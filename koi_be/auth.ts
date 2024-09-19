@@ -20,6 +20,7 @@ import { createAuth } from "@keystone-6/auth";
 
 // see https://keystonejs.com/docs/apis/session for the session docs
 import { statelessSessions } from "@keystone-6/core/session";
+import Role from "./schema/Role.schema";
 
 // withAuth is a function we can use to wrap our base configuration
 const { withAuth } = createAuth({
@@ -39,6 +40,16 @@ const { withAuth } = createAuth({
     //   you are asking the Keystone AdminUI to create a new user
     //   providing inputs for these fields
     fields: ["name", "email", "password", "phone"],
+    itemData: {
+      role: {
+        create: {
+          name: "Admin",
+          canManageUser: true,
+          canManageProduct: true,
+          canManageRole: true,
+        },
+      },
+    },
 
     // it uses context.sudo() to do this, which bypasses any access control you might have
     //   you shouldn't use this in production

@@ -1,6 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text, password } from "@keystone-6/core/fields";
+import { text, password, relationship } from "@keystone-6/core/fields";
 
 const User = list({
   access: {
@@ -14,7 +14,7 @@ const User = list({
 
   fields: {
     name: text({
-      label: "Name",
+      label: "Tên",
       validation: {
         isRequired: true,
       },
@@ -38,7 +38,7 @@ const User = list({
       },
     }),
     phone: text({
-      label: "Phone",
+      label: "Số điện thoại",
       validation: {
         isRequired: true,
         match: {
@@ -48,7 +48,11 @@ const User = list({
       },
     }),
     address: text({
-      label: "Address",
+      label: "Địa chỉ",
+    }),
+    role: relationship({
+      label: "Quyền hạn",
+      ref: "Role.user",
     }),
   },
 });

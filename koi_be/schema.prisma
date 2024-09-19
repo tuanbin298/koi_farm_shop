@@ -12,10 +12,23 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
+  id       String  @id @default(cuid())
+  name     String  @default("")
+  email    String  @unique @default("")
   password String
-  phone    String @default("")
-  address  String @default("")
+  phone    String  @default("")
+  address  String  @default("")
+  role     Role?   @relation("User_role", fields: [roleId], references: [id])
+  roleId   String? @map("role")
+
+  @@index([roleId])
+}
+
+model Role {
+  id               String  @id @default(cuid())
+  name             String  @default("")
+  canManageUser    Boolean @default(false)
+  canManageProduct Boolean @default(false)
+  canManageRole    Boolean @default(false)
+  user             User[]  @relation("User_role")
 }
