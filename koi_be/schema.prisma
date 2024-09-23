@@ -34,6 +34,24 @@ model Role {
 }
 
 model Product {
-  id   String @id @default(cuid())
-  name String @default("")
+  id          String    @id @default(cuid())
+  name        String    @default("")
+  age         Int
+  sex         String    @default("")
+  size        Float
+  price       Int
+  description String    @default("")
+  origin      String    @default("")
+  image       String?
+  category    Category? @relation("Product_category", fields: [categoryId], references: [id])
+  categoryId  String?   @map("category")
+
+  @@index([categoryId])
+}
+
+model Category {
+  id                    String    @id @default(cuid())
+  name                  String    @default("")
+  description           String    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  from_Product_category Product[] @relation("Product_category")
 }
