@@ -28,7 +28,7 @@ const User = list({
           explanation: "Invalid email",
         },
       },
-      isIndexed: "unique", //không được trùng 
+      isIndexed: "unique",
     }),
     password: password({
       label: "Password",
@@ -52,7 +52,7 @@ const User = list({
     }),
     role: relationship({
       label: "Quyền hạn",
-      ref: "Role.user",//
+      ref: "Role.user",
     }),
   },
 });

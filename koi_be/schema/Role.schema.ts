@@ -19,7 +19,7 @@ const Role = list({
         isRequired: true,
       },
     }),
-    canManageUser: checkbox({// dạng tích 
+    canManageUser: checkbox({
       label: "Quản lý người dùng",
       defaultValue: false,
     }),
@@ -34,7 +34,7 @@ const Role = list({
     user: relationship({
       label: "Người dùng",
       ref: "User.role",
-      many: true,// 1 - nhiều 
+      many: true,
     }),
   },
 });
