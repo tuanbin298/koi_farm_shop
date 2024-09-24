@@ -1,0 +1,89 @@
+
+.login-container {
+  width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-title {
+  font-size: 24px;
+  font-family: 'Brygada 1918', serif;
+  color: #000000;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-form input {
+  width: 351.5px;
+  height: 20px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #9A9898;
+  background-color: #FBFBFB;
+  color: #000000;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.login-button {
+  background-color: #a13422;
+  color: white;
+  padding: 10px 152.2px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.login-button:hover {
+  background-color: #911f1f;
+}
+
+.forgot-password {
+  font-family: 'Brygada 1918', serif;
+  font-size: 14px;
+  color: #1F53CB;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+.register-link-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-redirect {
+  color: #000000;
+  font-family: 'Brygada 1918', serif;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.login-redirect a {
+  color: #E93131;
+  text-decoration: none;
+}
+
+.login-redirect a:hover {
+  text-decoration: underline;
+}
