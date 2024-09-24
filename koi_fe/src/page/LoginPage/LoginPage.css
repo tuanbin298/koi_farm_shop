@@ -1,4 +1,4 @@
-/* Container chính cho trang đăng nhập */
+
 .login-container {
   width: 400px;
   margin: 0 auto;
@@ -11,7 +11,6 @@
   align-items: center;
 }
 
-/* Tiêu đề đăng nhập */
 .login-title {
   font-size: 24px;
   font-family: 'Brygada 1918', serif;
@@ -20,7 +19,6 @@
   text-align: center;
 }
 
-/* Form đăng nhập */
 .login-form {
   width: 100%;
   display: flex;
@@ -28,7 +26,6 @@
   align-items: center;
 }
 
-/* Các trường input cho email và mật khẩu */
 .login-form input {
   width: 351.5px;
   height: 20px;
@@ -42,7 +39,6 @@
   font-family: 'Poppins', sans-serif;
 }
 
-/* Nút đăng nhập */
 .login-button {
   background-color: #a13422;
   color: white;
@@ -55,12 +51,10 @@
   margin-bottom: 15px;
 }
 
-/* Hiệu ứng khi rê chuột qua nút đăng nhập */
 .login-button:hover {
   background-color: #911f1f;
 }
 
-/* Link quên mật khẩu */
 .forgot-password {
   font-family: 'Brygada 1918', serif;
   font-size: 14px;
@@ -69,18 +63,15 @@
   margin-top: 10px;
 }
 
-/* Hiệu ứng khi rê chuột qua link quên mật khẩu */
 .forgot-password:hover {
   text-decoration: underline;
 }
 
-/* Container cho phần đăng ký */
 .register-link-container {
   margin-top: 20px;
   text-align: center;
 }
 
-/* Văn bản chuyển hướng tới trang đăng ký */
 .login-redirect {
   color: #000000;
   font-family: 'Brygada 1918', serif;
@@ -88,13 +79,11 @@
   font-size: 14px;
 }
 
-/* Link tới trang đăng ký */
 .login-redirect a {
   color: #E93131;
   text-decoration: none;
 }
 
-/* Hiệu ứng khi rê chuột qua link đăng ký */
 .login-redirect a:hover {
   text-decoration: underline;
 }
