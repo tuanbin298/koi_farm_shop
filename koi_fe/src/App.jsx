@@ -11,8 +11,9 @@ function App() {
   return (
     <>
     
-    <Header/>
+    
     <BrowserRouter>
+    <Header/>
       <Routes>
         <Route path="/" element={<Homepage />}/>
         <Route path="/login" element={<Login/>}/>
