@@ -20,7 +20,6 @@ import { createAuth } from "@keystone-6/auth";
 
 // see https://keystonejs.com/docs/apis/session for the session docs
 import { statelessSessions } from "@keystone-6/core/session";
-import Role from "./schema/Role.schema";
 
 // withAuth is a function we can use to wrap our base configuration
 const { withAuth } = createAuth({
@@ -30,7 +29,17 @@ const { withAuth } = createAuth({
   // this is a GraphQL query fragment for fetching what data will be attached to a context.session
   //   this can be helpful for when you are writing your access control functions
   //   you can find out more at https://keystonejs.com/docs/guides/auth-and-access-control
-  sessionData: "name",
+  sessionData: `
+    name
+    role {
+      id
+      name
+      canManageUser
+      canManageProduct
+      canManageRole
+      canManageArticle
+    }
+  `,
   secretField: "password",
 
   // WARNING: remove initFirstItem functionality in production

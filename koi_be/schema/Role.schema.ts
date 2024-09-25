@@ -31,6 +31,10 @@ const Role = list({
       label: "Quản lý quyền hạn",
       defaultValue: false,
     }),
+    canManageArticle: checkbox({
+      label: "Quản lý bài đăng",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",

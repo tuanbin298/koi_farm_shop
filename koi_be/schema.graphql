@@ -124,6 +124,7 @@ type Role {
   canManageUser: Boolean
   canManageProduct: Boolean
   canManageRole: Boolean
+  canManageArticle: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -141,6 +142,7 @@ input RoleWhereInput {
   canManageUser: BooleanFilter
   canManageProduct: BooleanFilter
   canManageRole: BooleanFilter
+  canManageArticle: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -161,6 +163,7 @@ input RoleOrderByInput {
   canManageUser: OrderDirection
   canManageProduct: OrderDirection
   canManageRole: OrderDirection
+  canManageArticle: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -168,6 +171,7 @@ input RoleUpdateInput {
   canManageUser: Boolean
   canManageProduct: Boolean
   canManageRole: Boolean
+  canManageArticle: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -188,6 +192,7 @@ input RoleCreateInput {
   canManageUser: Boolean
   canManageProduct: Boolean
   canManageRole: Boolean
+  canManageArticle: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -199,7 +204,7 @@ input UserRelateToManyForCreateInput {
 type Product {
   id: ID!
   name: String
-  age: Int
+  birth: Int
   sex: String
   size: Float
   price: Int
@@ -267,7 +272,7 @@ input ProductWhereInput {
   NOT: [ProductWhereInput!]
   id: IDFilter
   name: StringFilter
-  age: IntFilter
+  birth: IntFilter
   sex: StringFilter
   size: FloatFilter
   price: IntFilter
@@ -301,7 +306,7 @@ input FloatFilter {
 input ProductOrderByInput {
   id: OrderDirection
   name: OrderDirection
-  age: OrderDirection
+  birth: OrderDirection
   sex: OrderDirection
   size: OrderDirection
   price: OrderDirection
@@ -311,7 +316,7 @@ input ProductOrderByInput {
 
 input ProductUpdateInput {
   name: String
-  age: Int
+  birth: Int
   sex: String
   size: Float
   price: Int
@@ -337,7 +342,7 @@ input ProductUpdateArgs {
 
 input ProductCreateInput {
   name: String
-  age: Int
+  birth: Int
   sex: String
   size: Float
   price: Int

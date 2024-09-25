@@ -21,6 +21,7 @@ const Category = list({
       },
     }),
     description: document({
+      label: "Mô tả về loại cá",
       formatting: true,
       layouts: [
         [1, 1],

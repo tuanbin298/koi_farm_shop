@@ -2,6 +2,7 @@ import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { text, relationship, integer, float } from "@keystone-6/core/fields";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
+import { permissions } from "../auth/access";
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
@@ -17,6 +18,16 @@ const Product = list({
       create: allowAll,
       update: allowAll,
       delete: allowAll,
+    },
+  },
+
+  ui: {
+    hideCreate: (args) => {
+      console.log(args.session.data);
+      return !permissions.canManageProduct(args);
+    },
+    hideDelete: (args) => {
+      return !permissions.canManageProduct(args);
     },
   },
 
