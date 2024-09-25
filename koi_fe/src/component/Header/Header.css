@@ -38,10 +38,16 @@ body {
 
 .header_top-auth {
   margin-right: 10px;
+  text-decoration: none;
 }
 
 .header_top-auth:hover {
   cursor: pointer;
+}
+
+.linkForm{
+  text-decoration: none;
+  color: white;
 }
 
 .header_top-location {
