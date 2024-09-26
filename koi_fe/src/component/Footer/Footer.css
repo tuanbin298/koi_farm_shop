@@ -1,0 +1,96 @@
+.container {
+  min-height: 100vh; /* will cover the 100% of viewport */
+  overflow: hidden;
+  display: block;
+  position: relative;
+  padding-bottom: 100px; /* height of your footer */
+  width: 100%;
+}
+
+.footer {
+  padding: 40px 20px;
+  font-family: Arial, sans-serif;
+  flex-shrink: 0;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+/* Footer Content */
+.footer_content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.footer_logo {
+  width: 30%;
+}
+
+.footer_logo img {
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.footer_logo p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #666;
+  max-width: 300px;
+  word-wrap: break-word;
+  margin-top: 10px;
+  text-align: justify;
+}
+
+/* Footer About Us Section */
+.footer_about-us,
+.footer_support,
+.footer_contact {
+  width: 20%;
+}
+
+.footer_about-us h3,
+.footer_support h3,
+.footer_contact h3 {
+  color: #d94e4e;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.footer_about-us ul,
+.footer_support ul,
+.footer_contact ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer_about-us li,
+.footer_support li,
+.footer_contact li {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Footer Contact Icons */
+.footer_contact li {
+  display: flex;
+  align-items: center;
+}
+
+.footer_contact span {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Footer Bottom */
+.footer_bottom {
+  width: 100%;
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+  margin-top: 20px;
+}

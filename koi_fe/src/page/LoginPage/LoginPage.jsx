@@ -33,8 +33,8 @@ const Login = () => {
         <button type="submit" className="login-button">Đăng nhập</button>
       </form>
       <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
-      <div className="register-link-container">
-      <p className="login-redirect">Bạn chưa có tài khoản đăng ký <a href="/login">Tại đây</a></p>
+      <div className="login-link-container">
+      <p className="login-redirect ">Bạn chưa có tài khoản đăng ký <a href="/login">Tại đây</a></p>
 
       </div>
     </div>
