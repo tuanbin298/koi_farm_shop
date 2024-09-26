@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './LoginPage.css';
-
+import { Link } from "react-router-dom";
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +34,7 @@ const Login = () => {
       </form>
       <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
       <div className="register-link-container">
-      <p className="login-redirect">Bạn chưa có tài khoản đăng ký <a href="/login">Tại đây</a></p>
+      <p className="login-redirect">Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link></p>
 
       </div>
     </div>
