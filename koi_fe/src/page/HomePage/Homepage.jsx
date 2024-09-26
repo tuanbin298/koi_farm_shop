@@ -39,7 +39,7 @@ export default function Homepage() {
       {/* <Button variant="outline-danger" className='KoiProductBtn'>Xem thêm <FaArrowRight /></Button>{' '} */}
 
       {/* Header Button */}
-      <header className="header">
+      <header className="headerShowMoreButton">
         <Button variant="outline-danger" className="viewMoreButton">
           Xem thêm <FaArrowRight />
         </Button>{" "}
