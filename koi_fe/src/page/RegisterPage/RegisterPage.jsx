@@ -189,7 +189,7 @@ const RegisterPage = () => {
         </p>
       </form>
 
-      <hr />
+      
     </div>
   );
 };
