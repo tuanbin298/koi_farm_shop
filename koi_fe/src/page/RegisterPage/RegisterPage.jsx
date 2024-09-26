@@ -9,7 +9,7 @@ const RegisterPage = () => {
     email: "",
     phone: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -21,13 +21,13 @@ const RegisterPage = () => {
       ...formData,
       [name]: value,
     });
-    setErrors({ ...errors, [name]: '' }); // Xóa lỗi khi người dùng nhập liệu
+    setErrors({ ...errors, [name]: "" }); // Xóa lỗi khi người dùng nhập liệu
   };
 
   // Kiểm tra hợp lệ các trường form
   const validate = () => {
     let errors = {};
-    
+
     // Kiểm tra họ tên
     if (!formData.firstName.trim()) {
       errors.firstName = "Tên không được bỏ trống";
@@ -97,9 +97,11 @@ const RegisterPage = () => {
             value={formData.firstName}
             onChange={handleChange}
             placeholder="Họ*"
-            className={errors.firstName ? 'input-error' : ''}
+            className={errors.firstName ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.firstName ? 'visible' : ''}`}>
+          <span
+            className={`tooltip-error ${errors.firstName ? "visible" : ""}`}
+          >
             {errors.firstName}
           </span>
         </div>
@@ -111,9 +113,9 @@ const RegisterPage = () => {
             value={formData.lastName}
             onChange={handleChange}
             placeholder="Tên*"
-            className={errors.lastName ? 'input-error' : ''}
+            className={errors.lastName ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.lastName ? 'visible' : ''}`}>
+          <span className={`tooltip-error ${errors.lastName ? "visible" : ""}`}>
             {errors.lastName}
           </span>
         </div>
@@ -125,9 +127,9 @@ const RegisterPage = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="Email*"
-            className={errors.email ? 'input-error' : ''}
+            className={errors.email ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.email ? 'visible' : ''}`}>
+          <span className={`tooltip-error ${errors.email ? "visible" : ""}`}>
             {errors.email}
           </span>
         </div>
@@ -139,9 +141,9 @@ const RegisterPage = () => {
             value={formData.phone}
             onChange={handleChange}
             placeholder="Số điện thoại*"
-            className={errors.phone ? 'input-error' : ''}
+            className={errors.phone ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.phone ? 'visible' : ''}`}>
+          <span className={`tooltip-error ${errors.phone ? "visible" : ""}`}>
             {errors.phone}
           </span>
         </div>
@@ -153,9 +155,9 @@ const RegisterPage = () => {
             value={formData.password}
             onChange={handleChange}
             placeholder="Mật khẩu*"
-            className={errors.password ? 'input-error' : ''}
+            className={errors.password ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.password ? 'visible' : ''}`}>
+          <span className={`tooltip-error ${errors.password ? "visible" : ""}`}>
             {errors.password}
           </span>
         </div>
@@ -167,9 +169,13 @@ const RegisterPage = () => {
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="Nhập lại mật khẩu*"
-            className={errors.confirmPassword ? 'input-error' : ''}
+            className={errors.confirmPassword ? "input-error" : ""}
           />
-          <span className={`tooltip-error ${errors.confirmPassword ? 'visible' : ''}`}>
+          <span
+            className={`tooltip-error ${
+              errors.confirmPassword ? "visible" : ""
+            }`}
+          >
             {errors.confirmPassword}
           </span>
         </div>

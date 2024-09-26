@@ -12,7 +12,7 @@
 
 .registration-form h2 {
   font-size: 24px;
-  font-family: 'Brygada 1918', serif;
+  font-family: "Brygada 1918", serif;
   color: #000000;
   text-align: center;
   margin-bottom: 20px;
@@ -36,31 +36,30 @@
   padding: 10px;
   margin: 0px;
   margin-bottom: 5px;
-  border: 1px solid #9A9898;
-  background-color: #FBFBFB;
+  border: 1px solid #9a9898;
+  background-color: #fbfbfb;
   color: #000000;
   border-radius: 10px;
 }
 
 /* Xử lý màu nền và chữ khi autofill */
 input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #9A9898 inset !important; /* Đảm bảo nền là màu #FBFBFB */
+  -webkit-box-shadow: 0 0 0px 1000px #9a9898 inset !important; /* Đảm bảo nền là màu #FBFBFB */
   -webkit-text-fill-color: #000000 !important; /* Đảm bảo chữ là màu đen */
   color: #000000 !important; /* Thiết lập lại màu chữ */
 }
 
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0px 1000px #FBFBFB inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #fbfbfb inset !important;
   -webkit-text-fill-color: #000000 !important; /* Đảm bảo chữ là màu đen khi focus */
   color: #000000 !important;
 }
 
 input:autofill {
-  box-shadow: 0 0 0px 1000px #FBFBFB inset !important;
+  box-shadow: 0 0 0px 1000px #fbfbfb inset !important;
   -webkit-text-fill-color: #000000 !important;
   color: #000000 !important;
 }
-
 
 /* Hiệu ứng khi focus */
 .registration-form input:focus {
@@ -118,7 +117,7 @@ input:autofill {
   padding: 10px 152.2px;
   border: none;
   border-radius: 10px;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 18px;
 }
 
@@ -129,13 +128,13 @@ input:autofill {
 
 .login-redirect {
   color: #000000;
-  font-family: 'Brygada 1918', serif;
+  font-family: "Brygada 1918", serif;
   text-decoration: none;
   text-align: center;
   margin-top: 15px;
 }
 
 .login-redirect a {
-  color: #E93131;
+  color: #e93131;
   text-decoration: none;
 }
