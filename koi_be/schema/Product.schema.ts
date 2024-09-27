@@ -76,7 +76,7 @@ const Product = list({
       cloudinary,
     }),
     category: relationship({
-      label: "Nguồn gốc",
+      label: "Loại",
       ref: "Category",
     }),
   },
