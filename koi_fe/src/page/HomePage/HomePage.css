@@ -99,7 +99,7 @@
 }
 
 /* Header */
-.header {
+.headerShowMoreButton {
   display: flex;
   justify-content: center;
   padding: 20px 0;
@@ -172,6 +172,7 @@
   background-color: #b02a37;
   color: white;
   padding: 40px;
+  margin-bottom: 30px;
 }
 
 .quoteContent {

@@ -95,7 +95,7 @@ body {
 }
 
 .header_mid-nav a:hover {
-  text-decoration: underline;
+  opacity: 0.2;
 }
 
 .header_mid-search {
