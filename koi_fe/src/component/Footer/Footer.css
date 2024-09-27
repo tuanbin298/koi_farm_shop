@@ -1,3 +1,4 @@
+
 .containe {
   min-height: 70vh; /* will cover the 100% of viewport */
   overflow: hidden;
@@ -23,7 +24,7 @@
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
 }
 
 .footer_logo {
