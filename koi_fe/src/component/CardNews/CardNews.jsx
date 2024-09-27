@@ -14,7 +14,11 @@ export default function CardProduct() {
       boxShadow:"21px 17px 48px -7px rgba(0,0,0,0.75)"
     }}>
       <CardMedia
-        image="src/assets/KoiNewsImg.jfif"
+        image="src/assets/koiimgnews.jfif"
+        title="green iguana"
+        style={{
+          aspectRatio: "4/3"
+        }}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
