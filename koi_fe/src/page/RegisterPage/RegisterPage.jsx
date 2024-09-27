@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "./RegisterPage.css";
+import './RegisterPage.css'; 
+import { Link } from "react-router-dom";
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -184,11 +185,11 @@ const RegisterPage = () => {
         </button>
 
         <p className="login-redirect">
-          Bạn đã có tài khoản đăng nhập <a href="/LoginPage">Tại đây</a>
+          Bạn đã có tài khoản đăng nhập <Link to="/login">Tại đây</Link>
         </p>
       </form>
 
-      <hr />
+      
     </div>
   );
 };

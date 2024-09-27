@@ -1,11 +1,13 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
 import { FaArrowRight } from "react-icons/fa";
+import Header from "./component/Header/Header";
 import "./HomePage.css";
 
 export default function Homepage() {
   return (
     <>
+    <Header />
       <div className="banner">
         <div className="banner-content">
           <h1>CaKoiViet Koi Farm Shop</h1>
@@ -39,7 +41,7 @@ export default function Homepage() {
       {/* <Button variant="outline-danger" className='KoiProductBtn'>Xem thêm <FaArrowRight /></Button>{' '} */}
 
       {/* Header Button */}
-      <header className="header">
+      <header className="headerShowMoreButton">
         <Button variant="outline-danger" className="viewMoreButton">
           Xem thêm <FaArrowRight />
         </Button>{" "}
