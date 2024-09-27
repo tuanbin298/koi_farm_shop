@@ -206,7 +206,7 @@ type Product {
   name: String
   birth: Int
   sex: String
-  size: Float
+  size: String
   price: Int
   description: String
   origin: String
@@ -273,8 +273,8 @@ input ProductWhereInput {
   id: IDFilter
   name: StringFilter
   birth: IntFilter
-  sex: StringFilter
-  size: FloatFilter
+  sex: StringNullableFilter
+  size: StringNullableFilter
   price: IntFilter
   description: StringFilter
   origin: StringFilter
@@ -292,15 +292,18 @@ input IntFilter {
   not: IntFilter
 }
 
-input FloatFilter {
-  equals: Float
-  in: [Float!]
-  notIn: [Float!]
-  lt: Float
-  lte: Float
-  gt: Float
-  gte: Float
-  not: FloatFilter
+input StringNullableFilter {
+  equals: String
+  in: [String!]
+  notIn: [String!]
+  lt: String
+  lte: String
+  gt: String
+  gte: String
+  contains: String
+  startsWith: String
+  endsWith: String
+  not: StringNullableFilter
 }
 
 input ProductOrderByInput {
@@ -318,7 +321,7 @@ input ProductUpdateInput {
   name: String
   birth: Int
   sex: String
-  size: Float
+  size: String
   price: Int
   description: String
   origin: String
@@ -344,7 +347,7 @@ input ProductCreateInput {
   name: String
   birth: Int
   sex: String
-  size: Float
+  size: String
   price: Int
   description: String
   origin: String

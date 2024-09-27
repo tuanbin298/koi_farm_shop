@@ -1,6 +1,12 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text, relationship, integer, float } from "@keystone-6/core/fields";
+import {
+  text,
+  relationship,
+  integer,
+  float,
+  select,
+} from "@keystone-6/core/fields";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
 import { permissions } from "../auth/access";
 
@@ -44,17 +50,25 @@ const Product = list({
         isRequired: true,
       },
     }),
-    sex: text({
+    sex: select({
       label: "Giới tính",
-      validation: {
-        isRequired: true,
-      },
+      defaultValue: "Sex",
+      options: [
+        { label: "Đực", value: "Đực" },
+        { label: "Cái", value: "Cái" },
+      ],
     }),
-    size: float({
+    size: select({
       label: "Kích thước",
-      validation: {
-        isRequired: true,
-      },
+      defaultValue: "Size",
+      options: [
+        { label: "20cm", value: "20cm" },
+        { label: "30cm", value: "30cm" },
+        { label: "40cm", value: "40cm" },
+        { label: "50cm", value: "50cm" },
+        { label: "60cm", value: "60cm" },
+        { label: "70cm", value: "70cm" },
+      ],
     }),
     price: integer({
       label: "Giá",

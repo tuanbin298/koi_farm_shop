@@ -38,8 +38,8 @@ model Product {
   id          String    @id @default(cuid())
   name        String    @default("")
   birth       Int
-  sex         String    @default("")
-  size        Float
+  sex         String?   @default("Sex")
+  size        String?   @default("Size")
   price       Int
   description String    @default("")
   origin      String    @default("")
