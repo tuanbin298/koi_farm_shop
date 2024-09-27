@@ -7,6 +7,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link } from "react-router-dom";
+
 export default function Header() {
   return (
     <div>
@@ -31,14 +32,24 @@ export default function Header() {
 
           <div className="header_top-auth">
             <AccountCircleIcon className="header_top-icon" />
-            <span><Link to="/login" className="linkForm">Đăng nhập</Link> | <Link to="/register" className="linkForm">Đăng ký</Link></span>
+            <span>
+              <Link to="/login" className="linkForm">
+                Đăng nhập
+              </Link>{" "}
+              |{" "}
+              <Link to="/register" className="linkForm">
+                Đăng ký
+              </Link>
+            </span>
           </div>
         </div>
 
         {/* Header mid */}
         <div className="header_mid">
           <div className="header_mid-logo">
-            <Link to="/"><img src={logo} alt="Ca Koi Viet Logo" /></Link>
+            <Link to="/">
+              <img src={logo} alt="Ca Koi Viet Logo" />
+            </Link>
           </div>
 
           <nav className="header_mid-nav">
