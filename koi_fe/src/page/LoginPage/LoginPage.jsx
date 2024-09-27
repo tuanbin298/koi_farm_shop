@@ -34,7 +34,7 @@ const Login = () => {
       </form>
       <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
       <div className="register-link-container">
-      <p className="login-redirect">Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link></p>
+      <p className="register-redirect">Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link></p>
 
       </div>
     </div>
