@@ -45,7 +45,7 @@ body {
   cursor: pointer;
 }
 
-.linkForm{
+.linkForm {
   text-decoration: none;
   color: white;
 }
@@ -106,6 +106,10 @@ body {
   padding: 8px 16px;
   border: none;
   margin-right: 10px;
+}
+
+.header_mid-search:hover {
+  box-shadow: 0 0.4rem 0.4rem #002;
 }
 
 .header_mid-search input {
