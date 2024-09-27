@@ -9,7 +9,7 @@ import { FaArrowRight } from "react-icons/fa";
 export default function CardProduct() {
   return (
     <Card sx={{ maxWidth: 345 }} style={{
-      marginBottom: "2%",
+      marginBottom: "5%",
       marginLeft:"17%",
       boxShadow:"21px 17px 48px -7px rgba(0,0,0,0.75)"
     }}>

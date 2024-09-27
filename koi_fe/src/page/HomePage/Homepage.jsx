@@ -47,8 +47,10 @@ export default function Homepage() {
         <Row>
           <Col sm><CardProduct/></Col>
           <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
         </Row>
         <Row>
+          <Col sm><CardProduct/></Col>
           <Col sm><CardProduct/></Col>
           <Col sm><CardProduct/></Col>
         </Row>
@@ -82,9 +84,6 @@ export default function Homepage() {
         <Container>
         <Row>
           <Col sm><CardNews/></Col>
-          <Col sm><CardNews/></Col>
-        </Row>
-        <Row>
           <Col sm><CardNews/></Col>
           <Col sm><CardNews/></Col>
         </Row>
