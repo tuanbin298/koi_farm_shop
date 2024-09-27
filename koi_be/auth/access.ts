@@ -31,3 +31,17 @@ export const permissions = {
   canManageArticle: ({ session }: AccessArgs) =>
     session?.data.role?.canManageArticle ?? false,
 };
+
+export const filters = {
+  canReadUser: ({ session }: AccessArgs) => {
+    if (!session) {
+      return false;
+    }
+
+    if (session.data.role?.canManageUser) {
+      return true;
+    }
+
+    return { id: { equals: session.itemId } };
+  },
+};

@@ -1,6 +1,7 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { text, password, relationship } from "@keystone-6/core/fields";
+import { filters, permissions } from "../auth/access";
 
 const User = list({
   access: {
@@ -9,6 +10,18 @@ const User = list({
       create: allowAll,
       update: allowAll,
       delete: allowAll,
+    },
+    filter: {
+      query: filters.canReadUser,
+    },
+  },
+
+  ui: {
+    hideCreate: (args) => {
+      return !permissions.canManageUser(args);
+    },
+    hideDelete: (args) => {
+      return !permissions.canManageUser(args);
     },
   },
 

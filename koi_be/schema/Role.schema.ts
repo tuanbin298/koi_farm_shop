@@ -1,6 +1,7 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { checkbox, relationship, text } from "@keystone-6/core/fields";
+import { permissions } from "../auth/access";
 
 const Role = list({
   access: {
@@ -9,6 +10,16 @@ const Role = list({
       create: allowAll,
       update: allowAll,
       delete: allowAll,
+    },
+  },
+
+  ui: {
+    hideCreate: (args) => {
+      console.log(args.session.data);
+      return !permissions.canManageRole(args);
+    },
+    hideDelete: (args) => {
+      return !permissions.canManageRole(args);
     },
   },
 
