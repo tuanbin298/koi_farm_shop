@@ -7,7 +7,7 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 
 export default function Footer() {
   return (
-    <div className="container">
+    <div className="containe">
       {/* Footer */}
       <footer className="footer">
         <div className="footer_content">

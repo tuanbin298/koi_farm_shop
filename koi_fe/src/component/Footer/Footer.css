@@ -1,14 +1,15 @@
-.container {
-  min-height: 100vh; /* will cover the 100% of viewport */
+.containe {
+  min-height: 70vh; /* will cover the 100% of viewport */
   overflow: hidden;
   display: block;
   position: relative;
-  padding-bottom: 100px; /* height of your footer */
+  padding-bottom: 50px;
+   /* height of your footer */
   width: 100%;
 }
 
 .footer {
-  padding: 40px 20px;
+  padding: 0px 20px;
   font-family: Arial, sans-serif;
   flex-shrink: 0;
   position: absolute;
@@ -54,8 +55,8 @@
 .footer_about-us h3,
 .footer_support h3,
 .footer_contact h3 {
-  color: #d94e4e;
-  font-size: 18px;
+  font-weight: bold;
+  font-size: 20px;
   margin-bottom: 10px;
 }
 
@@ -78,12 +79,15 @@
 /* Footer Contact Icons */
 .footer_contact li {
   display: flex;
+  border-radius: 100px;
   align-items: center;
+  
 }
 
 .footer_contact span {
   font-size: 14px;
   color: #333;
+  padding-left: 4px;
 }
 
 /* Footer Bottom */
@@ -94,3 +98,4 @@
   border-top: 1px solid #ccc;
   margin-top: 20px;
 }
+
