@@ -12,7 +12,7 @@ const Login = () => {
     password: "",
   });
 
-  const [errorMsg, setErrorMsg] = useState();
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -85,6 +85,7 @@ const Login = () => {
           </p>
         </div>
       </div>
+      {errorMsg && <p style={{ color: red }}>{errorMsg}</p>}
     </div>
   );
 };
