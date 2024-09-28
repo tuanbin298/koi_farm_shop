@@ -210,6 +210,7 @@ type Product {
   price: Int
   description: String
   origin: String
+  generic: String
   image: CloudinaryImage_File
   category: Category
 }
@@ -278,6 +279,7 @@ input ProductWhereInput {
   price: IntFilter
   description: StringFilter
   origin: StringFilter
+  generic: StringFilter
   category: CategoryWhereInput
 }
 
@@ -315,6 +317,7 @@ input ProductOrderByInput {
   price: OrderDirection
   description: OrderDirection
   origin: OrderDirection
+  generic: OrderDirection
 }
 
 input ProductUpdateInput {
@@ -325,6 +328,7 @@ input ProductUpdateInput {
   price: Int
   description: String
   origin: String
+  generic: String
   image: Upload
   category: CategoryRelateToOneForUpdateInput
 }
@@ -351,6 +355,7 @@ input ProductCreateInput {
   price: Int
   description: String
   origin: String
+  generic: String
   image: Upload
   category: CategoryRelateToOneForCreateInput
 }
@@ -363,11 +368,7 @@ input CategoryRelateToOneForCreateInput {
 type Category {
   id: ID!
   name: String
-  description: Category_description_Document
-}
-
-type Category_description_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
+  description: String
 }
 
 input CategoryWhereUniqueInput {
@@ -380,16 +381,18 @@ input CategoryWhereInput {
   NOT: [CategoryWhereInput!]
   id: IDFilter
   name: StringFilter
+  description: StringFilter
 }
 
 input CategoryOrderByInput {
   id: OrderDirection
   name: OrderDirection
+  description: OrderDirection
 }
 
 input CategoryUpdateInput {
   name: String
-  description: JSON
+  description: String
 }
 
 input CategoryUpdateArgs {
@@ -399,7 +402,7 @@ input CategoryUpdateArgs {
 
 input CategoryCreateInput {
   name: String
-  description: JSON
+  description: String
 }
 
 """

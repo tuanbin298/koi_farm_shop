@@ -56,6 +56,7 @@ const { withAuth } = createAuth({
           canManageUser: true,
           canManageProduct: true,
           canManageRole: true,
+          canManageArticle: true,
         },
       },
     },

@@ -5,13 +5,16 @@
   "scripts": {
     "dev": "keystone dev",
     "start": "keystone start",
-    "build": "keystone build"
+    "build": "keystone build",
+    "seed": "tsx ./seed-data/index.ts"
   },
   "dependencies": {
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/cloudinary": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
-    "typescript": "^5.5.0"
+    "dotenv": "^16.4.5",
+    "tsx": "^4.15.1",
+    "typescript": "^5.4.5"
   }
 }
