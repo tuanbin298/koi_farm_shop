@@ -84,8 +84,8 @@ const Login = () => {
             Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link>
           </p>
         </div>
+        {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}
       </div>
-      {errorMsg && <p style={{ color: red }}>{errorMsg}</p>}
     </div>
   );
 };
