@@ -1,41 +1,88 @@
-import React, { useState } from 'react';
-import './LoginPage.css';
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import "./LoginPage.css";
+import { Link, useNavigate } from "react-router-dom";
+import { MUTATION_LOGIN } from "../api/Mutations/user";
+import { useMutation } from "@apollo/client";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Email:', email);
-    console.log('Password:', password);
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [errorMsg, setErrorMsg] = useState();
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setInput({
+      ...input,
+      [name]: value,
+    });
   };
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      const response = await login();
+      console.log(response);
+      if (response.data.authenticateUserWithPassword.sessionToken) {
+        const { sessionToken, item } =
+          response.data.authenticateUserWithPassword;
+        localStorage.setItem("sessionToken", sessionToken);
+        localStorage.setItem("id", item.id);
+        localStorage.setItem("name", item.name);
+        localStorage.setItem("email", item.email);
+        localStorage.setItem("phone", item.phone);
+
+        navigate("/");
+      } else if (response.data.authenticateUserWithPassword.message) {
+        setErrorMsg(response.data.authenticateUserWithPassword.message);
+      }
+    } catch (error) {
+      setErrorMsg("An error occured, Please try again !");
+    }
+  }
+
+  const [login] = useMutation(MUTATION_LOGIN, {
+    variables: input,
+  });
+
   return (
-    <div className="login-page"> {/* Add this wrapper */}
+    <div className="login-page">
+      {" "}
+      {/* Add this wrapper */}
       <div className="login-container">
         <h2 className="login-title">Đăng nhập</h2>
         <form onSubmit={handleSubmit} className="login-form">
           <input
             type="email"
             placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="email"
+            value={input.email}
+            onChange={handleChange}
             required
           />
           <input
             type="password"
             placeholder="Mật khẩu"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="password"
+            value={input.password}
+            onChange={handleChange}
             required
           />
-          <button type="submit" className="login-button">Đăng nhập</button>
+          <button type="submit" className="login-button">
+            Đăng nhập
+          </button>
         </form>
-        <a href="/forgot-password" className="forgot-password">Quên mật khẩu?</a>
+        <a href="/forgot-password" className="forgot-password">
+          Quên mật khẩu?
+        </a>
         <div className="register-link-container">
-          <p className="register-redirect">Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link></p>
+          <p className="register-redirect">
+            Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link>
+          </p>
         </div>
       </div>
     </div>
