@@ -43,6 +43,7 @@ model Product {
   price       Int
   description String    @default("")
   origin      String    @default("")
+  generic     String    @default("")
   image       String?
   category    Category? @relation("Product_category", fields: [categoryId], references: [id])
   categoryId  String?   @map("category")
@@ -53,6 +54,6 @@ model Product {
 model Category {
   id                    String    @id @default(cuid())
   name                  String    @default("")
-  description           String    @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  description           String    @default("")
   from_Product_category Product[] @relation("Product_category")
 }

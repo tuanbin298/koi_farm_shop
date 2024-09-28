@@ -20,13 +20,8 @@ const Category = list({
         isRequired: true,
       },
     }),
-    description: document({
+    description: text({
       label: "Mô tả về loại cá",
-      formatting: true,
-      layouts: [
-        [1, 1],
-        [1, 1, 1],
-      ],
     }),
   },
 });
