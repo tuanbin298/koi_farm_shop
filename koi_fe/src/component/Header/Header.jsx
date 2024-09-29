@@ -56,7 +56,14 @@ export default function Header() {
             <a href="">Trang chủ</a>
             <a href="">Giới thiệu</a>
             <a href="">Cá Koi Nhật</a>
-            <a href="">Ký gửi</a>
+
+            <div className="dropdown">
+              <a href="#">Ký gửi</a>
+              <div className="dropdown-content">
+                <Link to="/sales">Ký Gửi Bán</Link>
+                <Link to="/care">Ký Gửi Nuôi</Link>
+              </div>
+            </div>
             <a href="">Tin tức</a>
           </nav>
 

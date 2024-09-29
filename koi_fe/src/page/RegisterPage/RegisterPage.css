@@ -1,7 +1,7 @@
 .registration-form {
-  width:auto ;
+  width: auto;
   margin: 0 auto;
-  padding: 20px; 
+  padding: 20px;
   border-radius: 5px;
   display: flex;
   flex-direction: column;
@@ -10,7 +10,7 @@
 
 .registration-form h2 {
   font-size: 24px;
-  font-family: "Brygada 1918", serif ;
+  font-family: "Brygada 1918", serif;
   font-weight: bold;
   color: #000000;
   text-align: center;
@@ -19,7 +19,7 @@
 
 .registration-form form {
   width: 100%;
-  height:max-content;
+  height: max-content;
 }
 
 .form-group {
@@ -92,8 +92,6 @@
   box-shadow: 0 0 5px rgba(161, 52, 34, 0.5);
 }
 
-
-
 .register-button {
   background-color: #a13422;
   color: white;
@@ -105,7 +103,6 @@
   display: block;
   margin: 0 auto; /* Thêm dòng này để căn giữa */
 }
-
 
 .register-button:hover {
   background-color: #e14528;
