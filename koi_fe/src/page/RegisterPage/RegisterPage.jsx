@@ -97,7 +97,7 @@ const RegisterPage = () => {
         console.log("Account registered successfully:", response.data);
 
         // Redirect to home page after successful registration
-        navigate("/"); // Programmatic navigation to the home page
+        navigate("/login"); // Programmatic navigation to the home page
       } catch (err) {
         console.error("Error registering account:", err);
       }
