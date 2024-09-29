@@ -7,7 +7,13 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, MenuItem, IconButton, Breadcrumbs, Typography } from "@mui/material";
+import {
+  Menu,
+  MenuItem,
+  IconButton,
+  Breadcrumbs,
+  Typography,
+} from "@mui/material";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -15,11 +21,11 @@ export default function Header() {
   const [userName, setUserName] = useState("");
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
-  
+
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
     const storedUserName = localStorage.getItem("name");
-    
+
     if (sessionToken) {
       setLoggedIn(true);
       setUserName(storedUserName);
@@ -66,24 +72,33 @@ export default function Header() {
     const pathnames = location.pathname.split("/").filter((x) => x); // Splits the pathname by "/" and removes empty items
     return (
       <Breadcrumbs aria-label="breadcrumb">
-        <Link to="/" style={{
-          textDecoration:"none",
-          color:"white"
-        }}>Trang chủ</Link>
+        <Link
+          to="/"
+          style={{
+            textDecoration: "none",
+            color: "white",
+          }}
+        >
+          Trang chủ
+        </Link>
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join("/")}`;
 
           // If this is the last item, render it as plain text
           const isLast = index === pathnames.length - 1;
           return isLast ? (
-            <Typography key={to} color="text.primary" style={{
-              textDecoration:"none",
-          color:"white"
-            }}>
+            <Typography
+              key={to}
+              color="text.primary"
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+            >
               {value.charAt(0).toUpperCase() + value.slice(1)}
             </Typography>
           ) : (
-            <Link key={to} to={to} >
+            <Link key={to} to={to}>
               {value.charAt(0).toUpperCase() + value.slice(1)}
             </Link>
           );
@@ -123,7 +138,9 @@ export default function Header() {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    Profile
+                  </MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </>
@@ -149,11 +166,17 @@ export default function Header() {
           </div>
 
           <nav className="header_mid-nav">
-            <a href="/">Trang chủ</a>
-            <a href="/about">Giới thiệu</a>
-            <a href="/koi">Cá Koi Nhật</a>
-            <a href="/consignment">Ký gửi</a>
-            <a href="/news">Tin tức</a>
+            <a href="">Trang chủ</a>
+            <a href="">Giới thiệu</a>
+            <a href="">Cá Koi Nhật</a>
+            <div className="dropdown">
+              <a href="#">Ký gửi</a>
+              <div className="dropdown-content">
+                <Link to="/sales">Ký Gửi Bán</Link>
+                <Link to="/care">Ký Gửi Nuôi</Link>
+              </div>
+            </div>
+            <a href="">Tin tức</a>>
           </nav>
 
           <div className="header_mid-search">
@@ -164,9 +187,7 @@ export default function Header() {
           </div>
         </div>
 
-        <div className="header_bottom">
-          {generateBreadcrumbs()}
-        </div>
+        <div className="header_bottom">{generateBreadcrumbs()}</div>
       </header>
     </div>
   );
