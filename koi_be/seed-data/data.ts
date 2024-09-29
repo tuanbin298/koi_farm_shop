@@ -18,7 +18,7 @@ export const categories = [
     name: "Cá koi Asagi",
     description:
       "Asagi là 1 trong những dòng cá Koi xuất hiện sớm nhất ở Nhật Bản. Cái tên của nó bắt nguồn từ ngôi làng sinh ra toàn bộ giống cá Koi Asagi  này làm nghề dệt vải giống hoa văn trên người những con cá. Giống cá này được coi là tổ tiên của các loại cá Koi Nishikigoi ra đời từ khoảng 160 năm trước, với hai dòng Kongo Asagi koi và Narumi Asagi đã lai tạo và cho ra những hậu duệ của giống Asagi Magoi (Narumi: tên của ngôi làng sản sinh ra toàn bộ giống Asagi).",
-  },
+  },npm
   {
     name: "Cá Koi Hariwake",
     description:
