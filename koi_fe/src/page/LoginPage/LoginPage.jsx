@@ -36,6 +36,9 @@ const Login = () => {
         localStorage.setItem("email", item.email);
         localStorage.setItem("phone", item.phone);
 
+        // Dispatch storage event to trigger the listener
+        window.dispatchEvent(new Event("storage"));
+
         navigate("/");
       } else if (response.data.authenticateUserWithPassword.message) {
         setErrorMsg(response.data.authenticateUserWithPassword.message);
@@ -51,8 +54,6 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      {" "}
-      {/* Add this wrapper */}
       <div className="login-container">
         <h2 className="login-title">Đăng nhập</h2>
         <form onSubmit={handleSubmit} className="login-form">

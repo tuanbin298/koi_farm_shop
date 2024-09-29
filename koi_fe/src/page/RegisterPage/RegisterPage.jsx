@@ -1,11 +1,26 @@
 import React, { useState } from "react";
 import './RegisterPage.css'; 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { gql, useMutation } from "@apollo/client";
+
+// GraphQL mutation
+const REGISTER_MUTATION = gql`
+mutation Mutation($data: UserCreateInput!) {
+  createUser(data: $data) {
+    id
+    name
+    email
+    password {
+      isSet
+    }
+    phone
+  }
+}
+`;
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
     phone: "",
     password: "",
@@ -13,76 +28,81 @@ const RegisterPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [register, { loading, error, data }] = useMutation(REGISTER_MUTATION);
 
-  // Xử lý thay đổi input
+  // useNavigate hook for navigation
+  const navigate = useNavigate();
+
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
-    setErrors({ ...errors, [name]: "" }); // Xóa lỗi khi người dùng nhập liệu
+    setErrors({ ...errors, [name]: "" }); // Clear the error when input is changed
   };
 
-  // Kiểm tra hợp lệ các trường form
+  // Validate form fields
   const validate = () => {
     let errors = {};
 
-    // Kiểm tra họ tên
-    if (!formData.firstName.trim()) {
-      errors.firstName = "Tên không được bỏ trống";
-    } else if (formData.firstName.length < 2) {
-      errors.firstName = "Tên phải có ít nhất 2 ký tự";
+    if (!formData.name.trim()) {
+      errors.name = "Tên không được bỏ trống";
+    } else if (formData.name.length < 2) {
+      errors.name = "Tên phải có ít nhất 2 ký tự";
     }
 
-    if (!formData.lastName.trim()) {
-      errors.lastName = "Họ không được bỏ trống";
-    } else if (formData.lastName.length < 2) {
-      errors.lastName = "Họ phải có ít nhất 2 ký tự";
-    }
-
-    // Kiểm tra email hợp lệ
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
       errors.email = "Email không được bỏ trống";
     } else if (!emailPattern.test(formData.email)) {
       errors.email = "Email không hợp lệ";
     }
+    {/* phần sđt này Đăng sẽ sửa sau */}
 
-    // Kiểm tra số điện thoại
-    const phonePattern = /^[0-9]{10,11}$/;
-    if (!formData.phone.trim()) {
-      errors.phone = "Số điện thoại không được bỏ trống";
-    } else if (!phonePattern.test(formData.phone)) {
-      errors.phone = "Số điện thoại phải là 10-11 chữ số";
-    }
+    // const phonePattern = /^[0-9]{10,11}$/;
+    // if (!formData.phone.trim()) {
+    //   errors.phone = "Số điện thoại không được bỏ trống";
+    // } else if (!phonePattern.test(formData.phone)) {
+    //   errors.phone = "Số điện thoại phải là 10-11 chữ số";
+    // }
 
-    // Kiểm tra mật khẩu
     if (!formData.password.trim()) {
       errors.password = "Mật khẩu không được bỏ trống";
     } else if (formData.password.length < 6) {
       errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
     }
 
-    // Kiểm tra xác nhận mật khẩu
-    if (!formData.confirmPassword.trim()) {
-      errors.confirmPassword = "Vui lòng nhập lại mật khẩu";
-    } else if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = "Mật khẩu nhập lại không khớp";
-    }
-
     return errors;
   };
 
-  // Xử lý khi submit form
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Form submitted successfully:", formData);
-      // Gửi dữ liệu API hoặc thực hiện hành động khác tại đây
+      try {
+        // Send the form data to the GraphQL API
+        const response = await register({
+          variables: {
+            data: {
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              password: formData.password, // Only send the password field
+            },
+          },
+        });
+        console.log("Account registered successfully:", response.data);
+
+        // Redirect to home page after successful registration
+        navigate("/login"); // Programmatic navigation to the home page
+      } catch (err) {
+        console.error("Error registering account:", err);
+      }
     } else {
-      setErrors(validationErrors); // Cập nhật tất cả các lỗi khi có
+      setErrors(validationErrors); // Update errors if validation fails
     }
   };
 
@@ -93,30 +113,14 @@ const RegisterPage = () => {
         <div className="form-group">
           <input
             type="text"
-            name="firstName"
-            value={formData.firstName}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
-            placeholder="Họ*"
-            className={errors.firstName ? "input-error" : ""}
+            placeholder="Họ và Tên*"
+            className={errors.name ? "input-error" : ""}
           />
-          <span
-            className={`tooltip-error ${errors.firstName ? "visible" : ""}`}
-          >
-            {errors.firstName}
-          </span>
-        </div>
-
-        <div className="form-group">
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            placeholder="Tên*"
-            className={errors.lastName ? "input-error" : ""}
-          />
-          <span className={`tooltip-error ${errors.lastName ? "visible" : ""}`}>
-            {errors.lastName}
+          <span className={`tooltip-error ${errors.name ? "visible" : ""}`}>
+            {errors.name}
           </span>
         </div>
 
@@ -162,34 +166,28 @@ const RegisterPage = () => {
           </span>
         </div>
 
+        {/* Optional confirm password field */}
         <div className="form-group">
           <input
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Nhập lại mật khẩu*"
-            className={errors.confirmPassword ? "input-error" : ""}
+            placeholder="Nhập lại mật khẩu (tùy chọn)"
           />
-          <span
-            className={`tooltip-error ${
-              errors.confirmPassword ? "visible" : ""
-            }`}
-          >
-            {errors.confirmPassword}
-          </span>
+          {/* No validation or errors displayed for confirmPassword */}
         </div>
 
-        <button type="submit" className="register-button">
-          Đăng ký
+        <button type="submit" className="register-button" disabled={loading}>
+          {loading ? "Đang đăng ký..." : "Đăng ký"}
         </button>
+
+        {error && <p className="error-message">Đã xảy ra lỗi: {error.message}</p>}
 
         <p className="login-redirect">
           Bạn đã có tài khoản đăng nhập <Link to="/login">Tại đây</Link>
         </p>
       </form>
-
-      
     </div>
   );
 };
