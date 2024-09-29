@@ -405,6 +405,56 @@ input CategoryCreateInput {
   description: String
 }
 
+type Article {
+  id: ID!
+  name: String
+  content: String
+  link: Article_link_Document
+  image: CloudinaryImage_File
+}
+
+type Article_link_Document {
+  document(hydrateRelationships: Boolean! = false): JSON!
+}
+
+input ArticleWhereUniqueInput {
+  id: ID
+}
+
+input ArticleWhereInput {
+  AND: [ArticleWhereInput!]
+  OR: [ArticleWhereInput!]
+  NOT: [ArticleWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  content: StringFilter
+}
+
+input ArticleOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  content: OrderDirection
+}
+
+input ArticleUpdateInput {
+  name: String
+  content: String
+  link: JSON
+  image: Upload
+}
+
+input ArticleUpdateArgs {
+  where: ArticleWhereUniqueInput!
+  data: ArticleUpdateInput!
+}
+
+input ArticleCreateInput {
+  name: String
+  content: String
+  link: JSON
+  image: Upload
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -435,6 +485,12 @@ type Mutation {
   updateCategories(data: [CategoryUpdateArgs!]!): [Category]
   deleteCategory(where: CategoryWhereUniqueInput!): Category
   deleteCategories(where: [CategoryWhereUniqueInput!]!): [Category]
+  createArticle(data: ArticleCreateInput!): Article
+  createArticles(data: [ArticleCreateInput!]!): [Article]
+  updateArticle(where: ArticleWhereUniqueInput!, data: ArticleUpdateInput!): Article
+  updateArticles(data: [ArticleUpdateArgs!]!): [Article]
+  deleteArticle(where: ArticleWhereUniqueInput!): Article
+  deleteArticles(where: [ArticleWhereUniqueInput!]!): [Article]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -471,6 +527,9 @@ type Query {
   category(where: CategoryWhereUniqueInput!): Category
   categories(where: CategoryWhereInput! = {}, orderBy: [CategoryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CategoryWhereUniqueInput): [Category!]
   categoriesCount(where: CategoryWhereInput! = {}): Int
+  article(where: ArticleWhereUniqueInput!): Article
+  articles(where: ArticleWhereInput! = {}, orderBy: [ArticleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ArticleWhereUniqueInput): [Article!]
+  articlesCount(where: ArticleWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
