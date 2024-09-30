@@ -13,6 +13,7 @@ import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
 import "../../component/Card/CardProduct.css";
+import { formatMoney } from "../../utils/formatMoney";
 
 //Defined new component use styled
 const Item = styled(Paper)(({ theme }) => ({
@@ -52,7 +53,7 @@ export default function CardProduct() {
                   )}
                   <div className="product_info">
                     <h4>{product.name}</h4>
-                    <div>{product.price}</div>
+                    <div>{formatMoney(product.price)}</div>
                     <div>{product.origin}</div>
                     <div>{product.sex}</div>
                     <div>{product.generic}</div>
