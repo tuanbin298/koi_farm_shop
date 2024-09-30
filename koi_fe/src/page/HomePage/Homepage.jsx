@@ -83,11 +83,21 @@ export default function Homepage() {
           </div>
         </div>
         <Container>
-        <Row>
-          <Col sm><CardNews/></Col>
-          <Col sm><CardNews/></Col>
-          <Col sm><CardNews/></Col>
-        </Row>
+          <Row>
+<<<<<<<<< Temporary merge branch 1
+            <Col sm>
+              <CardNews />
+            </Col>
+            <Col sm>
+              <CardNews />
+            </Col>
+            <Col sm>
+              <CardNews />
+            </Col>
+=========
+            <Col sm><CardNews /></Col>
+>>>>>>>>> Temporary merge branch 2
+          </Row>
         </Container>
       </section>
 
