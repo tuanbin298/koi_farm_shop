@@ -26,7 +26,6 @@ const Login = () => {
     event.preventDefault();
     try {
       const response = await login();
-      console.log(response);
       if (response.data.authenticateUserWithPassword.sessionToken) {
         const { sessionToken, item } =
           response.data.authenticateUserWithPassword;

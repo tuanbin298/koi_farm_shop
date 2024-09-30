@@ -9,7 +9,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 export default function Homepage() {
-
   return (
     <>
       <div className="banner">
@@ -17,11 +16,11 @@ export default function Homepage() {
           <h1>CaKoiViet Koi Farm Shop</h1>
           <h2>Chất lượng và niềm tin</h2>
           <Button variant="contained" color="error">
-            <a href="#" className="btn-banner">
-              Các giống cá Koi được bán
-            </a>
-          </Button>
-
+          <a href="#" className="btn-banner">
+            Các giống cá Koi được bán
+          </a>
+      </Button>
+          
         </div>
       </div>
       <section className="introduction-section">
@@ -44,18 +43,18 @@ export default function Homepage() {
         <h3>Các giống Cá Koi</h3>
         <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
         <div className="productList">
-          <Container>
-            <Row>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-            </Row>
-            <Row>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-            </Row>
-          </Container>
+        <Container>
+        <Row>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+        </Row>
+        <Row>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+        </Row>
+        </Container>
         </div>
       </section>
 
@@ -84,14 +83,19 @@ export default function Homepage() {
 
         <Container>
           <Row>
+<<<<<<<<< Temporary merge branch 1
+            <Col sm>
+              <CardNews />
+            </Col>
+            <Col sm>
+              <CardNews />
+            </Col>
+            <Col sm>
+              <CardNews />
+            </Col>
+=========
             <Col sm><CardNews /></Col>
-            <Col sm><CardNews /></Col>
-            <Col sm><CardNews /></Col>
-          </Row>
-          <Row>
-            <Col sm><CardNews /></Col>
-            <Col sm><CardNews /></Col>
-            <Col sm><CardNews /></Col>
+>>>>>>>>> Temporary merge branch 2
           </Row>
         </Container>
       </section>
