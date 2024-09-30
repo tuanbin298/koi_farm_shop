@@ -14,13 +14,13 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
   transition: "transform 0.3s, box-shadow 0.3s",
-  height: '100%', 
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
   '&:hover': {
-    transform: "scale(1.05)", 
-    boxShadow: theme.shadows[5], 
+    transform: "scale(1.05)",
+    boxShadow: theme.shadows[5],
   }
 }));
 
@@ -54,13 +54,13 @@ export default function CardNews() {
                     <img
                       src={article.image.publicUrl}
                       alt={article.name}
-                      className="cardNews-image" // Sử dụng lớp CSS mới
+                      className="cardNews-image"
                     />
                   )}
                   <div className="article__info">
-                    <h4 className="cardNews-title">{article.name}</h4> {/* Sử dụng lớp CSS mới */}
-                    <p className="cardNews-content">{article.content}</p> {/* Sử dụng lớp CSS mới */}
-                    <button className="readMoreButton">Đọc thêm</button> {/* Nút "Đọc thêm" */}
+                    <h4 className="cardNews-title">{article.name}</h4>
+                    <p className="cardNews-content">{article.content}</p>
+                    <button className="readMoreButton">Đọc thêm</button>
                   </div>
                 </div>
               </a>

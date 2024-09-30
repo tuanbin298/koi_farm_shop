@@ -1,20 +1,23 @@
-
 .cardNews-title {
-    text-align: center; 
-    margin: 10px 0; 
-    font-size: 24px; 
-    color: black;
-  }
-  
-  .cardNews-content {
-    text-align: justify; 
-    margin: 10px 0; 
-    flex-grow: 1; 
-  }
-  
-  .article {
-    display: flex;
-    flex-direction: column;
-    height: 100%; 
-  }
-  
+  text-align: center; 
+  margin: 10px 0; 
+  font-size: 24px; 
+  color: black; 
+}
+
+.cardNews-content {
+  text-align: justify; 
+  margin: 10px 0; 
+  flex-grow: 1;
+}
+
+.article {
+  display: flex;
+  flex-direction: column;
+  height: 100%; 
+}
+
+.no-link .cardNews-title,
+.no-link .cardNews-content {
+  color: white; 
+}
