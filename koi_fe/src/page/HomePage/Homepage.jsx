@@ -1,12 +1,12 @@
 import React from "react";
 import { FaArrowRight } from "react-icons/fa";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 import "./HomePage.css";
 import CardProduct from "../../component/Card/CardProduct";
 import CardNews from "../../component/CardNews/CardNews";
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Container from "react-bootstrap/Container";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 
 export default function Homepage() {
 
@@ -17,11 +17,11 @@ export default function Homepage() {
           <h1>CaKoiViet Koi Farm Shop</h1>
           <h2>Chất lượng và niềm tin</h2>
           <Button variant="contained" color="error">
-            <a href="#" className="btn-banner">
-              Các giống cá Koi được bán
-            </a>
-          </Button>
-
+          <a href="#" className="btn-banner">
+            Các giống cá Koi được bán
+          </a>
+      </Button>
+          
         </div>
       </div>
       <section className="introduction-section">
@@ -44,18 +44,18 @@ export default function Homepage() {
         <h3>Các giống Cá Koi</h3>
         <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
         <div className="productList">
-          <Container>
-            <Row>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-            </Row>
-            <Row>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-              <Col sm><CardProduct /></Col>
-            </Row>
-          </Container>
+        <Container>
+        <Row>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+        </Row>
+        <Row>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+          <Col sm><CardProduct/></Col>
+        </Row>
+        </Container>
         </div>
       </section>
 
@@ -74,7 +74,7 @@ export default function Homepage() {
           <div>
             <h2 className="title">Tin Tức</h2>
             <h3 className="subtitle">Kiến thức và kinh nghiệm nuôi cá Koi</h3>
-
+            
           </div>
           <div>
             <Button variant="outlined" color="light" className="viewMoreButton">
@@ -83,9 +83,11 @@ export default function Homepage() {
           </div>
         </div>
         <Container>
-          <Row>
-            <Col sm><CardNews /></Col>
-          </Row>
+        <Row>
+          <Col sm><CardNews/></Col>
+          <Col sm><CardNews/></Col>
+          <Col sm><CardNews/></Col>
+        </Row>
         </Container>
       </section>
 

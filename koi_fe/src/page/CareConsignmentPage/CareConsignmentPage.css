@@ -1,0 +1,51 @@
+.policy-care-container {
+  width: 70%;
+  margin: 50px auto;
+  padding: 50px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.policy-care-container h2 {
+  text-align: center;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.policy-care-container h5 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.policy-care-containerul {
+  margin-left: 20px;
+  list-style-type: disc;
+}
+
+.policy-care-container li {
+  margin-bottom: 10px;
+}
+
+.toggle-button {
+  margin: auto;
+  padding: 10px 20px;
+  background-color: #d32f2f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.policy-care-container button:hover {
+  background-color: #b71c1c;
+}
+
+.expanded-content {
+  margin-top: 10px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
+  color: #666;
+}
