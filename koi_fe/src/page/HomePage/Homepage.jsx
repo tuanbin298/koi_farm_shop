@@ -85,8 +85,6 @@ export default function Homepage() {
         <Container>
         <Row>
           <Col sm><CardNews/></Col>
-          <Col sm><CardNews/></Col>
-          <Col sm><CardNews/></Col>
         </Row>
         </Container>
       </section>
