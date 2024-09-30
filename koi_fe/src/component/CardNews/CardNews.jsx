@@ -1,54 +1,73 @@
 import React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { FaArrowRight } from "react-icons/fa";
+import { GET_ARTICLES } from "../../page/api/Queries/articles";
+import { useQuery } from "@apollo/client";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import './CardNews.css'; 
 
-export default function CardProduct() {
+// Định nghĩa một styled component
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+  transition: "transform 0.3s, box-shadow 0.3s",
+  height: '100%', 
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  '&:hover': {
+    transform: "scale(1.05)", 
+    boxShadow: theme.shadows[5], 
+  }
+}));
+
+export default function CardNews() {
+  const {
+    data: articlesData,
+    loading: loadingArticles,
+    error: errorArticles
+  } = useQuery(GET_ARTICLES);
+
+  if (loadingArticles) {
+    return <p>Loading...</p>;
+  }
+  if (errorArticles) {
+    return <p>Error fetching articles</p>;
+  }
+
   return (
-    <Card
-      sx={{ maxWidth: 345 }}
-      style={{
-        marginBottom: "5%",
-        marginLeft: "17%",
-        boxShadow: "21px 17px 48px -7px rgba(0,0,0,0.75)",
-      }}
-    >
-      <CardMedia
-        image="src/assets/koiimgnews.jfif"
-        title="green iguana"
-        style={{
-          aspectRatio: "4/3",
-        }}
-      />
-      <CardContent>
-        <Typography gutterBottom variant="h5" component="div">
-          Hiện tượng cá Koi nổi đầu – Nguyên nhân và cách khắc phục nhanh nhất
-        </Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          Cá Koi nổi đầu chính là một trong những hiện tượng thường gặp ở cá Koi
-          và chúng khá là nguy hiểm. Người nuôi cá cần phải có những biện pháp
-          khắc phục kịp thời để tránh gây ra những hậu quả nghiêm trọng. Vậy,
-          nguyên nhân và cách khắc phục hiện tượng này như thế nào? Các bạn hãy
-          cùng ISHI Koi Farm khám phá qua bài viết dưới đây.
-        </Typography>
-      </CardContent>
-      <CardActions
-        style={{
-          display: "flex",
-          alignItems: "flex-end",
-        }}
-      >
-        <div className="addToCartBtn">
-          <Button variant="contained" color="error">
-            Đọc thêm
-            <FaArrowRight />
-          </Button>
-        </div>
-      </CardActions>
-    </Card>
+    <Grid container spacing={3}>
+      {articlesData && articlesData.articles.map((article) => {
+        const link = article.link?.document?.[0]?.children?.find(
+          (child) => child.href
+        )?.href;
+
+        return (
+          <Grid key={article.id} item xs={12} sm={6} md={4}>
+            <Item>
+              <a href={link ? link : '#'} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="article">
+                  {article.image?.publicUrl && (
+                    <img
+                      src={article.image.publicUrl}
+                      alt={article.name}
+                      className="cardNews-image" // Sử dụng lớp CSS mới
+                    />
+                  )}
+                  <div className="article__info">
+                    <h4 className="cardNews-title">{article.name}</h4> {/* Sử dụng lớp CSS mới */}
+                    <p className="cardNews-content">{article.content}</p> {/* Sử dụng lớp CSS mới */}
+                    <button className="readMoreButton">Đọc thêm</button> {/* Nút "Đọc thêm" */}
+                  </div>
+                </div>
+              </a>
+            </Item>
+          </Grid>
+        );
+      })}
+    </Grid>
   );
 }

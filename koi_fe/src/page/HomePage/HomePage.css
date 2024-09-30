@@ -118,16 +118,22 @@
   align-items: center;
   justify-content: space-between;
   color: white;
+  margin-bottom: 40px; /* Thêm khoảng cách phía dưới */
+  padding: 20px; /* Thêm khoảng cách xung quanh */
+  background-color: #212121; /* Nền tối cho section */
+  border-radius: 10px; /* Bo góc cho section */
 }
 
 .title {
   font-size: 32px;
   margin-bottom: 10px;
+  font-weight: bold; /* Làm cho tiêu đề đậm hơn */
 }
 
 .subtitle {
   font-size: 20px;
   margin-bottom: 30px;
+  font-style: italic; /* Thêm phong cách chữ nghiêng cho subtitle */
 }
 
 .newsItem {
@@ -135,11 +141,18 @@
   border-radius: 8px;
   overflow: hidden;
   color: black;
+  transition: transform 0.3s, box-shadow 0.3s; /* Thêm hiệu ứng chuyển tiếp */
+}
+
+.newsItem:hover {
+  transform: scale(1.05); /* Phóng to khi hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Thêm bóng khi hover */
 }
 
 .newsImage {
   width: 100%;
   height: auto;
+  border-radius: 8px 8px 0 0; /* Bo góc cho hình ảnh phía trên */
 }
 
 .newsContent {
@@ -154,10 +167,19 @@
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
+  text-decoration: none; /* Bỏ gạch chân cho nút */
+  display: inline-block; /* Đảm bảo button hiển thị như một khối */
+  margin-top: 10px; /* Thêm khoảng cách phía trên */
 }
 
 .readMoreButton:hover {
   background-color: #d32f2f;
+}
+
+/* Bỏ gạch chân dưới chữ cho thẻ a */
+a {
+  text-decoration: none !important; /* Không có gạch chân */
+  color: inherit !important; /* Giữ nguyên màu sắc chữ */
 }
 
 /* Quote Section */
