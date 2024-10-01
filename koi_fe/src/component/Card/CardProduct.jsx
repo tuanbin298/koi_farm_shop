@@ -46,26 +46,27 @@ export default function CardProduct() {
                 </Link>
 
                 <div className="card-body text-start">
-                  <h4 className="card-title text-danger">{product.name}</h4>
-                  <p className="mb-1">
-                    <strong>Size: </strong>15 cm - 90 cm
+                  <h4 className="card-title">{product.name}</h4>
+                  <p className="mb-1 text-center text-danger">
+                    <strong>Giá: </strong>
+                    {formatMoney(product.price)}
                   </p>
                   <p className="mb-1">
                     <strong>Nguồn gốc: </strong>
                     {product.origin}
                   </p>
                   <p className="mb-1">
-                    <strong>Chất lượng: </strong>
-                    {product.quality || "Xuất sắc"}
+                    <strong>Kích thước </strong>
+                    {product.size}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Giới tính </strong>
+                    {product.sex}
                   </p>
                   <p className="mb-1">
                     <strong>Loại: </strong>
                     {product.generic}
                   </p>
-                  <p className="mb-1">
-                    <strong>Xuất xứ: </strong>Nhật Bản
-                  </p>
-
                   {/* Nút thêm vào giỏ hàng */}
                   <Link to={`/ProductDetail/${product.id}`}>
                     <div className="text-center">
