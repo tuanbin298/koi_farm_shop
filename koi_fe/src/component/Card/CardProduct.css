@@ -1,34 +1,16 @@
-.listitem {
-  padding: 0px 50px; /* Adjust padding for better fit */
-  display: grid;
-  justify-content: center;
-  gap: 20px; /* Add space between items */
+.card {
+  border-radius: 15px; /* Bo tròn góc cho toàn bộ thẻ card */
 }
 
-.image {
-  height: 360px; /* Reduce height for better fit */
-  width: 360px;
+.card-img-top {
+  height: 350px; /* Đặt chiều cao cố định cho ảnh */
+  object-fit: cover; /* Đảm bảo ảnh không bị bóp méo */
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 }
 
-.detail {
-  padding: 15px; /* Adjust padding for better presentation */
-  text-align: center;
-}
-
-.content {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns layout */
-  gap: 20px; /* Add space between items */
-  justify-content: center;
-  align-items: center;
-}
-.button {
-  margin-top: 10px;
-  padding: 8px 16px;
-  background-color: #1976d2; /* Primary color for CTA */
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+.btn-success {
+  padding: 10px 20px;
   font-size: 1rem;
+  font-weight: 600;
 }
