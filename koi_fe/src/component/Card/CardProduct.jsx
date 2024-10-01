@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import { Link, useLocation } from "react-router-dom";
+import "../../component/Card/CardProduct.css";
 import { formatMoney } from "../../utils/formatMoney";
 
 //Defined new component use styled
@@ -36,30 +37,33 @@ export default function CardProduct() {
   if (productLoading) return <p>Loading ...</p>;
   if (productError) return <p>Error loading products.</p>;
   return (
-    <Grid container spacing={2}>
-      {productData &&
-        productData.products.map((product) => (
-          <Grid key={product.id} item xs={4}>
-            <Item>
+    <div className="listitem">
+      <div className="content">
+        {productData &&
+          productData.products.map((product) => (
+            <Item key={product.id}>
               <Link to={`/ProductDetail/${product.id}`}>
-                <div className="product">
+                <div className="detail">
                   {product.image?.publicUrl && (
-                    <img src={product.image.publicUrl} alt={product.name} />
+                    <img
+                      src={product.image.publicUrl}
+                      alt={product.name}
+                      className="image"
+                    />
                   )}
-
                   <div className="product_info">
                     <h4>{product.name}</h4>
                     <div>{formatMoney(product.price)}</div>
                     <div>{product.origin}</div>
                     <div>{product.sex}</div>
                     <div>{product.generic}</div>
-                    <button>Xem thêm</button>
+                    <button className="button">Xem thêm</button>
                   </div>
                 </div>
               </Link>
             </Item>
-          </Grid>
-        ))}
-    </Grid>
+          ))}
+      </div>
+    </div>
   );
 }
