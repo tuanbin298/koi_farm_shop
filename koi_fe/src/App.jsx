@@ -19,11 +19,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="/care" element={<CareConsignmentPage />} />
-<<<<<<< HEAD
-          <Route path="/checkout" element={<Checkout/>}/>
-=======
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/sales" element={<SalesConsignmentPage />} />
->>>>>>> 2b938d52f374c3664e1e6475e84904b3394424c4
         </Routes>
       </BrowserRouter>
       <Footer />
