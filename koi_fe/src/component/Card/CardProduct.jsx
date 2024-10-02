@@ -1,28 +1,9 @@
 import React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import { FaCartShopping } from "react-icons/fa6";
 import { GET_PRODUCT } from "../../page/api/Queries/product";
-import { useQuery, gql } from "@apollo/client";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
-import { Link, useLocation } from "react-router-dom";
-import "../../component/Card/CardProduct.css";
+import { useQuery } from "@apollo/client";
+import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
-
-//Defined new component use styled
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2, //apply all font from theme
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary, //apply secondary color from theme
-}));
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function CardProduct() {
   const {
@@ -30,38 +11,73 @@ export default function CardProduct() {
     loading: productLoading,
     error: productError,
   } = useQuery(GET_PRODUCT, {
-    variables: { take: 6 },
+    variables: { take: 6 }, // Lấy 6 sản phẩm
   });
-  console.log(productData);
 
+  // Kiểm tra trạng thái loading và error
   if (productLoading) return <p>Loading ...</p>;
   if (productError) return <p>Error loading products.</p>;
+
   return (
-    <div className="listitem">
-      <div className="content">
+    <div className="container mt-4">
+      <div className="row">
         {productData &&
           productData.products.map((product) => (
-            <Item key={product.id}>
-              <Link to={`/ProductDetail/${product.id}`}>
-                <div className="detail">
-                  {product.image?.publicUrl && (
-                    <img
-                      src={product.image.publicUrl}
-                      alt={product.name}
-                      className="image"
-                    />
-                  )}
-                  <div className="product_info">
-                    <h4>{product.name}</h4>
-                    <div>{formatMoney(product.price)}</div>
-                    <div>{product.origin}</div>
-                    <div>{product.sex}</div>
-                    <div>{product.generic}</div>
-                    <button className="button">Xem thêm</button>
-                  </div>
+            <div key={product.id} className="col-md-4 mb-4">
+              <div
+                className="card h-100 shadow-sm"
+                style={{
+                  maxWidth: "350px", // Giới hạn kích thước tối đa của card
+                  margin: "0 auto", // Căn giữa thẻ card
+                }}
+              >
+                {/* Link tới chi tiết sản phẩm */}
+                <Link to={`/ProductDetail/${product.id}`}>
+                  <img
+                    src={product.image?.publicUrl}
+                    alt={product.name}
+                    className="card-img-top img-fluid"
+                    style={{
+                      height: "360px", // Chiều cao cố định cho ảnh
+                      width: "100%", // Chiếm toàn bộ chiều rộng của khung chứa
+                      objectFit: "fill", // Bóp méo ảnh để lấp đầy khung
+                    }}
+                  />
+                </Link>
+
+                <div className="card-body text-start">
+                  <h4 className="card-title">{product.name}</h4>
+                  <p className="mb-1 text-center text-danger">
+                    <strong>Giá: </strong>
+                    {formatMoney(product.price)}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Nguồn gốc: </strong>
+                    {product.origin}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Kích thước </strong>
+                    {product.size}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Giới tính </strong>
+                    {product.sex}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Loại: </strong>
+                    {product.generic}
+                  </p>
+                  {/* Nút thêm vào giỏ hàng */}
+                  <Link to={`/ProductDetail/${product.id}`}>
+                    <div className="text-center">
+                      <button className="btn btn-success mt-3">
+                        Thêm vào giỏ hàng
+                      </button>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
-            </Item>
+              </div>
+            </div>
           ))}
       </div>
     </div>

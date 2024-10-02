@@ -42,7 +42,9 @@ export default function Homepage() {
         <h3>Các giống Cá Koi</h3>
         <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
         <div className="productList">
-          <CardProduct />
+          <Container>
+            <CardProduct />
+          </Container>
         </div>
       </section>
 
