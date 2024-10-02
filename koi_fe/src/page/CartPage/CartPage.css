@@ -1,0 +1,69 @@
+.cart-container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .cart-content {
+    margin-top: 20px;
+  }
+  
+  .deposit-fields-container {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+  }
+  
+  .deposit-input {
+    flex: 1;
+  }
+  
+  .total-amount {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: end;
+  }
+
+  .totalSection{
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .footer {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .footer small {
+    font-size: 0.9rem;
+  }
+
+  .back-button-section {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    padding: 10px 0; 
+  }
+
+  .icon-container {
+    background-color: #4193DF; 
+    padding: 10px; 
+    border-radius: 50%; 
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+  }
+  
+  .icon {
+    color: white; 
+    font-size: 16px; 
+  }
+  
+  .back-button-text {
+    font-size: 18px; 
+    font-weight: bold; 
+    color: #000; 
+  }
+  
+  
