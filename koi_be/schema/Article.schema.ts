@@ -18,7 +18,7 @@ const Article = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageArticle,
       delete: allowAll,
     },
   },
@@ -31,6 +31,7 @@ const Article = list({
       return !permissions.canManageArticle(args);
     },
   },
+
   fields: {
     name: text({
       label: "Tiêu đề bài blog",

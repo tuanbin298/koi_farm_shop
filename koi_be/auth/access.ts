@@ -7,10 +7,10 @@ export type Session = {
     role: {
       id: string;
       name: string;
-      canManageUser: string;
-      canManageProduct: string;
-      canManageRole: string;
-      canManageArticle: string;
+      canManageUser: boolean;
+      canManageProduct: boolean;
+      canManageRole: boolean;
+      canManageArticle: boolean;
     };
   };
 };

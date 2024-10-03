@@ -8,7 +8,7 @@ const Role = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageRole,
       delete: allowAll,
     },
   },
