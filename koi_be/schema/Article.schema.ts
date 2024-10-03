@@ -24,10 +24,10 @@ const Article = list({
   },
 
   ui: {
-    hideCreate: (args) => {
+    hideCreate(args) {
       return !permissions.canManageArticle(args);
     },
-    hideDelete: (args) => {
+    hideDelete(args) {
       return !permissions.canManageArticle(args);
     },
   },

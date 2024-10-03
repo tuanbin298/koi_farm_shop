@@ -17,10 +17,10 @@ const User = list({
   },
 
   ui: {
-    hideCreate: (args) => {
+    hideCreate(args) {
       return !permissions.canManageUser(args);
     },
-    hideDelete: (args) => {
+    hideDelete(args) {
       return !permissions.canManageUser(args);
     },
   },
@@ -66,6 +66,13 @@ const User = list({
     role: relationship({
       label: "Quyền hạn",
       ref: "Role.user",
+      ui: {
+        itemView: {
+          fieldMode(args) {
+            return permissions.canManageUser(args) ? "edit" : "read";
+          },
+        },
+      },
     }),
   },
 });

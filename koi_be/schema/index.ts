@@ -4,6 +4,8 @@ import Product from "./Product.schema";
 import Category from "./Category.schema";
 import Article from "./Article.schema";
 import Feedback from "./Feedback.schema";
+import Order from "./Order.schema";
+import OrderItem from "./OrderItem.schema";
 
 export const lists = {
   User,
@@ -12,4 +14,6 @@ export const lists = {
   Category,
   Article,
   Feedback,
+  Order,
+  OrderItem,
 };

@@ -23,12 +23,12 @@ const Product = list({
   },
 
   ui: {
-    hideCreate: (args) => {
+    hideCreate(args) {
       console.log(args.session.data);
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageUser(args);
     },
-    hideDelete: (args) => {
-      return !permissions.canManageProduct(args);
+    hideDelete(args) {
+      return !permissions.canManageUser(args);
     },
   },
 

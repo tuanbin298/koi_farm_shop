@@ -80,3 +80,11 @@ model Feedback {
   @@index([userId])
   @@index([productId])
 }
+
+model Order {
+  id String @id @default(cuid())
+}
+
+model OrderItem {
+  id String @id @default(cuid())
+}
