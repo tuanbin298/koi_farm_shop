@@ -5,15 +5,12 @@ import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function CardProduct() {
+export default function CardListProduct() {
   const {
     data: productData,
     loading: productLoading,
     error: productError,
-  } = useQuery(GET_PRODUCT, {
-    variables: { take: 6 }, // Lấy 6 sản phẩm
-    fetchPolicy: "network-only", // Ensures a fresh fetch from the server
-  });
+  } = useQuery(GET_PRODUCT);
 
   // Kiểm tra trạng thái loading và error
   if (productLoading) return <p>Loading ...</p>;

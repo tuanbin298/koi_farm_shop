@@ -1,0 +1,16 @@
+.card {
+  border-radius: 15px; /* Bo tròn góc cho toàn bộ thẻ card */
+}
+
+.card-img-top {
+  height: 350px; /* Đặt chiều cao cố định cho ảnh */
+  object-fit: cover; /* Đảm bảo ảnh không bị bóp méo */
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.btn-success {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 600;
+}
