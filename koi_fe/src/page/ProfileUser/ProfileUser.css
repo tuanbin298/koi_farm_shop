@@ -2,7 +2,9 @@
 .profile-container {
   display: flex;
   justify-content: space-between;
-  padding: 20px;
+  padding: 30px;
+  gap: 20px; /* Space between the two sections */
+  background-color: #fff; /* Ensure the background is white */
 }
 
 /* Left-side styling */
@@ -11,13 +13,16 @@
 }
 
 .profile-left h2 {
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 28px;  /* Larger heading font size */
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .profile-left p {
+  font-size: 20px;  /* Larger text size */
+  color: #444;
   margin-bottom: 20px;
-  font-size: 16px;
 }
 
 .profile-left table {
@@ -27,48 +32,84 @@
 
 .profile-left th, .profile-left td {
   border: 1px solid #ddd;
-  padding: 8px;
+  padding: 12px;  /* Extra padding for readability */
   text-align: left;
+  font-size: 18px;  /* Larger font size for table content */
 }
 
 .profile-left th {
   background-color: #f2f2f2;
+  font-weight: bold;
 }
 
 .no-orders {
   text-align: center;
   color: #999;
   font-style: italic;
+  font-size: 18px;  /* Ensure the "No orders" message is also legible */
 }
 
 /* Right-side styling */
 .profile-right {
   width: 35%;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 5px;
+  background-color: #fff; /* White background to match the page */
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);  /* Subtle shadow for contrast */
 }
 
 .profile-right h3 {
-  margin-bottom: 15px;
-  font-size: 18px;
+  margin-bottom: 20px;
+  font-size: 24px;  /* Larger heading for "TÀI KHOẢN CỦA TÔI" */
+  font-weight: bold;
+  color: #333;
+  text-align: center;  /* Centers the text */
 }
 
 .profile-right p {
-  margin: 5px 0;
-  font-size: 14px;
+  font-size: 20px;  /* Increase font size for details */
+  color: #555;
+  margin: 15px 0;  /* Add spacing between each info line */
+}
+
+.profile-right p strong {
+  color: #000;  /* Ensure bold text is more prominent */
+  font-size: 20px;  /* Bold text to be the same size */
 }
 
 .address-btn {
-  margin-top: 20px;
-  padding: 10px;
+  display: block;
+  width: 180px;  /* Larger button */
+  margin: 30px auto 0;  /* Centered button */
+  padding: 12px;
   background-color: #333;
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 5px;
+  font-size: 20px;  /* Larger button text */
 }
 
 .address-btn:hover {
   background-color: #555;
+}
+
+/* Ensure no background color issues */
+body {
+  background-color: #fff; /* Make sure the whole page is white */
+}
+
+/* Responsiveness for smaller screens */
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .profile-left, .profile-right {
+    width: 100%;
+  }
+
+  .profile-right {
+    margin-top: 20px;
+  }
 }
