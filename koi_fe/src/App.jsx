@@ -8,6 +8,7 @@ import SalesConsignmentPage from "./page/SalesConsignmentPage/SalesConsignmentPa
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Checkout from "./page/Checkout/Checkout";
+import ProfileUser from "./page/ProfileUser/ProfileUser";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/care" element={<CareConsignmentPage />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/sales" element={<SalesConsignmentPage />} />
+          <Route path="/profile" element={<ProfileUser/>}/>
         </Routes>
       </BrowserRouter>
       <Footer />
