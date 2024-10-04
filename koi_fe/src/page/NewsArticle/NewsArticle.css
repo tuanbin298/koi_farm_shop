@@ -1,46 +1,78 @@
+/* Container cho danh sách bài viết */
+.news-article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Bố cục của từng bài viết: hình ảnh bên trái, nội dung bên phải */
+.article-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Style cho hình ảnh của bài viết */
 .newsArticle-image {
+  width: 250px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.newsArticle-image:hover {
+  transform: scale(1.05);
+}
+
+/* Style cho tiêu đề của bài viết */
+.newsArticle-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.newsArticle-title:hover {
+  color: #007bff;
+}
+
+/* Style cho nội dung tóm tắt của bài viết */
+.newsArticle-content {
+  font-size: 1em;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+/* Style cho nút "Đọc thêm" */
+.readMoreButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1em;
+}
+
+.readMoreButton:hover {
+  background-color: #0056b3;
+}
+
+/* Điều chỉnh responsive để hiển thị tốt trên màn hình nhỏ */
+@media (max-width: 768px) {
+  .article-horizontal {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .newsArticle-image {
     width: 100%;
     height: auto;
-    border-radius: 8px;
   }
-  
-  .article {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
-  
-  .article__info {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .newsArticle-title {
-    font-size: 1.2em;
-    margin: 10px 0;
-    color: #333;
-  }
-  
-  .newsArticle-content {
-    flex-grow: 1;
-    color: #555;
-    line-height: 1.4;
-  }
-  
-  .readMoreButton {
-    margin-top: 10px;
-    padding: 10px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .readMoreButton:hover {
-    background-color: #0056b3;
-  }
-  
+}
