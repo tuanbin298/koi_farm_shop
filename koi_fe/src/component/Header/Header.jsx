@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client"; // Import Apollo hooks
-import { GET_CATALOG } from "../../page/api/Queries/catalogy"; // Import the GraphQL query
+import { GET_CATALOG } from "../../page/api/Queries/category"; // Import the GraphQL query
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
