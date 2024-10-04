@@ -1,75 +1,74 @@
 /* Container styling for the profile page */
 .profile-container {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px;
-  }
-  
-  /* Left-side styling */
-  .profile-left {
-    width: 60%;
-  }
-  
-  .profile-left h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .profile-left p {
-    margin-bottom: 20px;
-    font-size: 16px;
-  }
-  
-  .profile-left table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .profile-left th, .profile-left td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .profile-left th {
-    background-color: #f2f2f2;
-  }
-  
-  .no-orders {
-    text-align: center;
-    color: #999;
-    font-style: italic;
-  }
-  
-  /* Right-side styling */
-  .profile-right {
-    width: 35%;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 5px;
-  }
-  
-  .profile-right h3 {
-    margin-bottom: 15px;
-    font-size: 18px;
-  }
-  
-  .profile-right p {
-    margin: 5px 0;
-    font-size: 14px;
-  }
-  
-  .address-btn {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #333;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 3px;
-  }
-  
-  .address-btn:hover {
-    background-color: #555;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+/* Left-side styling */
+.profile-left {
+  width: 60%;
+}
+
+.profile-left h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.profile-left p {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.profile-left table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.profile-left th, .profile-left td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.profile-left th {
+  background-color: #f2f2f2;
+}
+
+.no-orders {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+/* Right-side styling */
+.profile-right {
+  width: 35%;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.profile-right h3 {
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.profile-right p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.address-btn {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #333;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.address-btn:hover {
+  background-color: #555;
+}
