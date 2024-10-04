@@ -1,4 +1,4 @@
-import { gql, useState } from "@apollo/client";
+import { gql} from "@apollo/client";
 
 // Get a limited number of products based on the take argument
 export const GET_PRODUCT = gql`
