@@ -6,7 +6,7 @@ const ProfileUser = () => {
     <div className="profile-container">
       <div className="profile-left">
         <h2>THÔNG TIN TÀI KHOẢN</h2>
-        <p>Xin chào, {localStorage.getItem("userName")} !</p>
+        <p>Xin chào, {localStorage.getItem("name")}  !</p>
         
         <table>
           <thead>
@@ -28,10 +28,10 @@ const ProfileUser = () => {
 
       <div className="profile-right">
         <h3>TÀI KHOẢN CỦA TÔI</h3>
-        <p><strong>Tên tài khoản:</strong>{localStorage.getItem("userName")}</p>
-        <p><strong>Email:</strong> </p>
-        <p><strong>Điện thoại:</strong> </p>
-        <p><strong>Địa chỉ:</strong> </p>
+        <p><strong>Tên tài khoản:{localStorage.getItem("name")}</strong></p>
+        <p><strong>Email:{localStorage.getItem("email")}</strong> </p>
+        <p><strong>Điện thoại:{localStorage.getItem("phone")}</strong> </p>
+        <p><strong>Địa chỉ:{localStorage.getItem("address")}</strong> </p>
         <button className="address-btn">Sửa địa chỉ </button>
       </div>
     </div>
