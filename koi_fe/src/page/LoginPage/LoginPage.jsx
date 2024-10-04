@@ -81,7 +81,9 @@ const Login = () => {
         </a>
         <div className="register-link-container">
           <p className="register-redirect">
-            Bạn chưa có tài khoản đăng ký <Link to="/register">Tại đây</Link>
+            Bạn chưa có tài khoản đăng ký <Link to="/register" style={{
+              color:"#e93131"
+            }}>Tại đây</Link>
           </p>
         </div>
         {errorMsg && <p style={{ color: "red" }}>{errorMsg}</p>}

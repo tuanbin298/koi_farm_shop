@@ -123,7 +123,7 @@ export default function Header() {
 
           <div className="header_top-cart">
             <ShoppingCartIcon className="header_top-icon" />
-            <span className="header_top-cart-text"> Giỏ hàng</span>
+            <Link to="/cart">Giỏ hàng</Link>
           </div>
 
           <div className="header_top-auth">

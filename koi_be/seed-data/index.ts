@@ -1,5 +1,5 @@
 import config from "../keystone";
-import { categories, roles, users, products } from "./data";
+import { categories, roles, users, products, articles } from "./data";
 import * as PrismaModule from "@prisma/client";
 import { getContext } from "@keystone-6/core/context";
 
@@ -21,8 +21,11 @@ export default async function insertSeedData() {
     data: roles,
   });
 
+  await context.sudo().db.Article.createMany({
+    data: articles,
+  });
+
   const categoryItem = await context.sudo().db.Category.findMany();
-  console.log(categoryItem);
 
   for (const product of products) {
     const category = categoryItem.find(function (item) {
