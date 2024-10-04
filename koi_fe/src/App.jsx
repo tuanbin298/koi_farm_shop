@@ -27,6 +27,7 @@ function App() {
           <Route path="/sales" element={<SalesConsignmentPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/koiList" element={<KoiListPage />} />
+          <Route path="/news" element={<NewsArticle />} />
         </Routes>
       </BrowserRouter>
       <Footer />
