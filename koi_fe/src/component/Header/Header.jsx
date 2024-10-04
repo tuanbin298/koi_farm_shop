@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client"; // Import Apollo hooks
-import { GET_CATALOG } from "../../page/api/Queries/category"; // Import the GraphQL query
+import { GET_CATEGORY } from "../../page/api/Queries/category"; // Import the GraphQL query
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -28,7 +28,7 @@ export default function Header() {
   const location = useLocation(); // To get the current path
 
   // Fetching data for fish types using Apollo's useQuery
-  const { data, loading, error } = useQuery(GET_CATALOG);
+  const { data, loading, error } = useQuery(GET_CATEGORY);
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
