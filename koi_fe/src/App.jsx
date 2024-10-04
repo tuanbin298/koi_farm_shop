@@ -5,7 +5,7 @@ import Login from "./page/LoginPage/LoginPage";
 import RegisterPage from "./page/RegisterPage/RegisterPage";
 import CareConsignmentPage from "./page/CareConsignmentPage/CareConsignmentPage";
 import SalesConsignmentPage from "./page/SalesConsignmentPage/SalesConsignmentPage";
-
+import KoiListPage from "./page/KoiListPage/KoiListPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Checkout from "./page/Checkout/Checkout";
 import CartPage from "./page/CartPage/CartPage";
@@ -25,9 +25,8 @@ function App() {
           <Route path="/care" element={<CareConsignmentPage />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/sales" element={<SalesConsignmentPage />} />
-          <Route path="/cart" element={<CartPage/>}/>
-          <Route path="/profile" element={<ProfileUser/>} />
-          <Route path="/news" element={<NewsArticle/>}/>
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/koiList" element={<KoiListPage />} />
         </Routes>
       </BrowserRouter>
       <Footer />
