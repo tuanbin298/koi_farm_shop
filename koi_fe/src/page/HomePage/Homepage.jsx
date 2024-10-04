@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { FaArrowRight } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import "./HomePage.css";
@@ -7,10 +7,29 @@ import CardNews from "../../component/CardNews/CardNews";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { Link, useLocation } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Homepage() {
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.fromLogin) {
+      toast.success("Đăng nhập thành công!", {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#21bf21",
+        },
+        iconTheme: {
+          primary: "#21bf21",
+          secondary: "#FFFAEE",
+        },
+      });
+    }
+  }, [location.state]);
   return (
     <>
+    
       <div className="banner">
         <div className="banner-content">
           <h1>CaKoiViet Koi Farm Shop</h1>
@@ -96,6 +115,7 @@ export default function Homepage() {
             </div>
           </p>
         </div>
+        <Toaster position="bottom-right" reverseOrder={false} />
       </section>
     </>
   );

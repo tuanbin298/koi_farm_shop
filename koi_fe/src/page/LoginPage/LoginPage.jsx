@@ -38,7 +38,7 @@ const Login = () => {
         // Dispatch storage event to trigger the listener
         window.dispatchEvent(new Event("storage"));
 
-        navigate("/");
+        navigate("/", { state: { fromLogin: true } });
       } else if (response.data.authenticateUserWithPassword.message) {
         setErrorMsg(response.data.authenticateUserWithPassword.message);
       }
