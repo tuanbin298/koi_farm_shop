@@ -28,6 +28,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/koiList" element={<KoiListPage />} />
           <Route path="/news" element={<NewsArticle />} />
+          <Route path="/profile" element={<ProfileUser />} />
         </Routes>
       </BrowserRouter>
       <Footer />

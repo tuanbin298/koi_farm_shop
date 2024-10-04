@@ -30,7 +30,6 @@ export default function NewsArticle() {
     loading: loadingArticles,
     error: errorArticles,
   } = useQuery(GET_ARTICLES, {
-    variables: { take: 3 }, // Số lượng bài viết lấy về
   });
 
   if (loadingArticles) {
@@ -39,7 +38,7 @@ export default function NewsArticle() {
   if (errorArticles) {
     return <p>Error fetching articles</p>;
   }
-
+  console.log(articlesData)
   return (
     <Grid container spacing={3}>
       {articlesData &&
