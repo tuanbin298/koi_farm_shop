@@ -8,17 +8,16 @@ const Role = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageRole,
       delete: allowAll,
     },
   },
 
   ui: {
-    hideCreate: (args) => {
-      console.log(args.session.data);
+    hideCreate(args) {
       return !permissions.canManageRole(args);
     },
-    hideDelete: (args) => {
+    hideDelete(args) {
       return !permissions.canManageRole(args);
     },
   },

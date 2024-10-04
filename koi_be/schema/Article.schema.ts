@@ -18,19 +18,20 @@ const Article = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageArticle,
       delete: allowAll,
     },
   },
 
   ui: {
-    hideCreate: (args) => {
+    hideCreate(args) {
       return !permissions.canManageArticle(args);
     },
-    hideDelete: (args) => {
+    hideDelete(args) {
       return !permissions.canManageArticle(args);
     },
   },
+
   fields: {
     name: text({
       label: "Tiêu đề bài blog",

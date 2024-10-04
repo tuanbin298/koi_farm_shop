@@ -14,13 +14,21 @@ import {
   Breadcrumbs,
   Typography,
 } from "@mui/material";
+import { gql, useQuery } from "@apollo/client"; // Import Apollo hooks
+import { GET_CATALOG } from "../../page/api/Queries/category"; // Import the GraphQL query
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false); // Cá Koi Nhật dropdown control
+  const [kiguiDropdownOpen, setKiguiDropdownOpen] = useState(false); // Ký gửi dropdown control
+
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
+
+  // Fetching data for fish types using Apollo's useQuery
+  const { data, loading, error } = useQuery(GET_CATALOG);
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -35,13 +43,9 @@ export default function Header() {
   };
 
   useEffect(() => {
-    // Call initially to check login status on component mount
     checkLoginStatus();
-
-    // Add event listener to listen to localStorage changes
     window.addEventListener("storage", checkLoginStatus);
 
-    // Cleanup the event listener when the component unmounts
     return () => {
       window.removeEventListener("storage", checkLoginStatus);
     };
@@ -67,9 +71,8 @@ export default function Header() {
     navigate("/login");
   };
 
-  // Helper function to build the breadcrumb based on the current location
   const generateBreadcrumbs = () => {
-    const pathnames = location.pathname.split("/").filter((x) => x); // Splits the pathname by "/" and removes empty items
+    const pathnames = location.pathname.split("/").filter((x) => x);
     return (
       <Breadcrumbs aria-label="breadcrumb">
         <Link
@@ -83,8 +86,6 @@ export default function Header() {
         </Link>
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-
-          // If this is the last item, render it as plain text
           const isLast = index === pathnames.length - 1;
           return isLast ? (
             <Typography
@@ -115,17 +116,14 @@ export default function Header() {
             <LocationOnIcon className="header_top-icon" />
             <span>Thành phố Dĩ An, tỉnh Bình Dương</span>
           </div>
-
           <div className="header_top-contact">
             <PhoneEnabledIcon className="header_top-icon" />
             <a href="">123457890</a>
           </div>
-
           <div className="header_top-cart">
             <ShoppingCartIcon className="header_top-icon" />
             <Link to="/cart">Giỏ hàng</Link>
           </div>
-
           <div className="header_top-auth">
             {loggedIn ? (
               <>
@@ -158,6 +156,7 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Middle bar with navigation */}
         <div className="header_mid">
           <div className="header_mid-logo">
             <Link to="/">
@@ -168,13 +167,52 @@ export default function Header() {
           <nav className="header_mid-nav">
             <a href="">Trang chủ</a>
             <a href="">Giới thiệu</a>
-            <a href="">Cá Koi Nhật</a>
-            <div className="dropdown">
+
+            {/* Dropdown Cá Ký Gửi*/}
+            <div
+              className="dropdown"
+              onMouseEnter={() => setDropdownOpen(true)}
+              onMouseLeave={() => setDropdownOpen(false)}
+            >
+              <Link to="/koiList">Cá Koi Nhật</Link>
+              {dropdownOpen && (
+                <div className="dropdown-content">
+                  {loading ? (
+                    <div>Loading...</div>
+                  ) : error ? (
+                    <div>Error loading data</div>
+                  ) : (
+                    data?.categories.map((type) => (
+                      <Link
+                        key={type.id}
+                        to={`/koi-type/${type.id}`}
+                        className="dropdown-item"
+                      >
+                        {type.name}
+                      </Link>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/*Dropdown Ký gửi*/}
+            <div
+              className="dropdown"
+              onMouseEnter={() => setKiguiDropdownOpen(true)}
+              onMouseLeave={() => setKiguiDropdownOpen(false)}
+            >
               <a href="#">Ký gửi</a>
-              <div className="dropdown-content">
-                <Link to="/sales">Ký Gửi Bán</Link>
-                <Link to="/care">Ký Gửi Nuôi</Link>
-              </div>
+              {kiguiDropdownOpen && (
+                <div className="dropdown-content">
+                  <Link to="/sales" className="dropdown-item">
+                    Ký Gửi Bán
+                  </Link>
+                  <Link to="/care" className="dropdown-item">
+                    Ký Gửi Nuôi
+                  </Link>
+                </div>
+              )}
             </div>
 
             <a href="">Tin tức</a>

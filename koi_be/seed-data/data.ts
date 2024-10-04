@@ -37,7 +37,7 @@ export const roles = [
     canManageUser: false,
     canManageProduct: false,
     canManageRole: false,
-    canManageArticle: false,
+    canManageArticle: true,
     user: {
       connect: [
         {
@@ -142,4 +142,20 @@ export const products = [
   },
 ];
 
-export const articles = [];
+export const articles = [
+  {
+    name: "Loại thức ăn cho cá Koi lên màu nhanh và đẹp",
+    content:
+      "Nuôi cho cá Koi lên màu nhanh và đẹp là mục tiêu mà bất cứ người chơi cá nào cũng muốn hướng đến. Một trong những cách giúp cá lên màu đẹp là sử dụng những loại thức ăn phù hợp.",
+  },
+  {
+    name: "Các loại cá chép koi Nhật Bản – tên gọi và cách phân biệt",
+    content:
+      "Cá koi vô cùng đa dạng về màu sắc, hình dáng. Việc phân biệt và nhớ tên các dòng cá koi Nhật là điều khó khăn với người bắt đầu chơi koi. Bài viết sẽ giúp bạn phân biệt dễ dàng hơn các loại cá koi Nhật.",
+  },
+  {
+    name: "Cá koi bao lâu thì đẻ? Nhân giống cá koi như thế nào?",
+    content:
+      "Biết được thời gian cá koi đẻ giúp người nuôi chuẩn bị kịp thời những điều kiện cần thiết nhất, giúp giống cá sau đạt chất lượng tốt nhất. Tham khảo cách xác định thời gian cá koi đẻ và cách nhân giống cá koi dưới đây.",
+  },
+];

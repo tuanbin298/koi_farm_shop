@@ -71,9 +71,15 @@ export default function Homepage() {
 
       {/* Header Button */}
       <header className="headerShowMoreButton">
-        <Button variant="outlined" color="error" className="viewMoreButton">
-          Xem thêm <FaArrowRight />
-        </Button>{" "}
+        <Button
+          variant="outlined"
+          color="error"
+          className="viewMoreButton"
+          component={Link} // Use Link as the component for Button
+          to="/koiList" // Specify the path for navigation
+        >
+          Xem thêm <FaArrowRight /> {/* FontAwesome arrow icon */}
+        </Button>
       </header>
 
       {/* News Section */}

@@ -17,18 +17,18 @@ const Product = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageProduct,
       delete: allowAll,
     },
   },
 
   ui: {
-    hideCreate: (args) => {
+    hideCreate(args) {
       console.log(args.session.data);
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageUser(args);
     },
-    hideDelete: (args) => {
-      return !permissions.canManageProduct(args);
+    hideDelete(args) {
+      return !permissions.canManageUser(args);
     },
   },
 

@@ -1,9 +1,9 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useState } from "@apollo/client";
 
-// Get all data of product
+// Get a limited number of products based on the take argument
 export const GET_PRODUCT = gql`
-  query Query {
-    products {
+  query GetProducts($take: Int) {
+    products(take: $take) {
       id
       name
       birth
@@ -19,3 +19,5 @@ export const GET_PRODUCT = gql`
     }
   }
 `;
+
+
