@@ -21,10 +21,10 @@ const Order = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageOrder;
+      return !permissions.canManageOrder(args);
     },
     hideDelete(args) {
-      return !permissions.canManageOrder;
+      return !permissions.canManageOrder(args);
     },
   },
 

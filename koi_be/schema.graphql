@@ -126,6 +126,7 @@ type Role {
   canManageRole: Boolean
   canManageArticle: Boolean
   canManageOrder: Boolean
+  canManageFeedback: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -145,6 +146,7 @@ input RoleWhereInput {
   canManageRole: BooleanFilter
   canManageArticle: BooleanFilter
   canManageOrder: BooleanFilter
+  canManageFeedback: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -167,6 +169,7 @@ input RoleOrderByInput {
   canManageRole: OrderDirection
   canManageArticle: OrderDirection
   canManageOrder: OrderDirection
+  canManageFeedback: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -176,6 +179,7 @@ input RoleUpdateInput {
   canManageRole: Boolean
   canManageArticle: Boolean
   canManageOrder: Boolean
+  canManageFeedback: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -198,6 +202,7 @@ input RoleCreateInput {
   canManageRole: Boolean
   canManageArticle: Boolean
   canManageOrder: Boolean
+  canManageFeedback: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -695,6 +700,32 @@ input OrderRelateToOneForCreateInput {
   connect: OrderWhereUniqueInput
 }
 
+type ProductStorage {
+  id: ID!
+}
+
+input ProductStorageWhereUniqueInput {
+  id: ID
+}
+
+input ProductStorageWhereInput {
+  AND: [ProductStorageWhereInput!]
+  OR: [ProductStorageWhereInput!]
+  NOT: [ProductStorageWhereInput!]
+  id: IDFilter
+}
+
+input ProductStorageOrderByInput {
+  id: OrderDirection
+}
+
+input ProductStorageUpdateArgs {
+  where: ProductStorageWhereUniqueInput!
+  data: Empty
+}
+
+scalar Empty
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -749,6 +780,12 @@ type Mutation {
   updateOrderItems(data: [OrderItemUpdateArgs!]!): [OrderItem]
   deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
   deleteOrderItems(where: [OrderItemWhereUniqueInput!]!): [OrderItem]
+  createProductStorage(data: Empty): ProductStorage
+  createProductStorages(data: [Empty]!): [ProductStorage]
+  updateProductStorage(where: ProductStorageWhereUniqueInput!, data: Empty): ProductStorage
+  updateProductStorages(data: [ProductStorageUpdateArgs!]!): [ProductStorage]
+  deleteProductStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
+  deleteProductStorages(where: [ProductStorageWhereUniqueInput!]!): [ProductStorage]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -797,6 +834,9 @@ type Query {
   orderItem(where: OrderItemWhereUniqueInput!): OrderItem
   orderItems(where: OrderItemWhereInput! = {}, orderBy: [OrderItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: OrderItemWhereUniqueInput): [OrderItem!]
   orderItemsCount(where: OrderItemWhereInput! = {}): Int
+  productStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
+  productStorages(where: ProductStorageWhereInput! = {}, orderBy: [ProductStorageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductStorageWhereUniqueInput): [ProductStorage!]
+  productStoragesCount(where: ProductStorageWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

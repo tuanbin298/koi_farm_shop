@@ -27,14 +27,15 @@ model User {
 }
 
 model Role {
-  id               String  @id @default(cuid())
-  name             String  @default("")
-  canManageUser    Boolean @default(false)
-  canManageProduct Boolean @default(false)
-  canManageRole    Boolean @default(false)
-  canManageArticle Boolean @default(false)
-  canManageOrder   Boolean @default(false)
-  user             User[]  @relation("User_role")
+  id                String  @id @default(cuid())
+  name              String  @default("")
+  canManageUser     Boolean @default(false)
+  canManageProduct  Boolean @default(false)
+  canManageRole     Boolean @default(false)
+  canManageArticle  Boolean @default(false)
+  canManageOrder    Boolean @default(false)
+  canManageFeedback Boolean @default(false)
+  user              User[]  @relation("User_role")
 }
 
 model Product {
@@ -111,4 +112,8 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+model ProductStorage {
+  id String @id @default(cuid())
 }

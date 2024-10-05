@@ -1,14 +1,24 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { checkbox, integer, relationship } from "@keystone-6/core/fields";
+import { permissions } from "../auth/access";
 
 const OrderItem = list({
   access: {
     operation: {
       query: allowAll,
       create: allowAll,
-      update: allowAll,
+      update: permissions.canManageOrder,
       delete: allowAll,
+    },
+  },
+
+  ui: {
+    hideCreate(args) {
+      return !permissions.canManageOrder(args);
+    },
+    hideDelete(args) {
+      return !permissions.canManageOrder(args);
     },
   },
 
