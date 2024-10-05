@@ -214,8 +214,9 @@ export default function Header() {
                 </div>
               )}
             </div>
-
-            <a href="">Tin tức</a>
+            <Link to="/news" className="dropdown-item">
+              Tin tức
+            </Link>
           </nav>
 
           <div className="header_mid-search">
