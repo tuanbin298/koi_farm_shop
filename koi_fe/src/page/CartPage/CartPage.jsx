@@ -87,14 +87,7 @@ const CartPage = () => {
                               InputProps={{ inputProps: { min: 0, max: product.quantity } }}
                               variant="outlined"
                               className="deposit-input"
-                            />
-                            <TextField
-                              label="Ngày bắt đầu"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              variant="outlined"
-                              className="deposit-input"
-                            />
+                            />                           
                             <TextField
                               label="Ngày kết thúc"
                               type="date"
