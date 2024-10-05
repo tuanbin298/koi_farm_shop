@@ -26,8 +26,9 @@
 .login-title {
   font-size: 24px;
   font-family: 'Brygada 1918', serif;
-  color: #333;
+  color: #000000;
   margin-bottom: 20px;
+  font-weight: bold; 
 }
 
 /* Style for the form itself */
