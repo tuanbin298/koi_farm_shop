@@ -12,7 +12,6 @@ export default function CardProduct() {
     error: productError,
   } = useQuery(GET_PRODUCT, {
     variables: { take: 6 }, // Lấy 6 sản phẩm
-    fetchPolicy: "network-only", // Ensures a fresh fetch from the server
   });
 
   // Kiểm tra trạng thái loading và error
