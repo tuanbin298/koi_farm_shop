@@ -1,9 +1,8 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text } from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
 
-const Category = list({
+const ProductStorage = list({
   access: {
     operation: {
       query: allowAll,
@@ -22,17 +21,7 @@ const Category = list({
     },
   },
 
-  fields: {
-    name: text({
-      label: "Loại cá",
-      validation: {
-        isRequired: true,
-      },
-    }),
-    description: text({
-      label: "Mô tả về loại cá",
-    }),
-  },
+  fields: {},
 });
 
-export default Category;
+export default ProductStorage;

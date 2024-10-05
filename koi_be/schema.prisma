@@ -21,34 +21,38 @@ model User {
   role               Role?      @relation("User_role", fields: [roleId], references: [id])
   roleId             String?    @map("role")
   from_Feedback_user Feedback[] @relation("Feedback_user")
+  from_Order_user    Order[]    @relation("Order_user")
 
   @@index([roleId])
 }
 
 model Role {
-  id               String  @id @default(cuid())
-  name             String  @default("")
-  canManageUser    Boolean @default(false)
-  canManageProduct Boolean @default(false)
-  canManageRole    Boolean @default(false)
-  canManageArticle Boolean @default(false)
-  user             User[]  @relation("User_role")
+  id                String  @id @default(cuid())
+  name              String  @default("")
+  canManageUser     Boolean @default(false)
+  canManageProduct  Boolean @default(false)
+  canManageRole     Boolean @default(false)
+  canManageArticle  Boolean @default(false)
+  canManageOrder    Boolean @default(false)
+  canManageFeedback Boolean @default(false)
+  user              User[]  @relation("User_role")
 }
 
 model Product {
-  id                    String     @id @default(cuid())
-  name                  String     @default("")
-  birth                 Int
-  sex                   String?    @default("Sex")
-  size                  String?    @default("Size")
-  price                 Int
-  description           String     @default("")
-  origin                String     @default("")
-  generic               String     @default("")
-  image                 String?
-  category              Category?  @relation("Product_category", fields: [categoryId], references: [id])
-  categoryId            String?    @map("category")
-  from_Feedback_product Feedback[] @relation("Feedback_product")
+  id                     String      @id @default(cuid())
+  name                   String      @default("")
+  birth                  Int
+  sex                    String?     @default("Sex")
+  size                   String?     @default("Size")
+  price                  Int
+  description            String      @default("")
+  origin                 String      @default("")
+  generic                String      @default("")
+  image                  String?
+  category               Category?   @relation("Product_category", fields: [categoryId], references: [id])
+  categoryId             String?     @map("category")
+  from_Feedback_product  Feedback[]  @relation("Feedback_product")
+  from_OrderItem_product OrderItem[] @relation("OrderItem_product")
 
   @@index([categoryId])
 }
@@ -82,9 +86,34 @@ model Feedback {
 }
 
 model Order {
-  id String @id @default(cuid())
+  id                   String      @id @default(cuid())
+  user                 User?       @relation("Order_user", fields: [userId], references: [id])
+  userId               String?     @map("user")
+  items                OrderItem[] @relation("Order_items")
+  price                Int?
+  createAt             DateTime?   @default(now())
+  address              String      @default("")
+  status               String?     @default("Chờ xác nhận")
+  from_OrderItem_order OrderItem[] @relation("OrderItem_order")
+
+  @@index([userId])
 }
 
 model OrderItem {
+  id               String   @id @default(cuid())
+  order            Order?   @relation("OrderItem_order", fields: [orderId], references: [id])
+  orderId          String?  @map("order")
+  product          Product? @relation("OrderItem_product", fields: [productId], references: [id])
+  productId        String?  @map("product")
+  quantity         Int
+  price            Int
+  isStored         Boolean  @default(false)
+  from_Order_items Order[]  @relation("Order_items")
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model ProductStorage {
   id String @id @default(cuid())
 }

@@ -67,8 +67,6 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* <Button variant="outline-danger" className='KoiProductBtn'>Xem thêm <FaArrowRight /></Button>{' '} */}
-
       {/* Header Button */}
       <header className="headerShowMoreButton">
         <Button
@@ -78,7 +76,7 @@ export default function Homepage() {
           component={Link} // Use Link as the component for Button
           to="/koiList" // Specify the path for navigation
         >
-          Xem thêm <FaArrowRight /> {/* FontAwesome arrow icon */}
+          Xem thêm <FaArrowRight />
         </Button>
       </header>
 
