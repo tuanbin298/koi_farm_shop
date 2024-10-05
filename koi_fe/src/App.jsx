@@ -9,6 +9,9 @@ import KoiListPage from "./page/KoiListPage/KoiListPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Checkout from "./page/Checkout/Checkout";
 import CartPage from "./page/CartPage/CartPage";
+import ProfileUser from "./page/ProfileUser/ProfileUser";
+import NewsArticle from "./page/NewsArticle/NewsArticle";
+
 
 function App() {
   return (
@@ -24,6 +27,8 @@ function App() {
           <Route path="/sales" element={<SalesConsignmentPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/koiList" element={<KoiListPage />} />
+          <Route path="/news" element={<NewsArticle />} />
+          <Route path="/profile" element={<ProfileUser />} />
         </Routes>
       </BrowserRouter>
       <Footer />

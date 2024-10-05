@@ -34,6 +34,7 @@ const Login = () => {
         localStorage.setItem("name", item.name);
         localStorage.setItem("email", item.email);
         localStorage.setItem("phone", item.phone);
+        localStorage.setItem("address", item.address);
 
         // Dispatch storage event to trigger the listener
         window.dispatchEvent(new Event("storage"));

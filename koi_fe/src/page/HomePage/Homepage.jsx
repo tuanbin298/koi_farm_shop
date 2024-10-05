@@ -90,9 +90,11 @@ export default function Homepage() {
             <h3 className="subtitle">Kiến thức và kinh nghiệm nuôi cá Koi</h3>
           </div>
           <div>
-            <Button variant="outlined" color="light" className="viewMoreButton">
-              Xem thêm <FaArrowRight />
-            </Button>
+          <Link to="/news">
+          <Button variant="outlined" color="light" className="viewMoreButton">
+            Xem thêm <FaArrowRight />
+          </Button>
+        </Link>
           </div>
         </div>
         <Container>
