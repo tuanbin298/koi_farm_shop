@@ -49,7 +49,7 @@ const CartPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell>Sản phẩm</TableCell>
-                  <TableCell align="center">Số lượng</TableCell>
+                  <TableCell></TableCell>
                   <TableCell align="center">Ký gửi nuôi</TableCell>
                   <TableCell align="center">Giá/Sản phẩm (VND)</TableCell>
                   <TableCell align="center">Thành tiền (VND)</TableCell>
@@ -63,10 +63,11 @@ const CartPage = () => {
                         <Image
                           width={200}
                           src={product.image}
-                        />
-                          {product.name}
+                        />       
                         </TableCell>
-                      <TableCell align="center">{product.quantity}</TableCell>
+                        <TableCell align='center'>
+                        {product.name}
+                        </TableCell>
                       <TableCell align="center">
                         <Checkbox
                           checked={depositFields[product.id] || false}
@@ -75,7 +76,12 @@ const CartPage = () => {
                         <p>Ký gửi nuôi</p>
                       </TableCell>
                       <TableCell align="center">{product.price.toLocaleString()}</TableCell>
-                      <TableCell align="center">{product.total.toLocaleString()}</TableCell>
+                      <TableCell align="center" >{product.total.toLocaleString()} 
+                        <Button variant="contained" color="error" style={{
+                          marginLeft: "15%"
+                        }}>
+                          xoá
+          </Button></TableCell>
                     </TableRow>
                     {depositFields[product.id] && (
                       <TableRow>

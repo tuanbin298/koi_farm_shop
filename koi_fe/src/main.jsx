@@ -11,7 +11,16 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 //customizing mui themes
-const theme = createTheme()
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#000000", // Dark color for buttons or other components
+    },
+    secondary:{
+      main:"#C15445",
+    },
+  },
+});
 // Render
 ReactDOM.render(
   <React.StrictMode>
