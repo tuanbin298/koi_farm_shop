@@ -45,6 +45,10 @@ const Role = list({
       label: "Quản lý bài đăng",
       defaultValue: false,
     }),
+    canManageOrder: checkbox({
+      label: "Quản lý đơn hàng",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",
