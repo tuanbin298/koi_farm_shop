@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import CardListProduct from "../../component/CartListProduct/CardListProduct";
@@ -10,11 +10,20 @@ import {
 function KoiListPage() {
   const { categoryId } = useParams(); // Lấy categoryId từ URL
 
-  const [filter, setFilter] = useState({
+  // Thiết lập filter mặc định
+  const defaultFilter = {
     size: "all",
     price: "all",
     generic: "all",
-  });
+  };
+
+  // State để quản lý filter
+  const [filter, setFilter] = useState(defaultFilter);
+
+  // Reset bộ lọc khi categoryId thay đổi
+  useEffect(() => {
+    setFilter(defaultFilter);
+  }, [categoryId]);
 
   const { data, loading, error } = useQuery(
     categoryId ? GET_PRODUCT_BY_CATEGORY : GET_ALL_PRODUCTS,
@@ -25,6 +34,24 @@ function KoiListPage() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error loading Koi data!</p>;
+
+  const sizeMap = {
+    "10-15cm": [10, 15],
+    "15-20cm": [15, 20],
+    "20-30cm": [20, 30],
+    "30-40cm": [30, 40],
+    "40-50cm": [40, 50],
+    "above-50cm": [50, 100],
+  };
+
+  const priceMap = {
+    "1000000-5000000": [1000000, 5000000],
+    "5000000-10000000": [5000000, 10000000],
+    "10000000-15000000": [10000000, 15000000],
+    "15000000-20000000": [15000000, 20000000],
+    "20000000-25000000": [20000000, 25000000],
+    "above-25000000": [25000000, 100000000],
+  };
 
   const filterKoi = () => {
     if (!data || !data.products) return [];
