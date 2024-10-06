@@ -14,7 +14,8 @@ const client = new ApolloClient({
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#000000", // Dark color for buttons or other components
+      main: "#000000",
+      light: "#F9F9F9"
     },
     secondary:{
       main:"#C15445",

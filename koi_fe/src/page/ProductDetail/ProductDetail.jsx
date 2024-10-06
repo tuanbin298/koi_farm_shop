@@ -1,158 +1,167 @@
-import React from 'react'
+import React, { useState } from 'react';
+import { useParams } from 'react-router-dom'; // To get product ID from the route
 import { Flex } from 'antd';
 import { Image } from 'antd';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
-import { IoLocationSharp } from "react-icons/io5";
-import { FaPhone } from "react-icons/fa6";
-import { FaBookmark, FaRegArrowAltCircleLeft, FaRegArrowAltCircleRight } from "react-icons/fa";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
-import { Link } from "react-router-dom";
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import "./ProductDetail.css"
-
-
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { IoLocationSharp } from "react-icons/io5";
+import { FaPhone, FaBookmark } from "react-icons/fa";
+import './ProductDetail.css';
+import {Link} from "react-router-dom"
+import { useProduct, useAllProducts } from '../api/Queries/product'; // Import custom hooks
 
 export default function ProductDetail() {
-  const products = [
-    { name: 'Koi Asagi', image: 'src/assets/kohaku.jpg' },  // Replace with actual image paths
-    { name: 'Koi Tancho', image: 'src/assets/kohaku.jpg' },
-    { name: 'Koi Shiro Utsuri', image: 'src/assets/kohaku.jpg' },
-    { name: 'Koi Kohaku', image: 'src/assets/kohaku.jpg' }
-  ];  
+  const { id } = useParams(); // Get product ID from the route
+  const { loading, error, product } = useProduct(id); // Fetch single product
+  const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
+
+  // State to track the starting index of the currently displayed products
+  const [startIndex, setStartIndex] = useState(0);
+
+  const productsPerPage = 4; // Number of products to display at a time
+  const maxIndex = products ? products.length - productsPerPage : 0; // Maximum index we can start displaying
+
+  if (loading || allLoading) return <p>Loading...</p>;
+  if (error || allError) return <p>Error: {error?.message || allError?.message}</p>;
+
+  // Get the subset of products to display based on the current startIndex
+  const displayedProducts = products?.slice(startIndex, startIndex + productsPerPage);
+
+  // Handler for next button
+  const handleNext = () => {
+    if(startIndex < products.length - 4){
+      setStartIndex(startIndex + 1);
+    }    
+  };
+
+  // Handler for previous button
+  const handlePrev = () => {
+    if(startIndex > 0){
+      setStartIndex(startIndex - 1);
+    }
+  };
+
   return (
     <>
-    <Box style={
-      {
-        marginTop: "1%",
-        padding: "1%"
-      }
-    }>
-      <Flex gap="large" justify='space-around'>
+      <Box style={{ marginTop: "1%", padding: "1%" }}>
+        <Flex gap="large" justify="space-around">
+          {/* Conditionally render the image */}
           <div>
-          <Image
-          width={300}
-          src="src/assets/kohaku.jpg"
-            />    
+            {product.image?.publicUrl ? (
+              <Image
+                width={300}
+                src={product.image.publicUrl}
+                alt={product.name}
+              />
+            ) : null}
           </div>
 
-          <div style={{
-            width:"100%"
-          }}>
-              <Typography variant="h3" gutterBottom style={
-                {
-                  fontWeight:"bold"
-                }
-              }>
-            Koi Showa 97cm 5 tuổi
-            </Typography>
-            <Typography variant="body2" gutterBottom style={{
-              fontFamily:"'Times New Roman', Times, serif",
-              fontSize:"15px",
-              fontWeight:"bold",
-              color: "#982B1C",
-              boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
-              border:"0.5px solid gray",
-              textAlign: "center",
-              padding: "1%",
-              width: "40%",
-              marginBottom: "4%",
-              marginLeft: "7%"
-            }}>
-              GIÁ BÁN: 8,000,000 VNĐ
-            </Typography>
-            <Typography variant="body2" gutterBottom style={{
-              border:"2px dashed gray",
-              padding: "15px"
-            }}>
-              Em koi showa 97 cm 5 tuổi thuộc dòng jumbo với kích thước rất khủng. 
-              Vì vậy, màu sắc, hoa văn, hình thể của em ấy đạt đến chuẩn mực cao. 
-              Đây là em showa được CaKoiViet nhập về trực tiếp từ Dainichi Koi farm, đã nuôi dưỡng đủ 6 tháng khỏe mạnh, vạm vỡ.
+          {/* Product Info */}
+          <div style={{ width: "100%" }}>
+            <Typography variant="h3" gutterBottom style={{ fontWeight: "bold" }}>
+              {product.name} {product.size}cm {new Date().getFullYear() - product.birth} tuổi
             </Typography>
 
-            <Stack spacing={0.5} className='productInfo'>
-              <div>
-                Giới tính: Koi Cái
-              </div>
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{
+                fontFamily: "'Times New Roman', Times, serif",
+                fontSize: "15px",
+                fontWeight: "bold",
+                color: "#982B1C",
+                boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
+                border: "0.5px solid gray",
+                textAlign: "center",
+                padding: "1%",
+                width: "40%",
+                marginBottom: "4%",
+                marginLeft: "7%"
+              }}
+            >
+              GIÁ BÁN: {product.price}
+            </Typography>
 
-              <div>
-                 Năm sinh: 2016
-              </div>
-              
-              <div> 
-                Kích thước: 97 cm
-              </div>
+            {/* Product Description */}
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{ border: "2px dashed gray", padding: "15px" }}
+            >
+              {product.description}
+            </Typography>
 
-              <div> 
-                Chủng loại: Cá Koi Showa
-              </div>
-
-              <div> 
-                Nguồn gốc: Cá nhập khẩu
-              </div>
+            {/* Product Information */}
+            <Stack spacing={0.5} className="productInfo">
+              <div>Giới tính: {product.sex === 'male' ? 'Koi Đực' : 'Koi Cái'}</div>
+              <div>Năm sinh: {product.birth}</div>
+              <div>Kích thước: {product.size} cm</div>
+              <div>Chủng loại: {product.generic}</div>
+              <div>Nguồn gốc: {product.origin}</div>
             </Stack>
-            <Stack spacing={2} direction="row" className='productBtnGroup'>
-              <Button variant="outlined" color="primary" style={{
-                color:"#982B1C"
-              }}>Thêm vào giỏ hàng</Button>
+
+            {/* Buttons */}
+            <Stack spacing={2} direction="row" className="productBtnGroup">
+              <Button variant="outlined" color="primary" style={{ color: "#982B1C" }}>
+                Thêm vào giỏ hàng
+              </Button>
               <Button variant="contained" color="secondary">Mua Ngay</Button>
             </Stack>
           </div>
 
-
-          <div style={{
-            width: "80%"
-          }}>
-          <Typography variant="body2" style={{
-            border: "1px solid",
-            backgroundColor: "#982B1C",
-            color: "white",
-            padding: "20px",
-            textAlign: "center",
-            fontFamily: "Brygada 1918, serif",
-            fontSize: "20px",
-            fontWeight: "bold"
-          }}>
-            THÔNG TIN LIÊN HỆ
-          </Typography> 
-          <Typography variant="body2" style={{
-            border: "1px solid",
-            padding: "20px"
-          }}>
-            <Stack spacing={2}>
-              <div className='infoRow'>
-
-                <div className='infoIcon'><IoLocationSharp /></div> C5 C7 đường số 12, P.Hưng Phú 1, Q. Cái Răng, TP Cần Thơ.
-
-              </div>
-              <div className='infoRow'>
-
-                <div className='infoIcon'><FaPhone /></div> 0864284671
-
-              </div>
-              <div className='infoRow'> 
-
-                <div className='infoIcon'><FaBookmark /> </div>Hotrocakoiviet@gmail.com
-                
-              </div>
-            </Stack>
-          </Typography>
+          {/* Contact Info */}
+          <div style={{ width: "80%" }}>
+            <Typography
+              variant="body2"
+              style={{
+                border: "1px solid",
+                backgroundColor: "#982B1C",
+                color: "white",
+                padding: "20px",
+                textAlign: "center",
+                fontFamily: "Brygada 1918, serif",
+                fontSize: "20px",
+                fontWeight: "bold"
+              }}
+            >
+              THÔNG TIN LIÊN HỆ
+            </Typography>
+            <Typography
+              variant="body2"
+              style={{ border: "1px solid", padding: "20px" }}
+            >
+              <Stack spacing={2}>
+                <div className="infoRow">
+                  <IoLocationSharp /> C5 C7 đường số 12, P.Hưng Phú 1, Q. Cái Răng, TP Cần Thơ.
+                </div>
+                <div className="infoRow">
+                  <FaPhone /> 0864284671
+                </div>
+                <div className="infoRow">
+                  <FaBookmark /> Hotrocakoiviet@gmail.com
+                </div>
+              </Stack>
+            </Typography>
           </div>
         </Flex>
       </Box>
+
+      {/* "Các sản phẩm khác" section */}
       <Box display="flex" flexDirection="column" gap={3} justifyContent="center" alignItems="center"
-      style={{
-        backgroundColor: "#ebe8e8",
-        paddingBottom:"3%",
-        paddingTop:"3%",
-        boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)"
-      }}> 
+        style={{
+          backgroundColor: "#ebe8e8",
+          paddingBottom:"3%",
+          paddingTop:"3%",
+          boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)"
+        }}>
         <div>
           <Typography variant='h4' style={{
             fontFamily: "'Brygada 1918'",
@@ -174,41 +183,48 @@ export default function ProductDetail() {
             backgroundColor: "white",
             borderRadius:"50%"
           }}>
-            <IconButton color="primary">
+            {/* Previous Button */}
+            <IconButton color="primary" onClick={handlePrev} disabled={startIndex === 0}>
               <ArrowBackIcon/>
             </IconButton>
           </div>
-          {products.map((product) =>
-          <Link>
-          <Card sx={{ maxWidth: 250 }}>
-          <CardMedia
-            component="img"
-            alt="green iguana"
-            image={product.image}
-          />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div" textAlign="center"
-            style={{
-              fontFamily:"'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              fontWeight:"450"
-            }}>
-              {product.name}
-            </Typography>
-          </CardContent>
-        </Card>
-        </Link> 
+
+          {/* Render only the current 4 displayed products */}
+          {displayedProducts?.map((product) =>
+            <Link to={`/ProductDetail/${product.id}`} key={product.id}>
+              <Card sx={{ maxWidth: 250 }}>
+                {product.image?.publicUrl ? (
+                  <CardMedia
+                    component="img"
+                    alt={product.name}
+                    image={product.image.publicUrl} // Use publicUrl for product image
+                  />
+                ) : null} {/* Render nothing if image is null */}
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div" textAlign="center"
+                    style={{
+                      fontFamily:"'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                      fontWeight:"450"
+                    }}>
+                    {product.name}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Link>
           )}
-        <div className="slideBtn" style={{
-          marginRight:"3%",
-          backgroundColor: "white",
-          borderRadius:"50%"
-        }}>
-          <IconButton color="primary">
-            <ArrowForwardIcon />
-          </IconButton>
-        </div>
+
+          <div className="slideBtn" style={{
+            marginRight:"3%",
+            backgroundColor: "white",
+            borderRadius:"50%"
+          }}>
+            {/* Next Button */}
+            <IconButton color="primary" onClick={handleNext} disabled={startIndex + productsPerPage >= products.length}>
+              <ArrowForwardIcon />
+            </IconButton>
+          </div>
         </div>
       </Box>
     </>
-  )
+  );
 }
