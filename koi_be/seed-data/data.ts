@@ -91,7 +91,7 @@ export const products = [
     birth: 2019,
     sex: "Đực",
     size: "60cm",
-    price: 123,
+    price: 18000000,
     description:
       "Chăm sóc dễ dàng. Ăn tạp; hiền; ưa hòa bình;  Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon",
     origin: "Nhập khẩu Nhật bản",
@@ -103,7 +103,7 @@ export const products = [
     birth: 2019,
     sex: "Đực",
     size: "60cm",
-    price: 10,
+    price: 30000000,
     description:
       "Chăm sóc dễ dàng ; Ăn tạp; hiền; ưa hòa bình ; Màu sắc: Đỏ - Trắng; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu để nuôi cá: 1000 gallon.",
     origin: "Nhập khẩu Nhật bản",
