@@ -1,12 +1,10 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import "./HomePage.css";
 import CardProduct from "../../component/Card/CardProduct";
 import CardNews from "../../component/CardNews/CardNews";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import { Link, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -29,7 +27,6 @@ export default function Homepage() {
   }, [location.state]);
   return (
     <>
-    
       <div className="banner">
         <div className="banner-content">
           <h1>CaKoiViet Koi Farm Shop</h1>
@@ -88,11 +85,15 @@ export default function Homepage() {
             <h3 className="subtitle">Kiến thức và kinh nghiệm nuôi cá Koi</h3>
           </div>
           <div>
-          <Link to="/news">
-          <Button variant="outlined" color="light" className="viewMoreButton">
-            Xem thêm <FaArrowRight />
-          </Button>
-        </Link>
+            <Link to="/news">
+              <Button
+                variant="outlined"
+                color="light"
+                className="viewMoreButton"
+              >
+                Xem thêm <FaArrowRight />
+              </Button>
+            </Link>
           </div>
         </div>
         <Container>
