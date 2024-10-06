@@ -229,6 +229,18 @@ export const products = [
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Mud Pond",
   },
+  {
+    name: "Cá Koi Yamabuki Ogon Nhật Size Mini",
+    birth: 2021,
+    sex: "Cái",
+    size: "30cm",
+    price: 6500000,
+    description:
+      "Chăm sóc dễ dàng; Ăn tạp; hiền; ưa hòa bình; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon.",
+    origin: "Nhập khẩu Nhật bản",
+    generic: "Mini",
+    category: "Cá koi vàng Yamabuki",
+  },
 ];
 
 export const articles = [
