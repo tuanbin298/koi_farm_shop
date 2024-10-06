@@ -7,9 +7,8 @@ import { useQuery } from "@apollo/client";
 function KoiListPage() {
   const [filter, setFilter] = useState({
     size: "all", // 'all' để hiển thị tất cả các kích cỡ mặc định
-    minPrice: "", // Minimum price
-    maxPrice: "", // Maximum price
-    origin: "all", //Nguồn gốc
+    price: "all",
+    generic: "all",
   });
 
   const { data, loading, error } = useQuery(GET_PRODUCT);
@@ -28,6 +27,15 @@ function KoiListPage() {
     "above-50cm": [50, 100],
   };
 
+  const priceMap = {
+    "1000000-5000000": [1000000, 5000000],
+    "5000000-10000000": [5000000, 10000000],
+    "10000000-15000000": [10000000, 15000000],
+    "15000000-20000000": [15000000, 20000000],
+    "20000000-25000000": [20000000, 25000000],
+    "above-25000000": [25000000, 100000000],
+  };
+
   // Hàm lọc các sản phẩm cá Koi theo cả kích thước, giá tiền và nguồn gốc
   const filterKoi = () => {
     if (!data || !data.products) return [];
@@ -41,12 +49,15 @@ function KoiListPage() {
       }
 
       // 2. Lọc theo giá nếu có giá trị
-      const koiPrice = koi.price;
-      if (filter.minPrice && koiPrice < filter.minPrice) return false; // Giá quá thấp
-      if (filter.maxPrice && koiPrice > filter.maxPrice) return false; // Giá quá cao
+      if (filter.price !== "all") {
+        const koiPrice = koi.price;
+        const [minPrice, maxPrice] = priceMap[filter.price];
+        if (koiPrice < minPrice || koiPrice > maxPrice) return false; // Không phù hợp với kích thước
+      }
 
       // 3. Lọc theo nguồn gốc nếu có giá trị
-      if (filter.origin !== "all" && koi.origin !== filter.origin) return false; // Không phù hợp với nguồn gốc
+      if (filter.generic !== "all" && koi.generic !== filter.generic)
+        return false; // Không phù hợp với nguồn gốc
 
       return true; // Thỏa mãn cả điều kiện về kích thước, giá và nguồn gốc
     });
@@ -81,68 +92,30 @@ function KoiListPage() {
         {/* Nguồn gốc Filter */}
         <select
           className="form-select w-auto btn-outline-primary"
-          value={filter.origin}
-          onChange={(e) => setFilter({ ...filter, origin: e.target.value })}
+          value={filter.generic}
+          onChange={(e) => setFilter({ ...filter, generic: e.target.value })}
         >
           <option value="all">Tất cả nguồn gốc</option>
-          <option value="Nhập khẩu Nhật bản">Nhập khẩu Nhật bản</option>
-          <option value="Cá Koi F1">Cá Koi F1</option>
-          <option value="Cá Koi Mini">Cá Koi Mini</option>
+          <option value="Cá Koi Nhật thuần chủng">Nhập khẩu Nhật bản</option>
+          <option value="F1">Cá Koi F1</option>
+          <option value="Mini">Cá Koi Mini</option>
           {/* Thêm các tùy chọn khác nếu cần */}
         </select>
 
         {/* Giá Filter */}
-        <div className="dropdown">
-          <select
-            className="form-select w-auto btn-outline-primary"
-            onClick={() =>
-              setFilter({ ...filter, showPriceFilter: !filter.showPriceFilter })
-            }
-          >
-            <option>Giá cả</option>
-          </select>
-
-          {filter.showPriceFilter && (
-            <div
-              className="dropdown-menu p-3"
-              style={{
-                display: "block",
-                backgroundColor: "white",
-                boxShadow: "none",
-                border: "1px solid #0d6efd",
-              }}
-            >
-              <div className="d-flex align-items-center gap-2">
-                <div className="d-flex align-items-center">
-                  <label className="form-label mb-0 me-2">Giá từ:</label>
-                  <input
-                    type="number"
-                    className="form-control w-auto"
-                    placeholder="Min Price"
-                    value={filter.minPrice}
-                    onChange={(e) =>
-                      setFilter({ ...filter, minPrice: e.target.value })
-                    }
-                  />
-                </div>
-
-                <span>đến:</span>
-
-                <div className="d-flex align-items-center">
-                  <input
-                    type="number"
-                    className="form-control w-auto"
-                    placeholder="Max Price"
-                    value={filter.maxPrice}
-                    onChange={(e) =>
-                      setFilter({ ...filter, maxPrice: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
+        <select
+          className="form-select w-auto btn-outline-primary"
+          value={filter.price}
+          onChange={(e) => setFilter({ ...filter, price: e.target.value })} // Cập nhật đúng filter.price
+        >
+          <option value="all">Tất cả mức giá</option>
+          <option value="1000000-5000000">1,000,000 - 5,000,000 VND</option>
+          <option value="5000000-10000000">5,000,000 - 10,000,000 VND</option>
+          <option value="10000000-15000000">10,000,000 - 15,000,000 VND</option>
+          <option value="15000000-20000000">15,000,000 - 20,000,000 VND</option>
+          <option value="20000000-25000000">20,000,000 - 25,000,000 VND</option>
+          <option value="above-25000000">Trên 25,000,000 VND</option>
+        </select>
       </div>
 
       {/* Product List */}
