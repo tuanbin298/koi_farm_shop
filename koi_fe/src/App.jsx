@@ -11,6 +11,7 @@ import Checkout from "./page/Checkout/Checkout";
 import CartPage from "./page/CartPage/CartPage";
 import ProfileUser from "./page/ProfileUser/ProfileUser";
 import NewsArticle from "./page/NewsArticle/NewsArticle";
+import IntroducePage from"./page/IntroducePage/IntroducePage";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/koiList" element={<KoiListPage />} />
           <Route path="/news" element={<NewsArticle />} />
           <Route path="/profile" element={<ProfileUser />} />
+          <Route path="/introduce" element={<IntroducePage />} />
         </Routes>
       </BrowserRouter>
       <Footer />

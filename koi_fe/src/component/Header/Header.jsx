@@ -166,7 +166,9 @@ export default function Header() {
 
           <nav className="header_mid-nav">
             <a href="">Trang chủ</a>
-            <a href="">Giới thiệu</a>
+            <Link to="/introduce" className="dropdown-item">
+              Giới Thiệu
+            </Link>
 
             {/* Dropdown Cá Ký Gửi*/}
             <div
