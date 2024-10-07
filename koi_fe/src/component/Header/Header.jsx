@@ -168,7 +168,7 @@ export default function Header() {
             <Link to="" className="linkForm">
               Trang chủ
             </Link>
-            <Link to="" className="linkForm">
+            <Link to="/introduce" className="linkForm">
               Giới thiệu
             </Link>
 
