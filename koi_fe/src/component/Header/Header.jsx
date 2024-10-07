@@ -172,13 +172,14 @@ export default function Header() {
               Giới thiệu
             </Link>
 
-            {/* Dropdown Cá Ký Gửi*/}
+            {/* Dropdown Cá Koi*/}
             <div
               className="dropdown"
               onMouseEnter={() => setDropdownOpen(true)}
               onMouseLeave={() => setDropdownOpen(false)}
             >
               <Link to="/koiList">Cá Koi Nhật</Link>
+              {/* Hiển thị tất cả các loại cá Koi */}
               {dropdownOpen && (
                 <div className="dropdown-content">
                   {loading ? (
@@ -189,7 +190,7 @@ export default function Header() {
                     data?.categories.map((type) => (
                       <Link
                         key={type.id}
-                        to={`/koi-type/${type.id}`}
+                        to={`/koiList/${type.id}`}
                         className="dropdown-item"
                       >
                         {type.name}
