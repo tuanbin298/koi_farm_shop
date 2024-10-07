@@ -29,6 +29,21 @@ export const categories = [
     description:
       "Cá koi Hikari Utsuri là giống chép Nhật màu sắc tương tự như Kin Showa, Kin Ki Utsuri, Kin Hi Utsuri, Gin Shiro Utsuri. Chúng chỉ đặc biệt hơn cá koi Utsuri bởi được bao phủ một lớp lấp lánh ánh kim loại toàn thân.",
   },
+  {
+    name: "Cá koi Shiro Utsuri",
+    description:
+      "Cá Koi Shiro là dòng cá du nhập vào Việt Nam từ khá lâu đời và trở thành trào lưu mới trong giới nuôi cá cảnh. Dòng cá này có thân hình, màu sắc và dáng bơi đẹp cùng đặc tính tương đối dễ nuôi. Bài viết dưới đây sẽ là những chia sẻ hữu ích về dòng cá này giúp bạn đọc có thêm thông tin khi nuôi dưỡng loại Shiro Koi này.",
+  },
+  {
+    name: "Cá Koi Magoi ",
+    description:
+      "Cá Koi là giống cá được lai tạo từ giống cá chép Nhật thủy tổ Magoi Koi có màu đen. Hầu như tất cả cá Koi hiện đại đều có nguồn gốc từ Magoi và đến từ Châu Á. Ngay cả ở Trung Quốc, Nhật Bản, cá Magoi Koi đều được gọi là cá chép tiêu chuẩn. Để giúp bạn có thêm thông thông tin về loài cá này, hãy cùng chúng tôi tìm hiểu kỹ hơn qua bài viết dưới đây. ",
+  },
+  {
+    name: "Cá Koi Mud Pond",
+    description:
+      "Mud Pond Nuôi Ao Bùn là cá đơn sắc, toàn bộ vảy, vây cá đều mang màu đỏ trông như quả ớt khổng lồ. Nếu thả trong hồ koi thì cá nổi bật hơn hẳn so với dòng koi khác. Đối với dòng nhỏ hơn là Girin Benigoi thì vảy cá có màu óng ánh đẹp mắt, lộng lẫy, lôi cuốn bất cứ ai khi nhìn thấy lần đầu tiên.",
+  },
 ];
 
 export const roles = [
@@ -38,6 +53,8 @@ export const roles = [
     canManageProduct: false,
     canManageRole: false,
     canManageArticle: true,
+    canManageOrder: false,
+    canManageFeedback: true,
     user: {
       connect: [
         {
@@ -74,7 +91,7 @@ export const products = [
     birth: 2019,
     sex: "Đực",
     size: "60cm",
-    price: 123,
+    price: 18000000,
     description:
       "Chăm sóc dễ dàng. Ăn tạp; hiền; ưa hòa bình;  Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon",
     origin: "Nhập khẩu Nhật bản",
@@ -86,7 +103,7 @@ export const products = [
     birth: 2019,
     sex: "Đực",
     size: "60cm",
-    price: 10,
+    price: 30000000,
     description:
       "Chăm sóc dễ dàng ; Ăn tạp; hiền; ưa hòa bình ; Màu sắc: Đỏ - Trắng; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu để nuôi cá: 1000 gallon.",
     origin: "Nhập khẩu Nhật bản",
@@ -137,8 +154,92 @@ export const products = [
     description:
       "Kích thước: 50-65cm ; Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình; Màu sắc: Vàng - Trắng",
     origin: "Nhập khẩu Nhật bản",
-    generic: "Nhật Bản",
+    generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Hariwake",
+  },
+  {
+    name: "Cá Koi Yamabuki Ogon F1",
+    birth: 2021,
+    sex: "Cái",
+    size: "30cm",
+    price: 500000,
+    description:
+      "Kích thước: 35-50cm; Chăm sóc dễ dàng ;Ăn tạp; hiền; ưa hòa bình; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2;  Kích thước hồ tối thiểu: 1000 gallon.",
+    origin: "bố nhật mẹ nhật",
+    generic: "F1",
+    category: "Cá koi vàng Yamabuki",
+  },
+  {
+    name: "Cá Koi Tancho F1",
+    birth: 2020,
+    sex: "Đực",
+    size: "40cm",
+    price: 1200000,
+    description:
+      "Chăm sóc dễ dàng ; Ăn tạp; hiền; ưa hòa bình ; Màu sắc: Đỏ - Trắng; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2;  Kích thước hồ tối thiểu để nuôi cá: 1000 gallon.",
+    origin: "bố nhật mẹ nhật",
+    generic: "F1",
+    category: "Cá koi Tancho",
+  },
+  {
+    name: "Cá Koi Shusui F1",
+    birth: 2020,
+    sex: "Đực",
+    size: "50cm",
+    price: 2000000,
+    description:
+      "Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình ; Màu sắc: Đen, đỏ, trắng",
+    origin: "bố nhật mẹ nhật",
+    generic: "F1",
+    category: "Cá koi Shusui",
+  },
+  {
+    name: "Shiro Utsuri Nuôi Ao Bùn",
+    birth: 2019,
+    sex: "Cái",
+    size: "70cm",
+    price: 55000000,
+    description:
+      "Kích thước: 55-75cm; Chăm sóc dễ dàng; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình ; Màu Sắc: Đen, trắng",
+    origin: "Nhập khẩu Nhật bản",
+    generic: "Cá Koi Nhật thuần chủng",
+    category: "Cá koi Shiro Utsuri",
+  },
+  {
+    name: "Cá Koi Magoi F1",
+    birth: 2020,
+    sex: "Đực",
+    size: "70cm",
+    price: 7500000,
+    description:
+      "Chăm sóc dễ dàng; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình; Màu sắc: Đen",
+    origin: "bố nhật mẹ nhật",
+    generic: "F1",
+    category: "Cá Koi Magoi ",
+  },
+  {
+    name: "Mud Pond Nuôi Ao Bùn",
+    birth: 2018,
+    sex: "Đực",
+    size: "70cm",
+    price: 55000000,
+    description:
+      " Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp; Tính cách: Hòa bình ; Màu sắc: Đỏ",
+    origin: "Nhập khẩu Nhật bản",
+    generic: "Cá Koi Nhật thuần chủng",
+    category: "Cá Koi Mud Pond",
+  },
+  {
+    name: "Cá Koi Yamabuki Ogon Nhật Size Mini",
+    birth: 2021,
+    sex: "Cái",
+    size: "30cm",
+    price: 6500000,
+    description:
+      "Chăm sóc dễ dàng; Ăn tạp; hiền; ưa hòa bình; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon.",
+    origin: "Nhập khẩu Nhật bản",
+    generic: "Mini",
+    category: "Cá koi vàng Yamabuki",
   },
 ];
 

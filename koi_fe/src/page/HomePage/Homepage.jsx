@@ -1,13 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaArrowRight } from "react-icons/fa";
 import Button from "@mui/material/Button";
 import "./HomePage.css";
 import CardProduct from "../../component/Card/CardProduct";
 import CardNews from "../../component/CardNews/CardNews";
 import Container from "react-bootstrap/Container";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Homepage() {
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state?.fromLogin) {
+      toast.success("Đăng nhập thành công!", {
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#21bf21",
+        },
+        iconTheme: {
+          primary: "#21bf21",
+          secondary: "#FFFAEE",
+        },
+      });
+    }
+  }, [location.state]);
   return (
     <>
       <div className="banner">
@@ -47,8 +64,6 @@ export default function Homepage() {
         </div>
       </section>
 
-      {/* <Button variant="outline-danger" className='KoiProductBtn'>Xem thêm <FaArrowRight /></Button>{' '} */}
-
       {/* Header Button */}
       <header className="headerShowMoreButton">
         <Button
@@ -58,7 +73,7 @@ export default function Homepage() {
           component={Link} // Use Link as the component for Button
           to="/koiList" // Specify the path for navigation
         >
-          Xem thêm <FaArrowRight /> {/* FontAwesome arrow icon */}
+          Xem thêm <FaArrowRight />
         </Button>
       </header>
 
@@ -70,11 +85,15 @@ export default function Homepage() {
             <h3 className="subtitle">Kiến thức và kinh nghiệm nuôi cá Koi</h3>
           </div>
           <div>
-          <Link to="/news">
-          <Button variant="outlined" color="light" className="viewMoreButton">
-            Xem thêm <FaArrowRight />
-          </Button>
-        </Link>
+            <Link to="/news">
+              <Button
+                variant="outlined"
+                color="light"
+                className="viewMoreButton"
+              >
+                Xem thêm <FaArrowRight />
+              </Button>
+            </Link>
           </div>
         </div>
         <Container>
@@ -103,6 +122,7 @@ export default function Homepage() {
             </div>
           </p>
         </div>
+        <Toaster position="bottom-right" reverseOrder={false} />
       </section>
     </>
   );

@@ -125,6 +125,8 @@ type Role {
   canManageProduct: Boolean
   canManageRole: Boolean
   canManageArticle: Boolean
+  canManageOrder: Boolean
+  canManageFeedback: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -143,6 +145,8 @@ input RoleWhereInput {
   canManageProduct: BooleanFilter
   canManageRole: BooleanFilter
   canManageArticle: BooleanFilter
+  canManageOrder: BooleanFilter
+  canManageFeedback: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -164,6 +168,8 @@ input RoleOrderByInput {
   canManageProduct: OrderDirection
   canManageRole: OrderDirection
   canManageArticle: OrderDirection
+  canManageOrder: OrderDirection
+  canManageFeedback: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -172,6 +178,8 @@ input RoleUpdateInput {
   canManageProduct: Boolean
   canManageRole: Boolean
   canManageArticle: Boolean
+  canManageOrder: Boolean
+  canManageFeedback: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -193,6 +201,8 @@ input RoleCreateInput {
   canManageProduct: Boolean
   canManageRole: Boolean
   canManageArticle: Boolean
+  canManageOrder: Boolean
+  canManageFeedback: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -540,6 +550,13 @@ input ProductRelateToOneForCreateInput {
 
 type Order {
   id: ID!
+  user: User
+  items(where: OrderItemWhereInput! = {}, orderBy: [OrderItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: OrderItemWhereUniqueInput): [OrderItem!]
+  itemsCount(where: OrderItemWhereInput! = {}): Int
+  price: Int
+  createAt: DateTime
+  address: String
+  status: String
 }
 
 input OrderWhereUniqueInput {
@@ -551,21 +568,81 @@ input OrderWhereInput {
   OR: [OrderWhereInput!]
   NOT: [OrderWhereInput!]
   id: IDFilter
+  user: UserWhereInput
+  items: OrderItemManyRelationFilter
+  price: IntNullableFilter
+  createAt: DateTimeNullableFilter
+  address: StringFilter
+  status: StringNullableFilter
+}
+
+input OrderItemManyRelationFilter {
+  every: OrderItemWhereInput
+  some: OrderItemWhereInput
+  none: OrderItemWhereInput
+}
+
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
 }
 
 input OrderOrderByInput {
   id: OrderDirection
+  price: OrderDirection
+  createAt: OrderDirection
+  address: OrderDirection
+  status: OrderDirection
+}
+
+input OrderUpdateInput {
+  user: UserRelateToOneForUpdateInput
+  items: OrderItemRelateToManyForUpdateInput
+  price: Int
+  createAt: DateTime
+  address: String
+  status: String
+}
+
+input OrderItemRelateToManyForUpdateInput {
+  disconnect: [OrderItemWhereUniqueInput!]
+  set: [OrderItemWhereUniqueInput!]
+  create: [OrderItemCreateInput!]
+  connect: [OrderItemWhereUniqueInput!]
 }
 
 input OrderUpdateArgs {
   where: OrderWhereUniqueInput!
-  data: Empty
+  data: OrderUpdateInput!
 }
 
-scalar Empty
+input OrderCreateInput {
+  user: UserRelateToOneForCreateInput
+  items: OrderItemRelateToManyForCreateInput
+  price: Int
+  createAt: DateTime
+  address: String
+  status: String
+}
+
+input OrderItemRelateToManyForCreateInput {
+  create: [OrderItemCreateInput!]
+  connect: [OrderItemWhereUniqueInput!]
+}
 
 type OrderItem {
   id: ID!
+  order: Order
+  product: Product
+  quantity: Int
+  price: Int
+  isStored: Boolean
 }
 
 input OrderItemWhereUniqueInput {
@@ -577,16 +654,77 @@ input OrderItemWhereInput {
   OR: [OrderItemWhereInput!]
   NOT: [OrderItemWhereInput!]
   id: IDFilter
+  order: OrderWhereInput
+  product: ProductWhereInput
+  quantity: IntFilter
+  price: IntFilter
+  isStored: BooleanFilter
 }
 
 input OrderItemOrderByInput {
   id: OrderDirection
+  quantity: OrderDirection
+  price: OrderDirection
+  isStored: OrderDirection
+}
+
+input OrderItemUpdateInput {
+  order: OrderRelateToOneForUpdateInput
+  product: ProductRelateToOneForUpdateInput
+  quantity: Int
+  price: Int
+  isStored: Boolean
+}
+
+input OrderRelateToOneForUpdateInput {
+  create: OrderCreateInput
+  connect: OrderWhereUniqueInput
+  disconnect: Boolean
 }
 
 input OrderItemUpdateArgs {
   where: OrderItemWhereUniqueInput!
+  data: OrderItemUpdateInput!
+}
+
+input OrderItemCreateInput {
+  order: OrderRelateToOneForCreateInput
+  product: ProductRelateToOneForCreateInput
+  quantity: Int
+  price: Int
+  isStored: Boolean
+}
+
+input OrderRelateToOneForCreateInput {
+  create: OrderCreateInput
+  connect: OrderWhereUniqueInput
+}
+
+type ProductStorage {
+  id: ID!
+}
+
+input ProductStorageWhereUniqueInput {
+  id: ID
+}
+
+input ProductStorageWhereInput {
+  AND: [ProductStorageWhereInput!]
+  OR: [ProductStorageWhereInput!]
+  NOT: [ProductStorageWhereInput!]
+  id: IDFilter
+}
+
+input ProductStorageOrderByInput {
+  id: OrderDirection
+}
+
+input ProductStorageUpdateArgs {
+  where: ProductStorageWhereUniqueInput!
   data: Empty
 }
+
+scalar Empty
 
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
@@ -630,18 +768,24 @@ type Mutation {
   updateFeedbacks(data: [FeedbackUpdateArgs!]!): [Feedback]
   deleteFeedback(where: FeedbackWhereUniqueInput!): Feedback
   deleteFeedbacks(where: [FeedbackWhereUniqueInput!]!): [Feedback]
-  createOrder(data: Empty): Order
-  createOrders(data: [Empty]!): [Order]
-  updateOrder(where: OrderWhereUniqueInput!, data: Empty): Order
+  createOrder(data: OrderCreateInput!): Order
+  createOrders(data: [OrderCreateInput!]!): [Order]
+  updateOrder(where: OrderWhereUniqueInput!, data: OrderUpdateInput!): Order
   updateOrders(data: [OrderUpdateArgs!]!): [Order]
   deleteOrder(where: OrderWhereUniqueInput!): Order
   deleteOrders(where: [OrderWhereUniqueInput!]!): [Order]
-  createOrderItem(data: Empty): OrderItem
-  createOrderItems(data: [Empty]!): [OrderItem]
-  updateOrderItem(where: OrderItemWhereUniqueInput!, data: Empty): OrderItem
+  createOrderItem(data: OrderItemCreateInput!): OrderItem
+  createOrderItems(data: [OrderItemCreateInput!]!): [OrderItem]
+  updateOrderItem(where: OrderItemWhereUniqueInput!, data: OrderItemUpdateInput!): OrderItem
   updateOrderItems(data: [OrderItemUpdateArgs!]!): [OrderItem]
   deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
   deleteOrderItems(where: [OrderItemWhereUniqueInput!]!): [OrderItem]
+  createProductStorage(data: Empty): ProductStorage
+  createProductStorages(data: [Empty]!): [ProductStorage]
+  updateProductStorage(where: ProductStorageWhereUniqueInput!, data: Empty): ProductStorage
+  updateProductStorages(data: [ProductStorageUpdateArgs!]!): [ProductStorage]
+  deleteProductStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
+  deleteProductStorages(where: [ProductStorageWhereUniqueInput!]!): [ProductStorage]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -690,6 +834,9 @@ type Query {
   orderItem(where: OrderItemWhereUniqueInput!): OrderItem
   orderItems(where: OrderItemWhereInput! = {}, orderBy: [OrderItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: OrderItemWhereUniqueInput): [OrderItem!]
   orderItemsCount(where: OrderItemWhereInput! = {}): Int
+  productStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
+  productStorages(where: ProductStorageWhereInput! = {}, orderBy: [ProductStorageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductStorageWhereUniqueInput): [ProductStorage!]
+  productStoragesCount(where: ProductStorageWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
