@@ -112,6 +112,33 @@
   margin-bottom: 40px;
   padding: 40px;
  }
+
+ /*Service section*/
+ .serviceSection{
+  color: white;
+  margin-bottom: 40px;
+  background-color: #b02a37;
+ }
+
+ .leftSubService{
+  border-right: 3px solid white;
+  background: url('src/assets/service1.jfif');
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 20px;
+ }
+
+ .rightSubService{
+  background: url('src/assets/service2.jfif');  
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding:20px;
+ }
+
+ .titleLeftSubService, .titleRightSubService {
+  border-bottom: 2px solid #fafafa;
+  padding-bottom: 2%;
+}
 /* News Section */
 .newsSection {
   display: flex;
