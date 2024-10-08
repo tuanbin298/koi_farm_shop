@@ -42,7 +42,7 @@ const Order = list({
       label: "Tổng tiền",
     }),
     createAt: timestamp({
-      label: "Ngày thanh toán",
+      label: "Thời gian thanh toán",
       defaultValue: { kind: "now" },
     }),
     address: text({
