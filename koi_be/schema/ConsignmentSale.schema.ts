@@ -1,6 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text, relationship, integer, select } from "@keystone-6/core/fields";
+import { text, integer, select } from "@keystone-6/core/fields";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
 import { permissions } from "../auth/access";
 import "dotenv/config";
@@ -12,19 +12,18 @@ export const cloudinary = {
   folder: `/${process.env.CLOUDINARY_FOLDER ?? "koi_viet"}`,
 };
 
-const Consignment = list({
+const ConsignmentSale = list({
   access: {
     operation: {
-      query: allowAll, // Cho phép tất cả mọi người truy vấn danh sách
-      create: allowAll, // Cho phép tất cả tạo
-      update: allowAll, // Cho phép tất cả cập nhật
-      delete: allowAll, // Cho phép tất cả xóa
+      query: allowAll,
+      create: allowAll,
+      update: allowAll,
+      delete: allowAll,
     },
   },
 
   ui: {
     hideCreate(args) {
-      console.log(args.session.data);
       return !permissions.canManageProduct(args);
     },
     hideDelete(args) {
@@ -39,10 +38,6 @@ const Consignment = list({
         isRequired: true,
       },
     }),
-    // request: relationship({
-    //   label: "Yêu cầu",
-    //   ref: "Request",
-    // }),
     birth: integer({
       label: "Năm sinh",
       validation: {
@@ -57,18 +52,17 @@ const Consignment = list({
         { label: "Cái", value: "Cái" },
       ],
     }),
-    medicalHistory: text({
+    medical: text({
       label: "Lịch sử bệnh",
     }),
     size: integer({
-      label: "Size (cm)",
+      label: "Kích thước",
       validation: {
         isRequired: true,
         min: 20,
         max: 100,
       },
     }),
-
     price: integer({
       label: "Giá được xác định bởi hệ thống",
       validation: {
@@ -91,19 +85,22 @@ const Consignment = list({
       label: "Hình ảnh",
       cloudinary,
     }),
-    category: relationship({
+    category: text({
       label: "Loại",
-      ref: "Category",
     }),
-    koiStatus: select({
+    status: select({
       label: "Trạng thái",
+      defaultValue: "Còn hàng",
       options: [
-        { label: "Available", value: "available" },
-        { label: "Sold", value: "sold" },
+        { label: "Còn hàng", value: "Còn hàng" },
+        { label: "Đã bán", value: "Đã bán" },
       ],
-      defaultValue: "available",
     }),
+    // request: relationship({
+    //   label: "Yêu cầu",
+    //   ref: "Request",
+    // }),
   },
 });
 
-export default Consignment;
+export default ConsignmentSale;

@@ -117,10 +117,6 @@ model OrderItem {
   @@index([productId])
 }
 
-model ProductStorage {
-  id String @id @default(cuid())
-}
-
 model Cart {
   id                 String     @id @default(cuid())
   user               User?      @relation("Cart_user", fields: [userId], references: [id])
@@ -144,4 +140,24 @@ model CartItem {
   from_Cart_items Cart[]    @relation("Cart_items")
 
   @@index([cartId])
+}
+
+model ConsigmentRaising {
+  id String @id @default(cuid())
+}
+
+model ConsignmentSale {
+  id          String  @id @default(cuid())
+  name        String  @default("")
+  birth       Int
+  sex         String? @default("Sex")
+  medical     String  @default("")
+  size        Int
+  price       Int
+  description String  @default("")
+  origin      String  @default("")
+  generic     String  @default("")
+  image       String?
+  category    String  @default("")
+  status      String? @default("Còn hàng")
 }

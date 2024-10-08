@@ -705,32 +705,6 @@ input OrderRelateToOneForCreateInput {
   connect: OrderWhereUniqueInput
 }
 
-type ProductStorage {
-  id: ID!
-}
-
-input ProductStorageWhereUniqueInput {
-  id: ID
-}
-
-input ProductStorageWhereInput {
-  AND: [ProductStorageWhereInput!]
-  OR: [ProductStorageWhereInput!]
-  NOT: [ProductStorageWhereInput!]
-  id: IDFilter
-}
-
-input ProductStorageOrderByInput {
-  id: OrderDirection
-}
-
-input ProductStorageUpdateArgs {
-  where: ProductStorageWhereUniqueInput!
-  data: Empty
-}
-
-scalar Empty
-
 type Cart {
   id: ID!
   user: User
@@ -863,6 +837,120 @@ input ProductRelateToManyForCreateInput {
   connect: [ProductWhereUniqueInput!]
 }
 
+type ConsigmentRaising {
+  id: ID!
+}
+
+input ConsigmentRaisingWhereUniqueInput {
+  id: ID
+}
+
+input ConsigmentRaisingWhereInput {
+  AND: [ConsigmentRaisingWhereInput!]
+  OR: [ConsigmentRaisingWhereInput!]
+  NOT: [ConsigmentRaisingWhereInput!]
+  id: IDFilter
+}
+
+input ConsigmentRaisingOrderByInput {
+  id: OrderDirection
+}
+
+input ConsigmentRaisingUpdateArgs {
+  where: ConsigmentRaisingWhereUniqueInput!
+  data: Empty
+}
+
+scalar Empty
+
+type ConsignmentSale {
+  id: ID!
+  name: String
+  birth: Int
+  sex: String
+  medical: String
+  size: Int
+  price: Int
+  description: String
+  origin: String
+  generic: String
+  image: CloudinaryImage_File
+  category: String
+  status: String
+}
+
+input ConsignmentSaleWhereUniqueInput {
+  id: ID
+}
+
+input ConsignmentSaleWhereInput {
+  AND: [ConsignmentSaleWhereInput!]
+  OR: [ConsignmentSaleWhereInput!]
+  NOT: [ConsignmentSaleWhereInput!]
+  id: IDFilter
+  name: StringFilter
+  birth: IntFilter
+  sex: StringNullableFilter
+  medical: StringFilter
+  size: IntFilter
+  price: IntFilter
+  description: StringFilter
+  origin: StringFilter
+  generic: StringFilter
+  category: StringFilter
+  status: StringNullableFilter
+}
+
+input ConsignmentSaleOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+  birth: OrderDirection
+  sex: OrderDirection
+  medical: OrderDirection
+  size: OrderDirection
+  price: OrderDirection
+  description: OrderDirection
+  origin: OrderDirection
+  generic: OrderDirection
+  category: OrderDirection
+  status: OrderDirection
+}
+
+input ConsignmentSaleUpdateInput {
+  name: String
+  birth: Int
+  sex: String
+  medical: String
+  size: Int
+  price: Int
+  description: String
+  origin: String
+  generic: String
+  image: Upload
+  category: String
+  status: String
+}
+
+input ConsignmentSaleUpdateArgs {
+  where: ConsignmentSaleWhereUniqueInput!
+  data: ConsignmentSaleUpdateInput!
+}
+
+input ConsignmentSaleCreateInput {
+  name: String
+  birth: Int
+  sex: String
+  medical: String
+  size: Int
+  price: Int
+  description: String
+  origin: String
+  generic: String
+  image: Upload
+  category: String
+  status: String
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -917,12 +1005,6 @@ type Mutation {
   updateOrderItems(data: [OrderItemUpdateArgs!]!): [OrderItem]
   deleteOrderItem(where: OrderItemWhereUniqueInput!): OrderItem
   deleteOrderItems(where: [OrderItemWhereUniqueInput!]!): [OrderItem]
-  createProductStorage(data: Empty): ProductStorage
-  createProductStorages(data: [Empty]!): [ProductStorage]
-  updateProductStorage(where: ProductStorageWhereUniqueInput!, data: Empty): ProductStorage
-  updateProductStorages(data: [ProductStorageUpdateArgs!]!): [ProductStorage]
-  deleteProductStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
-  deleteProductStorages(where: [ProductStorageWhereUniqueInput!]!): [ProductStorage]
   createCart(data: CartCreateInput!): Cart
   createCarts(data: [CartCreateInput!]!): [Cart]
   updateCart(where: CartWhereUniqueInput!, data: CartUpdateInput!): Cart
@@ -935,6 +1017,18 @@ type Mutation {
   updateCartItems(data: [CartItemUpdateArgs!]!): [CartItem]
   deleteCartItem(where: CartItemWhereUniqueInput!): CartItem
   deleteCartItems(where: [CartItemWhereUniqueInput!]!): [CartItem]
+  createConsigmentRaising(data: Empty): ConsigmentRaising
+  createConsigmentRaisings(data: [Empty]!): [ConsigmentRaising]
+  updateConsigmentRaising(where: ConsigmentRaisingWhereUniqueInput!, data: Empty): ConsigmentRaising
+  updateConsigmentRaisings(data: [ConsigmentRaisingUpdateArgs!]!): [ConsigmentRaising]
+  deleteConsigmentRaising(where: ConsigmentRaisingWhereUniqueInput!): ConsigmentRaising
+  deleteConsigmentRaisings(where: [ConsigmentRaisingWhereUniqueInput!]!): [ConsigmentRaising]
+  createConsignmentSale(data: ConsignmentSaleCreateInput!): ConsignmentSale
+  createConsignmentSales(data: [ConsignmentSaleCreateInput!]!): [ConsignmentSale]
+  updateConsignmentSale(where: ConsignmentSaleWhereUniqueInput!, data: ConsignmentSaleUpdateInput!): ConsignmentSale
+  updateConsignmentSales(data: [ConsignmentSaleUpdateArgs!]!): [ConsignmentSale]
+  deleteConsignmentSale(where: ConsignmentSaleWhereUniqueInput!): ConsignmentSale
+  deleteConsignmentSales(where: [ConsignmentSaleWhereUniqueInput!]!): [ConsignmentSale]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -984,15 +1078,18 @@ type Query {
   orderItem(where: OrderItemWhereUniqueInput!): OrderItem
   orderItems(where: OrderItemWhereInput! = {}, orderBy: [OrderItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: OrderItemWhereUniqueInput): [OrderItem!]
   orderItemsCount(where: OrderItemWhereInput! = {}): Int
-  productStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
-  productStorages(where: ProductStorageWhereInput! = {}, orderBy: [ProductStorageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductStorageWhereUniqueInput): [ProductStorage!]
-  productStoragesCount(where: ProductStorageWhereInput! = {}): Int
   cart(where: CartWhereUniqueInput!): Cart
   carts(where: CartWhereInput! = {}, orderBy: [CartOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartWhereUniqueInput): [Cart!]
   cartsCount(where: CartWhereInput! = {}): Int
   cartItem(where: CartItemWhereUniqueInput!): CartItem
   cartItems(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
   cartItemsCount(where: CartItemWhereInput! = {}): Int
+  consigmentRaising(where: ConsigmentRaisingWhereUniqueInput!): ConsigmentRaising
+  consigmentRaisings(where: ConsigmentRaisingWhereInput! = {}, orderBy: [ConsigmentRaisingOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ConsigmentRaisingWhereUniqueInput): [ConsigmentRaising!]
+  consigmentRaisingsCount(where: ConsigmentRaisingWhereInput! = {}): Int
+  consignmentSale(where: ConsignmentSaleWhereUniqueInput!): ConsignmentSale
+  consignmentSales(where: ConsignmentSaleWhereInput! = {}, orderBy: [ConsignmentSaleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ConsignmentSaleWhereUniqueInput): [ConsignmentSale!]
+  consignmentSalesCount(where: ConsignmentSaleWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
