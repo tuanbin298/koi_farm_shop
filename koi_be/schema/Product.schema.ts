@@ -69,6 +69,7 @@ const Product = list({
       label: "Giá",
       validation: {
         isRequired: true,
+        min: 0,
       },
     }),
     description: text({

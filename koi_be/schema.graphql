@@ -127,6 +127,7 @@ type Role {
   canManageArticle: Boolean
   canManageOrder: Boolean
   canManageFeedback: Boolean
+  canManageCart: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -147,6 +148,7 @@ input RoleWhereInput {
   canManageArticle: BooleanFilter
   canManageOrder: BooleanFilter
   canManageFeedback: BooleanFilter
+  canManageCart: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -170,6 +172,7 @@ input RoleOrderByInput {
   canManageArticle: OrderDirection
   canManageOrder: OrderDirection
   canManageFeedback: OrderDirection
+  canManageCart: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -180,6 +183,7 @@ input RoleUpdateInput {
   canManageArticle: Boolean
   canManageOrder: Boolean
   canManageFeedback: Boolean
+  canManageCart: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -203,6 +207,7 @@ input RoleCreateInput {
   canManageArticle: Boolean
   canManageOrder: Boolean
   canManageFeedback: Boolean
+  canManageCart: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -726,6 +731,138 @@ input ProductStorageUpdateArgs {
 
 scalar Empty
 
+type Cart {
+  id: ID!
+  user: User
+  items: CartItem
+  price: Int
+  createAt: DateTime
+}
+
+input CartWhereUniqueInput {
+  id: ID
+}
+
+input CartWhereInput {
+  AND: [CartWhereInput!]
+  OR: [CartWhereInput!]
+  NOT: [CartWhereInput!]
+  id: IDFilter
+  user: UserWhereInput
+  items: CartItemWhereInput
+  price: IntNullableFilter
+  createAt: DateTimeNullableFilter
+}
+
+input CartOrderByInput {
+  id: OrderDirection
+  price: OrderDirection
+  createAt: OrderDirection
+}
+
+input CartUpdateInput {
+  user: UserRelateToOneForUpdateInput
+  items: CartItemRelateToOneForUpdateInput
+  price: Int
+  createAt: DateTime
+}
+
+input CartItemRelateToOneForUpdateInput {
+  create: CartItemCreateInput
+  connect: CartItemWhereUniqueInput
+  disconnect: Boolean
+}
+
+input CartUpdateArgs {
+  where: CartWhereUniqueInput!
+  data: CartUpdateInput!
+}
+
+input CartCreateInput {
+  user: UserRelateToOneForCreateInput
+  items: CartItemRelateToOneForCreateInput
+  price: Int
+  createAt: DateTime
+}
+
+input CartItemRelateToOneForCreateInput {
+  create: CartItemCreateInput
+  connect: CartItemWhereUniqueInput
+}
+
+type CartItem {
+  id: ID!
+  cart: Cart
+  product(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
+  productCount(where: ProductWhereInput! = {}): Int
+  price: Int
+}
+
+input CartItemWhereUniqueInput {
+  id: ID
+}
+
+input CartItemWhereInput {
+  AND: [CartItemWhereInput!]
+  OR: [CartItemWhereInput!]
+  NOT: [CartItemWhereInput!]
+  id: IDFilter
+  cart: CartWhereInput
+  product: ProductManyRelationFilter
+  price: IntNullableFilter
+}
+
+input ProductManyRelationFilter {
+  every: ProductWhereInput
+  some: ProductWhereInput
+  none: ProductWhereInput
+}
+
+input CartItemOrderByInput {
+  id: OrderDirection
+  price: OrderDirection
+}
+
+input CartItemUpdateInput {
+  cart: CartRelateToOneForUpdateInput
+  product: ProductRelateToManyForUpdateInput
+  price: Int
+}
+
+input CartRelateToOneForUpdateInput {
+  create: CartCreateInput
+  connect: CartWhereUniqueInput
+  disconnect: Boolean
+}
+
+input ProductRelateToManyForUpdateInput {
+  disconnect: [ProductWhereUniqueInput!]
+  set: [ProductWhereUniqueInput!]
+  create: [ProductCreateInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
+input CartItemUpdateArgs {
+  where: CartItemWhereUniqueInput!
+  data: CartItemUpdateInput!
+}
+
+input CartItemCreateInput {
+  cart: CartRelateToOneForCreateInput
+  product: ProductRelateToManyForCreateInput
+  price: Int
+}
+
+input CartRelateToOneForCreateInput {
+  create: CartCreateInput
+  connect: CartWhereUniqueInput
+}
+
+input ProductRelateToManyForCreateInput {
+  create: [ProductCreateInput!]
+  connect: [ProductWhereUniqueInput!]
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -786,6 +923,18 @@ type Mutation {
   updateProductStorages(data: [ProductStorageUpdateArgs!]!): [ProductStorage]
   deleteProductStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
   deleteProductStorages(where: [ProductStorageWhereUniqueInput!]!): [ProductStorage]
+  createCart(data: CartCreateInput!): Cart
+  createCarts(data: [CartCreateInput!]!): [Cart]
+  updateCart(where: CartWhereUniqueInput!, data: CartUpdateInput!): Cart
+  updateCarts(data: [CartUpdateArgs!]!): [Cart]
+  deleteCart(where: CartWhereUniqueInput!): Cart
+  deleteCarts(where: [CartWhereUniqueInput!]!): [Cart]
+  createCartItem(data: CartItemCreateInput!): CartItem
+  createCartItems(data: [CartItemCreateInput!]!): [CartItem]
+  updateCartItem(where: CartItemWhereUniqueInput!, data: CartItemUpdateInput!): CartItem
+  updateCartItems(data: [CartItemUpdateArgs!]!): [CartItem]
+  deleteCartItem(where: CartItemWhereUniqueInput!): CartItem
+  deleteCartItems(where: [CartItemWhereUniqueInput!]!): [CartItem]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -838,6 +987,12 @@ type Query {
   productStorage(where: ProductStorageWhereUniqueInput!): ProductStorage
   productStorages(where: ProductStorageWhereInput! = {}, orderBy: [ProductStorageOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductStorageWhereUniqueInput): [ProductStorage!]
   productStoragesCount(where: ProductStorageWhereInput! = {}): Int
+  cart(where: CartWhereUniqueInput!): Cart
+  carts(where: CartWhereInput! = {}, orderBy: [CartOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartWhereUniqueInput): [Cart!]
+  cartsCount(where: CartWhereInput! = {}): Int
+  cartItem(where: CartItemWhereUniqueInput!): CartItem
+  cartItems(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
+  cartItemsCount(where: CartItemWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

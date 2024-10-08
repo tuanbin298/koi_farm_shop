@@ -45,6 +45,7 @@ const { withAuth } = createAuth({
       canManageArticle
       canManageOrder
       canManageFeedback
+      canManageCart
     }
   `,
   secretField: "password",
@@ -66,6 +67,7 @@ const { withAuth } = createAuth({
           canManageArticle: true,
           canManageOrder: true,
           canManageFeedback: true,
+          canManageCart: true,
         },
       },
     },

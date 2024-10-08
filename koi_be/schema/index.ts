@@ -7,6 +7,8 @@ import Feedback from "./Feedback.schema";
 import Order from "./Order.schema";
 import OrderItem from "./OrderItem.schema";
 import ProductStorage from "./ProductStorage.schema";
+import Cart from "./Cart.schema";
+import CartItem from "./CartItem.schema";
 
 export const lists = {
   User,
@@ -18,4 +20,6 @@ export const lists = {
   Order,
   OrderItem,
   ProductStorage,
+  Cart,
+  CartItem,
 };
