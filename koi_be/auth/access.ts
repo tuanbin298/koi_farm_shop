@@ -15,6 +15,7 @@ export type Session = {
       canManageFeedback: boolean;
       canManageCart: boolean;
       canManageConsigment: boolean;
+      canManageRequest: boolean;
     };
   };
 };
@@ -42,6 +43,8 @@ export const permissions = {
     session?.data.role?.canManageCart ?? false,
   canManageConsigment: ({ session }: AccessArgs) =>
     session?.data.role?.canManageConsigment ?? false,
+  canManageRequest: ({ session }: AccessArgs) =>
+    session?.data.role?.canManageRequest ?? false,
 };
 
 export const filters = {

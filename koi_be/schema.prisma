@@ -23,21 +23,25 @@ model User {
   from_Feedback_user Feedback[] @relation("Feedback_user")
   from_Order_user    Order[]    @relation("Order_user")
   from_Cart_user     Cart[]     @relation("Cart_user")
+  from_Request_user  Request[]  @relation("Request_user")
+  from_Request_staff Request[]  @relation("Request_staff")
 
   @@index([roleId])
 }
 
 model Role {
-  id                String  @id @default(cuid())
-  name              String  @default("")
-  canManageUser     Boolean @default(false)
-  canManageProduct  Boolean @default(false)
-  canManageRole     Boolean @default(false)
-  canManageArticle  Boolean @default(false)
-  canManageOrder    Boolean @default(false)
-  canManageFeedback Boolean @default(false)
-  canManageCart     Boolean @default(false)
-  user              User[]  @relation("User_role")
+  id                  String  @id @default(cuid())
+  name                String  @default("")
+  canManageUser       Boolean @default(false)
+  canManageProduct    Boolean @default(false)
+  canManageRole       Boolean @default(false)
+  canManageArticle    Boolean @default(false)
+  canManageOrder      Boolean @default(false)
+  canManageFeedback   Boolean @default(false)
+  canManageCart       Boolean @default(false)
+  canManageConsigment Boolean @default(false)
+  canManageRequest    Boolean @default(false)
+  user                User[]  @relation("User_role")
 }
 
 model Product {
@@ -121,14 +125,12 @@ model Cart {
   id                 String     @id @default(cuid())
   user               User?      @relation("Cart_user", fields: [userId], references: [id])
   userId             String?    @map("user")
-  items              CartItem?  @relation("Cart_items", fields: [itemsId], references: [id])
-  itemsId            String?    @map("items")
+  items              CartItem[] @relation("Cart_items")
   price              Int?
   createAt           DateTime?  @default(now())
   from_CartItem_cart CartItem[] @relation("CartItem_cart")
 
   @@index([userId])
-  @@index([itemsId])
 }
 
 model CartItem {
@@ -147,17 +149,35 @@ model ConsigmentRaising {
 }
 
 model ConsignmentSale {
-  id          String  @id @default(cuid())
-  name        String  @default("")
-  birth       Int
-  sex         String? @default("Sex")
-  medical     String  @default("")
-  size        Int
-  price       Int
-  description String  @default("")
-  origin      String  @default("")
-  generic     String  @default("")
-  image       String?
-  category    String  @default("")
-  status      String? @default("Còn hàng")
+  id                       String    @id @default(cuid())
+  name                     String    @default("")
+  birth                    Int
+  sex                      String?   @default("Sex")
+  medical                  String    @default("")
+  size                     Int
+  price                    Int
+  description              String    @default("")
+  origin                   String    @default("")
+  generic                  String    @default("")
+  image                    String?
+  category                 String    @default("")
+  status                   String?   @default("Còn hàng")
+  from_Request_consignment Request[] @relation("Request_consignment")
+}
+
+model Request {
+  id            String           @id @default(cuid())
+  user          User?            @relation("Request_user", fields: [userId], references: [id])
+  userId        String?          @map("user")
+  staff         User?            @relation("Request_staff", fields: [staffId], references: [id])
+  staffId       String?          @map("staff")
+  createAt      DateTime?        @default(now())
+  description   String           @default("")
+  consignment   ConsignmentSale? @relation("Request_consignment", fields: [consignmentId], references: [id])
+  consignmentId String?          @map("consignment")
+  status        String?          @default("Chờ xác nhận")
+
+  @@index([userId])
+  @@index([staffId])
+  @@index([consignmentId])
 }
