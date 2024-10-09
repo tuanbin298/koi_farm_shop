@@ -24,10 +24,10 @@ const ConsignmentSale = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageConsigment(args);
     },
     hideDelete(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageConsigment(args);
     },
   },
 

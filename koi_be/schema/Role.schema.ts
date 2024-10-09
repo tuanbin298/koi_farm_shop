@@ -57,6 +57,10 @@ const Role = list({
       label: "Quản lý giỏ hàng",
       defaultValue: false,
     }),
+    canManageConsigment: checkbox({
+      label: "Quản lý hàng ký gửi",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",
