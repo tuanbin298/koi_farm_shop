@@ -36,7 +36,7 @@ const CartPage = () => {
       <div className="icon-container">
         <FaArrowLeft className="icon" />
       </div>
-      <span className="back-button-text"><Link to="/productList">Tiếp tục mua hàng/Quay lại trang chủ</Link></span>
+      <span className="back-button-text"><Link to="/koiList">Tiếp tục mua hàng/Quay lại trang chủ</Link></span>
     </section>
 
       <main className="cart-content">
@@ -129,7 +129,7 @@ const CartPage = () => {
     </Box>
     <Box>
       <Flex justify='flex-end'>
-      <Button variant="contained" color="success">Tiến hành thanh toán <FaShoppingCart /></Button>
+      <Button variant="contained" color="success"><Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link></Button>
       </Flex>  
     </Box>
         </section>
