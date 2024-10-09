@@ -11,7 +11,7 @@ import Pagination from '@mui/material/Pagination';
 function KoiListPage() {
   const [page, setPage] = useState(1);
   const { categoryId } = useParams();
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   const defaultFilter = {
     size: "all",
