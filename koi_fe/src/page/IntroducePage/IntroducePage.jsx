@@ -25,43 +25,7 @@ const IntroducePage = () => {
             <section className="koi-varieties">
                 <h2>Các Giống Cá Koi Của Chúng Tôi</h2>
                 <div className="koi-list">
-                    <div className="koi-item">
-                        <img
-                            src="https://example.com/koi1.jpg"
-                            alt="Koi Sanke"
-                            className="koi-image"
-                        />
-                        <h3>Koi Sanke</h3>
-                        <p>
-                            Koi Sanke là một trong những giống Koi phổ biến nhất với màu trắng,
-                            đen và đỏ tuyệt đẹp.
-                        </p>
-                    </div>
-
-                    <div className="koi-item">
-                        <img
-                            src="https://example.com/koi2.jpg"
-                            alt="Koi Showa"
-                            className="koi-image"
-                        />
-                        <h3>Koi Showa</h3>
-                        <p>
-                            Koi Showa có sự kết hợp màu sắc đen, đỏ và trắng, tạo nên vẻ đẹp
-                            mạnh mẽ.
-                        </p>
-                    </div>
-
-                    <div className="koi-item">
-                        <img
-                            src="https://example.com/koi3.jpg"
-                            alt="Koi Kohaku"
-                            className="koi-image"
-                        />
-                        <h3>Koi Kohaku</h3>
-                        <p>
-                            Koi Kohaku nổi bật với màu trắng tinh khiết và các vệt đỏ.
-                        </p>
-                    </div>
+      
                 </div>
             </section>
 

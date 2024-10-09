@@ -24,7 +24,7 @@ export default function NewsArticle() {
     loading: loadingArticles,
     error: errorArticles,
   } = useQuery(GET_ARTICLES, {
-    variables: { take: 5 }, // Lấy 5 bài viết
+    variables: { take: 3 }, // Lấy 3 bài viết
   });
 
   if (loadingArticles) {
