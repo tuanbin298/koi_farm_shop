@@ -7,7 +7,7 @@ import CardNews from "../../component/CardNews/CardNews";
 import Container from "react-bootstrap/Container";
 import { Link, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
-import { Typography } from "@mui/material";
+import { Typography, Pagination } from "@mui/material";
 import { Flex } from "antd";
 
 export default function Homepage() {
@@ -33,10 +33,12 @@ export default function Homepage() {
         <div className="banner-content">
           <h1>CaKoiViet Koi Farm Shop</h1>
           <h2>Chất lượng và niềm tin</h2>
-          <Button variant="contained" color="error">
-            <a href="#" className="btn-banner">
+          <Button variant="contained" color="error" style={{
+            padding:"15px"
+          }}>
+            <Link to="/koiList">
               Các giống cá Koi được bán
-            </a>
+              </Link>
           </Button>
         </div>
       </div>
@@ -81,17 +83,21 @@ export default function Homepage() {
 
       <section className="serviceSection">
         <div className="titleServiceSection">
-          <Typography variant="h3" style={{
+          <p style={{
             borderBottom:"3px solid white",
             width:"35%",
-            marginBottom:"1%"
-          }}>Dịch vụ ký gửi cá Koi</Typography>
-          <Typography variant="body1" style={{
-            fontSize:"25px",
-            lineHeight:"40px"
+            marginBottom:"1%",
+            marginLeft: "20px",
+            fontSize: "2rem",
+            fontWeight:"bold"
+          }}>Dịch vụ ký gửi cá Koi</p>
+          <p variant="body1" style={{
+            lineHeight:"40px",
+            marginLeft: "20px",
+            fontSize: "1.2rem"
           }}>
             Chúng tôi cung cấp dịch vụ ký gửi nuôi cá và ký gửi bán cá, giúp bạn chăm sóc và phân phối cá của mình trong một môi trường chuyên nghiệp và an toàn.
-          </Typography>
+          </p>
           <Flex justify="space-around" style={{
             marginTop:"3%"
           }}>
@@ -102,23 +108,54 @@ export default function Homepage() {
                 marginBottom:"2%",
                 lineHeight:"35px"
               }} className="titleLeftSubService">Ký gửi nuôi cá</Typography>
+
               <Typography variant="body1" style={{
                 textAlign:"center",
                 padding:"15px",
                 lineHeight:"35px"
               }}>Dịch vụ ký gửi nuôi cá đảm bảo các loại cá của bạn được chăm sóc và nuôi dưỡng trong môi trường sạch sẽ, an toàn và được giám sát kỹ lưỡng bởi các chuyên gia.</Typography>
+
+
+              <Typography style={
+                {
+                  display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column"
+                }
+              }>
+                <Button variant="contained" style={{
+                  backgroundColor:"#3192C8",
+                  padding:"15px"
+                }}><Link to="/care">Xem hướng dẫn ký gửi nuôi cá <FaArrowRight/></Link></Button>
+              </Typography>
             </div>
 
             <div className="rightSubService">
               <Typography variant="h4" style={{
                 textAlign:"center",
-                marginBottom:"2%"
+                marginBottom:"2%",
+                lineHeight:"35px"
               }} className="titleRightSubService">Ký gửi bán cá</Typography>
+
+
               <Typography variant="body1" style={{
                 textAlign:"center",
                 padding: "15px",
                 lineHeight:"35px"
-              }}>Chúng tôi cung cấp dịch vụ ký gửi bán cá, giúp bạn tiếp cận với thị trường rộng lớn và bán cá của mình một cách hiệu quả thông qua hệ thống của chúng tôi.</Typography>
+              }}>Chúng tôi cung cấp dịch vụ ký gửi bán cá, 
+              giúp bạn tiếp cận với thị trường rộng lớn và bán cá của mình một cách hiệu quả thông qua hệ thống của chúng tôi.</Typography>
+
+
+              <Typography style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column"
+              }}><Button variant="contained" style={{
+                backgroundColor: "#3192C8",
+                padding:"15px"
+              }}><Link to="/sales">Xem hướng dẫn ký gửi bán cá <FaArrowRight/></Link></Button></Typography>
             </div>
 
           </Flex>
@@ -170,7 +207,11 @@ export default function Homepage() {
             </div>
           </p>
         </div>
+        
         <Toaster position="bottom-right" reverseOrder={false} />
+      </section>
+      <section className="feedback-section">
+        <h3>Đánh giá của khách hàng về dịch vụ chúng tôi</h3>
       </section>
     </>
   );

@@ -15,28 +15,29 @@ const Cart = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageCart(args);
     },
     hideDelete(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageCart(args);
     },
   },
 
   fields: {
     user: relationship({
-        label: "Người mua",
-        ref: "User",
-      }),
-    quantity: integer({
-        label: "Số lượng",
-        validation: {
-          isRequired: true,
-        },
-      }),
+      label: "Người mua",
+      ref: "User",
+    }),
+    items: relationship({
+      label: "Sản phẩm",
+      ref: "CartItem",
+    }),
+    price: integer({
+      label: "Tổng tiền",
+    }),
     createAt: timestamp({
-        label: "Ngày tạo giỏ hàng",
-        defaultValue: { kind: "now" },
-      }),
+      label: "Ngày tạo giỏ hàng",
+      defaultValue: { kind: "now" },
+    }),
   },
 });
 

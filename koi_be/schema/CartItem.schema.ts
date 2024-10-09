@@ -1,6 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { integer, relationship, float } from "@keystone-6/core/fields";
+import { integer, relationship } from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
 
 const CartItem = list({
@@ -15,27 +15,26 @@ const CartItem = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageCart(args);
     },
     hideDelete(args) {
-      return !permissions.canManageProduct(args);
+      return !permissions.canManageCart(args);
     },
   },
 
   fields: {
     cart: relationship({
-        ref: "Cart",
-        label: "Giỏ hàng",
-        many: false,
-      }),
-    Product: relationship({
-      ref: "Product",
-      label: "Sản phẩm",
+      ref: "Cart",
+      label: "Giỏ hàng",
       many: false,
     }),
-    price: float({
+    product: relationship({
+      label: "Sản phẩm",
+      ref: "Product",
+      many: true,
+    }),
+    price: integer({
       label: "Giá",
-      validation: { isRequired: true, min: 0 },
     }),
   },
 });

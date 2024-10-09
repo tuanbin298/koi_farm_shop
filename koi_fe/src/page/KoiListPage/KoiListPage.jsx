@@ -6,23 +6,24 @@ import {
   GET_PRODUCT_BY_CATEGORY,
   GET_ALL_PRODUCTS,
 } from "../api/Queries/product";
+import Pagination from '@mui/material/Pagination';
 
 function KoiListPage() {
-  const { categoryId } = useParams(); // Lấy categoryId từ URL
+  const [page, setPage] = useState(1);
+  const { categoryId } = useParams();
+  const itemsPerPage = 6;
 
-  // Thiết lập filter mặc định
   const defaultFilter = {
     size: "all",
     price: "all",
     generic: "all",
   };
 
-  // State để quản lý filter
   const [filter, setFilter] = useState(defaultFilter);
 
-  // Reset bộ lọc khi categoryId thay đổi
   useEffect(() => {
     setFilter(defaultFilter);
+    setPage(1); // Reset to page 1 when category changes
   }, [categoryId]);
 
   const { data, loading, error } = useQuery(
@@ -77,6 +78,21 @@ function KoiListPage() {
   };
 
   const filteredProducts = filterKoi();
+
+  // Calculate the products to display on the current page
+  const startIndex = (page - 1) * itemsPerPage;
+  const paginatedProducts = filteredProducts.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  // Calculate total pages based on filtered products
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setPage(value); // Ensure state is updated with the selected page
+  };
 
   return (
     <div className="container mt-5">
@@ -137,7 +153,21 @@ function KoiListPage() {
 
       {/* Hiển thị sản phẩm */}
       <div className="productList">
-        <CardListProduct products={filteredProducts} />
+        <CardListProduct products={paginatedProducts} />
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column"
+        }}>
+        {/* MUI Pagination Component */}
+        <Pagination
+          count={totalPages}     // Total pages
+          page={page}            // Current page
+          onChange={handlePageChange}  // Handle page change
+          color="primary"
+        />
+        </div>
       </div>
     </div>
   );

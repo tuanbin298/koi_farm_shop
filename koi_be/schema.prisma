@@ -22,6 +22,7 @@ model User {
   roleId             String?    @map("role")
   from_Feedback_user Feedback[] @relation("Feedback_user")
   from_Order_user    Order[]    @relation("Order_user")
+  from_Cart_user     Cart[]     @relation("Cart_user")
 
   @@index([roleId])
 }
@@ -35,6 +36,7 @@ model Role {
   canManageArticle  Boolean @default(false)
   canManageOrder    Boolean @default(false)
   canManageFeedback Boolean @default(false)
+  canManageCart     Boolean @default(false)
   user              User[]  @relation("User_role")
 }
 
@@ -53,6 +55,7 @@ model Product {
   categoryId             String?     @map("category")
   from_Feedback_product  Feedback[]  @relation("Feedback_product")
   from_OrderItem_product OrderItem[] @relation("OrderItem_product")
+  from_CartItem_product  CartItem[]  @relation("CartItem_product")
 
   @@index([categoryId])
 }
@@ -114,6 +117,47 @@ model OrderItem {
   @@index([productId])
 }
 
-model ProductStorage {
+model Cart {
+  id                 String     @id @default(cuid())
+  user               User?      @relation("Cart_user", fields: [userId], references: [id])
+  userId             String?    @map("user")
+  items              CartItem?  @relation("Cart_items", fields: [itemsId], references: [id])
+  itemsId            String?    @map("items")
+  price              Int?
+  createAt           DateTime?  @default(now())
+  from_CartItem_cart CartItem[] @relation("CartItem_cart")
+
+  @@index([userId])
+  @@index([itemsId])
+}
+
+model CartItem {
+  id              String    @id @default(cuid())
+  cart            Cart?     @relation("CartItem_cart", fields: [cartId], references: [id])
+  cartId          String?   @map("cart")
+  product         Product[] @relation("CartItem_product")
+  price           Int?
+  from_Cart_items Cart[]    @relation("Cart_items")
+
+  @@index([cartId])
+}
+
+model ConsigmentRaising {
   id String @id @default(cuid())
+}
+
+model ConsignmentSale {
+  id          String  @id @default(cuid())
+  name        String  @default("")
+  birth       Int
+  sex         String? @default("Sex")
+  medical     String  @default("")
+  size        Int
+  price       Int
+  description String  @default("")
+  origin      String  @default("")
+  generic     String  @default("")
+  image       String?
+  category    String  @default("")
+  status      String? @default("Còn hàng")
 }

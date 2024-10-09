@@ -173,7 +173,7 @@ const RegisterPage = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Nhập lại mật khẩu (tùy chọn)"
+            placeholder="Nhập lại mật khẩu"
           />
           {/* No validation or errors displayed for confirmPassword */}
         </div>

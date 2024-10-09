@@ -7,6 +7,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import Avatar from '@mui/material/Avatar';
 import {
   Menu,
   MenuItem,
@@ -14,7 +15,7 @@ import {
   Breadcrumbs,
   Typography,
 } from "@mui/material";
-import { gql, useQuery } from "@apollo/client"; // Import Apollo hooks
+import { gql, useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category"; // Import the GraphQL query
 
 export default function Header() {
@@ -71,8 +72,25 @@ export default function Header() {
     navigate("/login");
   };
 
+  // Mapping URL paths to Vietnamese labels
+  const breadcrumbMap = {
+    "": "Trang chủ", // Empty for homepage
+    "koiList": "Danh sách Cá Koi",
+    "sales": "Ký Gửi Bán",
+    "care": "Ký Gửi Nuôi",
+    "cart": "Giỏ hàng",
+    "profile": "Thông tin cá nhân",
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "about": "Giới thiệu",
+    "news": "Tin tức",
+    "ProductDetail": "Chi tiết"
+  };
+
+  // Function to generate breadcrumbs based on current URL
   const generateBreadcrumbs = () => {
     const pathnames = location.pathname.split("/").filter((x) => x);
+
     return (
       <Breadcrumbs aria-label="breadcrumb">
         <Link
@@ -82,11 +100,13 @@ export default function Header() {
             color: "white",
           }}
         >
-          Trang chủ
+          {breadcrumbMap[""]}
         </Link>
         {pathnames.map((value, index) => {
           const to = `/${pathnames.slice(0, index + 1).join("/")}`;
           const isLast = index === pathnames.length - 1;
+          const translatedLabel = breadcrumbMap[value] || value;
+
           return isLast ? (
             <Typography
               key={to}
@@ -96,11 +116,18 @@ export default function Header() {
                 color: "white",
               }}
             >
-              {value.charAt(0).toUpperCase() + value.slice(1)}
+              {translatedLabel}
             </Typography>
           ) : (
-            <Link key={to} to={to}>
-              {value.charAt(0).toUpperCase() + value.slice(1)}
+            <Link
+              key={to}
+              to={to}
+              style={{
+                textDecoration: "none",
+                color: "white",
+              }}
+            >
+              {translatedLabel}
             </Link>
           );
         })}
@@ -128,8 +155,10 @@ export default function Header() {
             {loggedIn ? (
               <>
                 <IconButton onClick={handleMenuClick}>
-                  <AccountCircleIcon className="header_top-icon" />
-                  <span>{userName}</span>
+                  <Avatar alt="profile pic" src="src/assets/kohaku.jpg"/>
+                  <span style={{
+                    color:"white"
+                  }}>{userName}</span>
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
@@ -165,14 +194,14 @@ export default function Header() {
           </div>
 
           <nav className="header_mid-nav">
-            <Link to="" className="linkForm">
+            <Link to="/" className="linkForm">
               Trang chủ
             </Link>
-            <Link to="/introduce" className="linkForm">
+            <Link to="/about" className="linkForm">
               Giới thiệu
             </Link>
 
-            {/* Dropdown Cá Koi*/}
+            {/* Dropdown Cá Koi */}
             <div
               className="dropdown"
               onMouseEnter={() => setDropdownOpen(true)}
@@ -201,7 +230,7 @@ export default function Header() {
               )}
             </div>
 
-            {/*Dropdown Ký gửi*/}
+            {/* Dropdown Ký gửi */}
             <div
               className="dropdown"
               onMouseEnter={() => setKiguiDropdownOpen(true)}
@@ -219,9 +248,8 @@ export default function Header() {
                 </div>
               )}
             </div>
-            <Link to="/news" className="dropdown-item">
-              Tin tức
-            </Link>
+
+            <Link to="/news" className="linkForm">Tin tức</Link>
           </nav>
 
           <div className="header_mid-search">
