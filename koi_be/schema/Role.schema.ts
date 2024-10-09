@@ -53,6 +53,10 @@ const Role = list({
       label: "Quản lý đánh giá",
       defaultValue: false,
     }),
+    canManageCart: checkbox({
+      label: "Quản lý giỏ hàng",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",

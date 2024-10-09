@@ -2,7 +2,7 @@ import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { permissions } from "../auth/access";
 
-const ProductStorage = list({
+const ConsigmentRaising = list({
   access: {
     operation: {
       query: allowAll,
@@ -24,4 +24,4 @@ const ProductStorage = list({
   fields: {},
 });
 
-export default ProductStorage;
+export default ConsigmentRaising;

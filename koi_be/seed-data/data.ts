@@ -55,6 +55,7 @@ export const roles = [
     canManageArticle: true,
     canManageOrder: false,
     canManageFeedback: true,
+    canManageCart: false,
     user: {
       connect: [
         {
