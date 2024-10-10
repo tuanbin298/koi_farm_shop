@@ -13,14 +13,14 @@
 }
 
 .profile-left h2 {
-  font-size: 28px;  /* Larger heading font size */
+  font-size: 15px;  /* Updated heading font size to 15px */
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
 }
 
 .profile-left p {
-  font-size: 20px;  /* Larger text size */
+  font-size: 15px;  /* Updated text size to 15px */
   color: #444;
   margin-bottom: 20px;
 }
@@ -34,7 +34,7 @@
   border: 1px solid #ddd;
   padding: 12px;  /* Extra padding for readability */
   text-align: left;
-  font-size: 18px;  /* Larger font size for table content */
+  font-size: 15px;  /* Updated font size for table content to 15px */
 }
 
 .profile-left th {
@@ -46,7 +46,7 @@
   text-align: center;
   color: #999;
   font-style: italic;
-  font-size: 18px;  /* Ensure the "No orders" message is also legible */
+  font-size: 15px;  /* Updated font size for "No orders" message to 15px */
 }
 
 /* Right-side styling */
@@ -60,21 +60,21 @@
 
 .profile-right h3 {
   margin-bottom: 20px;
-  font-size: 24px;  /* Larger heading for "TÀI KHOẢN CỦA TÔI" */
+  font-size: 15px;  /* Updated heading font size for "TÀI KHOẢN CỦA TÔI" to 15px */
   font-weight: bold;
   color: #333;
   text-align: center;  /* Centers the text */
 }
 
 .profile-right p {
-  font-size: 20px;  /* Increase font size for details */
+  font-size: 15px;  /* Updated font size for details to 15px */
   color: #555;
   margin: 15px 0;  /* Add spacing between each info line */
 }
 
 .profile-right p strong {
   color: #000;  /* Ensure bold text is more prominent */
-  font-size: 20px;  /* Bold text to be the same size */
+  font-size: 15px;  /* Bold text to be the same size */
 }
 
 .address-btn {
@@ -87,7 +87,7 @@
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 20px;  /* Larger button text */
+  font-size: 15px;  /* Updated button text size to 15px */
 }
 
 .address-btn:hover {

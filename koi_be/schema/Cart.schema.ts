@@ -28,8 +28,9 @@ const Cart = list({
       ref: "User",
     }),
     items: relationship({
-      label: "Sản phẩm",
+      label: "Sản phẩm trong giỏ hàng",
       ref: "CartItem",
+      many: true,
     }),
     price: integer({
       label: "Tổng tiền",

@@ -129,6 +129,7 @@ type Role {
   canManageFeedback: Boolean
   canManageCart: Boolean
   canManageConsigment: Boolean
+  canManageRequest: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -151,6 +152,7 @@ input RoleWhereInput {
   canManageFeedback: BooleanFilter
   canManageCart: BooleanFilter
   canManageConsigment: BooleanFilter
+  canManageRequest: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -176,6 +178,7 @@ input RoleOrderByInput {
   canManageFeedback: OrderDirection
   canManageCart: OrderDirection
   canManageConsigment: OrderDirection
+  canManageRequest: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -188,6 +191,7 @@ input RoleUpdateInput {
   canManageFeedback: Boolean
   canManageCart: Boolean
   canManageConsigment: Boolean
+  canManageRequest: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -213,6 +217,7 @@ input RoleCreateInput {
   canManageFeedback: Boolean
   canManageCart: Boolean
   canManageConsigment: Boolean
+  canManageRequest: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -713,7 +718,8 @@ input OrderRelateToOneForCreateInput {
 type Cart {
   id: ID!
   user: User
-  items: CartItem
+  items(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
+  itemsCount(where: CartItemWhereInput! = {}): Int
   price: Int
   createAt: DateTime
 }
@@ -728,9 +734,15 @@ input CartWhereInput {
   NOT: [CartWhereInput!]
   id: IDFilter
   user: UserWhereInput
-  items: CartItemWhereInput
+  items: CartItemManyRelationFilter
   price: IntNullableFilter
   createAt: DateTimeNullableFilter
+}
+
+input CartItemManyRelationFilter {
+  every: CartItemWhereInput
+  some: CartItemWhereInput
+  none: CartItemWhereInput
 }
 
 input CartOrderByInput {
@@ -741,15 +753,16 @@ input CartOrderByInput {
 
 input CartUpdateInput {
   user: UserRelateToOneForUpdateInput
-  items: CartItemRelateToOneForUpdateInput
+  items: CartItemRelateToManyForUpdateInput
   price: Int
   createAt: DateTime
 }
 
-input CartItemRelateToOneForUpdateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
-  disconnect: Boolean
+input CartItemRelateToManyForUpdateInput {
+  disconnect: [CartItemWhereUniqueInput!]
+  set: [CartItemWhereUniqueInput!]
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 input CartUpdateArgs {
@@ -759,14 +772,14 @@ input CartUpdateArgs {
 
 input CartCreateInput {
   user: UserRelateToOneForCreateInput
-  items: CartItemRelateToOneForCreateInput
+  items: CartItemRelateToManyForCreateInput
   price: Int
   createAt: DateTime
 }
 
-input CartItemRelateToOneForCreateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
+input CartItemRelateToManyForCreateInput {
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 type CartItem {
@@ -956,6 +969,74 @@ input ConsignmentSaleCreateInput {
   status: String
 }
 
+type Request {
+  id: ID!
+  user: User
+  staff: User
+  createAt: DateTime
+  description: String
+  consignment: ConsignmentSale
+  status: String
+}
+
+input RequestWhereUniqueInput {
+  id: ID
+}
+
+input RequestWhereInput {
+  AND: [RequestWhereInput!]
+  OR: [RequestWhereInput!]
+  NOT: [RequestWhereInput!]
+  id: IDFilter
+  user: UserWhereInput
+  staff: UserWhereInput
+  createAt: DateTimeNullableFilter
+  description: StringFilter
+  consignment: ConsignmentSaleWhereInput
+  status: StringNullableFilter
+}
+
+input RequestOrderByInput {
+  id: OrderDirection
+  createAt: OrderDirection
+  description: OrderDirection
+  status: OrderDirection
+}
+
+input RequestUpdateInput {
+  user: UserRelateToOneForUpdateInput
+  staff: UserRelateToOneForUpdateInput
+  createAt: DateTime
+  description: String
+  consignment: ConsignmentSaleRelateToOneForUpdateInput
+  status: String
+}
+
+input ConsignmentSaleRelateToOneForUpdateInput {
+  create: ConsignmentSaleCreateInput
+  connect: ConsignmentSaleWhereUniqueInput
+  disconnect: Boolean
+}
+
+input RequestUpdateArgs {
+  where: RequestWhereUniqueInput!
+  data: RequestUpdateInput!
+}
+
+input RequestCreateInput {
+  user: UserRelateToOneForCreateInput
+  staff: UserRelateToOneForCreateInput
+  createAt: DateTime
+  description: String
+  consignment: ConsignmentSaleRelateToOneForCreateInput
+  status: String
+}
+
+input ConsignmentSaleRelateToOneForCreateInput {
+  create: ConsignmentSaleCreateInput
+  connect: ConsignmentSaleWhereUniqueInput
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
@@ -1034,6 +1115,12 @@ type Mutation {
   updateConsignmentSales(data: [ConsignmentSaleUpdateArgs!]!): [ConsignmentSale]
   deleteConsignmentSale(where: ConsignmentSaleWhereUniqueInput!): ConsignmentSale
   deleteConsignmentSales(where: [ConsignmentSaleWhereUniqueInput!]!): [ConsignmentSale]
+  createRequest(data: RequestCreateInput!): Request
+  createRequests(data: [RequestCreateInput!]!): [Request]
+  updateRequest(where: RequestWhereUniqueInput!, data: RequestUpdateInput!): Request
+  updateRequests(data: [RequestUpdateArgs!]!): [Request]
+  deleteRequest(where: RequestWhereUniqueInput!): Request
+  deleteRequests(where: [RequestWhereUniqueInput!]!): [Request]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -1095,6 +1182,9 @@ type Query {
   consignmentSale(where: ConsignmentSaleWhereUniqueInput!): ConsignmentSale
   consignmentSales(where: ConsignmentSaleWhereInput! = {}, orderBy: [ConsignmentSaleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ConsignmentSaleWhereUniqueInput): [ConsignmentSale!]
   consignmentSalesCount(where: ConsignmentSaleWhereInput! = {}): Int
+  request(where: RequestWhereUniqueInput!): Request
+  requests(where: RequestWhereInput! = {}, orderBy: [RequestOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: RequestWhereUniqueInput): [Request!]
+  requestsCount(where: RequestWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
