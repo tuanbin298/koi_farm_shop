@@ -1,13 +1,12 @@
 import React from 'react';
 import { useQuery } from "@apollo/client";
-import { GET_PRODUCT } from "../../page/api/Queries/product"; 
-import CardProduct from "../../component/Card/CardProduct";
+import { GET_PRODUCT } from "../../page/api/Queries/product";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row"; 
-import Col from "react-bootstrap/Col"; 
-import { Link } from "react-router-dom"; 
-import { Button } from "react-bootstrap"; 
-import { FaArrowRight } from "react-icons/fa"; 
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { FaArrowRight } from "react-icons/fa";
 
 const IntroducePage = () => {
     const {
@@ -15,11 +14,15 @@ const IntroducePage = () => {
         loading: productLoading,
         error: productError,
     } = useQuery(GET_PRODUCT, {
-        variables: { take: 1 },
+        variables: { take: 3 },
     });
+    console.log(productData);
+    if (productLoading) return <p className="text-center">Loading ...</p>;
+    if (productError) return <p className="text-center text-danger">Error loading Introduce </p>;
 
-    if (productLoading) return <p className="text-center">Đang tải sản phẩm...</p>;
-    if (productError) return <p className="text-center text-danger">Có lỗi xảy ra: {productError.message}</p>;
+    const formatMoney = (amount) => {
+        return amount.toLocaleString() + " đ"; // Hàm định dạng giá
+    };
 
     return (
         <div className="introduce-page">
@@ -40,10 +43,10 @@ const IntroducePage = () => {
                 </section>
 
                 <Row className="mt-4 justify-content-center">
-                    <Col md={8}>
+                    <Col md={10}>
                         <section className="species-section d-flex justify-content-between align-items-center mb-3">
-                            <h3 >Các giống Cá Koi của CaKoiViet</h3>
-                            <Link to="/koilist" className="ml-auto"> {/* Thêm class "ml-auto" */}
+                            <h3 >Các giống Cá của CaKoiViet</h3>
+                            <Link to="/koilist" className="ml-auto">
                                 <Button variant="outline-primary" className="viewMoreButton">
                                     Xem thêm <FaArrowRight />
                                 </Button>
@@ -53,7 +56,42 @@ const IntroducePage = () => {
                         <div className="productList d-flex justify-content-center flex-wrap">
                             {productData.products.length > 0 ? (
                                 productData.products.map((product) => (
-                                    <CardProduct key={product.id} product={product} className="card-product" />
+                                    <div key={product.id} className="col-md-4 mb-4 d-flex">
+                                        <div className="card h-100 shadow-sm text-center" style={{ maxWidth: "300px", margin: "0 auto" }}>
+                                            <Link to={`/ProductDetail/${product.id}`}>
+                                                <img
+                                                    src={product.image?.publicUrl}
+                                                    alt={product.name}
+                                                    className="card-img-top img-fluid rounded mx-auto"
+                                                    style={{
+                                                        height: "300px",
+                                                        width: "200px",
+                                                        objectFit: "cover",
+                                                    }}
+                                                />
+                                            </Link>
+
+                                            <div className="card-body">
+                                                <h5 className="card-title">{product.name}</h5>
+                                                <p className="mb-1 text-danger">
+                                                    <strong>Giá: </strong>
+                                                    {formatMoney(product.price)}
+                                                </p>
+                                                <p className="mb-1">
+                                                    <strong>Nguồn gốc: </strong>
+                                                    {product.origin}
+                                                </p>
+                                                <p className="mb-1">
+                                                    <strong>Kích thước: </strong>
+                                                    {product.size} 
+                                                </p>
+                                                <p className="mb-1">
+                                                    <strong>Loại: </strong>
+                                                    {product.generic}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))
                             ) : (
                                 <p className="text-center">Không có sản phẩm nào để hiển thị.</p>
