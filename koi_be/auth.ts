@@ -47,6 +47,7 @@ const { withAuth } = createAuth({
       canManageFeedback
       canManageCart
       canManageConsigment
+      canManageRequest
     }
   `,
   secretField: "password",
@@ -70,6 +71,7 @@ const { withAuth } = createAuth({
           canManageFeedback: true,
           canManageCart: true,
           canManageConsigment: true,
+          canManageRequest: true,
         },
       },
     },
