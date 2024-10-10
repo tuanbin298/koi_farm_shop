@@ -128,6 +128,7 @@ type Role {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
+  canManageConsigment: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -149,6 +150,7 @@ input RoleWhereInput {
   canManageOrder: BooleanFilter
   canManageFeedback: BooleanFilter
   canManageCart: BooleanFilter
+  canManageConsigment: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -173,6 +175,7 @@ input RoleOrderByInput {
   canManageOrder: OrderDirection
   canManageFeedback: OrderDirection
   canManageCart: OrderDirection
+  canManageConsigment: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -184,6 +187,7 @@ input RoleUpdateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
+  canManageConsigment: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -208,6 +212,7 @@ input RoleCreateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
+  canManageConsigment: Boolean
   user: UserRelateToManyForCreateInput
 }
 

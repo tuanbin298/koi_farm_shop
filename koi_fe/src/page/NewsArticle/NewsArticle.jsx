@@ -1,74 +1,102 @@
-import React from "react";
-import { GET_ARTICLES } from "../../page/api/Queries/articles";
-import { useQuery } from "@apollo/client";
-import Paper from "@mui/material/Paper";
-import { styled } from "@mui/material/styles";
-import "./NewsArticle.css";
+import React, { useState } from 'react';
+import { GET_ARTICLES } from '../../page/api/Queries/articles';
+import { useQuery } from '@apollo/client';
+import Pagination from '@mui/material/Pagination';
+import Spinner from 'react-bootstrap/Spinner';
 
-// Styled component cho phần bài viết
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(3),
-  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  transition: "transform 0.3s, box-shadow 0.3s",
-  "&:hover": {
-    transform: "translateY(-5px)",
-    boxShadow: "0 6px 12px rgba(0, 0, 0, 0.2)",
-  },
-}));
-
+// Component tin tức
 export default function NewsArticle() {
-  const {
-    data: articlesData,
-    loading: loadingArticles,
-    error: errorArticles,
-  } = useQuery(GET_ARTICLES, {
-  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 6;
 
-  if (loadingArticles) {
-    return <p>Loading...</p>;
+  const { data: articlesData, loading, error } = useQuery(GET_ARTICLES);
+
+  if (loading) {
+    return <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner>;
   }
-  if (errorArticles) {
+
+  if (error) {
     return <p>Error fetching articles</p>;
   }
 
-  return (
-    <div className="news-article-list">
-      {articlesData &&
-        articlesData.articles.map((article) => {
-          const link = article.link?.document?.[0]?.children?.find(
-            (child) => child.href
-          )?.href;
+  // Tính toán cho phân trang
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = articlesData.articles.slice(indexOfFirstArticle, indexOfLastArticle);
 
-          return (
-            <Item key={article.id} className="news-article-item">
-              <a
-                href={link ? link : "#"}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                <div className="article-horizontal">
-                  {article.image?.publicUrl && (
-                    <img
-                      src={article.image.publicUrl}
-                      alt={article.name}
-                      className="newsArticle-image"
-                    />
-                  )}
-                  <div className="article__info">
-                    <h2 className="newsArticle-title">{article.name}</h2>
-                    <p className="newsArticle-content">
-                      {article.content.slice(0, 150)}...
-                    </p>
-                    <button className="readMoreButton">Đọc thêm</button>
+  const totalArticles = articlesData.articles.length;
+  const totalPages = Math.ceil(totalArticles / articlesPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Handle page change
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  return (
+    <div className="container mt-4">
+      <div className="row">
+        {/* Cột bài viết tin tức */}
+        <div className="col-md-12">
+          <div className="row">
+            {currentArticles.map((article) => {
+              const link = article.link?.document?.[0]?.children?.find((child) => child.href)?.href;
+
+              return (
+                <div key={article.id} className="col-md-4 mb-4">
+                  <div className="card shadow-sm">
+                    <div className="row no-gutters">
+                      <div className="col-md-12">
+                        {article.image?.publicUrl && (
+                          <img
+                            src={article.image.publicUrl}
+                            alt={article.name}
+                            className="card-img-top"
+                          />
+                        )}
+                      </div>
+                      <div className="col-md-12">
+                        <div className="card-body">
+                          <h5 className="card-title">{article.name}</h5>
+                          <p className="card-text">{article.content.slice(0, 150)}...</p>
+                          {/* Căn giữa nút "Đọc thêm" */}
+                          <div className="d-flex justify-content-center">
+                            <a
+                              href={link ? link : '#'}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-danger text-white" // Đặt màu chữ thành trắng
+                            >
+                              Đọc thêm
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </a>
-            </Item>
-          );
-        })}
+              );
+            })}
+          </div>
+
+          {/* Phân trang */}
+          <div style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            marginTop: '20px',
+          }}>
+            <Pagination
+              count={totalPages}       // Tổng số trang
+              page={currentPage}       // Trang hiện tại
+              onChange={handlePageChange} // Hàm xử lý khi thay đổi trang
+              color="primary"          // Màu sắc cho phân trang
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
