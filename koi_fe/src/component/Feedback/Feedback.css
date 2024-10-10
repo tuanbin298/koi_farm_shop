@@ -1,0 +1,40 @@
+.feedback-section {
+    margin: 40px 0;
+    text-align: center;
+  }
+  
+  .feedback-card {
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .star-rating {
+    margin: 10px 0;
+  }
+  
+  .star {
+    color: #ccc; /* Default star color */
+    font-size: 20px;
+  }
+  
+  .star.filled {
+    color: #f39c12; /* Filled star color (yellow) */
+  }
+  
+  .feedback-content h5 {
+    margin: 10px 0 5px; /* Adjust margin for user name */
+  }
+  
+  .feedback-content p {
+    margin: 5px 0; /* Adjust margin for comment */
+  }
+  
+  .feedback-content small {
+    display: block;
+    color: #777; /* Color for the date */
+    margin-top: 10px; /* Space between comment and date */
+  }
+  

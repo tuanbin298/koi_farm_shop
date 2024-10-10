@@ -9,6 +9,7 @@ import { Link, useLocation } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { Typography, Pagination } from "@mui/material";
 import { Flex } from "antd";
+import Feedback from "../../component/Feedback/Feedback"
 
 export default function Homepage() {
   const location = useLocation();
@@ -210,9 +211,7 @@ export default function Homepage() {
         
         <Toaster position="bottom-right" reverseOrder={false} />
       </section>
-      <section className="feedback-section">
-        <h3>Đánh giá của khách hàng về dịch vụ chúng tôi</h3>
-      </section>
+      <Feedback />
     </>
   );
 }
