@@ -17,6 +17,7 @@ import { FaPhone, FaBookmark } from "react-icons/fa";
 import "./ProductDetail.css";
 import { Link } from "react-router-dom";
 import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
+import { formatMoney } from "../../utils/formatMoney";
 
 export default function ProductDetail() {
   const { id } = useParams(); // Get product ID from the route
@@ -96,7 +97,7 @@ export default function ProductDetail() {
                 marginLeft: "7%",
               }}
             >
-              GIÁ BÁN: {product.price}
+              GIÁ BÁN: {formatMoney(product.price)}
             </Typography>
 
             {/* Product Description */}

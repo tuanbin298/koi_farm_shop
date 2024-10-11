@@ -12,7 +12,7 @@ import CartPage from "./page/CartPage/CartPage";
 import ProfileUser from "./page/ProfileUser/ProfileUser";
 import NewsArticle from "./page/NewsArticle/NewsArticle";
 import IntroducePage from "./page/IntroducePage/IntroducePage";
-
+import ProductDetail from "./page/ProductDetail/ProductDetail";
 
 function App() {
   return (
@@ -32,6 +32,7 @@ function App() {
           <Route path="/news" element={<NewsArticle />} />
           <Route path="/profile" element={<ProfileUser />} />
           <Route path="/introduce" element={<IntroducePage />} />
+          <Route path="/ProductDetail/:id" element={<ProductDetail />} />
         </Routes>
       </BrowserRouter>
       <Footer />
