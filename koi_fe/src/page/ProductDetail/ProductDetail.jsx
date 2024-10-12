@@ -17,6 +17,7 @@ import { FaPhone, FaBookmark } from "react-icons/fa";
 import "./ProductDetail.css";
 import { Link } from "react-router-dom";
 import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
+import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART, CREATE_CART_ITEM } from "../api/Mutations/cart";
 import { useMutation } from "@apollo/client";
 
@@ -154,7 +155,7 @@ export default function ProductDetail() {
                 marginLeft: "7%",
               }}
             >
-              GIÁ BÁN: {product.price}
+              GIÁ BÁN: {formatMoney(product.price)}
             </Typography>
 
             <Typography
