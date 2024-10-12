@@ -18,11 +18,17 @@ import "./ProductDetail.css";
 import { Link } from "react-router-dom";
 import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
 import { formatMoney } from "../../utils/formatMoney";
+import { CREATE_CART, CREATE_CART_ITEM } from "../api/Mutations/cart";
+import { useMutation } from "@apollo/client";
 
 export default function ProductDetail() {
+  const [createCart] = useMutation(CREATE_CART);
+  const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const { id } = useParams(); // Get product ID from the route
   const { loading, error, product } = useProduct(id); // Fetch single product
   const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
+  const userId = localStorage.getItem("id");
+  const [cartId, setCartId] = useState(localStorage.getItem("cartId")); // Store cart ID in state and localStorage
 
   // State to track the starting index of the currently displayed products
   const [startIndex, setStartIndex] = useState(0);
@@ -54,11 +60,64 @@ export default function ProductDetail() {
     }
   };
 
+  const handleAddToCart = async () => {
+    console.log(product.id);
+    console.log(userId);
+    console.log(cartId)
+    if (!userId) {
+      alert("User ID not found. Please log in.");
+      return;
+    }
+
+    try {
+      if (!cartId) {
+        // No cart found, create a new cart first
+        const { data: newCartData } = await createCart({
+          variables: {
+            data: {
+              user: {
+                connect: {
+                  id: userId, // Connect user by ID
+                },
+              },
+            },
+          },
+        });
+        const newCartId = newCartData?.createCart?.id;
+        setCartId(newCartId); // Update cart ID state
+        localStorage.setItem("cartId", newCartId); // Store cart ID in localStorage
+      }
+
+      // Add item to the cart
+      await createCartItem({
+        variables: {
+          data: {
+            price: product.price,
+            cart: {
+              connect: { id: cartId || localStorage.getItem("cartId") }, // Connect the cart by its ID
+            },
+            product: {
+              connect: { id: product.id }, // Connect product by ID
+            },
+          },
+        },
+      });
+      alert("Item added to cart successfully!");
+    } catch (error) {
+      if (error.message.includes("Access denied")) {
+        alert(error);
+        console.log(error);
+      } else {
+        console.error("Error adding item to cart:", error);
+        alert("Failed to add item to cart. Please try again.");
+      }
+    }
+  };
+
   return (
     <>
       <Box style={{ marginTop: "1%", padding: "1%" }}>
         <Flex gap="large" justify="space-around">
-          {/* Conditionally render the image */}
           <div>
             {product.image?.publicUrl ? (
               <Image
@@ -69,7 +128,6 @@ export default function ProductDetail() {
             ) : null}
           </div>
 
-          {/* Product Info */}
           <div style={{ width: "100%" }}>
             <Typography
               variant="h3"
@@ -94,13 +152,11 @@ export default function ProductDetail() {
                 padding: "1%",
                 width: "40%",
                 marginBottom: "4%",
-                marginLeft: "7%",
               }}
             >
               GIÁ BÁN: {formatMoney(product.price)}
             </Typography>
 
-            {/* Product Description */}
             <Typography
               variant="body2"
               gutterBottom
@@ -109,7 +165,6 @@ export default function ProductDetail() {
               {product.description}
             </Typography>
 
-            {/* Product Information */}
             <Stack spacing={0.5} className="productInfo">
               <div>
                 Giới tính: {product.sex === "male" ? "Koi Đực" : "Koi Cái"}
@@ -120,12 +175,12 @@ export default function ProductDetail() {
               <div>Nguồn gốc: {product.origin}</div>
             </Stack>
 
-            {/* Buttons */}
             <Stack spacing={2} direction="row" className="productBtnGroup">
               <Button
                 variant="outlined"
                 color="primary"
                 style={{ color: "#982B1C" }}
+                onClick={handleAddToCart}
               >
                 Thêm vào giỏ hàng
               </Button>
@@ -134,46 +189,9 @@ export default function ProductDetail() {
               </Button>
             </Stack>
           </div>
-
-          {/* Contact Info */}
-          <div style={{ width: "80%" }}>
-            <Typography
-              variant="body2"
-              style={{
-                border: "1px solid",
-                backgroundColor: "#982B1C",
-                color: "white",
-                padding: "20px",
-                textAlign: "center",
-                fontFamily: "Brygada 1918, serif",
-                fontSize: "20px",
-                fontWeight: "bold",
-              }}
-            >
-              THÔNG TIN LIÊN HỆ
-            </Typography>
-            <Typography
-              variant="body2"
-              style={{ border: "1px solid", padding: "20px" }}
-            >
-              <Stack spacing={2}>
-                <div className="infoRow">
-                  <IoLocationSharp /> C5 C7 đường số 12, P.Hưng Phú 1, Q. Cái
-                  Răng, TP Cần Thơ.
-                </div>
-                <div className="infoRow">
-                  <FaPhone /> 0864284671
-                </div>
-                <div className="infoRow">
-                  <FaBookmark /> Hotrocakoiviet@gmail.com
-                </div>
-              </Stack>
-            </Typography>
-          </div>
         </Flex>
       </Box>
 
-      {/* "Các sản phẩm khác" section */}
       <Box
         display="flex"
         flexDirection="column"
@@ -216,7 +234,6 @@ export default function ProductDetail() {
               borderRadius: "50%",
             }}
           >
-            {/* Previous Button */}
             <IconButton
               color="primary"
               onClick={handlePrev}
@@ -226,7 +243,6 @@ export default function ProductDetail() {
             </IconButton>
           </div>
 
-          {/* Render only the current 4 displayed products */}
           {displayedProducts?.map((product) => (
             <Link to={`/ProductDetail/${product.id}`} key={product.id}>
               <Card sx={{ maxWidth: 250 }}>
@@ -234,10 +250,14 @@ export default function ProductDetail() {
                   <CardMedia
                     component="img"
                     alt={product.name}
-                    image={product.image.publicUrl} // Use publicUrl for product image
+                    image={product.image.publicUrl}
+                    style={{
+                      aspectRatio:"1/4",
+                      height:"250px",
+                      width:"100%"
+                    }}
                   />
-                ) : null}{" "}
-                {/* Render nothing if image is null */}
+                ) : null}
                 <CardContent>
                   <Typography
                     gutterBottom
@@ -252,6 +272,14 @@ export default function ProductDetail() {
                   >
                     {product.name}
                   </Typography>
+                  <Typography textAlign="center"
+                    style={{
+                      fontFamily:
+                        "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                      fontWeight: "450",
+                    }}>
+                  {formatMoney(product.price)}
+                  </Typography>
                 </CardContent>
               </Card>
             </Link>
@@ -265,7 +293,6 @@ export default function ProductDetail() {
               borderRadius: "50%",
             }}
           >
-            {/* Next Button */}
             <IconButton
               color="primary"
               onClick={handleNext}

@@ -66,7 +66,7 @@ export default function Header() {
     localStorage.removeItem("id");
     localStorage.removeItem("email");
     localStorage.removeItem("phone");
-
+    localStorage.removeItem("cartId");
     setLoggedIn(false);
     setAnchorEl(null);
     navigate("/login");
