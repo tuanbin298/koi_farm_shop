@@ -23,18 +23,20 @@ const CartItem = list({
   },
 
   fields: {
-    cart: relationship({
-      ref: "Cart",
-      label: "Giỏ hàng",
-      many: false,
+    user: relationship({
+      ref: "User.cart",
+    }),
+    quantity: integer({
+      label: "Số lượng",
+      defaultValue: 1,
+      validation: {
+        isRequired: true,
+      },
     }),
     product: relationship({
       label: "Sản phẩm",
       ref: "Product",
       many: true,
-    }),
-    price: integer({
-      label: "Giá",
     }),
   },
 });
