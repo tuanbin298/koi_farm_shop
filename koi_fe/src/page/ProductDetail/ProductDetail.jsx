@@ -63,6 +63,7 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     console.log(product.id);
     console.log(userId);
+    console.log(cartId)
     if (!userId) {
       alert("User ID not found. Please log in.");
       return;
@@ -79,7 +80,6 @@ export default function ProductDetail() {
                   id: userId, // Connect user by ID
                 },
               },
-              createAt: new Date().toISOString(),
             },
           },
         });
@@ -152,7 +152,6 @@ export default function ProductDetail() {
                 padding: "1%",
                 width: "40%",
                 marginBottom: "4%",
-                marginLeft: "7%",
               }}
             >
               GIÁ BÁN: {formatMoney(product.price)}
@@ -252,6 +251,11 @@ export default function ProductDetail() {
                     component="img"
                     alt={product.name}
                     image={product.image.publicUrl}
+                    style={{
+                      aspectRatio:"1/4",
+                      height:"250px",
+                      width:"100%"
+                    }}
                   />
                 ) : null}
                 <CardContent>
@@ -267,6 +271,14 @@ export default function ProductDetail() {
                     }}
                   >
                     {product.name}
+                  </Typography>
+                  <Typography textAlign="center"
+                    style={{
+                      fontFamily:
+                        "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                      fontWeight: "450",
+                    }}>
+                  {formatMoney(product.price)}
                   </Typography>
                 </CardContent>
               </Card>
