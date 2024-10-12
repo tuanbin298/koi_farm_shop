@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../api/Mutations/cart";
+import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 
 export default function ProductDetail() {
@@ -70,24 +71,6 @@ export default function ProductDetail() {
     }
 
     try {
-      // if (!cartId) {
-      //   // No cart found, create a new cart first
-      //   const { data: newCartData } = await createCart({
-      //     variables: {
-      //       data: {
-      //         user: {
-      //           connect: {
-      //             id: userId, // Connect user by ID
-      //           },
-      //         },
-      //       },
-      //     },
-      //   });
-      //   const newCartId = newCartData?.createCart?.id;
-      //   setCartId(newCartId); // Update cart ID state
-      //   localStorage.setItem("cartId", newCartId); // Store cart ID in localStorage
-      // }
-
       // Add item to the cart
       await createCartItem({
         variables: {
@@ -105,7 +88,18 @@ export default function ProductDetail() {
           },
         },
       });
-      alert("Item added to cart successfully!");
+      toast.success("Đã thêm vào giỏ hàng!", {
+        icon: "🛒",
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#982B1C",
+        },
+        iconTheme: {
+          primary: "#982B1C",
+          secondary: "#FFFAEE",
+        },
+      });
     } catch (error) {
       if (error.message.includes("Access denied")) {
         alert(error);
@@ -308,6 +302,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </Box>
+      <Toaster position="top-center" reverseOrder={false} />
     </>
   );
 }
