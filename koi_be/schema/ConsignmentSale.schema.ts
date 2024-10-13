@@ -44,16 +44,17 @@ const ConsignmentSale = list({
         isRequired: true,
       },
     }),
-    sex: select({
+    sex: text({
       label: "Giới tính",
-      defaultValue: "Sex",
-      options: [
-        { label: "Đực", value: "Đực" },
-        { label: "Cái", value: "Cái" },
-      ],
+      validation: {
+        isRequired: true,
+      },
     }),
     medical: text({
       label: "Lịch sử bệnh",
+      validation: {
+        isRequired: true,
+      },
     }),
     size: integer({
       label: "Kích thước",

@@ -910,10 +910,10 @@ type Request {
   id: ID!
   user: User
   staff: User
-  createAt: DateTime
   description: String
   consignment: ConsignmentSale
   status: String
+  createAt: DateTime
 }
 
 input RequestWhereUniqueInput {
@@ -927,26 +927,26 @@ input RequestWhereInput {
   id: IDFilter
   user: UserWhereInput
   staff: UserWhereInput
-  createAt: DateTimeNullableFilter
   description: StringFilter
   consignment: ConsignmentSaleWhereInput
   status: StringNullableFilter
+  createAt: DateTimeNullableFilter
 }
 
 input RequestOrderByInput {
   id: OrderDirection
-  createAt: OrderDirection
   description: OrderDirection
   status: OrderDirection
+  createAt: OrderDirection
 }
 
 input RequestUpdateInput {
   user: UserRelateToOneForUpdateInput
   staff: UserRelateToOneForUpdateInput
-  createAt: DateTime
   description: String
   consignment: ConsignmentSaleRelateToOneForUpdateInput
   status: String
+  createAt: DateTime
 }
 
 input ConsignmentSaleRelateToOneForUpdateInput {
@@ -963,10 +963,10 @@ input RequestUpdateArgs {
 input RequestCreateInput {
   user: UserRelateToOneForCreateInput
   staff: UserRelateToOneForCreateInput
-  createAt: DateTime
   description: String
   consignment: ConsignmentSaleRelateToOneForCreateInput
   status: String
+  createAt: DateTime
 }
 
 input ConsignmentSaleRelateToOneForCreateInput {
