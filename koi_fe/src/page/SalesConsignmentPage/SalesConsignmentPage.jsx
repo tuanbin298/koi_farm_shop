@@ -3,10 +3,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./SalesConsignmentPage.css";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category";
-import {
-  CREATE_REQUEST,
-  CREATE_CONSIGNMENT_SALE,
-} from "../../page/api/Mutations/request";
+// import {
+//   CREATE_REQUEST,
+//   CREATE_CONSIGNMENT_SALE,
+// } from "../../page/api/Mutations/request";
 import { useNavigate } from "react-router-dom";
 import SingleForm from "../../component/SalesConsignmentForm/SingleForm";
 

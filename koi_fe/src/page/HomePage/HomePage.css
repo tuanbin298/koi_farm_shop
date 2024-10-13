@@ -90,28 +90,23 @@
 }
 
 /* Header */
-.species-header {
+.headerShowMoreButton {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-}
-
-.text-content {
-  display: flex;
-  flex-direction: column;
-}
-
-.text-content h3,
-.text-content p {
-  margin: 0;
-  text-align: left;
+  justify-content: center;
+  padding: 20px 0;
 }
 
 .viewMoreButton {
-  font-size: 14px;
-  padding: 8px 16px;
-  margin-right: 10px;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.news {
+  background-color: #212121;
+  margin-bottom: 40px;
+  padding: 40px;
 }
 
 /*Service section*/
@@ -243,4 +238,11 @@ a {
 
 .productList {
   margin: 10px;
+}
+.web-container {
+  width: 80%; /* Chiếm 80% chiều rộng màn hình */
+  margin: 30px auto; /* Căn giữa nội dung */
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #fff;
 }

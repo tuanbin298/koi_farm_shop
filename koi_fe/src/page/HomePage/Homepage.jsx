@@ -63,28 +63,27 @@ export default function Homepage() {
           </div>
         </section>
         <section className="species-section">
-          <div className="species-header">
-            <div className="text-content">
-              <h3>Các giống Cá Koi</h3>
-              <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
-            </div>
-            <Button
-              variant="outlined"
-              color="error"
-              className="viewMoreButton"
-              component={Link}
-              to="/koiList"
-            >
-              Xem thêm <FaArrowRight />
-            </Button>
-          </div>
-
-          <div>
+          <h3>Các giống Cá Koi</h3>
+          <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
+          <div className="productList">
             <Container>
               <CardProduct />
             </Container>
           </div>
         </section>
+
+        {/* Header Button */}
+        <header className="headerShowMoreButton">
+          <Button
+            variant="outlined"
+            color="error"
+            className="viewMoreButton"
+            component={Link} // Use Link as the component for Button
+            to="/koiList" // Specify the path for navigation
+          >
+            Xem thêm <FaArrowRight />
+          </Button>
+        </header>
 
         <section className="serviceSection">
           <div className="titleServiceSection">
@@ -263,201 +262,6 @@ export default function Homepage() {
             </p>
           </div>
 
-          {/* Header Button */}
-          <header className="headerShowMoreButton">
-            <Button
-              variant="outlined"
-              color="error"
-              className="viewMoreButton"
-              component={Link} // Use Link as the component for Button
-              to="/koiList" // Specify the path for navigation
-            >
-              Xem thêm <FaArrowRight />
-            </Button>
-          </header>
-
-          <section className="serviceSection">
-            <div className="titleServiceSection">
-              <p
-                style={{
-                  borderBottom: "3px solid white",
-                  width: "35%",
-                  marginBottom: "1%",
-                  marginLeft: "20px",
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                }}
-              >
-                Dịch vụ ký gửi cá Koi
-              </p>
-              <p
-                variant="body1"
-                style={{
-                  lineHeight: "40px",
-                  marginLeft: "20px",
-                  fontSize: "1.2rem",
-                }}
-              >
-                Chúng tôi cung cấp dịch vụ ký gửi nuôi cá và ký gửi bán cá, giúp
-                bạn chăm sóc và phân phối cá của mình trong một môi trường
-                chuyên nghiệp và an toàn.
-              </p>
-              <Flex
-                justify="space-around"
-                style={{
-                  marginTop: "3%",
-                }}
-              >
-                <div className="leftSubService">
-                  <Typography
-                    variant="h4"
-                    style={{
-                      textAlign: "center",
-                      marginBottom: "2%",
-                      lineHeight: "35px",
-                    }}
-                    className="titleLeftSubService"
-                  >
-                    Ký gửi nuôi cá
-                  </Typography>
-
-                  <Typography
-                    variant="body1"
-                    style={{
-                      textAlign: "center",
-                      padding: "15px",
-                      lineHeight: "35px",
-                    }}
-                  >
-                    Dịch vụ ký gửi nuôi cá đảm bảo các loại cá của bạn được chăm
-                    sóc và nuôi dưỡng trong môi trường sạch sẽ, an toàn và được
-                    giám sát kỹ lưỡng bởi các chuyên gia.
-                  </Typography>
-
-                  <Typography
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      style={{
-                        backgroundColor: "#3192C8",
-                        padding: "15px",
-                      }}
-                    >
-                      <Link to="/care">
-                        Xem hướng dẫn ký gửi nuôi cá <FaArrowRight />
-                      </Link>
-                    </Button>
-                  </Typography>
-                </div>
-
-                <div className="rightSubService">
-                  <Typography
-                    variant="h4"
-                    style={{
-                      textAlign: "center",
-                      marginBottom: "2%",
-                      lineHeight: "35px",
-                    }}
-                    className="titleRightSubService"
-                  >
-                    Ký gửi bán cá
-                  </Typography>
-
-                  <Typography
-                    variant="body1"
-                    style={{
-                      textAlign: "center",
-                      padding: "15px",
-                      lineHeight: "35px",
-                    }}
-                  >
-                    Chúng tôi cung cấp dịch vụ ký gửi bán cá, giúp bạn tiếp cận
-                    với thị trường rộng lớn và bán cá của mình một cách hiệu quả
-                    thông qua hệ thống của chúng tôi.
-                  </Typography>
-
-                  <Typography
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      flexDirection: "column",
-                    }}
-                  >
-                    <Button
-                      variant="contained"
-                      style={{
-                        backgroundColor: "#3192C8",
-                        padding: "15px",
-                      }}
-                    >
-                      <Link to="/sales">
-                        Xem hướng dẫn ký gửi bán cá <FaArrowRight />
-                      </Link>
-                    </Button>
-                  </Typography>
-                </div>
-              </Flex>
-            </div>
-          </section>
-
-          {/* News Section */}
-          <section className="news">
-            <div className="newsSection">
-              <div>
-                <h2 className="title">Tin Tức</h2>
-                <h3 className="subtitle">
-                  Kiến thức và kinh nghiệm nuôi cá Koi
-                </h3>
-              </div>
-              <div>
-                <Link to="/news">
-                  <Button
-                    variant="outlined"
-                    color="light"
-                    className="viewMoreButton"
-                  >
-                    Xem thêm <FaArrowRight />
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            <Container>
-              <CardNews />
-            </Container>
-          </section>
-
-          {/* Quote Section */}
-          <section className="quoteSection">
-            <h2>Một câu trích dẫn từ Kodama Koi Farm</h2>
-            <div className="quoteContent">
-              <img
-                src="src/assets/kodama.jfif"
-                alt="Taro Kodama"
-                className="quoteImage"
-              />
-              <p className="quoteText">
-                <div>
-                  "What we all have in common here is that koi give us peaceful
-                  joy within our fast-paced and often busy lives, which is the
-                  sad reality of modern society in our world. We want to bring
-                  peace and tranquility to the United States through koi."
-                </div>
-                <div className="author">
-                  Taro Kodama, President, Kodama Koi Farm
-                </div>
-              </p>
-            </div>
-
-            <Toaster position="bottom-right" reverseOrder={false} />
-          </section>
-          <Feedback />
           <Toaster position="bottom-right" reverseOrder={false} />
         </section>
         <Feedback />
