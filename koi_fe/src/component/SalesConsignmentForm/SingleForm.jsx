@@ -135,17 +135,17 @@ export default function SingleForm({
 
       {/* Các bệnh đã từng bị */}
       <div className="row mb-3">
-        <label htmlFor="diseases" className="col-sm-4 col-form-label">
+        <label htmlFor="medical" className="col-sm-4 col-form-label">
           Các bệnh đã từng bị (nếu có)
         </label>
         <div className="col-sm-8">
           <input
             type="text"
-            name="diseases"
-            id="diseases"
+            name="medical"
+            id="medical"
             placeholder="Nhập tên các bệnh nếu có"
             className="form-control"
-            value={formData.diseases}
+            value={formData.medical}
             onChange={handleChange}
           />
         </div>

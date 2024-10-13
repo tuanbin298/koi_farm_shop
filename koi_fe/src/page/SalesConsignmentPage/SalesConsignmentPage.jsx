@@ -123,6 +123,7 @@ const SalesConsignmentPage = () => {
             category: formData.category,
             image: formData.image,
             status: "Còn hàng",
+            medical: formData.medical,
           },
         },
         context: {
