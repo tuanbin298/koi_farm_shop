@@ -4,6 +4,7 @@ import { text, relationship, integer, select } from "@keystone-6/core/fields";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
 import { permissions } from "../auth/access";
 import "dotenv/config";
+import buildSlug from "../utils/buildSlug";
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
@@ -35,6 +36,7 @@ const Product = list({
   fields: {
     name: text({
       label: "Cá Koi",
+      isIndexed: "unique",
       validation: {
         isRequired: true,
       },
@@ -84,6 +86,14 @@ const Product = list({
     generic: text({
       label: "Chủng loại",
     }),
+    slug: text({
+      label: "Đường dẫn sản phẩm",
+      isIndexed: "unique",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     image: cloudinaryImage({
       label: "Hình ảnh",
       cloudinary,
@@ -92,6 +102,21 @@ const Product = list({
       label: "Loại",
       ref: "Category",
     }),
+  },
+
+  hooks: {
+    beforeOperation: {
+      create: async ({ resolvedData }) => {
+        // Generate a slug based on product name
+        resolvedData.slug = buildSlug(resolvedData.name);
+      },
+      update: async ({ resolvedData }) => {
+        if (resolvedData?.name) {
+          // Generate a slug base on new of product name
+          resolvedData.slug = buildSlug(resolvedData.name);
+        }
+      },
+    },
   },
 });
 

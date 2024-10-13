@@ -259,6 +259,7 @@ type Product {
   description: String
   origin: String
   generic: String
+  slug: String
   image: CloudinaryImage_File
   category: Category
 }
@@ -313,6 +314,8 @@ input CloudinaryImageFormat {
 
 input ProductWhereUniqueInput {
   id: ID
+  name: String
+  slug: String
 }
 
 input ProductWhereInput {
@@ -328,6 +331,7 @@ input ProductWhereInput {
   description: StringFilter
   origin: StringFilter
   generic: StringFilter
+  slug: StringFilter
   category: CategoryWhereInput
 }
 
@@ -366,6 +370,7 @@ input ProductOrderByInput {
   description: OrderDirection
   origin: OrderDirection
   generic: OrderDirection
+  slug: OrderDirection
 }
 
 input ProductUpdateInput {
@@ -377,6 +382,7 @@ input ProductUpdateInput {
   description: String
   origin: String
   generic: String
+  slug: String
   image: Upload
   category: CategoryRelateToOneForUpdateInput
 }
@@ -404,6 +410,7 @@ input ProductCreateInput {
   description: String
   origin: String
   generic: String
+  slug: String
   image: Upload
   category: CategoryRelateToOneForCreateInput
 }
@@ -853,7 +860,7 @@ input ConsignmentSaleWhereInput {
   id: IDFilter
   name: StringFilter
   birth: IntFilter
-  sex: StringNullableFilter
+  sex: StringFilter
   medical: StringFilter
   size: IntFilter
   price: IntFilter

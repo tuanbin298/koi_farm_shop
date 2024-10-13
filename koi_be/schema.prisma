@@ -46,7 +46,7 @@ model Role {
 
 model Product {
   id                     String      @id @default(cuid())
-  name                   String      @default("")
+  name                   String      @unique @default("")
   birth                  Int
   sex                    String?     @default("Sex")
   size                   String?     @default("Size")
@@ -54,6 +54,7 @@ model Product {
   description            String      @default("")
   origin                 String      @default("")
   generic                String      @default("")
+  slug                   String      @unique @default("")
   image                  String?
   category               Category?   @relation("Product_category", fields: [categoryId], references: [id])
   categoryId             String?     @map("category")
@@ -139,7 +140,7 @@ model ConsignmentSale {
   id                       String    @id @default(cuid())
   name                     String    @default("")
   birth                    Int
-  sex                      String?   @default("Sex")
+  sex                      String    @default("")
   medical                  String    @default("")
   size                     Int
   price                    Int

@@ -13,18 +13,6 @@ export default async function insertSeedData() {
     data: categories,
   });
 
-  await context.sudo().db.User.createMany({
-    data: users,
-  });
-
-  await context.sudo().db.Role.createMany({
-    data: roles,
-  });
-
-  await context.sudo().db.Article.createMany({
-    data: articles,
-  });
-
   const categoryItem = await context.sudo().db.Category.findMany();
 
   for (const product of products) {
@@ -41,6 +29,18 @@ export default async function insertSeedData() {
       });
     }
   }
+
+  await context.sudo().db.Article.createMany({
+    data: articles,
+  });
+
+  await context.sudo().db.User.createMany({
+    data: users,
+  });
+
+  await context.sudo().db.Role.createMany({
+    data: roles,
+  });
 }
 
 insertSeedData();
