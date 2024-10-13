@@ -165,6 +165,24 @@ export default function SingleForm({
           />
         </div>
       </div>
+      {/* Giá dự tính */}
+      <div className="row mb-3">
+        <label htmlFor="estimatedPrice" className="col-sm-4 col-form-label">
+          Giá dự tính
+        </label>
+        <div className="col-sm-8">
+          <input
+            type="text"
+            name="estimatedPrice"
+            id="estimatedPrice"
+            placeholder="Giá được xác định bằng hệ thống"
+            className="form-control"
+            value={formData.estimatedPrice}
+            onChange={handleChange}
+            disabled
+          />
+        </div>
+      </div>
 
       <div className="text-center">
         <button type="submit" className="btn btn-danger btn-lg w-25 mt-4">

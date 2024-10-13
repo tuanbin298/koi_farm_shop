@@ -80,6 +80,11 @@ const RegisterPage = () => {
     } else if (formData.password.length < 6) {
       errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
     }
+    if (!formData.confirmPassword.trim()) {
+      errors.confirmPassword = "Mật khẩu nhập lại không được bỏ trống";
+    } else if (formData.confirmPassword !== formData.password) {
+      errors.confirmPassword = "Mật khẩu nhập lại không khớp";
+    }
 
     return errors;
   };
@@ -224,8 +229,13 @@ const RegisterPage = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Nhập lại mật khẩu"
-              className="form-control"
+              className={`form-control ${
+                errors.confirmPassword ? "is-invalid" : ""
+              }`}
             />
+            {errors.confirmPassword && (
+              <div className="invalid-feedback">{errors.confirmPassword}</div>
+            )}
           </div>
 
           {/* Submit Button */}
