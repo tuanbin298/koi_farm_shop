@@ -63,27 +63,28 @@ export default function Homepage() {
           </div>
         </section>
         <section className="species-section">
-          <h3>Các giống Cá Koi</h3>
-          <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
-          <div className="productList">
+          <div className="species-header">
+            <div className="text-content">
+              <h3>Các giống Cá Koi</h3>
+              <p>Cá koi thuần chủng nhập khẩu, lai F1, thuần Việt...</p>
+            </div>
+            <Button
+              variant="outlined"
+              color="error"
+              className="viewMoreButton"
+              component={Link}
+              to="/koiList"
+            >
+              Xem thêm <FaArrowRight />
+            </Button>
+          </div>
+
+          <div>
             <Container>
               <CardProduct />
             </Container>
           </div>
         </section>
-
-        {/* Header Button */}
-        <header className="headerShowMoreButton">
-          <Button
-            variant="outlined"
-            color="error"
-            className="viewMoreButton"
-            component={Link} // Use Link as the component for Button
-            to="/koiList" // Specify the path for navigation
-          >
-            Xem thêm <FaArrowRight />
-          </Button>
-        </header>
 
         <section className="serviceSection">
           <div className="titleServiceSection">
