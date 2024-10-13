@@ -219,7 +219,7 @@ export const roles = [
     user: {
       connect: [
         {
-          email: "staffABC@gmail.com",
+          email: "staffA@gmail.com",
         },
         {
           email: "staffB@gmail.com",
@@ -232,7 +232,7 @@ export const roles = [
 export const users = [
   {
     name: "staffA",
-    email: "staffABC@gmail.com",
+    email: "staffA@gmail.com",
     password: "123123",
     phone: "123123",
     address: "HCM",
