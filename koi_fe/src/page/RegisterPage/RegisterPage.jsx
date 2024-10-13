@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import './RegisterPage.css'; 
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 
 // GraphQL mutation
 const REGISTER_MUTATION = gql`
-mutation Mutation($data: UserCreateInput!) {
-  createUser(data: $data) {
-    id
-    name
-    email
-    password {
-      isSet
+  mutation Mutation($data: UserCreateInput!) {
+    createUser(data: $data) {
+      id
+      name
+      email
+      password {
+        isSet
+      }
+      phone
+      address
     }
-    phone
   }
-}
 `;
 
 const RegisterPage = () => {
@@ -23,12 +23,13 @@ const RegisterPage = () => {
     name: "",
     email: "",
     phone: "",
+    address: "", // Add address to formData
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [register, { loading, error, data }] = useMutation(REGISTER_MUTATION);
+  const [register, { loading, error }] = useMutation(REGISTER_MUTATION);
 
   // useNavigate hook for navigation
   const navigate = useNavigate();
@@ -59,7 +60,13 @@ const RegisterPage = () => {
     } else if (!emailPattern.test(formData.email)) {
       errors.email = "Email không hợp lệ";
     }
-    {/* phần sđt này Đăng sẽ sửa sau */}
+
+    if (!formData.address.trim()) {
+      errors.address = "Địa chỉ không được bỏ trống"; // Address validation
+    }
+    {
+      /* phần sđt này Đăng sẽ sửa sau */
+    }
 
     // const phonePattern = /^[0-9]{10,11}$/;
     // if (!formData.phone.trim()) {
@@ -90,14 +97,15 @@ const RegisterPage = () => {
               name: formData.name,
               email: formData.email,
               phone: formData.phone,
-              password: formData.password, // Only send the password field
+              address: formData.address, //
+              password: formData.password,
             },
           },
         });
         console.log("Account registered successfully:", response.data);
 
         // Redirect to home page after successful registration
-        navigate("/login"); // Programmatic navigation to the home page
+        navigate("/login"); // Programmatic navigation to the login page
       } catch (err) {
         console.error("Error registering account:", err);
       }
@@ -107,87 +115,142 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="registration-form">
-      <h2>Đăng ký tài khoản</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Họ và Tên*"
-            className={errors.name ? "input-error" : ""}
-          />
-          <span className={`tooltip-error ${errors.name ? "visible" : ""}`}>
-            {errors.name}
-          </span>
-        </div>
+    <div className="row justify-content-center mt-5">
+      <div className="col-lg-3 col-md-4 col-sm-6">
+        <h2 className="text-center mb-4">Đăng ký tài khoản</h2>
+        <form onSubmit={handleSubmit}>
+          {/* Name Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="name">
+              Họ và Tên<span className="text-danger">*</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Họ và Tên"
+              className={`form-control ${errors.name ? "is-invalid" : ""}`}
+            />
+            {errors.name && (
+              <div className="invalid-feedback">{errors.name}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Email*"
-            className={errors.email ? "input-error" : ""}
-          />
-          <span className={`tooltip-error ${errors.email ? "visible" : ""}`}>
-            {errors.email}
-          </span>
-        </div>
+          {/* Email Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="email">
+              Email<span className="text-danger">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Email"
+              className={`form-control ${errors.email ? "is-invalid" : ""}`}
+            />
+            {errors.email && (
+              <div className="invalid-feedback">{errors.email}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <input
-            type="text"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Số điện thoại*"
-            className={errors.phone ? "input-error" : ""}
-          />
-          <span className={`tooltip-error ${errors.phone ? "visible" : ""}`}>
-            {errors.phone}
-          </span>
-        </div>
+          {/* Phone Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="phone">
+              Số điện thoại<span className="text-danger">*</span>
+            </label>
+            <input
+              id="phone"
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Số điện thoại"
+              className={`form-control ${errors.phone ? "is-invalid" : ""}`}
+            />
+            {errors.phone && (
+              <div className="invalid-feedback">{errors.phone}</div>
+            )}
+          </div>
 
-        <div className="form-group">
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Mật khẩu*"
-            className={errors.password ? "input-error" : ""}
-          />
-          <span className={`tooltip-error ${errors.password ? "visible" : ""}`}>
-            {errors.password}
-          </span>
-        </div>
+          {/* Address Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="address">
+              Địa chỉ<span className="text-danger">*</span>
+            </label>
+            <input
+              id="address"
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Địa chỉ"
+              className={`form-control ${errors.address ? "is-invalid" : ""}`}
+            />
+            {errors.address && (
+              <div className="invalid-feedback">{errors.address}</div>
+            )}
+          </div>
 
-        {/* Optional confirm password field */}
-        <div className="form-group">
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="Nhập lại mật khẩu"
-          />
-          {/* No validation or errors displayed for confirmPassword */}
-        </div>
+          {/* Password Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="password">
+              Mật khẩu<span className="text-danger">*</span>
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Mật khẩu"
+              className={`form-control ${errors.password ? "is-invalid" : ""}`}
+            />
+            {errors.password && (
+              <div className="invalid-feedback">{errors.password}</div>
+            )}
+          </div>
 
-        <button type="submit" className="register-button" disabled={loading}>
-          {loading ? "Đang đăng ký..." : "Đăng ký"}
-        </button>
+          {/* Confirm Password Input */}
+          <div className="form-group mb-3">
+            <label htmlFor="confirmPassword">Nhập lại mật khẩu</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Nhập lại mật khẩu"
+              className="form-control"
+            />
+          </div>
 
-        {error && <p className="error-message">Đã xảy ra lỗi: {error.message}</p>}
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="btn btn-danger w-100"
+            disabled={loading}
+          >
+            {loading ? "Đang đăng ký..." : "Đăng ký"}
+          </button>
 
-        <p className="login-redirect">
-          Bạn đã có tài khoản đăng nhập <Link to="/login">Tại đây</Link>
-        </p>
-      </form>
+          {/* Error Message */}
+          {error && (
+            <p className="text-danger mt-3">Đã xảy ra lỗi: {error.message}</p>
+          )}
+
+          {/* Login Redirect */}
+          <p className="text-center mt-3">
+            Bạn đã có tài khoản? Đăng nhập{" "}
+            <Link to="/login" className="text-danger">
+              tại đây
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };

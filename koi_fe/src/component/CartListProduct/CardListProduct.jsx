@@ -36,7 +36,7 @@ export default function CardListProduct({ products }) {
 
               <div className="card-body text-start">
                 <h4 className="card-title">{product.name}</h4>
-                <p className="mb-1 text-center text-danger">
+                <p className="mb-1 text-danger">
                   <strong>Giá: </strong>
                   {formatMoney(product.price)}
                 </p>

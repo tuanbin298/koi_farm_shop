@@ -1,52 +1,68 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-import "./SalesConsignmentPage.css"; // Import the custom CSS file
-import { useQuery } from "@apollo/client";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./SalesConsignmentPage.css";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category";
+import {
+  CREATE_REQUEST,
+  CREATE_CONSIGNMENT_SALE,
+} from "../../page/api/Mutations/request";
 import { useNavigate } from "react-router-dom";
+import SingleForm from "../../component/SalesConsignmentForm/SingleForm";
 
 const SalesConsignmentPage = () => {
   const [formData, setFormData] = useState({
     name: "",
-    origin: "",
-    breed: "",
     birth: "",
-    diseases: "",
+    sex: "",
+    medical: "",
     size: "",
+    price: "",
+    description: "",
+    origin: "",
+    generic: "",
     image: null,
-    estimatedPrice: "",
+    category: "",
+    status: "",
   });
 
   const navigate = useNavigate();
-  const [loggedIn, setLoggedIn] = useState(false); // Track user login state
-  const [isCheckingLogin, setIsCheckingLogin] = useState(true); // New state for loading
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [isCheckingLogin, setIsCheckingLogin] = useState(true);
   const [errors, setErrors] = useState({});
   const { data, loading, error } = useQuery(GET_CATEGORY);
   const [expanded, setExpanded] = useState(false);
+  const [createRequest] = useMutation(CREATE_REQUEST);
+  const [createConsignmentSale] = useMutation(CREATE_CONSIGNMENT_SALE);
 
   const currentYear = new Date().getFullYear();
+  // Lấy userId từ localStorage
+  const userId = localStorage.getItem("id");
+  console.log("User ID from localStorage:", userId); // Debugging
 
   useEffect(() => {
-    // Check login status
     const sessionToken = localStorage.getItem("sessionToken");
-    setLoggedIn(!!sessionToken); // Update login state based on session token presence
-    setIsCheckingLogin(false); // Done checking login status
+    setLoggedIn(!!sessionToken);
+    setIsCheckingLogin(false);
   }, []);
 
   const handleLoginRedirect = () => {
-    navigate("/login"); // Redirect to login page
+    navigate("/login");
   };
 
   const toggleExpand = () => {
-    setExpanded(!expanded); // Toggle policy section expansion
+    setExpanded(!expanded);
   };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" })); // Reset specific field errors on change
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
     if (name === "image") {
-      setFormData({ ...formData, [name]: files[0] });
+      // Kiểm tra nếu file được chọn
+      if (files && files.length > 0) {
+        setFormData({ ...formData, [name]: files[0] }); // Đảm bảo file object được lưu
+      }
     } else {
       setFormData({ ...formData, [name]: value });
     }
@@ -68,24 +84,66 @@ const SalesConsignmentPage = () => {
 
     const size = parseInt(formData.size, 10);
     if (size < 20) {
-      newErrors.size =
-        "Trang trại không hỗ trợ ký gửi cá Koi Mini (kích thước < 20 cm).";
-    } else if (size > 70) {
       newErrors.size = "Kích thước phải nằm trong khoảng từ 20 cm đến 70 cm.";
     }
 
-    return newErrors;
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const validationErrors = validateForm();
-    setErrors(validationErrors); // Update error messages if validation fails
-
-    // If there are validation errors, do not submit the form
-    if (Object.keys(validationErrors).length > 0) {
+    // Kiểm tra nếu userId không tồn tại
+    if (!userId) {
+      console.error("User ID không tồn tại. Vui lòng đăng nhập lại.");
       return;
+    }
+
+    // Kiểm tra tính hợp lệ của form
+    if (!validateForm()) {
+      return; // Nếu form không hợp lệ, không thực hiện gửi request
+    }
+
+    // Đảm bảo price không bị null và có giá trị hợp lệ (ví dụ mặc định là 0)
+    const priceValue = formData.price ? parseInt(formData.price, 10) : 0;
+
+    try {
+      // Sử dụng FormData để chuẩn bị file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("name", formData.name);
+      formDataToSend.append("birth", parseInt(formData.birth, 10));
+      formDataToSend.append("size", parseInt(formData.size, 10));
+      formDataToSend.append("price", priceValue); // Đảm bảo price không null
+      formDataToSend.append("description", formData.description || "");
+      formDataToSend.append("origin", formData.origin);
+      formDataToSend.append("generic", formData.generic);
+      formDataToSend.append("image", formData.image); // Đảm bảo file hợp lệ
+      formDataToSend.append("status", "PENDING");
+
+      // Gửi mutation với file upload
+      const { data: consignmentData } = await createConsignmentSale({
+        variables: {
+          name: formData.name,
+          birth: parseInt(formData.birth, 10),
+          size: parseInt(formData.size, 10),
+          price: priceValue, // Đảm bảo price không null
+          description: formData.description || "",
+          origin: formData.origin,
+          generic: formData.generic,
+          image: formData.image, // Sử dụng file trong mutation
+          status: "PENDING",
+        },
+        context: {
+          headers: {
+            "Apollo-Require-Preflight": true, // Đảm bảo preflight request được gửi
+          },
+        },
+      });
+
+      console.log("Mutation thành công:", consignmentData);
+    } catch (error) {
+      console.error("Đã xảy ra lỗi khi gửi dữ liệu:", error);
     }
   };
 
@@ -117,210 +175,17 @@ const SalesConsignmentPage = () => {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit}>
-              {/* Tên Koi */}
-              <div className="row mb-3">
-                <label htmlFor="name" className="col-sm-4 col-form-label">
-                  Tên Koi <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="text"
-                    name="name"
-                    id="name"
-                    placeholder="Nhập tên cá koi"
-                    className={`form-control ${
-                      errors.name ? "is-invalid" : ""
-                    }`}
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.name && (
-                    <div className="invalid-feedback">{errors.name}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Nguồn gốc */}
-              <div className="row mb-3">
-                <label htmlFor="origin" className="col-sm-4 col-form-label">
-                  Nguồn gốc <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <select
-                    name="origin"
-                    className={`form-select ${
-                      errors.origin ? "is-invalid" : ""
-                    }`}
-                    aria-label="Default select example"
-                    value={formData.origin}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Chọn nguồn gốc cá
-                    </option>
-                    <option value="Nhập khẩu Nhật bản">
-                      Nhập khẩu Nhật bản
-                    </option>
-                    <option value="bố nhật mẹ nhật">Bố nhật mẹ nhật</option>
-                  </select>
-                  {errors.origin && (
-                    <div className="invalid-feedback">{errors.origin}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Chủng loại */}
-              <div className="row mb-3">
-                <label htmlFor="breed" className="col-sm-4 col-form-label">
-                  Chủng loại <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <select
-                    name="breed"
-                    className={`form-select ${
-                      errors.breed ? "is-invalid" : ""
-                    }`}
-                    aria-label="Default select example"
-                    value={formData.breed}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="" disabled>
-                      Chọn chủng loại cá
-                    </option>
-                    {loading ? (
-                      <option>Đang tải...</option>
-                    ) : (
-                      data?.categories?.map((type) => (
-                        <option key={type.id} value={type.name}>
-                          {type.name}
-                        </option>
-                      ))
-                    )}
-                  </select>
-                  {errors.breed && (
-                    <div className="invalid-feedback">{errors.breed}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Năm sinh */}
-              <div className="row mb-3">
-                <label htmlFor="birth" className="col-sm-4 col-form-label">
-                  Năm sinh <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="number"
-                    name="birth"
-                    id="birth"
-                    placeholder="Nhập năm sinh cá"
-                    className={`form-control ${
-                      errors.birth ? "is-invalid" : ""
-                    }`}
-                    value={formData.birth}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.birth && (
-                    <div className="invalid-feedback">{errors.birth}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Các bệnh đã từng bị */}
-              <div className="row mb-3">
-                <label htmlFor="diseases" className="col-sm-4 col-form-label">
-                  Các bệnh đã từng bị (nếu có)
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="text"
-                    name="diseases"
-                    id="diseases"
-                    placeholder="Nhập tên các bệnh nếu có"
-                    className="form-control"
-                    value={formData.diseases}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              {/* Kích thước */}
-              <div className="row mb-3">
-                <label htmlFor="size" className="col-sm-4 col-form-label">
-                  Kích thước (cm) <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="number"
-                    name="size"
-                    id="size"
-                    placeholder="Nhập kích thước cá"
-                    className={`form-control ${
-                      errors.size ? "is-invalid" : ""
-                    }`}
-                    value={formData.size}
-                    onChange={handleChange}
-                    required
-                  />
-                  {errors.size && (
-                    <div className="invalid-feedback">{errors.size}</div>
-                  )}
-                </div>
-              </div>
-
-              {/* Hình ảnh */}
-              <div className="row mb-3">
-                <label htmlFor="image" className="col-sm-4 col-form-label">
-                  Hình ảnh <span className="text-danger">*</span>
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="file"
-                    name="image"
-                    id="image"
-                    className="form-control-file"
-                    onChange={handleChange}
-                    accept="image/*"
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Giá dự tính */}
-              <div className="row mb-3">
-                <label
-                  htmlFor="estimatedPrice"
-                  className="col-sm-4 col-form-label"
-                >
-                  Giá dự tính
-                </label>
-                <div className="col-sm-8">
-                  <input
-                    type="text"
-                    name="estimatedPrice"
-                    id="estimatedPrice"
-                    placeholder="Giá được xác định bằng hệ thống"
-                    className="form-control"
-                    value={formData.estimatedPrice}
-                    onChange={handleChange}
-                    disabled
-                  />
-                </div>
-              </div>
-
-              <div className="text-center">
-                <button
-                  type="submit"
-                  className="btn btn-danger btn-lg w-25 mt-4"
-                >
-                  Đăng ký
-                </button>
-              </div>
-            </form>
+            <SingleForm
+              formData={formData}
+              errors={errors}
+              handleChange={handleChange}
+              handleSubmit={handleSubmit}
+              data={data}
+              loading={loading}
+              expanded={expanded}
+              toggleExpand={toggleExpand}
+              currentYear={currentYear}
+            />
           )}
         </div>
       </div>
