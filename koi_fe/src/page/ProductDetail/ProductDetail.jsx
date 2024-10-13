@@ -18,11 +18,12 @@ import "./ProductDetail.css";
 import { Link } from "react-router-dom";
 import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
 import { formatMoney } from "../../utils/formatMoney";
-import { CREATE_CART, CREATE_CART_ITEM } from "../api/Mutations/cart";
+import { CREATE_CART_ITEM } from "../api/Mutations/cart";
+import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 
 export default function ProductDetail() {
-  const [createCart] = useMutation(CREATE_CART);
+  // const [createCart] = useMutation(CREATE_CART);
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const { id } = useParams(); // Get product ID from the route
   const { loading, error, product } = useProduct(id); // Fetch single product
@@ -63,46 +64,42 @@ export default function ProductDetail() {
   const handleAddToCart = async () => {
     console.log(product.id);
     console.log(userId);
-    console.log(cartId)
+    console.log(cartId);
     if (!userId) {
       alert("User ID not found. Please log in.");
       return;
     }
 
     try {
-      if (!cartId) {
-        // No cart found, create a new cart first
-        const { data: newCartData } = await createCart({
-          variables: {
-            data: {
-              user: {
-                connect: {
-                  id: userId, // Connect user by ID
-                },
-              },
-            },
-          },
-        });
-        const newCartId = newCartData?.createCart?.id;
-        setCartId(newCartId); // Update cart ID state
-        localStorage.setItem("cartId", newCartId); // Store cart ID in localStorage
-      }
-
       // Add item to the cart
       await createCartItem({
         variables: {
           data: {
-            price: product.price,
-            cart: {
-              connect: { id: cartId || localStorage.getItem("cartId") }, // Connect the cart by its ID
-            },
+            // price: product.price,
+            quantity: 1,
             product: {
               connect: { id: product.id }, // Connect product by ID
+            },
+            user: {
+              connect: {
+                id: userId,
+              },
             },
           },
         },
       });
-      alert("Item added to cart successfully!");
+      toast.success("Đã thêm vào giỏ hàng!", {
+        icon: "🛒",
+        style: {
+          border: "1px solid #713200",
+          padding: "16px",
+          color: "#982B1C",
+        },
+        iconTheme: {
+          primary: "#982B1C",
+          secondary: "#FFFAEE",
+        },
+      });
     } catch (error) {
       if (error.message.includes("Access denied")) {
         alert(error);
@@ -252,9 +249,9 @@ export default function ProductDetail() {
                     alt={product.name}
                     image={product.image.publicUrl}
                     style={{
-                      aspectRatio:"1/4",
-                      height:"250px",
-                      width:"100%"
+                      aspectRatio: "1/4",
+                      height: "250px",
+                      width: "100%",
                     }}
                   />
                 ) : null}
@@ -272,13 +269,15 @@ export default function ProductDetail() {
                   >
                     {product.name}
                   </Typography>
-                  <Typography textAlign="center"
+                  <Typography
+                    textAlign="center"
                     style={{
                       fontFamily:
                         "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
                       fontWeight: "450",
-                    }}>
-                  {formatMoney(product.price)}
+                    }}
+                  >
+                    {formatMoney(product.price)}
                   </Typography>
                 </CardContent>
               </Card>
@@ -303,6 +302,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </Box>
+      <Toaster position="top-center" reverseOrder={false} />
     </>
   );
 }
