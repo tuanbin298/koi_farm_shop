@@ -30,6 +30,7 @@ export default function Homepage() {
   }, [location.state]);
   return (
     <>
+    <div className="web-container">
       <div className="banner">
         <div className="banner-content">
           <h1>CaKoiViet Koi Farm Shop</h1>
@@ -212,6 +213,7 @@ export default function Homepage() {
         <Toaster position="bottom-right" reverseOrder={false} />
       </section>
       <Feedback />
+      </div>
     </>
   );
 }
