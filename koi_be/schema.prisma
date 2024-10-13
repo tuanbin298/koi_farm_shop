@@ -158,11 +158,11 @@ model Request {
   userId        String?          @map("user")
   staff         User?            @relation("Request_staff", fields: [staffId], references: [id])
   staffId       String?          @map("staff")
-  createAt      DateTime?        @default(now())
   description   String           @default("")
   consignment   ConsignmentSale? @relation("Request_consignment", fields: [consignmentId], references: [id])
   consignmentId String?          @map("consignment")
   status        String?          @default("Chờ xác nhận")
+  createAt      DateTime?        @default(now())
 
   @@index([userId])
   @@index([staffId])
