@@ -19,7 +19,7 @@ export default function CardProduct() {
   if (productError) return <p>Error loading products.</p>;
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 species-section">
       <div className="row">
         {productData &&
           productData.products.map((product) => (
@@ -45,7 +45,10 @@ export default function CardProduct() {
                   />
                 </Link>
 
-                <div className="card-body text-start">
+                <div
+                  className="card-body text-start"
+                  style={{ padding: "25px" }}
+                >
                   <h4 className="card-title">{product.name}</h4>
                   <p className="mb-1 text-danger">
                     <strong>Giá: </strong>
@@ -66,6 +69,10 @@ export default function CardProduct() {
                   <p className="mb-1">
                     <strong>Loại: </strong>
                     {product.generic}
+                  </p>
+                  <p className="mb-1">
+                    <strong>Nguồn: </strong>
+                    Dainichi Koi Farm
                   </p>
                   {/* Nút thêm vào giỏ hàng */}
                   <Link to={`/ProductDetail/${product.id}`}>
