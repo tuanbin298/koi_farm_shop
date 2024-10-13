@@ -187,31 +187,6 @@ export default function Homepage() {
           <CardNews />
         </Container>
       </section>
-
-      {/* Quote Section */}
-      <section className="quoteSection">
-        <h2>Một câu trích dẫn từ Kodama Koi Farm</h2>
-        <div className="quoteContent">
-          <img
-            src="src/assets/kodama.jfif"
-            alt="Taro Kodama"
-            className="quoteImage"
-          />
-          <p className="quoteText">
-            <div>
-              "What we all have in common here is that koi give us peaceful joy
-              within our fast-paced and often busy lives, which is the sad
-              reality of modern society in our world. We want to bring peace and
-              tranquility to the United States through koi."
-            </div>
-            <div className="author">
-              Taro Kodama, President, Kodama Koi Farm
-            </div>
-          </p>
-        </div>
-        
-        <Toaster position="bottom-right" reverseOrder={false} />
-      </section>
       <Feedback />
       </div>
     </>
