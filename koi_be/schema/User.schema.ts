@@ -11,9 +11,9 @@ const User = list({
       update: allowAll,
       delete: allowAll,
     },
-    filter: {
-      query: filters.canReadUser,
-    },
+    // filter: {
+    //   query: filters.canReadUser,
+    // },
   },
 
   ui: {
@@ -77,6 +77,7 @@ const User = list({
     cart: relationship({
       label: "Giỏ hàng của người dùng",
       ref: "CartItem.user",
+      many:true
     }),
   },
 });
