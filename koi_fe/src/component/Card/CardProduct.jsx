@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./CardProduct.css"; // Import the new CSS file for hover effects
 
 export default function CardProduct() {
   const {
@@ -14,7 +15,6 @@ export default function CardProduct() {
     variables: { take: 6 }, // Lấy 6 sản phẩm
   });
 
-  // Kiểm tra trạng thái loading và error
   if (productLoading) return <p>Loading ...</p>;
   if (productError) return <p>Error loading products.</p>;
 
@@ -25,22 +25,21 @@ export default function CardProduct() {
           productData.products.map((product) => (
             <div key={product.id} className="col-md-4 mb-4">
               <div
-                className="card h-100 shadow-sm"
+                className="card h-100 shadow-sm card-product"
                 style={{
-                  maxWidth: "350px", // Giới hạn kích thước tối đa của card
-                  margin: "0 auto", // Căn giữa thẻ card
+                  maxWidth: "350px",
+                  margin: "0 auto",
                 }}
               >
-                {/* Link tới chi tiết sản phẩm */}
                 <Link to={`/ProductDetail/${product.id}`}>
                   <img
                     src={product.image?.publicUrl}
                     alt={product.name}
                     className="card-img-top img-fluid"
                     style={{
-                      height: "360px", // Chiều cao cố định cho ảnh
-                      width: "100%", // Chiếm toàn bộ chiều rộng của khung chứa
-                      objectFit: "fill", // Bóp méo ảnh để lấp đầy khung
+                      height: "360px",
+                      width: "100%",
+                      objectFit: "fill",
                     }}
                   />
                 </Link>
@@ -74,7 +73,6 @@ export default function CardProduct() {
                     <strong>Nguồn: </strong>
                     Dainichi Koi Farm
                   </p>
-                  {/* Nút thêm vào giỏ hàng */}
                   <Link to={`/ProductDetail/${product.id}`}>
                     <div className="text-center">
                       <button className="btn btn-success mt-3">
