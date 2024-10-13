@@ -9,7 +9,8 @@ type User {
   phone: String
   address: String
   role: Role
-  cart: CartItem
+  cart(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
+  cartCount(where: CartItemWhereInput! = {}): Int
 }
 
 type PasswordState {
@@ -31,7 +32,7 @@ input UserWhereInput {
   phone: StringFilter
   address: StringFilter
   role: RoleWhereInput
-  cart: CartItemWhereInput
+  cart: CartItemManyRelationFilter
 }
 
 input IDFilter {
@@ -73,6 +74,12 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input CartItemManyRelationFilter {
+  every: CartItemWhereInput
+  some: CartItemWhereInput
+  none: CartItemWhereInput
+}
+
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
@@ -93,7 +100,7 @@ input UserUpdateInput {
   phone: String
   address: String
   role: RoleRelateToOneForUpdateInput
-  cart: CartItemRelateToOneForUpdateInput
+  cart: CartItemRelateToManyForUpdateInput
 }
 
 input RoleRelateToOneForUpdateInput {
@@ -102,10 +109,11 @@ input RoleRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input CartItemRelateToOneForUpdateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
-  disconnect: Boolean
+input CartItemRelateToManyForUpdateInput {
+  disconnect: [CartItemWhereUniqueInput!]
+  set: [CartItemWhereUniqueInput!]
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -120,7 +128,7 @@ input UserCreateInput {
   phone: String
   address: String
   role: RoleRelateToOneForCreateInput
-  cart: CartItemRelateToOneForCreateInput
+  cart: CartItemRelateToManyForCreateInput
 }
 
 input RoleRelateToOneForCreateInput {
@@ -128,9 +136,9 @@ input RoleRelateToOneForCreateInput {
   connect: RoleWhereUniqueInput
 }
 
-input CartItemRelateToOneForCreateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
+input CartItemRelateToManyForCreateInput {
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 type Role {

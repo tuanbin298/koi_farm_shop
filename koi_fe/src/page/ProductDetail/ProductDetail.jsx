@@ -65,6 +65,7 @@ export default function ProductDetail() {
     console.log(product.id);
     console.log(userId);
     console.log(cartId);
+    console.log(localStorage.getItem("sessionToken"))
     if (!userId) {
       alert("User ID not found. Please log in.");
       return;
@@ -113,7 +114,7 @@ export default function ProductDetail() {
 
   return (
     <>
-      <Box style={{ marginTop: "1%", padding: "1%" }}>
+      <Box style={{ paddingTop: "1%", padding: "1%" }}>
         <Flex gap="large" justify="space-around">
           <div>
             {product.image?.publicUrl ? (
@@ -181,9 +182,6 @@ export default function ProductDetail() {
               >
                 Thêm vào giỏ hàng
               </Button>
-              <Button variant="contained" color="secondary">
-                Mua Ngay
-              </Button>
             </Stack>
           </div>
         </Flex>
@@ -249,8 +247,8 @@ export default function ProductDetail() {
                     alt={product.name}
                     image={product.image.publicUrl}
                     style={{
-                      aspectRatio: "1/4",
-                      height: "250px",
+                      aspectRatio: "1/3",
+                      height: "375px",
                       width: "100%",
                     }}
                   />
