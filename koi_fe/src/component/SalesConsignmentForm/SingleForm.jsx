@@ -58,14 +58,14 @@ export default function SingleForm({
 
       {/* Chủng loại */}
       <div className="row mb-3">
-        <label htmlFor="breed" className="col-sm-4 col-form-label">
+        <label htmlFor="category" className="col-sm-4 col-form-label">
           Chủng loại <span className="text-danger">*</span>
         </label>
         <div className="col-sm-8">
           <select
-            name="breed"
-            className={`form-select ${errors.breed ? "is-invalid" : ""}`}
-            value={formData.breed}
+            name="category"
+            className={`form-select ${errors.category ? "is-invalid" : ""}`}
+            value={formData.category}
             onChange={handleChange}
             required
           >
@@ -82,9 +82,32 @@ export default function SingleForm({
               ))
             )}
           </select>
-          {errors.breed && (
-            <div className="invalid-feedback">{errors.breed}</div>
+          {errors.category && (
+            <div className="invalid-feedback">{errors.category}</div>
           )}
+        </div>
+      </div>
+
+      {/* Giới tính */}
+      <div className="row mb-3">
+        <label htmlFor="sex" className="col-sm-4 col-form-label">
+          Giới tính <span className="text-danger">*</span>
+        </label>
+        <div className="col-sm-8">
+          <select
+            name="sex"
+            className={`form-select ${errors.sex ? "is-invalid" : ""}`}
+            value={formData.sex} // Bind formData.sex to the select input
+            onChange={handleChange} // Handle the change to update formData
+            required
+          >
+            <option value="" disabled>
+              Chọn giới tính
+            </option>
+            <option value="Đực">Đực</option>
+            <option value="Cái">Cái</option>
+          </select>
+          {errors.sex && <div className="invalid-feedback">{errors.sex}</div>}
         </div>
       </div>
 
@@ -148,8 +171,30 @@ export default function SingleForm({
         </div>
       </div>
 
-      {/* Hình ảnh */}
+      {/* Mô tả */}
       <div className="row mb-3">
+        <label htmlFor="description" className="col-sm-4 col-form-label">
+          Mô tả <span className="text-danger">*</span>
+        </label>
+        <div className="col-sm-8">
+          <input
+            type="text"
+            name="description"
+            id="description"
+            placeholder="Nhập kích thước cá"
+            className={`form-control ${errors.description ? "is-invalid" : ""}`}
+            value={formData.description}
+            onChange={handleChange}
+            required
+          />
+          {errors.description && (
+            <div className="invalid-feedback">{errors.description}</div>
+          )}
+        </div>
+      </div>
+
+      {/* Hình ảnh */}
+      {/* <div className="row mb-3">
         <label htmlFor="image" className="col-sm-4 col-form-label">
           Hình ảnh <span className="text-danger">*</span>
         </label>
@@ -164,7 +209,7 @@ export default function SingleForm({
             required
           />
         </div>
-      </div>
+      </div> */}
       {/* Giá dự tính */}
       <div className="row mb-3">
         <label htmlFor="estimatedPrice" className="col-sm-4 col-form-label">

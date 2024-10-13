@@ -20,9 +20,9 @@ const SalesConsignmentPage = () => {
     price: "",
     description: "",
     origin: "",
-    generic: "",
-    image: null,
     category: "",
+    image: null,
+    generic: "",
     status: "",
   });
 
@@ -38,7 +38,7 @@ const SalesConsignmentPage = () => {
   const currentYear = new Date().getFullYear();
   // Lấy userId từ localStorage
   const userId = localStorage.getItem("id");
-  console.log("User ID from localStorage:", userId); // Debugging
+  console.log(userId);
 
   useEffect(() => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -56,14 +56,17 @@ const SalesConsignmentPage = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    // Reset errors for the field
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
     if (name === "image") {
-      // Kiểm tra nếu file được chọn
+      // Handle file input separately
       if (files && files.length > 0) {
-        setFormData({ ...formData, [name]: files[0] }); // Đảm bảo file object được lưu
+        setFormData({ ...formData, [name]: files[0] });
       }
     } else {
+      // For other fields, update formData
       setFormData({ ...formData, [name]: value });
     }
   };
@@ -94,54 +97,71 @@ const SalesConsignmentPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Kiểm tra nếu userId không tồn tại
     if (!userId) {
       console.error("User ID không tồn tại. Vui lòng đăng nhập lại.");
       return;
     }
 
-    // Kiểm tra tính hợp lệ của form
     if (!validateForm()) {
-      return; // Nếu form không hợp lệ, không thực hiện gửi request
+      return;
     }
 
-    // Đảm bảo price không bị null và có giá trị hợp lệ (ví dụ mặc định là 0)
     const priceValue = formData.price ? parseInt(formData.price, 10) : 0;
 
     try {
-      // Sử dụng FormData để chuẩn bị file upload
-      const formDataToSend = new FormData();
-      formDataToSend.append("name", formData.name);
-      formDataToSend.append("birth", parseInt(formData.birth, 10));
-      formDataToSend.append("size", parseInt(formData.size, 10));
-      formDataToSend.append("price", priceValue); // Đảm bảo price không null
-      formDataToSend.append("description", formData.description || "");
-      formDataToSend.append("origin", formData.origin);
-      formDataToSend.append("generic", formData.generic);
-      formDataToSend.append("image", formData.image); // Đảm bảo file hợp lệ
-      formDataToSend.append("status", "PENDING");
-
-      // Gửi mutation với file upload
+      // Tạo Consignment Sale
       const { data: consignmentData } = await createConsignmentSale({
         variables: {
-          name: formData.name,
-          birth: parseInt(formData.birth, 10),
-          size: parseInt(formData.size, 10),
-          price: priceValue, // Đảm bảo price không null
-          description: formData.description || "",
-          origin: formData.origin,
-          generic: formData.generic,
-          image: formData.image, // Sử dụng file trong mutation
-          status: "PENDING",
+          data: {
+            name: formData.name,
+            sex: formData.sex,
+            birth: parseInt(formData.birth, 10),
+            size: parseInt(formData.size, 10),
+            price: priceValue,
+            description: formData.description || "",
+            origin: formData.origin,
+            category: formData.category,
+            image: formData.image,
+            status: "Còn hàng",
+          },
         },
         context: {
           headers: {
-            "Apollo-Require-Preflight": true, // Đảm bảo preflight request được gửi
+            "Apollo-Require-Preflight": true,
           },
         },
       });
 
-      console.log("Mutation thành công:", consignmentData);
+      // Log the full response to check the returned data
+      console.log("Consignment Sale Response:", consignmentData);
+
+      // Lấy consignmentId
+      const consignmentId = consignmentData.createConsignmentSale.id;
+      console.log(consignmentId);
+
+      if (!consignmentId) {
+        console.error("Không thể lấy ID của Consignment Sale.");
+        return;
+      }
+
+      const { data: requestData } = await createRequest({
+        variables: {
+          data: {
+            consignment: { connect: { id: consignmentId } }, // Thay "consignmentId" thành "consignment"
+            description: `Yêu cầu ký gửi cá Koi: ${formData.name}`,
+            status: "Chờ xác nhận",
+            user: { connect: { id: userId } }, // Thay "userId" thành "user"
+          },
+        },
+        context: {
+          headers: {
+            "Apollo-Require-Preflight": true,
+          },
+        },
+      });
+
+      console.log("Request thành công:", requestData);
+      navigate("/some-success-page");
     } catch (error) {
       console.error("Đã xảy ra lỗi khi gửi dữ liệu:", error);
     }
