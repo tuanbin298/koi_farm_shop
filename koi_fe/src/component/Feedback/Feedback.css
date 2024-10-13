@@ -1,0 +1,30 @@
+.feedback-nav-btn {
+    position: absolute;
+    top: 60%; /* Căn giữa theo chiều dọc */
+    transform: translateY(-40%); /* Đảm bảo nút nằm chính giữa */
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    z-index: 10; /* Đảm bảo nút nổi trên các phần tử khác */
+  }
+  
+  .feedback-nav-btn.left {
+    left: -30px; /* Đẩy nút trái ra sát cạnh */
+  }
+  
+  .feedback-nav-btn.right {
+    right: -30px; /* Đẩy nút phải ra sát cạnh */
+  }
+  
+  .feedback-nav-btn:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-50%) scale(1.1); /* Hiệu ứng hover */
+  }
