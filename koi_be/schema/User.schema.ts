@@ -12,9 +12,7 @@ const User = list({
       delete: allowAll,
     },
     filter: {
-      query: (args) => {
-        return filters.canReadUser(args);
-      },
+      query: filters.canReadUser,
     },
   },
 

@@ -6,7 +6,7 @@ import {
   GET_PRODUCT_BY_CATEGORY,
   GET_ALL_PRODUCTS,
 } from "../api/Queries/product";
-import Pagination from '@mui/material/Pagination';
+import Pagination from "@mui/material/Pagination";
 
 function KoiListPage() {
   const [page, setPage] = useState(1);
@@ -149,24 +149,40 @@ function KoiListPage() {
           <option value="20000000-25000000">20,000,000 - 25,000,000 VND</option>
           <option value="above-25000000">Trên 25,000,000 VND</option>
         </select>
+
+        <select
+          className="form-select w-auto btn-outline-primary"
+          value={filter.size}
+          onChange={(e) => setFilter({ ...filter, size: e.target.value })}
+        >
+          <option value="all">Tất cả các nguồn gốc</option>
+          <option value="10-15cm">tên nhà cung cấp</option>
+          <option value="15-20cm">chưa hoàn thành</option>
+          <option value="20-30cm">20-30 cm</option>
+          <option value="30-40cm">30-40 cm</option>
+          <option value="40-50cm">40-50 cm</option>
+          <option value="above-50cm">Trên 50 cm</option>
+        </select>
       </div>
 
       {/* Hiển thị sản phẩm */}
       <div className="productList">
         <CardListProduct products={paginatedProducts} />
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column"
-        }}>
-        {/* MUI Pagination Component */}
-        <Pagination
-          count={totalPages}     // Total pages
-          page={page}            // Current page
-          onChange={handlePageChange}  // Handle page change
-          color="primary"
-        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          {/* MUI Pagination Component */}
+          <Pagination
+            count={totalPages} // Total pages
+            page={page} // Current page
+            onChange={handlePageChange} // Handle page change
+            color="primary"
+          />
         </div>
       </div>
     </div>

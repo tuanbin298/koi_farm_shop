@@ -9,7 +9,7 @@ export default function CardListProduct({ products }) {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 species-section">
       <div className="row">
         {products.map((product) => (
           <div key={product.id} className="col-md-4 mb-4">
@@ -34,9 +34,14 @@ export default function CardListProduct({ products }) {
                 />
               </Link>
 
-              <div className="card-body text-start">
+              <div
+                className="card-body text-start"
+                style={{
+                  padding: "25px",
+                }}
+              >
                 <h4 className="card-title">{product.name}</h4>
-                <p className="mb-1 text-center text-danger">
+                <p className="mb-1  text-danger">
                   <strong>Giá: </strong>
                   {formatMoney(product.price)}
                 </p>
@@ -55,6 +60,10 @@ export default function CardListProduct({ products }) {
                 <p className="mb-1">
                   <strong>Loại: </strong>
                   {product.generic}
+                </p>
+                <p className="mb-1">
+                  <strong>Nguồn: </strong>
+                  Dainichi Koi Farm
                 </p>
                 {/* Nút thêm vào giỏ hàng */}
                 <Link to={`/ProductDetail/${product.id}`}>

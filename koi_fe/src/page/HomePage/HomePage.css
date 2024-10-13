@@ -17,7 +17,7 @@
 }
 
 .banner h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
 
@@ -25,7 +25,6 @@
   font-size: 1.5rem;
   margin-bottom: 1rem;
 }
-
 
 .introduction-section {
   background-color: #f5f5f5;
@@ -64,12 +63,14 @@
   height: auto;
 }
 
-.species-section, .feedback-section {
+.species-section,
+.feedback-section {
   text-align: center;
   margin-top: 3rem;
 }
 
-.species-section h3, .feedback-section h3 {
+.species-section h3,
+.feedback-section h3 {
   font-size: 2rem;
   margin-bottom: 0.5rem;
   border-bottom: 2px solid #b02a37;
@@ -77,7 +78,8 @@
   padding-bottom: 0.5rem;
 }
 
-.species-section p, .feedback-section p {
+.species-section p,
+.feedback-section p {
   font-size: 1.2rem;
   color: #666;
   margin-top: 0.5rem;
@@ -88,50 +90,62 @@
 }
 
 /* Header */
-.headerShowMoreButton {
+.species-header {
   display: flex;
-  justify-content: center;
-  padding: 20px 0;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.text-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-content h3,
+.text-content p {
+  margin: 0;
+  text-align: left;
 }
 
 .viewMoreButton {
-  padding: 10px 20px;
-  font-size: 18px;
-  border-radius: 5px;
-  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+  margin-right: 10px;
 }
 
-
- .news{
+.news {
   background-color: #212121;
   margin-bottom: 40px;
   padding: 40px;
- }
+}
 
- /*Service section*/
- .serviceSection{
+/*Service section*/
+.serviceSection {
   padding-top: 20px;
   color: white;
   margin-bottom: 40px;
   background-color: #b02a37;
- }
+}
 
- .leftSubService{
+.leftSubService {
   border-right: 3px solid white;
-  background: url('src/assets/service1.jfif');
+  background: url("src/assets/service1.jfif");
   background-repeat: no-repeat;
   background-size: cover;
   padding: 20px;
- }
+}
 
- .rightSubService{
-  background: url('src/assets/service2.jfif');  
+.rightSubService {
+  background: url("src/assets/service2.jfif");
   background-repeat: no-repeat;
   background-size: cover;
-  padding:20px;
- }
+  padding: 20px;
+}
 
- .titleLeftSubService, .titleRightSubService {
+.titleLeftSubService,
+.titleRightSubService {
   border-bottom: 2px solid #fafafa;
   padding-bottom: 2%;
 }
@@ -142,21 +156,21 @@
   justify-content: space-between;
   color: white;
   margin-bottom: 40px;
-  padding: 20px; 
+  padding: 20px;
   background-color: #212121;
-  border-radius: 10px; 
+  border-radius: 10px;
 }
 
 .title {
   font-size: 32px;
   margin-bottom: 10px;
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 .subtitle {
   font-size: 20px;
   margin-bottom: 30px;
-  font-style: italic; 
+  font-style: italic;
 }
 
 .newsItem {
@@ -164,18 +178,18 @@
   border-radius: 8px;
   overflow: hidden;
   color: black;
-  transition: transform 0.3s, box-shadow 0.3s; 
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .newsItem:hover {
-  transform: scale(1.05); 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .newsImage {
   width: 100%;
   height: auto;
-  border-radius: 8px 8px 0 0; 
+  border-radius: 8px 8px 0 0;
 }
 
 .newsContent {
@@ -190,19 +204,18 @@
   font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
-  text-decoration: none; 
-  display: inline-block; 
-  margin-top: 10px; 
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
 }
 
 .readMoreButton:hover {
   background-color: #d32f2f;
 }
 
-
 a {
   text-decoration: none !important;
-  color: inherit !important; 
+  color: inherit !important;
 }
 
 /* Quote Section */
@@ -235,6 +248,13 @@ a {
   font-weight: bold;
 }
 
-.productList{
+.productList {
   margin: 10px;
+}
+.web-container {
+  width: 80%; /* Chiếm 80% chiều rộng màn hình */
+  margin: 30px auto; /* Căn giữa nội dung */
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #fff;
 }
