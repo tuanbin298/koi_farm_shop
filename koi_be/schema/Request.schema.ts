@@ -31,10 +31,6 @@ const Request = list({
       label: "Nhân viên xử lý yêu cầu",
       ref: "User",
     }),
-    createAt: timestamp({
-      label: "Thời gian gửi yêu cầu",
-      defaultValue: { kind: "now" },
-    }),
     description: text({
       label: "Mô tả yêu cầu ký gửi",
     }),
@@ -49,6 +45,10 @@ const Request = list({
         { label: "Chờ xác nhận", value: "Chờ xác nhận" },
         { label: "Xác nhận yêu cầu", value: "Xác nhận yêu cầu" },
       ],
+    }),
+    createAt: timestamp({
+      label: "Thời gian gửi yêu cầu",
+      defaultValue: { kind: "now" },
     }),
   },
 });
