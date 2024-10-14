@@ -3,9 +3,6 @@ import { Container, Card, Button } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
 import "./Feedback.css";
 
-// Dữ liệu feedback mẫu
-
-
 const feedbackData = [
   {
     rating: 5,
