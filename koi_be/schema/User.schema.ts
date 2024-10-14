@@ -78,6 +78,10 @@ const User = list({
       label: "Giỏ hàng của người dùng",
       ref: "CartItem.user",
       many: true,
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
     }),
   },
 });
