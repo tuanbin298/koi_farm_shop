@@ -46,48 +46,6 @@ export const categories = [
   },
 ];
 
-export const roles = [
-  {
-    name: "Staff",
-    canManageUser: false,
-    canManageProduct: false,
-    canManageRole: false,
-    canManageArticle: true,
-    canManageOrder: false,
-    canManageFeedback: true,
-    canManageCart: false,
-    canManageConsigment: false,
-    canManageRequest: true,
-    user: {
-      connect: [
-        {
-          email: "staffA@gmail.com",
-        },
-        {
-          email: "staffB@gmail.com",
-        },
-      ],
-    },
-  },
-];
-
-export const users = [
-  {
-    name: "staffA",
-    email: "staffA@gmail.com",
-    password: "123123",
-    phone: "123123",
-    address: "HCM",
-  },
-  {
-    name: "staffB",
-    email: "staffB@gmail.com",
-    password: "123123",
-    phone: "123123",
-    address: "HCM",
-  },
-];
-
 export const products = [
   {
     name: "Yamabuki Nuôi Ao Bùn",
@@ -243,6 +201,48 @@ export const products = [
     origin: "Nhập khẩu Nhật bản",
     generic: "Mini",
     category: "Cá koi vàng Yamabuki",
+  },
+];
+
+export const roles = [
+  {
+    name: "Staff",
+    canManageUser: false,
+    canManageProduct: false,
+    canManageRole: false,
+    canManageArticle: true,
+    canManageOrder: false,
+    canManageFeedback: true,
+    canManageCart: false,
+    canManageConsigment: false,
+    canManageRequest: true,
+    user: {
+      connect: [
+        {
+          email: "staffA@gmail.com",
+        },
+        {
+          email: "staffB@gmail.com",
+        },
+      ],
+    },
+  },
+];
+
+export const users = [
+  {
+    name: "staffA",
+    email: "staffA@gmail.com",
+    password: "123123",
+    phone: "123123",
+    address: "HCM",
+  },
+  {
+    name: "staffB",
+    email: "staffB@gmail.com",
+    password: "123123",
+    phone: "123123",
+    address: "HCM",
   },
 ];
 

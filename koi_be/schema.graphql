@@ -9,7 +9,8 @@ type User {
   phone: String
   address: String
   role: Role
-  cart: CartItem
+  cart(where: CartItemWhereInput! = {}, orderBy: [CartItemOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: CartItemWhereUniqueInput): [CartItem!]
+  cartCount(where: CartItemWhereInput! = {}): Int
 }
 
 type PasswordState {
@@ -31,7 +32,7 @@ input UserWhereInput {
   phone: StringFilter
   address: StringFilter
   role: RoleWhereInput
-  cart: CartItemWhereInput
+  cart: CartItemManyRelationFilter
 }
 
 input IDFilter {
@@ -73,6 +74,12 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
+input CartItemManyRelationFilter {
+  every: CartItemWhereInput
+  some: CartItemWhereInput
+  none: CartItemWhereInput
+}
+
 input UserOrderByInput {
   id: OrderDirection
   name: OrderDirection
@@ -93,7 +100,7 @@ input UserUpdateInput {
   phone: String
   address: String
   role: RoleRelateToOneForUpdateInput
-  cart: CartItemRelateToOneForUpdateInput
+  cart: CartItemRelateToManyForUpdateInput
 }
 
 input RoleRelateToOneForUpdateInput {
@@ -102,10 +109,11 @@ input RoleRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
-input CartItemRelateToOneForUpdateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
-  disconnect: Boolean
+input CartItemRelateToManyForUpdateInput {
+  disconnect: [CartItemWhereUniqueInput!]
+  set: [CartItemWhereUniqueInput!]
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -120,7 +128,7 @@ input UserCreateInput {
   phone: String
   address: String
   role: RoleRelateToOneForCreateInput
-  cart: CartItemRelateToOneForCreateInput
+  cart: CartItemRelateToManyForCreateInput
 }
 
 input RoleRelateToOneForCreateInput {
@@ -128,9 +136,9 @@ input RoleRelateToOneForCreateInput {
   connect: RoleWhereUniqueInput
 }
 
-input CartItemRelateToOneForCreateInput {
-  create: CartItemCreateInput
-  connect: CartItemWhereUniqueInput
+input CartItemRelateToManyForCreateInput {
+  create: [CartItemCreateInput!]
+  connect: [CartItemWhereUniqueInput!]
 }
 
 type Role {
@@ -251,6 +259,7 @@ type Product {
   description: String
   origin: String
   generic: String
+  slug: String
   image: CloudinaryImage_File
   category: Category
 }
@@ -305,6 +314,8 @@ input CloudinaryImageFormat {
 
 input ProductWhereUniqueInput {
   id: ID
+  name: String
+  slug: String
 }
 
 input ProductWhereInput {
@@ -320,6 +331,7 @@ input ProductWhereInput {
   description: StringFilter
   origin: StringFilter
   generic: StringFilter
+  slug: StringFilter
   category: CategoryWhereInput
 }
 
@@ -358,6 +370,7 @@ input ProductOrderByInput {
   description: OrderDirection
   origin: OrderDirection
   generic: OrderDirection
+  slug: OrderDirection
 }
 
 input ProductUpdateInput {
@@ -369,6 +382,7 @@ input ProductUpdateInput {
   description: String
   origin: String
   generic: String
+  slug: String
   image: Upload
   category: CategoryRelateToOneForUpdateInput
 }
@@ -396,6 +410,7 @@ input ProductCreateInput {
   description: String
   origin: String
   generic: String
+  slug: String
   image: Upload
   category: CategoryRelateToOneForCreateInput
 }
@@ -845,7 +860,7 @@ input ConsignmentSaleWhereInput {
   id: IDFilter
   name: StringFilter
   birth: IntFilter
-  sex: StringNullableFilter
+  sex: StringFilter
   medical: StringFilter
   size: IntFilter
   price: IntFilter
@@ -910,10 +925,10 @@ type Request {
   id: ID!
   user: User
   staff: User
-  createAt: DateTime
   description: String
   consignment: ConsignmentSale
   status: String
+  createAt: DateTime
 }
 
 input RequestWhereUniqueInput {
@@ -927,26 +942,26 @@ input RequestWhereInput {
   id: IDFilter
   user: UserWhereInput
   staff: UserWhereInput
-  createAt: DateTimeNullableFilter
   description: StringFilter
   consignment: ConsignmentSaleWhereInput
   status: StringNullableFilter
+  createAt: DateTimeNullableFilter
 }
 
 input RequestOrderByInput {
   id: OrderDirection
-  createAt: OrderDirection
   description: OrderDirection
   status: OrderDirection
+  createAt: OrderDirection
 }
 
 input RequestUpdateInput {
   user: UserRelateToOneForUpdateInput
   staff: UserRelateToOneForUpdateInput
-  createAt: DateTime
   description: String
   consignment: ConsignmentSaleRelateToOneForUpdateInput
   status: String
+  createAt: DateTime
 }
 
 input ConsignmentSaleRelateToOneForUpdateInput {
@@ -963,10 +978,10 @@ input RequestUpdateArgs {
 input RequestCreateInput {
   user: UserRelateToOneForCreateInput
   staff: UserRelateToOneForCreateInput
-  createAt: DateTime
   description: String
   consignment: ConsignmentSaleRelateToOneForCreateInput
   status: String
+  createAt: DateTime
 }
 
 input ConsignmentSaleRelateToOneForCreateInput {
