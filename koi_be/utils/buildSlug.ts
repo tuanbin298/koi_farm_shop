@@ -10,5 +10,5 @@ export default function buildSlug(input: String) {
     output = output.replace(new RegExp(from[i], "g"), to[i]);
   }
 
-  return output.replace(/[^\w]+/g, "").replace(/ +/g, "-");
+  return output.replace(/[^\w ]+/g, "").replace(/ +/g, "-");
 }
