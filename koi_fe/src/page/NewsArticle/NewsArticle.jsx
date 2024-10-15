@@ -6,7 +6,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
-import './NewsArticle.css';  
+
 
 // Định nghĩa một styled component
 const Item = styled(Paper)(({ theme }) => ({

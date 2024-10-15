@@ -77,18 +77,6 @@ const IntroducePage = () => {
                                                     <strong>Giá: </strong>
                                                     {formatMoney(product.price)}
                                                 </p>
-                                                <p className="mb-1">
-                                                    <strong>Nguồn gốc: </strong>
-                                                    {product.origin}
-                                                </p>
-                                                <p className="mb-1">
-                                                    <strong>Kích thước: </strong>
-                                                    {product.size} 
-                                                </p>
-                                                <p className="mb-1">
-                                                    <strong>Loại: </strong>
-                                                    {product.generic}
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
