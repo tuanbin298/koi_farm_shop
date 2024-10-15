@@ -1,4 +1,5 @@
 import React from "react";
+import { formatMoney } from "../../utils/formatMoney";
 
 export default function SingleForm({
   formData,
@@ -8,6 +9,7 @@ export default function SingleForm({
   data,
   loading,
   currentYear,
+  calculatedPrice,
 }) {
   return (
     <form onSubmit={handleSubmit}>
@@ -125,6 +127,10 @@ export default function SingleForm({
             className={`form-control ${errors.birth ? "is-invalid" : ""}`}
             value={formData.birth}
             onChange={handleChange}
+            min="1900"
+            max={new Date().getFullYear()}
+            inputMode="numeric"
+            maxLength="2"
             required
           />
           {errors.birth && (
@@ -165,6 +171,10 @@ export default function SingleForm({
             className={`form-control ${errors.size ? "is-invalid" : ""}`}
             value={formData.size}
             onChange={handleChange}
+            min="20"
+            max="70"
+            inputMode="numeric"
+            maxLength="2"
             required
           />
           {errors.size && <div className="invalid-feedback">{errors.size}</div>}
@@ -181,7 +191,7 @@ export default function SingleForm({
             type="text"
             name="description"
             id="description"
-            placeholder="Nhập kích thước cá"
+            placeholder="Nhập mô tả cá"
             className={`form-control ${errors.description ? "is-invalid" : ""}`}
             value={formData.description}
             onChange={handleChange}
@@ -222,7 +232,13 @@ export default function SingleForm({
             id="estimatedPrice"
             placeholder="Giá được xác định bằng hệ thống"
             className="form-control"
-            value={formData.estimatedPrice}
+            value={
+              calculatedPrice.minPrice && calculatedPrice.maxPrice
+                ? `${formatMoney(calculatedPrice.minPrice)} - ${formatMoney(
+                    calculatedPrice.maxPrice
+                  )}`
+                : ""
+            }
             onChange={handleChange}
             disabled
           />

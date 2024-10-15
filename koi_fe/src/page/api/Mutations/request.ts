@@ -31,6 +31,7 @@ export const CREATE_CONSIGNMENT_SALE = gql`
       category
       origin
       medical
+      estimatedPrice
     }
   }
 `;
