@@ -21,7 +21,7 @@ export default function CardListProduct({ products }) {
               }}
             >
               {/* Link tới chi tiết sản phẩm */}
-              <Link to={`/ProductDetail/${product.id}`}>
+              <Link to={`/ProductDetail/${product.slug}`}>
                 <img
                   src={product.image?.publicUrl}
                   alt={product.name}

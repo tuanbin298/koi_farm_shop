@@ -84,7 +84,8 @@ export default function Header() {
     "register": "Đăng ký",
     "about": "Giới thiệu",
     "news": "Tin tức",
-    "ProductDetail": "Chi tiết"
+    "ProductDetail": "Chi tiết",
+    "introduce": "Giới thiệu"
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -92,7 +93,9 @@ export default function Header() {
     const pathnames = location.pathname.split("/").filter((x) => x);
 
     return (
-      <Breadcrumbs aria-label="breadcrumb">
+      <Breadcrumbs aria-label="breadcrumb" style={{
+        color:"white"
+      }}>
         <Link
           to="/"
           style={{
