@@ -78,7 +78,7 @@ const Product = list({
       label: "Mô tả",
     }),
     origin: text({
-      label: "Nguồn gốc",
+      label: "Nguồn cung",
       validation: {
         isRequired: true,
       },
@@ -91,7 +91,7 @@ const Product = list({
       isIndexed: "unique",
       ui: {
         createView: { fieldMode: "hidden" },
-        itemView: { fieldMode: "read" },
+        itemView: { fieldMode: "hidden" },
       },
     }),
     image: cloudinaryImage({
@@ -101,6 +101,13 @@ const Product = list({
     category: relationship({
       label: "Loại",
       ref: "Category",
+    }),
+    status: select({
+      label: "Trạng thái",
+      options: [
+        { label: "Còn hàng", value: "Còn hàng" },
+        { label: "Hết hàng", value: "Hết hàng" },
+      ],
     }),
   },
 
