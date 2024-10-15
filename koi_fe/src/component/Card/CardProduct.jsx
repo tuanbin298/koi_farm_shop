@@ -32,7 +32,7 @@ export default function CardProduct() {
                 }}
               >
                 {/* Link tới chi tiết sản phẩm */}
-                <Link to={`/ProductDetail/${product.id}`}>
+                <Link to={`/ProductDetail/${product.slug}`}>
                   <img
                     src={product.image?.publicUrl}
                     alt={product.name}

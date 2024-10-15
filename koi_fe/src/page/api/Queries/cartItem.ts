@@ -10,6 +10,7 @@ export const GET_CART_ITEMS = gql`
       }
       name
       price
+      id
     }
   }
 }

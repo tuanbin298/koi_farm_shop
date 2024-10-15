@@ -15,8 +15,8 @@ import CardMedia from "@mui/material/CardMedia";
 import { IoLocationSharp } from "react-icons/io5";
 import { FaPhone, FaBookmark } from "react-icons/fa";
 import "./ProductDetail.css";
-import { Link } from "react-router-dom";
-import { useProduct, useAllProducts } from "../api/Queries/product"; // Import custom hooks
+import { Link, useMatch } from "react-router-dom";
+import { useProduct, useAllProducts, useProductBySlug } from "../api/Queries/product"; // Import custom hooks
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
@@ -25,12 +25,19 @@ import { useMutation } from "@apollo/client";
 export default function ProductDetail() {
   // const [createCart] = useMutation(CREATE_CART);
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  const { id } = useParams(); // Get product ID from the route
-  const { loading, error, product } = useProduct(id); // Fetch single product
+  // const { id } = useParams(); // Get product ID from the route
+  const match = useMatch("/ProductDetail/:id"); 
+  const id = match ? match.params.id : null;
+
+  const { slug } = useParams();
+  console.log(slug);
+  // const { loading, error, product } = useProduct(id); // Fetch single product
+
+  const { loading, error, product } = useProductBySlug(slug);
   const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
   const userId = localStorage.getItem("id");
   const [cartId, setCartId] = useState(localStorage.getItem("cartId")); // Store cart ID in state and localStorage
-
+  
   // State to track the starting index of the currently displayed products
   const [startIndex, setStartIndex] = useState(0);
 
@@ -124,6 +131,7 @@ export default function ProductDetail() {
                 alt={product.name}
               />
             ) : null}
+            {console.log(product.slug)}
           </div>
 
           <div style={{ width: "100%" }}>
@@ -239,7 +247,7 @@ export default function ProductDetail() {
           </div>
 
           {displayedProducts?.map((product) => (
-            <Link to={`/ProductDetail/${product.id}`} key={product.id}>
+            <Link to={`/ProductDetail/${product.slug}`} key={product.id}>
               <Card sx={{ maxWidth: 250 }}>
                 {product.image?.publicUrl ? (
                   <CardMedia

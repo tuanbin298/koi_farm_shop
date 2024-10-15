@@ -33,7 +33,9 @@ function App() {
           <Route path="/news" element={<NewsArticle />} />
           <Route path="/profile" element={<ProfileUser />} />
           <Route path="/introduce" element={<IntroducePage />} />
-          <Route path="/ProductDetail/:id" element={<ProductDetail />} />
+          {/* <Route path="/ProductDetail/:id" element={<ProductDetail />} /> */}
+          <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
+
         </Routes>
       </BrowserRouter>
       <Footer />
