@@ -13,6 +13,7 @@ export const GET_ALL_PRODUCTS = gql`
       description
       origin
       generic
+      slug        
       image {
         publicUrl
       }
@@ -60,6 +61,7 @@ export const GET_PRODUCT = gql`
       image {
         publicUrl
       }
+      slug
     }
   }
 `;
@@ -79,9 +81,43 @@ export const GET_PRODUCT_DETAIL = gql`
         publicUrl
       }
       price
+      slug
     }
   }
 `;
+
+export const GET_PRODUCT_DETAIL_BY_SLUG = gql`
+ query Product($where: ProductWhereUniqueInput!) {
+    product(where: $where) {
+      id
+      name
+      birth
+      sex
+      size
+      description
+      origin
+      generic
+      image {
+        publicUrl
+      }
+      price
+      slug
+    }
+  }
+`;
+
+export function useProductBySlug(slug) {
+  const { loading, error, data } = useQuery(GET_PRODUCT_DETAIL_BY_SLUG, {
+    variables: { where: { slug } },  // Correctly wrap the slug in a where object
+  });
+
+  return {
+    loading,
+    error,
+    product: data?.product,
+  };
+}
+
 
 export function useProduct(id) {
   const { loading, error, data } = useQuery(GET_PRODUCT_DETAIL, {

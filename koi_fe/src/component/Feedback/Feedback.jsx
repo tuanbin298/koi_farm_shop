@@ -34,58 +34,56 @@ const feedbackData = [
     comment: "Rất đáng tiền! Tôi sẽ quay lại lần nữa.",
     date: "05/10/2024",
   },
+  {
+    rating: 5,
+    name: "Vũ Thị H",
+    comment: " Tôi sẽ quay lại lần nữa.",
+    date: "06/10/2024",
+  },
 ];
 
 const FeedbackSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const feedbackPerPage = 3; // Số feedback hiển thị trên một trang
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? feedbackData.length - 1 : prevIndex - 1
+      prevIndex === 0 ? feedbackData.length - feedbackPerPage : prevIndex - feedbackPerPage
     );
   };
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === feedbackData.length - 1 ? 0 : prevIndex + 1
+      prevIndex + feedbackPerPage >= feedbackData.length ? 0 : prevIndex + feedbackPerPage
     );
   };
 
-  const currentFeedback = feedbackData[currentIndex];
-
   return (
-    <Container className="position-relative my-5" style={{ maxWidth: "600px" }}>
-      <h2 className="text-center mb-4">Khách Hàng Nói Về Chúng Tôi</h2>
+    <Container className="feedback-slider my-5">
+      <h2 className="text-center mb-4">Đánh Giá Dịch Vụ</h2>
 
-      {/* Card hiển thị feedback */}
-      <Card className="text-center">
-        <Card.Body>
-        <div className="d-flex justify-content-center mb-2">
-            {[...Array(currentFeedback.rating)].map((_, index) => (
-              <FaStar key={index} color="#ffc107" />
-            ))}
-          </div>
-          <Card.Title>{currentFeedback.name}</Card.Title>
-          <Card.Text>"{currentFeedback.comment}"</Card.Text>
-        </Card.Body>
-        <Card.Footer className="text-muted">{currentFeedback.date}</Card.Footer>
-      </Card>
+      <div className="feedback-section">
+        {feedbackData.slice(currentIndex, currentIndex + feedbackPerPage).map((feedback, index) => (
+          <Card key={index} className="feedback-card">
+            <Card.Body>
+              <div className="d-flex justify-content-center mb-2">
+                {[...Array(feedback.rating)].map((_, idx) => (
+                  <FaStar key={idx} color="#ffc107" />
+                ))}
+              </div>
+              <Card.Title>{feedback.name}</Card.Title>
+              <Card.Text>"{feedback.comment}"</Card.Text>
+              <Card.Footer className="text-muted">{feedback.date}</Card.Footer>
+            </Card.Body>
+          </Card>
+        ))}
+      </div>
 
-      {/* Nút điều hướng trái */}
-      <Button
-        variant="light"
-        onClick={handlePrev}
-        className="feedback-nav-btn left"
-      >
+      <Button variant="light" onClick={handlePrev} className="feedback-nav-btn left">
         <FaChevronLeft />
       </Button>
 
-      {/* Nút điều hướng phải */}
-      <Button
-        variant="light"
-        onClick={handleNext}
-        className="feedback-nav-btn right"
-      >
+      <Button variant="light" onClick={handleNext} className="feedback-nav-btn right">
         <FaChevronRight />
       </Button>
     </Container>
