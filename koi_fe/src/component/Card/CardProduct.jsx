@@ -106,27 +106,27 @@ export default function CardProduct() {
                   >
                     <h4 className="card-title">{product.name}</h4>
                     <p className="mb-1 text-danger">
-                      <strong>Price: </strong>
+                      <strong>Giá: </strong>
                       {formatMoney(product.price)}
                     </p>
                     <p className="mb-1">
-                      <strong>Origin: </strong>
+                      <strong>Nguồn gốc: </strong>
                       {product.origin}
                     </p>
                     <p className="mb-1">
-                      <strong>Size: </strong>
+                      <strong>Kích thước: </strong>
                       {product.size}
                     </p>
                     <p className="mb-1">
-                      <strong>Sex: </strong>
+                      <strong>Giới tính: </strong>
                       {product.sex}
                     </p>
                     <p className="mb-1">
-                      <strong>Type: </strong>
+                      <strong>Loại: </strong>
                       {product.generic}
                     </p>
                     <p className="mb-1">
-                      <strong>Farm: </strong>
+                      <strong>Nguồn: </strong>
                       Dainichi Koi Farm
                     </p>
                     {/* Add to cart button */}

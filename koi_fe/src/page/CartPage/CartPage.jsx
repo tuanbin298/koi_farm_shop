@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Checkbox, TextField, Box, Typography, Button
+  Paper, Checkbox, TextField, Box, Typography, Button, Pagination
 } from '@mui/material';
-import { FaArrowLeft } from "react-icons/fa";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Image } from 'antd';
 import { useQuery, useMutation } from "@apollo/client";
@@ -18,25 +17,10 @@ const CartPage = () => {
   let totalPrice = 0;
 
   const [depositFields, setDepositFields] = useState({});
-  const [isLoading] = useState(false); // Loading state
-  const [deleteError] = useState(null); // Error state
-
-  // Xoá sản phẩm khỏi giỏ hàng
-  const handleDelete = async (cartItemId) => {
-    try {
-      await deleteCartItem({
-        variables: {
-          where: {
-            id: cartItemId,
-          }
-        }
-      });
-
-      refetchItems();
-    } catch (err) {
-      console.error("Delete fail: ", err)
-    }
-  };
+  const [isLoading] = useState(false);
+  const [deleteError] = useState(null);
+  const [page, setPage] = useState(1); // Current page
+  const itemsPerPage = 3; // Items per page
 
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 
@@ -49,21 +33,48 @@ const CartPage = () => {
   });
 
   useEffect(() => {
-    refetchItems(); // Cập nhật danh sách khi component được render
+    refetchItems();
   }, [refetchItems]);
 
-  // Tính tổng giá tiền
+  // Calculate the total price
   data?.cartItems?.forEach((cartItem) => {
     totalPrice += cartItem.product[0].price;
   });
 
-  // Toggle ký gửi nuôi
+  // Handle delete cart item
+  const handleDelete = async (cartItemId) => {
+    try {
+      await deleteCartItem({
+        variables: {
+          where: {
+            id: cartItemId,
+          }
+        }
+      });
+
+      refetchItems();
+    } catch (err) {
+      console.error("Delete fail: ", err);
+    }
+  };
+
+  // Handle deposit toggle
   const handleDepositToggle = (productId) => {
     setDepositFields((prev) => ({
       ...prev,
       [productId]: !prev[productId],
     }));
   };
+
+  // Handle pagination page change
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
+
+  // Pagination logic - slice the data to show items per page
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = data?.cartItems?.slice(startIndex, endIndex) || [];
 
   if (loading) return <p>Đang tải giỏ hàng...</p>;
   if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
@@ -95,7 +106,7 @@ const CartPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data?.cartItems?.map((cartItem) => (
+                {paginatedItems.map((cartItem) => (
                   cartItem && cartItem.product[0] && (
                     <React.Fragment key={cartItem.id}>
                       <TableRow>
@@ -122,7 +133,7 @@ const CartPage = () => {
                             color="error"
                             style={{ marginLeft: "15%" }}
                             onClick={() => handleDelete(cartItem.id)}
-                            disabled={isLoading} // Khoá nút khi đang xoá
+                            disabled={isLoading}
                           >
                             Xóa
                           </Button>
@@ -152,8 +163,18 @@ const CartPage = () => {
           </TableContainer>
 
           {deleteError && (
-            <p style={{ color: 'red' }}>Lỗi: {deleteError}</p> // Hiển thị lỗi nếu có
+            <p style={{ color: 'red' }}>Lỗi: {deleteError}</p>
           )}
+
+          {/* Pagination Controls */}
+          <Box display="flex" justifyContent="center" marginTop={2}>
+            <Pagination
+              count={Math.ceil((data?.cartItems?.length || 0) / itemsPerPage)}
+              page={page}
+              onChange={handlePageChange}
+              color="primary"
+            />
+          </Box>
 
           <Box display="flex" flexDirection="column" alignItems="flex-end" padding={2}>
             <Typography variant="h6" fontWeight="bold" gutterBottom>
