@@ -11,35 +11,34 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from '../api/Queries/cartItem';
 import { DELETE_CART_ITEM } from '../api/Mutations/deletecartItem';
 import { formatMoney } from "../../utils/formatMoney";
-import './CartPage.css'; 
+import './CartPage.css';
 
 const CartPage = () => {
   const userId = localStorage.getItem("id");
   let totalPrice = 0;
 
   const [depositFields, setDepositFields] = useState({});
-  const [isLoading, setIsLoading] = useState(false); // Loading state
-  const [deleteError, setDeleteError] = useState(null); // Error state
+  const [isLoading] = useState(false); // Loading state
+  const [deleteError] = useState(null); // Error state
 
-
-    // Xoá sản phẩm khỏi giỏ hàng
-    const handleDelete = async (cartItemId) => {
-      try {
-        await deleteCartItem({
-          variables: {
-            where: {
-              id: cartItemId,
-            }
+  // Xoá sản phẩm khỏi giỏ hàng
+  const handleDelete = async (cartItemId) => {
+    try {
+      await deleteCartItem({
+        variables: {
+          where: {
+            id: cartItemId,
           }
-        });
+        }
+      });
 
-        refetchItems();
-      } catch (err) {
-        console.error("Delete fail: ", err)
-      }
-    };
+      refetchItems();
+    } catch (err) {
+      console.error("Delete fail: ", err)
+    }
+  };
 
-    const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
+  const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 
   const { loading, error, data, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
     variables: {
@@ -65,8 +64,6 @@ const CartPage = () => {
       [productId]: !prev[productId],
     }));
   };
-
-
 
   if (loading) return <p>Đang tải giỏ hàng...</p>;
   if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
