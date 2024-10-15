@@ -17,7 +17,7 @@ const SalesConsignmentPage = () => {
     sex: "",
     medical: "",
     size: "",
-    price: "",
+    estimatedPrice: "",
     description: "",
     origin: "",
     category: "",
@@ -38,7 +38,6 @@ const SalesConsignmentPage = () => {
   const currentYear = new Date().getFullYear();
   // Lấy userId từ localStorage
   const userId = localStorage.getItem("id");
-  console.log(userId);
 
   useEffect(() => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -66,27 +65,138 @@ const SalesConsignmentPage = () => {
         setFormData({ ...formData, [name]: files[0] });
       }
     } else {
-      // For other fields, update formData
-      setFormData({ ...formData, [name]: value });
+      // For other fields, update formData and validate immediately
+      setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+
+      // Validate the field immediately
+      validateField(name, value);
     }
   };
 
-  const validateForm = () => {
+  // New function for validating individual fields
+  const validateField = (name, value) => {
+    let error = "";
+
+    if (name === "name") {
+      if (value.length < 10) {
+        error = "Tên Koi phải có độ dài ít nhất 10 ký tự.";
+      }
+    }
+
+    if (name === "birth") {
+      const birthYear = parseInt(value, 10);
+      if (birthYear > currentYear || birthYear < currentYear - 50) {
+        error = `Năm sinh phải nằm trong khoảng từ ${
+          currentYear - 15
+        } đến ${currentYear}.`;
+      }
+    }
+
+    if (name === "size") {
+      const size = parseInt(value, 10);
+      if (size < 20 || size > 70) {
+        error = "Kích thước phải nằm trong khoảng từ 20 cm đến 70 cm.";
+      }
+    }
+
+    if (name === "description") {
+      if (value.length < 40) {
+        error = "Mô tả cá Koi phải có độ dài ít nhất 40 ký tự.";
+      }
+    }
+
+    if (error) {
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+    }
+  };
+
+  const priceTable = {
+    size: {
+      small: 500000, // từ 20-35 cm
+      medium: 1000000, // từ 35-60 cm
+      large: 2000000, // từ 60 cm trở lên
+    },
+    origin: {
+      Japan: 2, // giá sẽ nhân với hệ số 1.5 nếu Koi từ Nhật
+      Local: 1, // Koi từ địa phương không thay đổi giá
+    },
+    ageFactor: (age) => {
+      if (age < 2) return 0.8; // cá dưới 2 tuổi giá giảm 20%
+      if (age >= 2 && age <= 5) return 1; // cá từ 2-5 tuổi giá bình thường
+      return 0.9; // cá trên 5 tuổi giá giảm 10%
+    },
+  };
+
+  const calculatePrice = (formData) => {
+    // Ánh xạ giá trị từ formData.origin thành "Japan" hoặc "Local"
+    const originMapping = {
+      "Nhập khẩu Nhật bản": "Japan",
+      "bố nhật mẹ nhật": "Local",
+    };
+
+    const sizeCategory =
+      formData.size < 35 ? "small" : formData.size < 60 ? "medium" : "large";
+
+    // Sử dụng giá trị ánh xạ cho origin
+    const originKey = originMapping[formData.origin] || "Local"; // Mặc định là "Local" nếu không tìm thấy
+    const originMultiplier = priceTable.origin[originKey] || 1;
+
+    const birthYear = parseInt(formData.birth, 10);
+    const age = new Date().getFullYear() - birthYear;
+    const ageMultiplier = priceTable.ageFactor(age);
+
+    // Tính giá dựa trên kích thước, nguồn gốc và tuổi
+    const basePrice = priceTable.size[sizeCategory];
+
+    // Tính giá dao động:
+    // Giá trị tối thiểu là 90% của giá hiện tại và tối đa là 110%
+    const minPrice = basePrice * originMultiplier * ageMultiplier * 0.9;
+    const maxPrice = basePrice * originMultiplier * ageMultiplier * 1.1;
+
+    return {
+      minPrice: Math.round(minPrice),
+      maxPrice: Math.round(maxPrice),
+    };
+  };
+
+  const [calculatedPrice, setCalculatedPrice] = useState({
+    minPrice: null,
+    maxPrice: null,
+  });
+
+  useEffect(() => {
+    // Chỉ tính toán giá khi người dùng đã nhập đầy đủ size, origin và birth
+    if (formData.size && formData.origin && formData.birth) {
+      const priceRange = calculatePrice(formData);
+      setCalculatedPrice(priceRange);
+    } else {
+      // Nếu thiếu thông tin, bỏ trống giá
+      setCalculatedPrice({ minPrice: null, maxPrice: null });
+    }
+  }, [formData.size, formData.origin, formData.birth]);
+
+  const validateForm = (formData) => {
     let newErrors = {};
 
-    if (formData.name.length < 10) {
+    // Ensure formData exists before accessing properties
+    if (!formData) {
+      console.error("formData is undefined");
+      return false;
+    }
+
+    if (formData.name?.length < 10) {
       newErrors.name = "Tên Koi phải có độ dài ít nhất 10 ký tự.";
     }
 
     const birthYear = parseInt(formData.birth, 10);
     if (birthYear > currentYear || birthYear < currentYear - 50) {
       newErrors.birth = `Năm sinh phải nằm trong khoảng từ ${
-        currentYear - 50
+        currentYear - 20
       } đến ${currentYear}.`;
     }
 
     const size = parseInt(formData.size, 10);
-    if (size < 20) {
+    if (size < 20 || size > 70) {
       newErrors.size = "Kích thước phải nằm trong khoảng từ 20 cm đến 70 cm.";
     }
 
@@ -102,11 +212,12 @@ const SalesConsignmentPage = () => {
       return;
     }
 
-    if (!validateForm()) {
+    // Ensure formData is passed to validateForm
+    if (!validateForm(formData)) {
       return;
     }
 
-    const priceValue = formData.price ? parseInt(formData.price, 10) : 0;
+    const priceValue = `${calculatedPrice.minPrice} - ${calculatedPrice.maxPrice}`;
 
     try {
       // Tạo Consignment Sale
@@ -117,28 +228,20 @@ const SalesConsignmentPage = () => {
             sex: formData.sex,
             birth: parseInt(formData.birth, 10),
             size: parseInt(formData.size, 10),
-            price: priceValue,
+            estimatedPrice: priceValue,
             description: formData.description || "",
             origin: formData.origin,
             category: formData.category,
             image: formData.image,
             status: "Còn hàng",
             medical: formData.medical,
-          },
-        },
-        context: {
-          headers: {
-            "Apollo-Require-Preflight": true,
+            price: 0,
           },
         },
       });
 
-      // Log the full response to check the returned data
-      console.log("Consignment Sale Response:", consignmentData);
-
       // Lấy consignmentId
       const consignmentId = consignmentData.createConsignmentSale.id;
-      console.log(consignmentId);
 
       if (!consignmentId) {
         console.error("Không thể lấy ID của Consignment Sale.");
@@ -148,15 +251,10 @@ const SalesConsignmentPage = () => {
       const { data: requestData } = await createRequest({
         variables: {
           data: {
-            consignment: { connect: { id: consignmentId } }, // Thay "consignmentId" thành "consignment"
+            consignment: { connect: { id: consignmentId } },
             description: `Yêu cầu ký gửi cá Koi: ${formData.name}`,
             status: "Chờ xác nhận",
-            user: { connect: { id: userId } }, // Thay "userId" thành "user"
-          },
-        },
-        context: {
-          headers: {
-            "Apollo-Require-Preflight": true,
+            user: { connect: { id: userId } },
           },
         },
       });
@@ -206,6 +304,7 @@ const SalesConsignmentPage = () => {
               expanded={expanded}
               toggleExpand={toggleExpand}
               currentYear={currentYear}
+              calculatedPrice={calculatedPrice}
             />
           )}
         </div>
