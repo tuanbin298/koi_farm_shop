@@ -38,7 +38,6 @@ const SalesConsignmentPage = () => {
   const currentYear = new Date().getFullYear();
   // Lấy userId từ localStorage
   const userId = localStorage.getItem("id");
-  console.log(userId);
 
   useEffect(() => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -239,19 +238,10 @@ const SalesConsignmentPage = () => {
             price: 0,
           },
         },
-        context: {
-          headers: {
-            "Apollo-Require-Preflight": true,
-          },
-        },
       });
-
-      // Log the full response to check the returned data
-      console.log("Consignment Sale Response:", consignmentData);
 
       // Lấy consignmentId
       const consignmentId = consignmentData.createConsignmentSale.id;
-      console.log(consignmentId);
 
       if (!consignmentId) {
         console.error("Không thể lấy ID của Consignment Sale.");
@@ -261,15 +251,10 @@ const SalesConsignmentPage = () => {
       const { data: requestData } = await createRequest({
         variables: {
           data: {
-            consignment: { connect: { id: consignmentId } }, // Thay "consignmentId" thành "consignment"
+            consignment: { connect: { id: consignmentId } },
             description: `Yêu cầu ký gửi cá Koi: ${formData.name}`,
             status: "Chờ xác nhận",
-            user: { connect: { id: userId } }, // Thay "userId" thành "user"
-          },
-        },
-        context: {
-          headers: {
-            "Apollo-Require-Preflight": true,
+            user: { connect: { id: userId } },
           },
         },
       });
