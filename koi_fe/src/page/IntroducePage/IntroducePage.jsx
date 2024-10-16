@@ -58,7 +58,7 @@ const IntroducePage = () => {
                                 productData.products.map((product) => (
                                     <div key={product.id} className="col-md-4 mb-4 d-flex">
                                         <div className="card h-100 shadow-sm text-center" style={{ maxWidth: "300px", margin: "0 auto" }}>
-                                            <Link to={`/ProductDetail/${product.id}`}>
+                                            <Link to={`/ProductDetail/${product.slug}`}>
                                                 <img
                                                     src={product.image?.publicUrl}
                                                     alt={product.name}

@@ -42,6 +42,7 @@ export const GET_PRODUCT_BY_CATEGORY = gql`
         id
         name
       }
+      slug
     }
   }
 `;
