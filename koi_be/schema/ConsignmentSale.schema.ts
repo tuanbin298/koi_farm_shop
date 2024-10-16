@@ -26,8 +26,8 @@ const ConsignmentSale = list({
     hideCreate(args) {
       return !permissions.canManageConsigment(args);
     },
-    hideDelete(args) {
-      return !permissions.canManageConsigment(args);
+    hideDelete() {
+      return true;
     },
   },
 
