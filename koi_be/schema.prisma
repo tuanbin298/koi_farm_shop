@@ -58,6 +58,7 @@ model Product {
   image                  String?
   category               Category?   @relation("Product_category", fields: [categoryId], references: [id])
   categoryId             String?     @map("category")
+  status                 String?
   from_Feedback_product  Feedback[]  @relation("Feedback_product")
   from_OrderItem_product OrderItem[] @relation("OrderItem_product")
   from_CartItem_product  CartItem[]  @relation("CartItem_product")
@@ -149,6 +150,7 @@ model ConsignmentSale {
   generic                  String    @default("")
   image                    String?
   category                 String    @default("")
+  estimatedPrice           String    @default("")
   status                   String?   @default("Còn hàng")
   from_Request_consignment Request[] @relation("Request_consignment")
 }

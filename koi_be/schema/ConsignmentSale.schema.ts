@@ -26,8 +26,8 @@ const ConsignmentSale = list({
     hideCreate(args) {
       return !permissions.canManageConsigment(args);
     },
-    hideDelete(args) {
-      return !permissions.canManageConsigment(args);
+    hideDelete() {
+      return true;
     },
   },
 
@@ -52,9 +52,6 @@ const ConsignmentSale = list({
     }),
     medical: text({
       label: "Lịch sử bệnh",
-      validation: {
-        isRequired: true,
-      },
     }),
     size: integer({
       label: "Kích thước",
@@ -65,7 +62,7 @@ const ConsignmentSale = list({
       },
     }),
     price: integer({
-      label: "Giá được xác định bởi hệ thống",
+      label: "Giá",
       validation: {
         isRequired: true,
       },
@@ -89,6 +86,12 @@ const ConsignmentSale = list({
     category: text({
       label: "Loại",
     }),
+    estimatedPrice: text({
+      label: "Giá được xác định bởi hệ thống",
+      validation: {
+        isRequired: true,
+      },
+    }),
     status: select({
       label: "Trạng thái",
       defaultValue: "Còn hàng",
@@ -97,10 +100,6 @@ const ConsignmentSale = list({
         { label: "Đã bán", value: "Đã bán" },
       ],
     }),
-    // request: relationship({
-    //   label: "Yêu cầu",
-    //   ref: "Request",
-    // }),
   },
 });
 

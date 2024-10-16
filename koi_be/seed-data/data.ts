@@ -44,6 +44,11 @@ export const categories = [
     description:
       "Mud Pond Nuôi Ao Bùn là cá đơn sắc, toàn bộ vảy, vây cá đều mang màu đỏ trông như quả ớt khổng lồ. Nếu thả trong hồ koi thì cá nổi bật hơn hẳn so với dòng koi khác. Đối với dòng nhỏ hơn là Girin Benigoi thì vảy cá có màu óng ánh đẹp mắt, lộng lẫy, lôi cuốn bất cứ ai khi nhìn thấy lần đầu tiên.",
   },
+  {
+    name: "Cá Koi Platinum",
+    description:
+      "Cá Koi Platinum có nguồn gốc từ Nhật Bản, nơi mà nghệ thuật nuôi cá Koi đã phát triển từ thế kỷ 19. Ban đầu, cá Koi được nuôi để làm thực phẩm, nhưng với sự phát triển của kỹ thuật lai tạo, chúng đã trở thành những tác phẩm nghệ thuật sống động.",
+  },
 ];
 
 export const products = [
@@ -55,9 +60,10 @@ export const products = [
     price: 18000000,
     description:
       "Chăm sóc dễ dàng. Ăn tạp; hiền; ưa hòa bình;  Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Izumiya Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi vàng Yamabuki",
+    status: "Còn hàng",
   },
   {
     name: "Tancho Nuôi Ao Bùn",
@@ -67,9 +73,10 @@ export const products = [
     price: 30000000,
     description:
       "Chăm sóc dễ dàng ; Ăn tạp; hiền; ưa hòa bình ; Màu sắc: Đỏ - Trắng; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu để nuôi cá: 1000 gallon.",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Tancho",
+    status: "Còn hàng",
   },
   {
     name: "Shusui Nuôi Ao Bùn",
@@ -79,9 +86,10 @@ export const products = [
     price: 15000000,
     description:
       "Chăm sóc dễ dàng; Chế độ ăn: Ăn tạp; Tính cách: Hòa bình; Màu sắc: Đen, đỏ, trắng",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Shusui",
+    status: "Còn hàng",
   },
   {
     name: "Grinrin Asagi Nuôi Ao Bùn",
@@ -90,9 +98,10 @@ export const products = [
     size: "30cm",
     price: 4500000,
     description: "Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Asagi",
+    status: "Còn hàng",
   },
   {
     name: "Hi Utsuri Nuôi Ao Bùn",
@@ -102,9 +111,10 @@ export const products = [
     price: 7500000,
     description:
       "Mắt của cá koi Hi Utsuri có hình dáng tròn và có màu đen sâu, tạo nên vẻ đẹp quyến rũ cho giống cá này. Râu của cá koi Hi Utsuri cũng là một trong những đặc điểm nổi bật, chúng có chiều dài và độ dày hơn hẳn các giống cá Koi. ",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Marushin Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Cọp Hikari Utsuri",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Hariwake",
@@ -114,9 +124,10 @@ export const products = [
     price: 2200000,
     description:
       "Kích thước: 50-65cm ; Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình; Màu sắc: Vàng - Trắng",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Hariwake",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Yamabuki Ogon F1",
@@ -126,9 +137,10 @@ export const products = [
     price: 500000,
     description:
       "Kích thước: 35-50cm; Chăm sóc dễ dàng ;Ăn tạp; hiền; ưa hòa bình; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2;  Kích thước hồ tối thiểu: 1000 gallon.",
-    origin: "bố nhật mẹ nhật",
+    origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi vàng Yamabuki",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Tancho F1",
@@ -138,9 +150,10 @@ export const products = [
     price: 1200000,
     description:
       "Chăm sóc dễ dàng ; Ăn tạp; hiền; ưa hòa bình ; Màu sắc: Đỏ - Trắng; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2;  Kích thước hồ tối thiểu để nuôi cá: 1000 gallon.",
-    origin: "bố nhật mẹ nhật",
+    origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi Tancho",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Shusui F1",
@@ -150,9 +163,10 @@ export const products = [
     price: 2000000,
     description:
       "Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình ; Màu sắc: Đen, đỏ, trắng",
-    origin: "bố nhật mẹ nhật",
+    origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi Shusui",
+    status: "Còn hàng",
   },
   {
     name: "Shiro Utsuri Nuôi Ao Bùn",
@@ -162,9 +176,10 @@ export const products = [
     price: 55000000,
     description:
       "Kích thước: 55-75cm; Chăm sóc dễ dàng; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình ; Màu Sắc: Đen, trắng",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Omosako Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Shiro Utsuri",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Magoi F1",
@@ -174,9 +189,10 @@ export const products = [
     price: 7500000,
     description:
       "Chăm sóc dễ dàng; Chế độ ăn: Ăn tạp ; Tính cách: Hòa bình; Màu sắc: Đen",
-    origin: "bố nhật mẹ nhật",
+    origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá Koi Magoi ",
+    status: "Còn hàng",
   },
   {
     name: "Mud Pond Nuôi Ao Bùn",
@@ -186,9 +202,10 @@ export const products = [
     price: 55000000,
     description:
       " Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp; Tính cách: Hòa bình ; Màu sắc: Đỏ",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Mud Pond",
+    status: "Còn hàng",
   },
   {
     name: "Cá Koi Yamabuki Ogon Nhật Size Mini",
@@ -198,9 +215,23 @@ export const products = [
     price: 6500000,
     description:
       "Chăm sóc dễ dàng; Ăn tạp; hiền; ưa hòa bình; Điều kiện nước: 36 – 90°F, HK 2-12, pH 6,8 – 7,2; Kích thước hồ tối thiểu: 1000 gallon.",
-    origin: "Nhập khẩu Nhật bản",
+    origin: "Dainichi Koi Farm",
     generic: "Mini",
     category: "Cá koi vàng Yamabuki",
+    status: "Còn hàng",
+  },
+  {
+    name: "Cá koi Platinum",
+    birth: 2021,
+    sex: "Cái",
+    size: "20cm",
+    price: 3000000,
+    description:
+      "Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp; Tính cách: Hòa bình ; Màu sắc: Trắng",
+    origin: "Marudo Koi Farm",
+    generic: "Cá Koi Nhật thuần chủng",
+    category: "Cá Koi Platinum",
+    status: "Còn hàng",
   },
 ];
 
@@ -261,5 +292,20 @@ export const articles = [
     name: "Cá koi bao lâu thì đẻ? Nhân giống cá koi như thế nào?",
     content:
       "Biết được thời gian cá koi đẻ giúp người nuôi chuẩn bị kịp thời những điều kiện cần thiết nhất, giúp giống cá sau đạt chất lượng tốt nhất. Tham khảo cách xác định thời gian cá koi đẻ và cách nhân giống cá koi dưới đây.",
+  },
+  {
+    name: "Liều lượng thức ăn cho cá Koi bao nhiêu là đủ?",
+    content:
+      "“Hay ăn chóng lớn” – đó là câu cửa miệng của nhiều người. Tuy nhiên, đối với cá koi thì không hoàn toàn đúng, cho ăn nhiều hơn lượng cần thiết ảnh hưởng sự phát triển của cá. Liều lượng thức ăn cho cá koi bao nhiêu là đủ?",
+  },
+  {
+    name: "Cho cá koi ăn vào thời gian nào trong ngày là tốt nhất?",
+    content:
+      "Cá koi hấp thụ chất dinh dưỡng hiệu quả hay không phụ thuộc phần lớn vào nhiệt độ và lượng oxy hòa tan trong nước. Do đó, cần lựa chọn và điều chỉnh thời điểm cho cá koi ăn phù hợp với sự thay đổi của 2 yếu tố này.",
+  },
+  {
+    name: "Cách nuôi cá Koi bướm trong bể kính chuẩn nhất",
+    content:
+      "Hình ảnh những chú cá koi bướm bơi uốn mình uyển chuyển khiến nhiều người thích mê. Nếu muốn nuôi cá koi bướm trong bể kính thì bạn có thể tham khảo qua bài viết sau.",
   },
 ];

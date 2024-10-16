@@ -262,6 +262,7 @@ type Product {
   slug: String
   image: CloudinaryImage_File
   category: Category
+  status: String
 }
 
 type CloudinaryImage_File {
@@ -333,6 +334,7 @@ input ProductWhereInput {
   generic: StringFilter
   slug: StringFilter
   category: CategoryWhereInput
+  status: StringNullableFilter
 }
 
 input IntFilter {
@@ -371,6 +373,7 @@ input ProductOrderByInput {
   origin: OrderDirection
   generic: OrderDirection
   slug: OrderDirection
+  status: OrderDirection
 }
 
 input ProductUpdateInput {
@@ -385,6 +388,7 @@ input ProductUpdateInput {
   slug: String
   image: Upload
   category: CategoryRelateToOneForUpdateInput
+  status: String
 }
 
 """The `Upload` scalar type represents a file upload."""
@@ -413,6 +417,7 @@ input ProductCreateInput {
   slug: String
   image: Upload
   category: CategoryRelateToOneForCreateInput
+  status: String
 }
 
 input CategoryRelateToOneForCreateInput {
@@ -846,6 +851,7 @@ type ConsignmentSale {
   generic: String
   image: CloudinaryImage_File
   category: String
+  estimatedPrice: String
   status: String
 }
 
@@ -868,6 +874,7 @@ input ConsignmentSaleWhereInput {
   origin: StringFilter
   generic: StringFilter
   category: StringFilter
+  estimatedPrice: StringFilter
   status: StringNullableFilter
 }
 
@@ -883,6 +890,7 @@ input ConsignmentSaleOrderByInput {
   origin: OrderDirection
   generic: OrderDirection
   category: OrderDirection
+  estimatedPrice: OrderDirection
   status: OrderDirection
 }
 
@@ -898,6 +906,7 @@ input ConsignmentSaleUpdateInput {
   generic: String
   image: Upload
   category: String
+  estimatedPrice: String
   status: String
 }
 
@@ -918,6 +927,7 @@ input ConsignmentSaleCreateInput {
   generic: String
   image: Upload
   category: String
+  estimatedPrice: String
   status: String
 }
 
