@@ -97,10 +97,6 @@ const ConsignmentSale = list({
         { label: "Đã bán", value: "Đã bán" },
       ],
     }),
-    // request: relationship({
-    //   label: "Yêu cầu",
-    //   ref: "Request",
-    // }),
   },
 });
 
