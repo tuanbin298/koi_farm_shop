@@ -67,12 +67,6 @@ const ConsignmentSale = list({
         isRequired: true,
       },
     }),
-    estimatedPrice: text({
-      label: "Giá được xác định bởi hệ thống",
-      validation: {
-        isRequired: true,
-      },
-    }),
     description: text({
       label: "Mô tả",
     }),
@@ -91,6 +85,12 @@ const ConsignmentSale = list({
     }),
     category: text({
       label: "Loại",
+    }),
+    estimated: integer({
+      label: "Giá được xác định bởi hệ thống",
+      validation: {
+        isRequired: true,
+      },
     }),
     status: select({
       label: "Trạng thái",
