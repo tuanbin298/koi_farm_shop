@@ -60,15 +60,7 @@ const ProfileUser = () => {
             )}
           </p>
 
-          {isEditing ? (
-            <button className="btn btn-custom mt-2" onClick={handleSaveAddress}>
-              Lưu địa chỉ
-            </button>
-          ) : (
-            <button className="btn btn-custom mt-2" onClick={handleEditClick}>
-              Sửa địa chỉ
-            </button>
-          )}
+
         </div>
       </div>
     </div>
