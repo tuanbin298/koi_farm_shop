@@ -52,9 +52,6 @@ const ConsignmentSale = list({
     }),
     medical: text({
       label: "Lịch sử bệnh",
-      validation: {
-        isRequired: true,
-      },
     }),
     size: integer({
       label: "Kích thước",
@@ -65,6 +62,12 @@ const ConsignmentSale = list({
       },
     }),
     price: integer({
+      label: "Giá",
+      validation: {
+        isRequired: true,
+      },
+    }),
+    estimatedPrice: text({
       label: "Giá được xác định bởi hệ thống",
       validation: {
         isRequired: true,
