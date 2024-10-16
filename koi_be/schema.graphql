@@ -851,7 +851,7 @@ type ConsignmentSale {
   generic: String
   image: CloudinaryImage_File
   category: String
-  estimated: Int
+  estimatedPrice: String
   status: String
 }
 
@@ -874,7 +874,7 @@ input ConsignmentSaleWhereInput {
   origin: StringFilter
   generic: StringFilter
   category: StringFilter
-  estimated: IntFilter
+  estimatedPrice: StringFilter
   status: StringNullableFilter
 }
 
@@ -890,7 +890,7 @@ input ConsignmentSaleOrderByInput {
   origin: OrderDirection
   generic: OrderDirection
   category: OrderDirection
-  estimated: OrderDirection
+  estimatedPrice: OrderDirection
   status: OrderDirection
 }
 
@@ -906,7 +906,7 @@ input ConsignmentSaleUpdateInput {
   generic: String
   image: Upload
   category: String
-  estimated: Int
+  estimatedPrice: String
   status: String
 }
 
@@ -927,7 +927,7 @@ input ConsignmentSaleCreateInput {
   generic: String
   image: Upload
   category: String
-  estimated: Int
+  estimatedPrice: String
   status: String
 }
 

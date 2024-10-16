@@ -86,7 +86,7 @@ const ConsignmentSale = list({
     category: text({
       label: "Loại",
     }),
-    estimated: integer({
+    estimatedPrice: text({
       label: "Giá được xác định bởi hệ thống",
       validation: {
         isRequired: true,

@@ -150,7 +150,7 @@ model ConsignmentSale {
   generic                  String    @default("")
   image                    String?
   category                 String    @default("")
-  estimated                Int
+  estimatedPrice           String    @default("")
   status                   String?   @default("Còn hàng")
   from_Request_consignment Request[] @relation("Request_consignment")
 }
