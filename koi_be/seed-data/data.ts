@@ -224,6 +224,7 @@ export const products = [
     name: "Cá koi Platinum",
     birth: 2021,
     sex: "Cái",
+    size: "20cm",
     price: 3000000,
     description:
       "Chăm sóc dễ dàng ; Chế độ ăn: Ăn tạp; Tính cách: Hòa bình ; Màu sắc: Trắng",
