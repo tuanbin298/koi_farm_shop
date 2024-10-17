@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category"; // Import the GraphQL query
+import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 
 export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -30,7 +31,14 @@ export default function Header() {
 
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
+  const { data: cartData, loading: cartLoading, error: cartError } = useQuery(GET_CART_ITEMS, {
+    variables: { where: {} }, // Thay đổi điều kiện nếu cần
+    fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
+  });
 
+  // Tính tổng số lượng sản phẩm trong giỏ hàng
+  const cartItemCount = cartData?.cartItems?.reduce((total, item) => total + (item.quantity || 1), 0) || 0;
+  
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
     const storedUserName = localStorage.getItem("name");
@@ -72,6 +80,7 @@ export default function Header() {
     navigate("/login");
   };
 
+
   // Mapping URL paths to Vietnamese labels
   const breadcrumbMap = {
     "": "Trang chủ", // Empty for homepage
@@ -94,7 +103,7 @@ export default function Header() {
 
     return (
       <Breadcrumbs aria-label="breadcrumb" style={{
-        color:"white"
+        color: "white"
       }}>
         <Link
           to="/"
@@ -151,16 +160,36 @@ export default function Header() {
             <a href="">123457890</a>
           </div>
           <div className="header_top-cart">
-            <ShoppingCartIcon className="header_top-icon" />
+            <div style={{ position: 'relative' }}>
+              <ShoppingCartIcon className="header_top-icon" />
+              {cartItemCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-6px',
+                    right: '-9px',
+                    backgroundColor: 'white',
+                    color: 'red',
+                    borderRadius: '40%',
+                    padding: '1px 5px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {cartItemCount}
+                </span>
+              )}
+            </div>
             <Link to="/cart">Giỏ hàng</Link>
           </div>
+
           <div className="header_top-auth">
             {loggedIn ? (
               <>
                 <IconButton onClick={handleMenuClick}>
-                  <Avatar alt="profile pic" src="src/assets/kohaku.jpg"/>
+                  <Avatar alt="profile pic" src="src/assets/kohaku.jpg" />
                   <span style={{
-                    color:"white"
+                    color: "white"
                   }}>{userName}</span>
                 </IconButton>
                 <Menu
@@ -262,7 +291,6 @@ export default function Header() {
             </button>
           </div>
         </div>
-
         <div className="header_bottom">{generateBreadcrumbs()}</div>
       </header>
     </div>

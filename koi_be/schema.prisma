@@ -145,6 +145,7 @@ model ConsignmentSale {
   medical                  String    @default("")
   size                     Int
   price                    Int
+  estimatedPrice           String    @default("")
   description              String    @default("")
   origin                   String    @default("")
   generic                  String    @default("")
