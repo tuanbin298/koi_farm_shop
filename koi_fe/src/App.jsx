@@ -13,7 +13,8 @@ import ProfileUser from "./page/ProfileUser/ProfileUser";
 import NewsArticle from "./page/NewsArticle/NewsArticle";
 import IntroducePage from "./page/IntroducePage/IntroducePage";
 import ProductDetail from "./page/ProductDetail/ProductDetail";
-
+import SuccessPage from "./page/SuccessPage/SuccessPage";
+import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentTrackingPage";
 
 function App() {
   return (
@@ -35,7 +36,11 @@ function App() {
           <Route path="/introduce" element={<IntroducePage />} />
           {/* <Route path="/ProductDetail/:id" element={<ProductDetail />} /> */}
           <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
-
+          <Route path="/some-success-page" element={<SuccessPage />} />
+          <Route
+            path="/consignment-tracking"
+            element={<ConsignmentTrackingPage />}
+          />
         </Routes>
       </BrowserRouter>
       <Footer />

@@ -7,7 +7,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
+import Avatar from "@mui/material/Avatar";
 import {
   Menu,
   MenuItem,
@@ -75,17 +75,17 @@ export default function Header() {
   // Mapping URL paths to Vietnamese labels
   const breadcrumbMap = {
     "": "Trang chủ", // Empty for homepage
-    "koiList": "Danh sách Cá Koi",
-    "sales": "Ký Gửi Bán",
-    "care": "Ký Gửi Nuôi",
-    "cart": "Giỏ hàng",
-    "profile": "Thông tin cá nhân",
-    "login": "Đăng nhập",
-    "register": "Đăng ký",
-    "about": "Giới thiệu",
-    "news": "Tin tức",
-    "ProductDetail": "Chi tiết",
-    "introduce": "Giới thiệu"
+    koiList: "Danh sách Cá Koi",
+    sales: "Ký Gửi Bán",
+    care: "Ký Gửi Nuôi",
+    cart: "Giỏ hàng",
+    profile: "Thông tin cá nhân",
+    login: "Đăng nhập",
+    register: "Đăng ký",
+    about: "Giới thiệu",
+    news: "Tin tức",
+    ProductDetail: "Chi tiết",
+    introduce: "Giới thiệu",
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -93,9 +93,12 @@ export default function Header() {
     const pathnames = location.pathname.split("/").filter((x) => x);
 
     return (
-      <Breadcrumbs aria-label="breadcrumb" style={{
-        color:"white"
-      }}>
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        style={{
+          color: "white",
+        }}
+      >
         <Link
           to="/"
           style={{
@@ -158,16 +161,23 @@ export default function Header() {
             {loggedIn ? (
               <>
                 <IconButton onClick={handleMenuClick}>
-                  <Avatar alt="profile pic" src="src/assets/kohaku.jpg"/>
-                  <span style={{
-                    color:"white"
-                  }}>{userName}</span>
+                  <Avatar alt="profile pic" src="src/assets/kohaku.jpg" />
+                  <span
+                    style={{
+                      color: "white",
+                    }}
+                  >
+                    {userName}
+                  </span>
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
+                  <MenuItem onClick={() => navigate("/consignment-tracking")}>
+                    Theo dõi ký gửi
+                  </MenuItem>
                   <MenuItem onClick={() => navigate("/profile")}>
                     Profile
                   </MenuItem>
@@ -252,7 +262,9 @@ export default function Header() {
               )}
             </div>
 
-            <Link to="/news" className="linkForm">Tin tức</Link>
+            <Link to="/news" className="linkForm">
+              Tin tức
+            </Link>
           </nav>
 
           <div className="header_mid-search">
