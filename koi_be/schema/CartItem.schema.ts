@@ -24,7 +24,11 @@ const CartItem = list({
 
   fields: {
     user: relationship({
+      label: "Người dùng",
       ref: "User.cart",
+      ui: {
+        itemView: { fieldMode: "read" },
+      },
     }),
     quantity: integer({
       label: "Số lượng",
@@ -32,11 +36,17 @@ const CartItem = list({
       validation: {
         isRequired: true,
       },
+      ui: {
+        itemView: { fieldMode: "read" },
+      },
     }),
     product: relationship({
       label: "Sản phẩm",
       ref: "Product",
       many: true,
+      ui: {
+        itemView: { fieldMode: "read" },
+      },
     }),
   },
 });
