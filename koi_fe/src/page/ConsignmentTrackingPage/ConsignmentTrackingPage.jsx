@@ -2,27 +2,26 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const ConsignmentTrackingPage = ({ userRole }) => {
-  // Data cứng với trạng thái và giá trị dự kiến hoặc xác định
   const [consignments, setConsignments] = useState([
     {
       name: "Cá Koi Kohaku",
       date: "2023-10-10T00:00:00.000Z",
       address: "Hà Nội, Việt Nam",
       estimatedValue: "15,000,000",
-      confirmedValue: null, // null khi chưa xác nhận
+      confirmedValue: null,
       status: "Đang chờ xác nhận",
-      consigner: "consigner123", // ID của người ký gửi
-      buyer: null, // null khi chưa có người mua
+      consigner: "consigner123",
+      buyer: null,
     },
     {
       name: "Cá Koi Showa",
       date: "2023-09-15T00:00:00.000Z",
       address: "Hồ Chí Minh, Việt Nam",
       estimatedValue: "20,000,000",
-      confirmedValue: "20,000,000", // Đã xác nhận
+      confirmedValue: "20,000,000",
       status: "Đã hoàn thành",
       consigner: "consigner456",
-      buyer: "buyer123", // ID của người mua
+      buyer: "buyer123",
     },
   ]);
 
