@@ -20,3 +20,15 @@ export const MUTATION_LOGIN = gql`
     }
   }
 `;
+//Mutation for update User's profile
+export const UPDATE_PROFILE = gql`
+mutation UpdateUser($where: UserWhereUniqueInput!, $data: UserUpdateInput!) {
+  updateUser(where: $where, data: $data) { 
+    id
+    email
+    address
+    phone
+    name
+  }
+}
+`;

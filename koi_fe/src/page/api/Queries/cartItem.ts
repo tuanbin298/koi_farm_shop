@@ -5,6 +5,7 @@ export const GET_CART_ITEMS = gql`
   query Query($where: CartItemWhereInput!) {
   cartItems(where: $where) {
     id
+    quantity
     product {
       image {
         publicUrl
