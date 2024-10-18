@@ -237,7 +237,7 @@ export const products = [
 
 export const roles = [
   {
-    name: "Staff",
+    name: "Nhân viên",
     canManageUser: false,
     canManageProduct: false,
     canManageRole: false,
@@ -257,6 +257,18 @@ export const roles = [
         },
       ],
     },
+  },
+  {
+    name: "Khách hàng",
+    canManageUser: false,
+    canManageProduct: false,
+    canManageRole: false,
+    canManageArticle: false,
+    canManageOrder: false,
+    canManageFeedback: false,
+    canManageCart: false,
+    canManageConsigment: false,
+    canManageRequest: false,
   },
 ];
 

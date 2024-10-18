@@ -1,29 +1,30 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { gql, useMutation } from "@apollo/client";
-
-// GraphQL mutation
-const REGISTER_MUTATION = gql`
-  mutation Mutation($data: UserCreateInput!) {
-    createUser(data: $data) {
-      id
-      name
-      email
-      password {
-        isSet
-      }
-      phone
-      address
-    }
-  }
-`;
+import { useMutation, useQuery } from "@apollo/client";
+import { REGISTER_MUTATION } from "../api/Mutations/user";
+import { GET_ROLE_BY_NAME } from "../api/Queries/role";
 
 const RegisterPage = () => {
+  // Take role "khách hàng" to connect with user
+  const {
+    data: roleData,
+    loading: roleLoading,
+    error: roleError,
+  } = useQuery(GET_ROLE_BY_NAME, {
+    variables: {
+      where: {
+        name: {
+          equals: "Khách hàng",
+        },
+      },
+    },
+  });
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    address: "", // Add address to formData
+    address: "",
     password: "",
     confirmPassword: "",
   });
@@ -102,8 +103,13 @@ const RegisterPage = () => {
               name: formData.name,
               email: formData.email,
               phone: formData.phone,
-              address: formData.address, //
+              address: formData.address,
               password: formData.password,
+              role: {
+                connect: {
+                  id: roleData.roles[0].id,
+                },
+              },
             },
           },
         });

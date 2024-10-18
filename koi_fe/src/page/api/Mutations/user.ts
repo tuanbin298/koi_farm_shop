@@ -20,3 +20,35 @@ export const MUTATION_LOGIN = gql`
     }
   }
 `;
+
+// Mutation to create user
+export const REGISTER_MUTATION = gql`
+  mutation Mutation($data: UserCreateInput!) {
+    createUser(data: $data) {
+      id
+      name
+      email
+      password {
+        isSet
+      }
+      phone
+      address
+      role {
+        id
+      }
+    }
+  }
+`;
+
+//Mutation for update User's profile
+export const UPDATE_PROFILE = gql`
+  mutation UpdateUser($where: UserWhereUniqueInput!, $data: UserUpdateInput!) {
+    updateUser(where: $where, data: $data) {
+      id
+      email
+      address
+      phone
+      name
+    }
+  }
+`;
