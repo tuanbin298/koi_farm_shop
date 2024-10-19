@@ -93,8 +93,6 @@ const CartPage = () => {
       <main className="cart-content">
         <section>
           <h2>Giỏ hàng</h2>
-          <h3>Danh sách sản phẩm</h3>
-
           <TableContainer component={Paper}>
             <Table aria-label="cart table">
               <TableHead>
