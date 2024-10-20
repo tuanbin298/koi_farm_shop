@@ -41,11 +41,11 @@ export default function Header() {
   });
 
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  const cartItemCount =
+  const cartItemCount = loggedIn ? (
     cartData?.cartItems?.reduce(
       (total, item) => total + (item.quantity || 1),
       0
-    ) || 0;
+    ) || 0):0;
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");

@@ -846,11 +846,10 @@ type ConsignmentSale {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
-  image: CloudinaryImage_File
+  photo: Gallery
   category: String
   estimatedPrice: String
   status: String
@@ -870,11 +869,11 @@ input ConsignmentSaleWhereInput {
   sex: StringFilter
   medical: StringFilter
   size: IntFilter
-  price: IntFilter
-  estimatedPrice: StringFilter
+  price: IntNullableFilter
   description: StringFilter
   origin: StringFilter
   generic: StringFilter
+  photo: GalleryWhereInput
   category: StringFilter
   estimatedPrice: StringFilter
   status: StringNullableFilter
@@ -888,7 +887,6 @@ input ConsignmentSaleOrderByInput {
   medical: OrderDirection
   size: OrderDirection
   price: OrderDirection
-  estimatedPrice: OrderDirection
   description: OrderDirection
   origin: OrderDirection
   generic: OrderDirection
@@ -904,14 +902,19 @@ input ConsignmentSaleUpdateInput {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
-  image: Upload
+  photo: GalleryRelateToOneForUpdateInput
   category: String
   estimatedPrice: String
   status: String
+}
+
+input GalleryRelateToOneForUpdateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
+  disconnect: Boolean
 }
 
 input ConsignmentSaleUpdateArgs {
@@ -926,14 +929,18 @@ input ConsignmentSaleCreateInput {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
-  image: Upload
+  photo: GalleryRelateToOneForCreateInput
   category: String
   estimatedPrice: String
   status: String
+}
+
+input GalleryRelateToOneForCreateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
 }
 
 type Request {
@@ -1002,6 +1009,48 @@ input RequestCreateInput {
 input ConsignmentSaleRelateToOneForCreateInput {
   create: ConsignmentSaleCreateInput
   connect: ConsignmentSaleWhereUniqueInput
+}
+
+type Gallery {
+  id: ID!
+  title: String
+  image: CloudinaryImage_File
+  product: ConsignmentSale
+}
+
+input GalleryWhereUniqueInput {
+  id: ID
+}
+
+input GalleryWhereInput {
+  AND: [GalleryWhereInput!]
+  OR: [GalleryWhereInput!]
+  NOT: [GalleryWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  product: ConsignmentSaleWhereInput
+}
+
+input GalleryOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+}
+
+input GalleryUpdateInput {
+  title: String
+  image: Upload
+  product: ConsignmentSaleRelateToOneForUpdateInput
+}
+
+input GalleryUpdateArgs {
+  where: GalleryWhereUniqueInput!
+  data: GalleryUpdateInput!
+}
+
+input GalleryCreateInput {
+  title: String
+  image: Upload
+  product: ConsignmentSaleRelateToOneForCreateInput
 }
 
 """
@@ -1082,6 +1131,12 @@ type Mutation {
   updateRequests(data: [RequestUpdateArgs!]!): [Request]
   deleteRequest(where: RequestWhereUniqueInput!): Request
   deleteRequests(where: [RequestWhereUniqueInput!]!): [Request]
+  createGallery(data: GalleryCreateInput!): Gallery
+  createGalleries(data: [GalleryCreateInput!]!): [Gallery]
+  updateGallery(where: GalleryWhereUniqueInput!, data: GalleryUpdateInput!): Gallery
+  updateGalleries(data: [GalleryUpdateArgs!]!): [Gallery]
+  deleteGallery(where: GalleryWhereUniqueInput!): Gallery
+  deleteGalleries(where: [GalleryWhereUniqueInput!]!): [Gallery]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -1143,6 +1198,9 @@ type Query {
   request(where: RequestWhereUniqueInput!): Request
   requests(where: RequestWhereInput! = {}, orderBy: [RequestOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: RequestWhereUniqueInput): [Request!]
   requestsCount(where: RequestWhereInput! = {}): Int
+  gallery(where: GalleryWhereUniqueInput!): Gallery
+  galleries(where: GalleryWhereInput! = {}, orderBy: [GalleryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: GalleryWhereUniqueInput): [Gallery!]
+  galleriesCount(where: GalleryWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

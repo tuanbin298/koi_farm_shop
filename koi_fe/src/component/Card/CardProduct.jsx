@@ -205,10 +205,6 @@ export default function CardProduct() {
                       <strong>Loại: </strong>
                       {consignment.generic}
                     </p>
-                    <p className="mb-1">
-                      <strong>Nguồn gốc: </strong>
-                      {consignment.origin}
-                    </p>
                     {/* Add to cart button */}
                     <div className="text-center">
                       <button

@@ -96,44 +96,38 @@ export default function CardListProduct({ products, consignmentSales }) {
                     />
                   </Link>
 
-                  <div
-                    className="card-body text-start"
-                    style={{ padding: "25px" }}
-                  >
-                    <h4 className="card-title">{product.name}</h4>
-                    <p className="mb-1 text-danger">
-                      <strong>Giá: </strong>
-                      {formatMoney(product.price)}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Nguồn gốc: </strong>
-                      {product.origin}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Kích thước </strong>
-                      {product.size}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Giới tính </strong>
-                      {product.sex}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Loại: </strong>
-                      {product.generic}
-                    </p>
-                    <p className="mb-1">
-                      <strong>Nguồn: </strong>
-                      Dainichi Koi Farm
-                    </p>
-                    {/* Add to cart button */}
-                    <div className="text-center">
-                      <button
-                        className="btn btn-success mt-3"
-                        onClick={() => handleAddToCart(product.id)}
-                      >
-                        Thêm vào giỏ hàng
-                      </button>
-                    </div>
+              <div
+                className="card-body text-start"
+                style={{
+                  padding: "25px",
+                }}
+              >
+                <h4 className="card-title">{product.name}</h4>
+                <p className="mb-1  text-danger">
+                  <strong>Giá: </strong>
+                  {formatMoney(product.price)}
+                </p>
+                <p className="mb-1">
+                  <strong>Nguồn gốc: </strong>
+                  {product.origin}
+                </p>
+                <p className="mb-1">
+                  <strong>Kích thước </strong>
+                  {product.size}
+                </p>
+                <p className="mb-1">
+                  <strong>Giới tính </strong>
+                  {product.sex}
+                </p>
+                <p className="mb-1">
+                  <strong>Loại: </strong>
+                  {product.generic}
+                </p>
+                {/* Nút thêm vào giỏ hàng */}
+                  <div className="text-center">
+                    <button className="btn btn-success mt-3" onClick={() => handleAddToCart(product.id)}>
+                      Thêm vào giỏ hàng
+                    </button>
                   </div>
                 </div>
               </div>
