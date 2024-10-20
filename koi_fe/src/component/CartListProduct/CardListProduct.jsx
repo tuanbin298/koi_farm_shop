@@ -115,10 +115,6 @@ export default function CardListProduct({ products }) {
                   <strong>Loại: </strong>
                   {product.generic}
                 </p>
-                <p className="mb-1">
-                  <strong>Nguồn: </strong>
-                  Dainichi Koi Farm
-                </p>
                 {/* Nút thêm vào giỏ hàng */}
                   <div className="text-center">
                     <button className="btn btn-success mt-3" onClick={() => handleAddToCart(product.id)}>

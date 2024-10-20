@@ -7,7 +7,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
+import Avatar from "@mui/material/Avatar";
 import {
   Menu,
   MenuItem,
@@ -31,14 +31,22 @@ export default function Header() {
 
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
-  const { data: cartData, loading: cartLoading, error: cartError } = useQuery(GET_CART_ITEMS, {
+  const {
+    data: cartData,
+    loading: cartLoading,
+    error: cartError,
+  } = useQuery(GET_CART_ITEMS, {
     variables: { where: {} }, // Thay đổi điều kiện nếu cần
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
 
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  const cartItemCount = cartData?.cartItems?.reduce((total, item) => total + (item.quantity || 1), 0) || 0;
-  
+  const cartItemCount = loggedIn ? (
+    cartData?.cartItems?.reduce(
+      (total, item) => total + (item.quantity || 1),
+      0
+    ) || 0):0;
+
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
     const storedUserName = localStorage.getItem("name");
@@ -80,21 +88,20 @@ export default function Header() {
     navigate("/login");
   };
 
-
   // Mapping URL paths to Vietnamese labels
   const breadcrumbMap = {
     "": "Trang chủ", // Empty for homepage
-    "koiList": "Danh sách Cá Koi",
-    "sales": "Ký Gửi Bán",
-    "care": "Ký Gửi Nuôi",
-    "cart": "Giỏ hàng",
-    "profile": "Thông tin cá nhân",
-    "login": "Đăng nhập",
-    "register": "Đăng ký",
-    "about": "Giới thiệu",
-    "news": "Tin tức",
-    "ProductDetail": "Chi tiết",
-    "introduce": "Giới thiệu"
+    koiList: "Danh sách Cá Koi",
+    sales: "Ký Gửi Bán",
+    care: "Ký Gửi Nuôi",
+    cart: "Giỏ hàng",
+    profile: "Thông tin cá nhân",
+    login: "Đăng nhập",
+    register: "Đăng ký",
+    about: "Giới thiệu",
+    news: "Tin tức",
+    ProductDetail: "Chi tiết",
+    introduce: "Giới thiệu",
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -102,9 +109,12 @@ export default function Header() {
     const pathnames = location.pathname.split("/").filter((x) => x);
 
     return (
-      <Breadcrumbs aria-label="breadcrumb" style={{
-        color: "white"
-      }}>
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        style={{
+          color: "white",
+        }}
+      >
         <Link
           to="/"
           style={{
@@ -160,20 +170,20 @@ export default function Header() {
             <a href="">123457890</a>
           </div>
           <div className="header_top-cart">
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: "relative" }}>
               <ShoppingCartIcon className="header_top-icon" />
               {cartItemCount > 0 && (
                 <span
                   style={{
-                    position: 'absolute',
-                    top: '-6px',
-                    right: '-9px',
-                    backgroundColor: 'white',
-                    color: 'red',
-                    borderRadius: '40%',
-                    padding: '1px 5px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
+                    position: "absolute",
+                    top: "-6px",
+                    right: "-9px",
+                    backgroundColor: "white",
+                    color: "red",
+                    borderRadius: "40%",
+                    padding: "1px 5px",
+                    fontSize: "12px",
+                    fontWeight: "bold",
                   }}
                 >
                   {cartItemCount}
@@ -188,15 +198,22 @@ export default function Header() {
               <>
                 <IconButton onClick={handleMenuClick}>
                   <Avatar alt="profile pic" src="src/assets/kohaku.jpg" />
-                  <span style={{
-                    color: "white"
-                  }}>{userName}</span>
+                  <span
+                    style={{
+                      color: "white",
+                    }}
+                  >
+                    {userName}
+                  </span>
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
+                  <MenuItem onClick={() => navigate("/consignment-tracking")}>
+                    Theo dõi ký gửi
+                  </MenuItem>
                   <MenuItem onClick={() => navigate("/profile")}>
                     Profile
                   </MenuItem>
@@ -281,7 +298,9 @@ export default function Header() {
               )}
             </div>
 
-            <Link to="/news" className="linkForm">Tin tức</Link>
+            <Link to="/news" className="linkForm">
+              Tin tức
+            </Link>
           </nav>
 
           <div className="header_mid-search">

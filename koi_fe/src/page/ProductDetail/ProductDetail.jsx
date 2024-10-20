@@ -41,7 +41,7 @@ export default function ProductDetail() {
   // State to track the starting index of the currently displayed products
   const [startIndex, setStartIndex] = useState(0);
 
-  const productsPerPage = 4; // Number of products to display at a time
+  const productsPerPage = 3; // Number of products to display at a time
   const maxIndex = products ? products.length - productsPerPage : 0; // Maximum index we can start displaying
 
   if (loading || allLoading) return <p>Loading...</p>;
@@ -121,6 +121,7 @@ export default function ProductDetail() {
 
   return (
     <>
+    <div className="web-container">
       <Box style={{ paddingTop: "1%", padding: "1%" }}>
         <Flex gap="large" justify="space-around">
           <div>
@@ -256,7 +257,7 @@ export default function ProductDetail() {
                     image={product.image.publicUrl}
                     style={{
                       aspectRatio: "1/3",
-                      height: "375px",
+                      height: "250px",
                       width: "100%",
                     }}
                   />
@@ -309,6 +310,7 @@ export default function ProductDetail() {
         </div>
       </Box>
       <Toaster position="top-center" reverseOrder={false} />
+      </div>
     </>
   );
 }
