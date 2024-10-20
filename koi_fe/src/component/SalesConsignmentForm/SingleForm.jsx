@@ -204,7 +204,7 @@ export default function SingleForm({
       </div>
 
       {/* Hình ảnh */}
-      {/* <div className="row mb-3">
+      <div className="row mb-3">
         <label htmlFor="image" className="col-sm-4 col-form-label">
           Hình ảnh <span className="text-danger">*</span>
         </label>
@@ -215,11 +215,12 @@ export default function SingleForm({
             id="image"
             className="form-control-file"
             onChange={handleChange}
-            accept="image/*"
+            // accept="image/*"
             required
           />
         </div>
-      </div> */}
+      </div>
+
       {/* Giá dự tính */}
       <div className="row mb-3">
         <label htmlFor="estimatedPrice" className="col-sm-4 col-form-label">
