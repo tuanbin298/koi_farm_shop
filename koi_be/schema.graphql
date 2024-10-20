@@ -846,7 +846,6 @@ type ConsignmentSale {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
@@ -871,7 +870,6 @@ input ConsignmentSaleWhereInput {
   medical: StringFilter
   size: IntFilter
   price: IntFilter
-  estimatedPrice: StringFilter
   description: StringFilter
   origin: StringFilter
   generic: StringFilter
@@ -888,7 +886,6 @@ input ConsignmentSaleOrderByInput {
   medical: OrderDirection
   size: OrderDirection
   price: OrderDirection
-  estimatedPrice: OrderDirection
   description: OrderDirection
   origin: OrderDirection
   generic: OrderDirection
@@ -904,7 +901,6 @@ input ConsignmentSaleUpdateInput {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
@@ -926,7 +922,6 @@ input ConsignmentSaleCreateInput {
   medical: String
   size: Int
   price: Int
-  estimatedPrice: String
   description: String
   origin: String
   generic: String
