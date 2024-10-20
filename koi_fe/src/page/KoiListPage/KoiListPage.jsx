@@ -5,8 +5,7 @@ import CardListProduct from "../../component/CartListProduct/CardListProduct";
 import {
   GET_PRODUCT_BY_CATEGORY,
   GET_ALL_PRODUCTS,
-} from "../api/Queries/product"; // Import consignment query
-import { GET_ALL_CONSIGNMENT_SALES } from "../api/Queries/consignment";
+} from "../api/Queries/product";
 import Pagination from "@mui/material/Pagination";
 
 function KoiListPage() {
@@ -18,7 +17,7 @@ function KoiListPage() {
     size: "all",
     price: "all",
     generic: "all",
-    supplier: "all", // Filter by supplier
+    origin: "all", // Add origin to the default filter
   };
 
   const [filter, setFilter] = useState(defaultFilter);
@@ -28,29 +27,16 @@ function KoiListPage() {
     setPage(1); // Reset to page 1 when category changes
   }, [categoryId]);
 
-  // Query for products
-  const {
-    data: productData,
-    loading: productLoading,
-    error: productError,
-  } = useQuery(
+  const { data, loading, error } = useQuery(
     categoryId ? GET_PRODUCT_BY_CATEGORY : GET_ALL_PRODUCTS,
     categoryId
       ? { variables: { categoryId: { id: { equals: categoryId } } } }
       : undefined
   );
 
-  // Query for consignment sales
-  const {
-    data: consignmentData,
-    loading: consignmentLoading,
-    error: consignmentError,
-  } = useQuery(GET_ALL_CONSIGNMENT_SALES);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error loading Koi data!</p>;
 
-  if (productLoading || consignmentLoading) return <p>Loading...</p>;
-  if (productError || consignmentError) return <p>Error loading Koi data!</p>;
-
-  // Mapping size and price ranges for filtering
   const sizeMap = {
     "10-15cm": [10, 15],
     "15-20cm": [15, 20],
@@ -69,38 +55,27 @@ function KoiListPage() {
     "above-25000000": [25000000, 100000000],
   };
 
-  // Combine products and consignment sales
-  const combinedData = [
-    ...(productData?.products || []),
-    ...(consignmentData?.consignmentSales || []),
-  ];
-
-  // Apply filters
   const filterKoi = () => {
-    return combinedData.filter((koi) => {
-      // Filter by size
+    if (!data || !data.products) return [];
+
+    return data.products.filter((koi) => {
       if (filter.size !== "all") {
         const koiSize = parseInt(koi.size.replace("cm", ""), 10);
         const [minSize, maxSize] = sizeMap[filter.size];
         if (koiSize < minSize || koiSize > maxSize) return false;
       }
 
-      // Filter by price
       if (filter.price !== "all") {
         const koiPrice = koi.price;
         const [minPrice, maxPrice] = priceMap[filter.price];
         if (koiPrice < minPrice || koiPrice > maxPrice) return false;
       }
 
-      // Filter by generic
       if (filter.generic !== "all" && koi.generic !== filter.generic)
         return false;
 
-      // Filter by supplier (if applicable)
-      if (filter.supplier !== "all") {
-        // Check if koi has a supplier field (depends on your schema)
-        if (koi.supplier !== filter.supplier) return false;
-      }
+      // Check for origin filter
+      if (filter.origin !== "all" && koi.origin !== filter.origin) return false;
 
       return true;
     });
@@ -125,23 +100,21 @@ function KoiListPage() {
 
   return (
     <div className="container mt-5">
-      {/* Display category name and description if available */}
+      {/* Hiển thị tên và mô tả loại nếu có */}
       <h1 className="mb-4 border-bottom">
         {categoryId
-          ? productData?.products[0]?.category?.name ||
-            "Danh sách Cá Koi theo loại"
+          ? data.products[0]?.category?.name || "Danh sách Cá Koi theo loại"
           : "Cá Koi Nhật"}
       </h1>
 
-      {categoryId && productData?.products[0]?.category?.description && (
+      {categoryId && data.products[0]?.category?.description && (
         <p className="mb-4 paddingBottom">
-          {productData.products[0].category.description}
+          {data.products[0].category.description}
         </p>
       )}
 
-      {/* Filter section */}
+      {/* Bộ lọc */}
       <div className="d-flex gap-3 mb-4">
-        {/* Size Filter */}
         <select
           className="form-select w-auto btn-outline-primary"
           value={filter.size}
@@ -156,19 +129,17 @@ function KoiListPage() {
           <option value="above-50cm">Trên 50 cm</option>
         </select>
 
-        {/* Generic Filter */}
         <select
           className="form-select w-auto btn-outline-primary"
           value={filter.generic}
           onChange={(e) => setFilter({ ...filter, generic: e.target.value })}
         >
-          <option value="all">Tất cả nguồn gốc</option>
+          <option value="all">Tất cả chủng loại</option>
           <option value="Cá Koi Nhật thuần chủng">Nhập khẩu Nhật bản</option>
           <option value="F1">Cá Koi F1</option>
           <option value="Mini">Cá Koi Mini</option>
         </select>
 
-        {/* Price Filter */}
         <select
           className="form-select w-auto btn-outline-primary"
           value={filter.price}
@@ -183,19 +154,20 @@ function KoiListPage() {
           <option value="above-25000000">Trên 25,000,000 VND</option>
         </select>
 
-        {/* Supplier Filter */}
         <select
           className="form-select w-auto btn-outline-primary"
-          value={filter.supplier}
-          onChange={(e) => setFilter({ ...filter, supplier: e.target.value })}
+          value={filter.origin}
+          onChange={(e) => setFilter({ ...filter, origin: e.target.value })}
         >
           <option value="all">Tất cả các nguồn gốc</option>
+          <option value="Izumiya Koi Farm">Izumiya Koi Farm</option>
           <option value="Dainichi Koi Farm">Dainichi Koi Farm</option>
-          <option value="KoiViet">Koi Viet Farm</option>
+          <option value="Marudo Koi Farm">Marudo Koi Farm</option>
+          <option value="Koi Viet">Koi Viet</option>
         </select>
       </div>
 
-      {/* Display the filtered products */}
+      {/* Hiển thị sản phẩm */}
       <div className="productList">
         <CardListProduct products={paginatedProducts} />
         <div
