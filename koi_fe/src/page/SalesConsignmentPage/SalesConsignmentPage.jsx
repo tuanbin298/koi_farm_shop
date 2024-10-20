@@ -60,10 +60,6 @@ const SalesConsignmentPage = () => {
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
     if (type === "file") {
-      // Handle file input separately
-      // if (files && files.length > 0) {
-      //   setFormData({ ...formData, [name]: files[0] });
-      // }
       setFormData({
         ...formData,
         [name]: e.target.files[0],
