@@ -60,9 +60,6 @@ const ConsignmentSale = list({
     }),
     origin: text({
       label: "Nguồn gốc",
-      validation: {
-        isRequired: true,
-      },
     }),
     generic: text({
       label: "Chủng loại",
