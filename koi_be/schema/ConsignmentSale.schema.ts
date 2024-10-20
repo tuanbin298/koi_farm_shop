@@ -1,16 +1,7 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text, integer, select } from "@keystone-6/core/fields";
-import { cloudinaryImage } from "@keystone-6/cloudinary";
+import { text, integer, select, relationship } from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
-import "dotenv/config";
-
-export const cloudinary = {
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
-  apiKey: process.env.CLOUDINARY_API_KEY ?? "",
-  apiSecret: process.env.CLOUDINARY_API_SECRET ?? "",
-  folder: `/${process.env.CLOUDINARY_FOLDER ?? "koi_viet"}`,
-};
 
 const ConsignmentSale = list({
   access: {
@@ -26,8 +17,8 @@ const ConsignmentSale = list({
     hideCreate(args) {
       return !permissions.canManageConsigment(args);
     },
-    hideDelete() {
-      return true;
+    hideDelete(args) {
+      return !permissions.canManageConsigment(args);
     },
   },
 
@@ -63,9 +54,6 @@ const ConsignmentSale = list({
     }),
     price: integer({
       label: "Giá",
-      validation: {
-        isRequired: true,
-      },
     }),
     description: text({
       label: "Mô tả",
@@ -79,9 +67,9 @@ const ConsignmentSale = list({
     generic: text({
       label: "Chủng loại",
     }),
-    image: cloudinaryImage({
+    photo: relationship({
       label: "Hình ảnh",
-      cloudinary,
+      ref: "Gallery.product",
     }),
     category: text({
       label: "Loại",
