@@ -21,7 +21,7 @@ const SalesConsignmentPage = () => {
     description: "",
     origin: "",
     category: "",
-    image: null,
+    image: "",
     generic: "",
     status: "",
   });
@@ -53,17 +53,21 @@ const SalesConsignmentPage = () => {
     setExpanded(!expanded);
   };
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
+  const handleChange = async (e) => {
+    const { name, value, type } = e.target;
 
     // Reset errors for the field
     setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 
-    if (name === "image") {
+    if (type === "file") {
       // Handle file input separately
-      if (files && files.length > 0) {
-        setFormData({ ...formData, [name]: files[0] });
-      }
+      // if (files && files.length > 0) {
+      //   setFormData({ ...formData, [name]: files[0] });
+      // }
+      setFormData({
+        ...formData,
+        [name]: e.target.files[0],
+      });
     } else {
       // For other fields, update formData and validate immediately
       setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
@@ -81,6 +85,7 @@ const SalesConsignmentPage = () => {
       if (value.length < 10) {
         error = "Tên Koi phải có độ dài ít nhất 10 ký tự.";
       }
+      CREATE_CONSIGNMENT_SALE;
     }
 
     if (name === "birth") {
@@ -223,20 +228,19 @@ const SalesConsignmentPage = () => {
       // Tạo Consignment Sale
       const { data: consignmentData } = await createConsignmentSale({
         variables: {
-          data: {
-            name: formData.name,
-            sex: formData.sex,
-            birth: parseInt(formData.birth, 10),
-            size: parseInt(formData.size, 10),
-            estimatedPrice: priceValue,
-            description: formData.description || "",
-            origin: formData.origin,
-            category: formData.category,
-            image: formData.image,
-            status: "Còn hàng",
-            medical: formData.medical,
-            price: 0,
-          },
+          name: formData.name,
+          sex: formData.sex,
+          birth: parseInt(formData.birth, 10),
+          size: parseInt(formData.size, 10),
+          estimatedPrice: priceValue,
+          generic: formData.generic,
+          description: formData.description || "",
+          origin: formData.origin,
+          category: formData.category,
+          image: formData.image,
+          status: "Còn hàng",
+          medical: formData.medical,
+          price: 0,
         },
       });
 

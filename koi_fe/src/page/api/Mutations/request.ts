@@ -16,22 +16,56 @@ export const CREATE_REQUEST = gql`
   }
 `;
 
-// Mutation để thêm chi tiết cá Koi vào bảng ConsignmentSale
+// // Mutation để thêm chi tiết cá Koi vào bảng ConsignmentSale
 export const CREATE_CONSIGNMENT_SALE = gql`
-  mutation CreateConsignmentSale($data: ConsignmentSaleCreateInput!) {
-    createConsignmentSale(data: $data) {
+  mutation CreateConsignmentSale(
+    $name: String!
+    $birth: Int!
+    $sex: String!
+    $medical: String!
+    $size: Int!
+    $description: String!
+    $origin: String!
+    $generic: String!
+    $image: Upload!
+    $category: String!
+    $estimatedPrice: String!
+    $status: String!
+  ) {
+    createConsignmentSale(
+      data: {
+        name: $name
+        birth: $birth
+        sex: $sex
+        medical: $medical
+        size: $size
+        description: $description
+        origin: $origin
+        generic: $generic
+        photo: { create: { image: $image, title: $name } }
+        category: $category
+        estimatedPrice: $estimatedPrice
+        status: $status
+      }
+    ) {
       id
       name
-      sex
       birth
-      size
-      status
-      generic
-      description
-      category
-      origin
+      sex
       medical
+      size
+      description
+      origin
+      generic
+      photo {
+        image {
+          filename
+          publicUrl
+        }
+      }
+      category
       estimatedPrice
+      status
     }
   }
 `;
