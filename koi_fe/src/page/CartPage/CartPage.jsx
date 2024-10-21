@@ -53,6 +53,7 @@ const CartPage = () => {
       });
 
       refetchItems();
+      window.dispatchEvent(new Event("cartUpdated"));  // Custom event
     } catch (err) {
       console.error("Delete fail: ", err);
     }
