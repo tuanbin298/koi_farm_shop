@@ -144,11 +144,12 @@ model ConsignmentSale {
   sex                      String    @default("")
   medical                  String    @default("")
   size                     Int
-  price                    Int
+  price                    Int?
   description              String    @default("")
   origin                   String    @default("")
   generic                  String    @default("")
-  image                    String?
+  photo                    Gallery?  @relation("ConsignmentSale_photo", fields: [photoId], references: [id])
+  photoId                  String?   @unique @map("photo")
   category                 String    @default("")
   estimatedPrice           String    @default("")
   status                   String?   @default("Còn hàng")
@@ -170,4 +171,11 @@ model Request {
   @@index([userId])
   @@index([staffId])
   @@index([consignmentId])
+}
+
+model Gallery {
+  id      String           @id @default(cuid())
+  title   String           @default("Hình ảnh")
+  image   String?
+  product ConsignmentSale? @relation("ConsignmentSale_photo")
 }

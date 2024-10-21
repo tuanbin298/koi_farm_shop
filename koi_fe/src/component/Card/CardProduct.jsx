@@ -125,10 +125,6 @@ export default function CardProduct() {
                       <strong>Loại: </strong>
                       {product.generic}
                     </p>
-                    <p className="mb-1">
-                      <strong>Nguồn: </strong>
-                      Dainichi Koi Farm
-                    </p>
                     {/* Add to cart button */}
                     <div className="text-center">
                       <button

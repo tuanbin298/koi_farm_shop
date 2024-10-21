@@ -10,6 +10,7 @@ import CartItem from "./CartItem.schema";
 import ConsigmentRaising from "./ConsigmentRaisings.schema";
 import ConsignmentSale from "./ConsignmentSale.schema";
 import Request from "./Request.schema";
+import Gallery from "./Gallery.schema";
 
 export const lists = {
   User,
@@ -24,4 +25,5 @@ export const lists = {
   ConsigmentRaising,
   ConsignmentSale,
   Request,
+  Gallery,
 };

@@ -2,29 +2,31 @@ import ReactDOM from "react-dom";
 import React from "react";
 import App from "./App.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { setContext } from "@apollo/client/link/context";
 import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
   createHttpLink,
+  ApolloLink,
 } from "@apollo/client";
 import { createTheme, ThemeProvider } from "@mui/material";
+import { setContext } from "@apollo/client/link/context";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
-// HTTP Link to connect API
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: "http://localhost:3000/api/graphql",
 });
 
-// Attach sessionToken into header when POST
 const authLink = setContext((_, { headers }) => {
-  const sessionToken = localStorage.getItem("sessionToken");
+  // get the authentication token from local storage if it exists
+  const token = localStorage.getItem("sessionToken");
 
   // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      authorization: sessionToken ? `Bearer ${sessionToken}` : "",
+      Authorization: token ? `Bearer ${token}` : "",
+      "Apollo-Require-Preflight": "true",
     },
   };
 });
