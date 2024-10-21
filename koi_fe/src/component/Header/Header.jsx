@@ -25,7 +25,7 @@ export default function Header() {
   const [userName, setUserName] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false); // Cá Koi Nhật dropdown control
   const [kiguiDropdownOpen, setKiguiDropdownOpen] = useState(false); // Ký gửi dropdown control
-
+  const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
 
@@ -35,17 +35,38 @@ export default function Header() {
     data: cartData,
     loading: cartLoading,
     error: cartError,
+    refetch: refetchItems
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: {} }, // Thay đổi điều kiện nếu cần
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
+  
+  useEffect(() => {
+    if (cartData && cartData.cartItems) {
+      const itemCount = loggedIn ?
+      (cartData?.cartItems?.reduce(
+        (total, item) => total + (item.quantity || 1),
+        0
+      ) || 0):0
+      setCartItemCount(itemCount);
+    } else {
+      setCartItemCount(0);
+    }
+  }, [cartData]);
 
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      refetchItems();
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
+  }, [refetchItems]);
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  const cartItemCount =
-    cartData?.cartItems?.reduce(
-      (total, item) => total + (item.quantity || 1),
-      0
-    ) || 0;
+  
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -102,6 +123,8 @@ export default function Header() {
     news: "Tin tức",
     ProductDetail: "Chi tiết",
     introduce: "Giới thiệu",
+    consignmentTracking: "Theo dõi đơn ký gửi bán"
+    
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -211,7 +234,7 @@ export default function Header() {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={() => navigate("/consignment-tracking")}>
+                  <MenuItem onClick={() => navigate("/consignmentTracking")}>
                     Theo dõi ký gửi
                   </MenuItem>
                   <MenuItem onClick={() => navigate("/profile")}>

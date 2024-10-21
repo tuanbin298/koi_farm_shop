@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './ProfileUser.css';
 import { useMutation } from "@apollo/client";
 import { UPDATE_PROFILE } from "../api/Mutations/user";
-
+import toast, { Toaster } from "react-hot-toast";
 const ProfileUser = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(localStorage.getItem("name") || "");
@@ -39,7 +39,7 @@ const ProfileUser = () => {
 
   const handleSaveChanges = async () => {
     if (!validateForm()) {
-      alert("Vui lòng sửa các lỗi trước khi lưu.");
+      toast.error("Vui lòng sửa các lỗi trước khi lưu.");
       return;
     }
 
@@ -63,7 +63,7 @@ const ProfileUser = () => {
         localStorage.setItem("phone", result.data.updateUser.phone);
         localStorage.setItem("address", result.data.updateUser.address);
         setIsEditing(false);
-        alert("Cập nhật thông tin thành công!");
+        toast.success("Cập nhật thông tin thành công!");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -72,7 +72,9 @@ const ProfileUser = () => {
   };
 
   return (
+    
     <div className="container mt-4">
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="row">
         <div className="col-md-8">
           <h2 className="mb-4">THÔNG TIN TÀI KHOẢN</h2>

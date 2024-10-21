@@ -38,7 +38,7 @@ function App() {
           <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
           <Route path="/some-success-page" element={<SuccessPage />} />
           <Route
-            path="/consignment-tracking"
+            path="/consignmentTracking"
             element={<ConsignmentTrackingPage />}
           />
         </Routes>

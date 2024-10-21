@@ -16,7 +16,7 @@ export default function CardListProduct({ products }) {
     const sessionToken = localStorage.getItem("sessionToken");
 
     if (!userId) {
-      alert("User ID not found. Please log in.");
+      toast.error("Thêm vào giỏ hàng không thành công");
       return;
     }
 
