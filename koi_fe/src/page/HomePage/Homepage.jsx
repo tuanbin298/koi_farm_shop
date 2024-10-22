@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { Typography, Pagination } from "@mui/material";
 import { Flex } from "antd";
 import Feedback from "../../component/Feedback/Feedback";
+import CardConsignmentSale from "../../component/CardConsignmentSale/CardConsignment";
 
 export default function Homepage() {
   const location = useLocation();
@@ -214,6 +215,33 @@ export default function Homepage() {
                 </Typography>
               </div>
             </Flex>
+          </div>
+        </section>
+
+        <section className="species-section">
+          <div className="species-header">
+            <div className="text-content">
+              <h3>Các Giống Cá Koi Được Ký Gửi Tại Trang Trại</h3>
+              <p>
+                Cá Koi thuần chủng nhập khẩu, lai F1, thuần Việt đều được tuyển
+                chọn kỹ lưỡng.
+              </p>
+            </div>
+            <Button
+              variant="outlined"
+              color="error"
+              className="viewMoreButton"
+              component={Link}
+              to="/consignmentList"
+            >
+              Xem thêm <FaArrowRight />
+            </Button>
+          </div>
+
+          <div>
+            <Container>
+              <CardConsignmentSale />
+            </Container>
           </div>
         </section>
 

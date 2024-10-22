@@ -1,22 +1,34 @@
 import React from "react";
+import { GET_CONSIGNMENT_SALES } from "../../page/api/Queries/consignment";
+import { useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
+import "bootstrap/dist/css/bootstrap.min.css";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
-import "bootstrap/dist/css/bootstrap.min.css";
+// import "./CardConsignmentSale.css";
 
-export default function CardListProduct({ products }) {
+export default function CardConsignmentSale() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  if (!products || products.length === 0) {
-    return <p>Không có sản phẩm nào phù hợp.</p>;
-  }
-  const handleAddToCart = async (productId) => {
+  const {
+    data: consignmentData,
+    loading: consignmentLoading,
+    error: consignmentError,
+  } = useQuery(GET_CONSIGNMENT_SALES, {
+    variables: { take: 6 }, // Fetch 6 consignments
+  });
+
+  // Loading and error states
+  if (consignmentLoading) return <p>Loading ...</p>;
+  if (consignmentError) return <p>Error loading consignments.</p>;
+
+  const handleAddToCart = async (consignmentId) => {
     const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
     const sessionToken = localStorage.getItem("sessionToken");
 
     if (!userId) {
-      toast.error("Thêm vào giỏ hàng không thành công");
+      alert("User ID not found. Please log in.");
       return;
     }
 
@@ -26,8 +38,8 @@ export default function CardListProduct({ products }) {
         variables: {
           data: {
             quantity: 1,
-            product: {
-              connect: { id: productId }, // Connect product by ID
+            consignment: {
+              connect: { id: consignmentId }, // Connect consignment by ID
             },
             user: {
               connect: {
@@ -65,61 +77,59 @@ export default function CardListProduct({ products }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="container mt-4 species-section">
         <div className="row">
-          {products.map((product) => (
-            <div key={product.id} className="col-md-4 mb-4">
+          {consignmentData?.consignmentSales.map((consignment) => (
+            <div key={consignment.id} className="col-md-4 mb-4">
               <div
                 className="card h-100 shadow-sm card-product"
                 style={{
-                  maxWidth: "350px", // Giới hạn kích thước tối đa của card
-                  margin: "0 auto", // Căn giữa thẻ card
+                  maxWidth: "350px",
+                  margin: "0 auto",
                 }}
               >
-                {/* Link tới chi tiết sản phẩm */}
-                <Link to={`/ProductDetail/${product.slug}`}>
+                {/* Link to consignment details */}
+                <Link to={`/consignmentDetail/${consignment.slug}`}>
                   <img
-                    src={product.image?.publicUrl}
-                    alt={product.name}
+                    src={consignment.image?.publicUrl}
+                    alt={consignment.name}
                     className="card-img-top img-fluid"
                     style={{
-                      height: "360px", // Chiều cao cố định cho ảnh
-                      width: "100%", // Chiếm toàn bộ chiều rộng của khung chứa
-                      objectFit: "fill", // Bóp méo ảnh để lấp đầy khung
+                      height: "360px",
+                      width: "100%",
+                      objectFit: "fill",
                     }}
                   />
                 </Link>
 
                 <div
                   className="card-body text-start"
-                  style={{
-                    padding: "25px",
-                  }}
+                  style={{ padding: "25px" }}
                 >
-                  <h4 className="card-title">{product.name}</h4>
-                  <p className="mb-1  text-danger">
+                  <h4 className="card-title">{consignment.name}</h4>
+                  <p className="mb-1 text-danger">
                     <strong>Giá: </strong>
-                    {formatMoney(product.price)}
+                    {formatMoney(consignment.price)}
                   </p>
                   <p className="mb-1">
-                    <strong>Kích thước </strong>
-                    {product.size}
+                    <strong>Kích thước: </strong>
+                    {consignment.size}cm
                   </p>
                   <p className="mb-1">
-                    <strong>Giới tính </strong>
-                    {product.sex}
+                    <strong>Giới tính: </strong>
+                    {consignment.sex}
                   </p>
                   <p className="mb-1">
                     <strong>Loại: </strong>
-                    {product.generic}
+                    {consignment.generic}
                   </p>
                   <p className="mb-1">
                     <strong>Nguồn gốc: </strong>
-                    {product.origin}
+                    {consignment.origin}
                   </p>
-                  {/* Nút thêm vào giỏ hàng */}
+                  {/* Add to cart button */}
                   <div className="text-center">
                     <button
                       className="btn btn-success mt-3"
-                      onClick={() => handleAddToCart(product.id)}
+                      onClick={() => handleAddToCart(consignment.id)} // Pass consignment ID
                     >
                       Thêm vào giỏ hàng
                     </button>
