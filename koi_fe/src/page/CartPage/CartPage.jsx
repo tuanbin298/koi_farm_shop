@@ -186,7 +186,9 @@ const CartPage = () => {
 
           <Box display="flex" justifyContent="flex-end">
             <Button variant="contained" color="success">
-              <Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link>
+             {data.cartItems.length <= 0?
+             (<Link to="/cart">Tiến hành thanh toán <FaShoppingCart /></Link>):
+             (<Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link>)} 
             </Button>
           </Box>
         </section>
