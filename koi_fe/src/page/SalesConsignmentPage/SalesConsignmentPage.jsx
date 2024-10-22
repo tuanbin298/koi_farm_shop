@@ -86,9 +86,9 @@ const SalesConsignmentPage = () => {
 
     if (name === "birth") {
       const birthYear = parseInt(value, 10);
-      if (birthYear > currentYear || birthYear < currentYear - 50) {
+      if (birthYear > currentYear || birthYear < currentYear - 10) {
         error = `Năm sinh phải nằm trong khoảng từ ${
-          currentYear - 15
+          currentYear - 10
         } đến ${currentYear}.`;
       }
     }
@@ -117,9 +117,10 @@ const SalesConsignmentPage = () => {
       medium: 1000000, // từ 35-60 cm
       large: 2000000, // từ 60 cm trở lên
     },
-    origin: {
-      Japan: 2, // giá sẽ nhân với hệ số 1.5 nếu Koi từ Nhật
-      Local: 1, // Koi từ địa phương không thay đổi giá
+    generic: {
+      Japan: 3, // Price multiplier for Japanese Koi
+      F1: 2, // Price multiplier for F1 Koi
+      Mini: 1, // Price multiplier for Mini Koi
     },
     ageFactor: (age) => {
       if (age < 2) return 0.8; // cá dưới 2 tuổi giá giảm 20%
@@ -128,31 +129,31 @@ const SalesConsignmentPage = () => {
     },
   };
 
-  const calculatePrice = (formData) => {
-    // Ánh xạ giá trị từ formData.origin thành "Japan" hoặc "Local"
-    const originMapping = {
-      "Nhập khẩu Nhật bản": "Japan",
-      "bố nhật mẹ nhật": "Local",
-    };
+  const genericMapping = {
+    "Cá Koi Nhật thuần chủng": "Japan",
+    "Cá Koi F1": "F1",
+    "Cá Koi Mini": "Mini",
+  };
 
+  const calculatePrice = (formData) => {
     const sizeCategory =
       formData.size < 35 ? "small" : formData.size < 60 ? "medium" : "large";
 
-    // Sử dụng giá trị ánh xạ cho origin
-    const originKey = originMapping[formData.origin] || "Local"; // Mặc định là "Local" nếu không tìm thấy
-    const originMultiplier = priceTable.origin[originKey] || 1;
+    // Sử dụng giá trị ánh xạ cho generic
+    const genericKey = genericMapping[formData.generic] || "Local";
+    const genericMultiplier = priceTable.generic[genericKey] || 1;
 
     const birthYear = parseInt(formData.birth, 10);
     const age = new Date().getFullYear() - birthYear;
     const ageMultiplier = priceTable.ageFactor(age);
 
-    // Tính giá dựa trên kích thước, nguồn gốc và tuổi
+    // Tính giá dựa trên kích thước, chủng loại và tuổi
     const basePrice = priceTable.size[sizeCategory];
 
     // Tính giá dao động:
     // Giá trị tối thiểu là 90% của giá hiện tại và tối đa là 110%
-    const minPrice = basePrice * originMultiplier * ageMultiplier * 0.9;
-    const maxPrice = basePrice * originMultiplier * ageMultiplier * 1.1;
+    const minPrice = basePrice * genericMultiplier * ageMultiplier * 0.9;
+    const maxPrice = basePrice * genericMultiplier * ageMultiplier * 1.1;
 
     return {
       minPrice: Math.round(minPrice),
@@ -166,55 +167,21 @@ const SalesConsignmentPage = () => {
   });
 
   useEffect(() => {
-    // Chỉ tính toán giá khi người dùng đã nhập đầy đủ size, origin và birth
-    if (formData.size && formData.origin && formData.birth) {
+    // Chỉ tính toán giá khi người dùng đã nhập đầy đủ size, generic và birth
+    if (formData.size && formData.generic && formData.birth) {
       const priceRange = calculatePrice(formData);
       setCalculatedPrice(priceRange);
     } else {
       // Nếu thiếu thông tin, bỏ trống giá
       setCalculatedPrice({ minPrice: null, maxPrice: null });
     }
-  }, [formData.size, formData.origin, formData.birth]);
-
-  const validateForm = (formData) => {
-    let newErrors = {};
-
-    // Ensure formData exists before accessing properties
-    if (!formData) {
-      console.error("formData is undefined");
-      return false;
-    }
-
-    if (formData.name?.length < 10) {
-      newErrors.name = "Tên Koi phải có độ dài ít nhất 10 ký tự.";
-    }
-
-    const birthYear = parseInt(formData.birth, 10);
-    if (birthYear > currentYear || birthYear < currentYear - 50) {
-      newErrors.birth = `Năm sinh phải nằm trong khoảng từ ${
-        currentYear - 20
-      } đến ${currentYear}.`;
-    }
-
-    const size = parseInt(formData.size, 10);
-    if (size < 20 || size > 70) {
-      newErrors.size = "Kích thước phải nằm trong khoảng từ 20 cm đến 70 cm.";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  }, [formData.size, formData.generic, formData.birth]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (!userId) {
       console.error("User ID không tồn tại. Vui lòng đăng nhập lại.");
-      return;
-    }
-
-    // Ensure formData is passed to validateForm
-    if (!validateForm(formData)) {
       return;
     }
 

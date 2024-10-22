@@ -48,6 +48,14 @@ const CartItem = list({
         itemView: { fieldMode: "read" },
       },
     }),
+    consignmentProduct: relationship({
+      label: "Sản phẩm ký gửi",
+      ref: "ConsignmentSale",
+      many: true,
+      ui: {
+        itemView: { fieldMode: "read" },
+      },
+    }),
   },
 });
 

@@ -7,6 +7,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
+import "./CardProduct.css";
 
 export default function CardProduct() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
@@ -80,7 +81,7 @@ export default function CardProduct() {
             productData.products.map((product) => (
               <div key={product.id} className="col-md-4 mb-4">
                 <div
-                  className="card h-100 shadow-sm"
+                  className="card h-100 shadow-sm card-product"
                   style={{
                     maxWidth: "350px",
                     margin: "0 auto",
@@ -124,6 +125,10 @@ export default function CardProduct() {
                     <p className="mb-1">
                       <strong>Loại: </strong>
                       {product.generic}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Nguồn: </strong>
+                      Dainichi Koi Farm
                     </p>
                     {/* Add to cart button */}
                     <div className="text-center">

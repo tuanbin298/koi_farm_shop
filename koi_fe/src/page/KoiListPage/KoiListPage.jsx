@@ -17,6 +17,7 @@ function KoiListPage() {
     size: "all",
     price: "all",
     generic: "all",
+    origin: "all", // Add origin to the default filter
   };
 
   const [filter, setFilter] = useState(defaultFilter);
@@ -72,6 +73,9 @@ function KoiListPage() {
 
       if (filter.generic !== "all" && koi.generic !== filter.generic)
         return false;
+
+      // Check for origin filter
+      if (filter.origin !== "all" && koi.origin !== filter.origin) return false;
 
       return true;
     });
@@ -130,7 +134,7 @@ function KoiListPage() {
           value={filter.generic}
           onChange={(e) => setFilter({ ...filter, generic: e.target.value })}
         >
-          <option value="all">Tất cả nguồn gốc</option>
+          <option value="all">Tất cả chủng loại</option>
           <option value="Cá Koi Nhật thuần chủng">Nhập khẩu Nhật bản</option>
           <option value="F1">Cá Koi F1</option>
           <option value="Mini">Cá Koi Mini</option>
@@ -152,16 +156,14 @@ function KoiListPage() {
 
         <select
           className="form-select w-auto btn-outline-primary"
-          value={filter.size}
-          onChange={(e) => setFilter({ ...filter, size: e.target.value })}
+          value={filter.origin}
+          onChange={(e) => setFilter({ ...filter, origin: e.target.value })}
         >
           <option value="all">Tất cả các nguồn gốc</option>
-          <option value="10-15cm">tên nhà cung cấp</option>
-          <option value="15-20cm">chưa hoàn thành</option>
-          <option value="20-30cm">20-30 cm</option>
-          <option value="30-40cm">30-40 cm</option>
-          <option value="40-50cm">40-50 cm</option>
-          <option value="above-50cm">Trên 50 cm</option>
+          <option value="Izumiya Koi Farm">Izumiya Koi Farm</option>
+          <option value="Dainichi Koi Farm">Dainichi Koi Farm</option>
+          <option value="Marudo Koi Farm">Marudo Koi Farm</option>
+          <option value="Koi Viet">Koi Viet</option>
         </select>
       </div>
 
