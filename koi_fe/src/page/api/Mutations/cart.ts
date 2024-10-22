@@ -7,6 +7,9 @@ export const CREATE_CART_ITEM = gql`
       product {
         id
       }
+      consignmentProduct {
+        id
+      }
     }
   }
 `;

@@ -6,9 +6,9 @@ import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function CardListProduct({ products }) {
+export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  if (!products || products.length === 0) {
+  if (!consignments || consignments.length === 0) {
     return <p>Không có sản phẩm nào phù hợp.</p>;
   }
   const handleAddToCart = async (productId) => {
@@ -27,7 +27,7 @@ export default function CardListProduct({ products }) {
           data: {
             quantity: 1,
             product: {
-              connect: { id: productId }, // Connect product by ID
+              connect: { id: consignmentId }, // Connect product by ID
             },
             user: {
               connect: {
@@ -65,8 +65,8 @@ export default function CardListProduct({ products }) {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="container mt-4 species-section">
         <div className="row">
-          {products.map((product) => (
-            <div key={product.id} className="col-md-4 mb-4">
+          {consignments.map((consignment) => (
+            <div key={consignment.id} className="col-md-4 mb-4">
               <div
                 className="card h-100 shadow-sm card-product"
                 style={{
@@ -75,10 +75,10 @@ export default function CardListProduct({ products }) {
                 }}
               >
                 {/* Link tới chi tiết sản phẩm */}
-                <Link to={`/ProductDetail/${product.slug}`}>
+                <Link to={`/ConsignmentDetail/${consignment.slug}`}>
                   <img
-                    src={product.image?.publicUrl}
-                    alt={product.name}
+                    src={consignment.image?.publicUrl}
+                    alt={consignment.name}
                     className="card-img-top img-fluid"
                     style={{
                       height: "360px", // Chiều cao cố định cho ảnh
@@ -94,32 +94,32 @@ export default function CardListProduct({ products }) {
                     padding: "25px",
                   }}
                 >
-                  <h4 className="card-title">{product.name}</h4>
+                  <h4 className="card-title">{consignment.name}</h4>
                   <p className="mb-1  text-danger">
                     <strong>Giá: </strong>
-                    {formatMoney(product.price)}
+                    {formatMoney(consignment.price)}
                   </p>
                   <p className="mb-1">
                     <strong>Kích thước </strong>
-                    {product.size}
+                    {consignment.size}
                   </p>
                   <p className="mb-1">
                     <strong>Giới tính </strong>
-                    {product.sex}
+                    {consignment.sex}
                   </p>
                   <p className="mb-1">
                     <strong>Loại: </strong>
-                    {product.generic}
+                    {consignment.generic}
                   </p>
-                  <p className="mb-1">
+                  {/* <p className="mb-1">
                     <strong>Nguồn gốc: </strong>
-                    {product.origin}
-                  </p>
+                    {consignment.origin}
+                  </p> */}
                   {/* Nút thêm vào giỏ hàng */}
                   <div className="text-center">
                     <button
                       className="btn btn-success mt-3"
-                      onClick={() => handleAddToCart(product.id)}
+                      onClick={() => handleAddToCart(consignment.id)}
                     >
                       Thêm vào giỏ hàng
                     </button>

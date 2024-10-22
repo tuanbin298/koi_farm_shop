@@ -9,12 +9,12 @@ export const GET_CONSIGNMENT_SALES = gql`
       sex
       size
       status
-      origin
       description
       category
       generic
       price
       estimatedPrice
+      slug
     }
   }
 `;
@@ -29,11 +29,11 @@ export const GET_ALL_CONSIGNMENT_SALES = gql`
       medical
       category
       birth
-      origin
       price
       sex
       size
       status
+      slug
     }
   }
 `;
