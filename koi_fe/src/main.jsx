@@ -11,11 +11,11 @@ import {
 } from "@apollo/client";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { setContext } from "@apollo/client/link/context";
-// import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
+import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
-// const httpLink = createUploadLink({
-//   uri: "http://localhost:3000/api/graphql",
-// });
+const httpLink = createUploadLink({
+  uri: "http://localhost:3000/api/graphql",
+});
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
@@ -33,8 +33,8 @@ const authLink = setContext((_, { headers }) => {
 
 // Connect API with backend
 const client = new ApolloClient({
-  // link: authLink.concat(httpLink),
-  uri: "http://localhost:3000/api/graphql",
+  link: authLink.concat(httpLink),
+  // uri: "http://localhost:3000/api/graphql",
   cache: new InMemoryCache(),
 });
 
