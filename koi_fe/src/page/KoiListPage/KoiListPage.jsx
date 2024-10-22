@@ -168,7 +168,7 @@ function KoiListPage() {
       </div>
 
       {/* Hiển thị sản phẩm */}
-      <div className="productList">
+      <div>
         <CardListProduct products={paginatedProducts} />
         <div
           style={{
