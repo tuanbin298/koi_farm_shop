@@ -37,7 +37,7 @@ export default function Header() {
     data: cartData,
     loading: cartLoading,
     error: cartError,
-    refetch: refetchItems
+    refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { 
       user: {
@@ -48,14 +48,15 @@ export default function Header() {
      } },
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
-  
+
   useEffect(() => {
     if (cartData && cartData.cartItems) {
-      const itemCount = loggedIn ?
-      (cartData?.cartItems?.reduce(
-        (total, item) => total + (item.quantity || 1),
-        0
-      ) || 0):0
+      const itemCount = loggedIn
+        ? cartData?.cartItems?.reduce(
+            (total, item) => total + (item.quantity || 1),
+            0
+          ) || 0
+        : 0;
       setCartItemCount(itemCount);
     } else {
       setCartItemCount(0);
@@ -74,7 +75,6 @@ export default function Header() {
     };
   }, [refetchItems]);
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -131,8 +131,7 @@ export default function Header() {
     news: "Tin tức",
     ProductDetail: "Chi tiết",
     introduce: "Giới thiệu",
-    consignmentTracking: "Theo dõi đơn ký gửi bán"
-    
+    consignmentTracking: "Theo dõi đơn ký gửi bán",
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -328,6 +327,10 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            <Link to="/consignmentList" className="linkForm">
+              Koi Ký Gửi
+            </Link>
 
             <Link to="/news" className="linkForm">
               Tin tức

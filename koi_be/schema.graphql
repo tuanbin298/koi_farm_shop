@@ -756,6 +756,8 @@ type CartItem {
   quantity: Int
   product(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
   productCount(where: ProductWhereInput! = {}): Int
+  consignmentProduct(where: ConsignmentSaleWhereInput! = {}, orderBy: [ConsignmentSaleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ConsignmentSaleWhereUniqueInput): [ConsignmentSale!]
+  consignmentProductCount(where: ConsignmentSaleWhereInput! = {}): Int
 }
 
 input CartItemWhereUniqueInput {
@@ -770,12 +772,19 @@ input CartItemWhereInput {
   user: UserWhereInput
   quantity: IntFilter
   product: ProductManyRelationFilter
+  consignmentProduct: ConsignmentSaleManyRelationFilter
 }
 
 input ProductManyRelationFilter {
   every: ProductWhereInput
   some: ProductWhereInput
   none: ProductWhereInput
+}
+
+input ConsignmentSaleManyRelationFilter {
+  every: ConsignmentSaleWhereInput
+  some: ConsignmentSaleWhereInput
+  none: ConsignmentSaleWhereInput
 }
 
 input CartItemOrderByInput {
@@ -787,6 +796,7 @@ input CartItemUpdateInput {
   user: UserRelateToOneForUpdateInput
   quantity: Int
   product: ProductRelateToManyForUpdateInput
+  consignmentProduct: ConsignmentSaleRelateToManyForUpdateInput
 }
 
 input ProductRelateToManyForUpdateInput {
@@ -794,6 +804,13 @@ input ProductRelateToManyForUpdateInput {
   set: [ProductWhereUniqueInput!]
   create: [ProductCreateInput!]
   connect: [ProductWhereUniqueInput!]
+}
+
+input ConsignmentSaleRelateToManyForUpdateInput {
+  disconnect: [ConsignmentSaleWhereUniqueInput!]
+  set: [ConsignmentSaleWhereUniqueInput!]
+  create: [ConsignmentSaleCreateInput!]
+  connect: [ConsignmentSaleWhereUniqueInput!]
 }
 
 input CartItemUpdateArgs {
@@ -805,11 +822,17 @@ input CartItemCreateInput {
   user: UserRelateToOneForCreateInput
   quantity: Int
   product: ProductRelateToManyForCreateInput
+  consignmentProduct: ConsignmentSaleRelateToManyForCreateInput
 }
 
 input ProductRelateToManyForCreateInput {
   create: [ProductCreateInput!]
   connect: [ProductWhereUniqueInput!]
+}
+
+input ConsignmentSaleRelateToManyForCreateInput {
+  create: [ConsignmentSaleCreateInput!]
+  connect: [ConsignmentSaleWhereUniqueInput!]
 }
 
 type ConsigmentRaising {
@@ -847,11 +870,11 @@ type ConsignmentSale {
   size: Int
   price: Int
   description: String
-  origin: String
   generic: String
   photo: Gallery
   category: String
   estimatedPrice: String
+  slug: String
   status: String
 }
 
@@ -872,11 +895,11 @@ input ConsignmentSaleWhereInput {
   price: IntFilter
   estimatedPrice: StringFilter
   description: StringFilter
-  origin: StringFilter
   generic: StringFilter
   photo: GalleryWhereInput
   category: StringFilter
   estimatedPrice: StringFilter
+  slug: StringFilter
   status: StringNullableFilter
 }
 
@@ -889,10 +912,10 @@ input ConsignmentSaleOrderByInput {
   size: OrderDirection
   price: OrderDirection
   description: OrderDirection
-  origin: OrderDirection
   generic: OrderDirection
   category: OrderDirection
   estimatedPrice: OrderDirection
+  slug: OrderDirection
   status: OrderDirection
 }
 
@@ -904,11 +927,11 @@ input ConsignmentSaleUpdateInput {
   size: Int
   price: Int
   description: String
-  origin: String
   generic: String
   photo: GalleryRelateToOneForUpdateInput
   category: String
   estimatedPrice: String
+  slug: String
   status: String
 }
 
@@ -931,11 +954,11 @@ input ConsignmentSaleCreateInput {
   size: Int
   price: Int
   description: String
-  origin: String
   generic: String
   photo: GalleryRelateToOneForCreateInput
   category: String
   estimatedPrice: String
+  slug: String
   status: String
 }
 

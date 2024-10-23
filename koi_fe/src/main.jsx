@@ -34,6 +34,7 @@ const authLink = setContext((_, { headers }) => {
 // Connect API with backend
 const client = new ApolloClient({
   link: authLink.concat(httpLink),
+  // uri: "http://localhost:3000/api/graphql",
   cache: new InMemoryCache(),
 });
 

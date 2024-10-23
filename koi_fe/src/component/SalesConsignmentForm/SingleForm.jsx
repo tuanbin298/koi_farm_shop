@@ -33,35 +33,36 @@ export default function SingleForm({
         </div>
       </div>
 
-      {/* Nguồn gốc */}
+      {/* Chủng loại */}
       <div className="row mb-3">
-        <label htmlFor="origin" className="col-sm-4 col-form-label">
-          Nguồn gốc <span className="text-danger">*</span>
+        <label htmlFor="generic" className="col-sm-4 col-form-label">
+          Chủng loại <span className="text-danger">*</span>
         </label>
         <div className="col-sm-8">
           <select
-            name="origin"
-            className={`form-select ${errors.origin ? "is-invalid" : ""}`}
-            value={formData.origin}
+            name="generic"
+            className={`form-select ${errors.generic ? "is-invalid" : ""}`}
+            value={formData.generic}
             onChange={handleChange}
             required
           >
             <option value="" disabled>
-              Chọn nguồn gốc cá
+              Chọn chủng loại cá
             </option>
-            <option value="Nhập khẩu Nhật bản">Nhập khẩu Nhật bản</option>
-            <option value="bố nhật mẹ nhật">Bố nhật mẹ nhật</option>
+            <option value="Cá Koi Nhật thuần chủng">Nhập khẩu Nhật bản</option>
+            <option value="F1">Cá Koi F1</option>
+            <option value="Mini">Cá Koi Mini</option>
           </select>
-          {errors.origin && (
-            <div className="invalid-feedback">{errors.origin}</div>
+          {errors.generic && (
+            <div className="invalid-feedback">{errors.generic}</div>
           )}
         </div>
       </div>
 
-      {/* Chủng loại */}
+      {/* Loại */}
       <div className="row mb-3">
         <label htmlFor="category" className="col-sm-4 col-form-label">
-          Chủng loại <span className="text-danger">*</span>
+          Loại <span className="text-danger">*</span>
         </label>
         <div className="col-sm-8">
           <select
@@ -72,7 +73,7 @@ export default function SingleForm({
             required
           >
             <option value="" disabled>
-              Chọn chủng loại cá
+              Chọn loại cá
             </option>
             {loading ? (
               <option>Đang tải...</option>
@@ -127,8 +128,8 @@ export default function SingleForm({
             className={`form-control ${errors.birth ? "is-invalid" : ""}`}
             value={formData.birth}
             onChange={handleChange}
-            min="1900"
-            max={new Date().getFullYear()}
+            min={currentYear - 10}
+            max={currentYear}
             inputMode="numeric"
             maxLength="2"
             required
@@ -215,7 +216,7 @@ export default function SingleForm({
             id="image"
             className="form-control-file"
             onChange={handleChange}
-            // accept="image/*"
+            accept="image/*"
             required
           />
         </div>

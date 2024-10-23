@@ -15,6 +15,7 @@ import IntroducePage from "./page/IntroducePage/IntroducePage";
 import ProductDetail from "./page/ProductDetail/ProductDetail";
 import SuccessPage from "./page/SuccessPage/SuccessPage";
 import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentTrackingPage";
+import KoiConsignment from "./page/KoiConsignment/KoiConsignment";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             path="/consignmentTracking"
             element={<ConsignmentTrackingPage />}
           />
+          <Route path="/consignmentList" element={<KoiConsignment />} />
         </Routes>
       </BrowserRouter>
       <Footer />

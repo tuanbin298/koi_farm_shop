@@ -2,6 +2,7 @@ import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { text, integer, select, relationship } from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
+import buildSlug from "../utils/buildSlug";
 
 const ConsignmentSale = list({
   access: {
@@ -58,12 +59,6 @@ const ConsignmentSale = list({
     description: text({
       label: "Mô tả",
     }),
-    origin: text({
-      label: "Nguồn gốc",
-      validation: {
-        isRequired: true,
-      },
-    }),
     generic: text({
       label: "Chủng loại",
     }),
@@ -80,14 +75,36 @@ const ConsignmentSale = list({
         isRequired: true,
       },
     }),
+    slug: text({
+      label: "Đường dẫn sản phẩm",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "hidden" },
+      },
+    }),
     status: select({
       label: "Trạng thái",
       defaultValue: "Còn hàng",
       options: [
-        { label: "Còn hàng", value: "Còn hàng" },
-        { label: "Đã bán", value: "Đã bán" },
+        { label: "Có sẵn", value: "Có sẵn" },
+        { label: "Không có sẵn", value: "Không có sẵn" },
       ],
     }),
+  },
+
+  hooks: {
+    beforeOperation: {
+      create: async ({ resolvedData }) => {
+        // Generate a slug based on product name
+        resolvedData.slug = buildSlug(resolvedData.name);
+      },
+      update: async ({ resolvedData }) => {
+        if (resolvedData?.name) {
+          // Generate a slug base on new of product name
+          resolvedData.slug = buildSlug(resolvedData.name);
+        }
+      },
+    },
   },
 });
 
