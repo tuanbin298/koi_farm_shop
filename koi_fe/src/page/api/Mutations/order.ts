@@ -12,6 +12,19 @@ mutation CreateOrder($data: OrderCreateInput!) {
     price
     status
     address
+    items {
+      id
+    }
+  }
+}
+`
+
+export const UPDATE_ORDER = gql`
+mutation UpdateOrder($where: OrderWhereUniqueInput!, $data: OrderUpdateInput!) {
+  updateOrder(where: $where, data: $data) {
+    items {
+      id
+    }
   }
 }
 `

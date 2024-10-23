@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom"; // To get product ID from the route
+import { useParams } from "react-router-dom";
 import { Flex } from "antd";
 import { Image } from "antd";
 import Box from "@mui/material/Box";
@@ -12,11 +12,9 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { IoLocationSharp } from "react-icons/io5";
-import { FaPhone, FaBookmark } from "react-icons/fa";
 import "./ProductDetail.css";
 import { Link, useMatch } from "react-router-dom";
-import { useProduct, useAllProducts, useProductBySlug } from "../api/Queries/product"; // Import custom hooks
+import { useAllProducts, useProductBySlug } from "../api/Queries/product";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";

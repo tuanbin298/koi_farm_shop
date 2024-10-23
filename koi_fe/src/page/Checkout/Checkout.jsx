@@ -4,20 +4,23 @@ import TextField from '@mui/material/TextField';
 import "./Checkout.css"
 import { Button, Flex, Radio,  Space, Image } from 'antd';
 import {Link} from "react-router-dom"
-import {CREATE_ORDER} from ".././api/Mutations/order"
+import {CREATE_ORDER, UPDATE_ORDER} from ".././api/Mutations/order"
 import {CREATE_ORDER_ITEMS} from ".././api/Mutations/orderItem"
 import { useMutation, useQuery } from '@apollo/client';
 import { GET_CART_ITEMS } from '../api/Queries/cartItem';
 import { DELETE_CART_ITEM } from '../api/Mutations/deletecartItem';
 import toast, { Toaster } from "react-hot-toast";
 import { formatMoney } from "../../utils/formatMoney";
+import { GET_ORDER_ITEM_ID } from '../api/Queries/orderItem';
 import { List, ListItem, ListItemText, Divider, Typography, ListItemAvatar, Avatar
   , Pagination
  } from '@mui/material';
 export default function Checkout() {
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
+  const [updateOrder] = useMutation(UPDATE_ORDER);
   const userId = localStorage.getItem("id");
-  const [orderItemsData, setOrderItemsData] = useState([])
+  const [orderItemsData, setOrderItemsData] = useState([]);
+  const [linkOrderId, setLinkOrderId] = useState(null);
   const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
@@ -25,6 +28,16 @@ export default function Checkout() {
       },
     },
   });
+
+  const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(GET_ORDER_ITEM_ID, {
+    variables: {
+      where: {
+        order: { id: { equals: linkOrderId } }, // Use the orderId state here
+      },
+    },
+    skip: !linkOrderId, // Skip the query until the orderId is set
+  });
+  console.log(orderItemIDs);
   const [orderData, setOrderData] = useState({
     name: "",
     email: "",
@@ -75,6 +88,7 @@ export default function Checkout() {
       });
 
       const orderId = data.createOrder.id;
+      setLinkOrderId(orderId);
       // Create Order Items (replace with actual items from cart)
       // setOrderItemsData(cartItems)
       // console.log(cartItems);
@@ -96,15 +110,35 @@ export default function Checkout() {
           data: orderItems,
         },
       });
+      for (let i = 0; i < orderItems.length; i++){
+      // const orderItemId = orderItems[i].id;
+      console.log(orderItems);
+      // await updateOrder({
+      //   variables: {
+      //     where: {
+      //       id: orderId
+      //     },
+      //     data: {
+      //       items: {
+      //         connect: [
+      //           {
+      //             id: orderItemId
+      //           }
+      //         ]
+      //       }
+      //     }
+      //   }
+      // })
+    }
 
-      for (let i = 0; i < cartItems.cartItems.length; i++) {
-        const cartItemId = cartItems.cartItems[i].id;
-        await deleteCartItem({
-          variables: {
-            where: { id: cartItemId },
-          },
-        });
-      }
+      // for (let i = 0; i < cartItems.cartItems.length; i++) {
+      //   const cartItemId = cartItems.cartItems[i].id;
+      //   await deleteCartItem({
+      //     variables: {
+      //       where: { id: cartItemId },
+      //     },
+      //   });
+      // }
       toast.success('Đã tạo đơn hàng!')
     } catch (error) {
       console.log(orderItemsData)
@@ -140,6 +174,7 @@ export default function Checkout() {
               style={{ width: "40%" }} 
               name="name" 
               onChange={handleInputChange} 
+              required
             />
             <TextField 
               id="outlined-basic" 
@@ -148,6 +183,7 @@ export default function Checkout() {
               style={{ width: "30%" }} 
               name="email" 
               onChange={handleInputChange} 
+              required
             />
             <TextField 
               id="outlined-basic" 
@@ -156,6 +192,7 @@ export default function Checkout() {
               style={{ width: "25%" }} 
               name="phone" 
               onChange={handleInputChange} 
+              required
             />
           </Flex>
         </Box>
@@ -169,6 +206,7 @@ export default function Checkout() {
               style={{ width: "98%" }} 
               name="address" 
               onChange={handleInputChange} 
+              required
             />
           </Flex>
         </Box>
@@ -182,6 +220,7 @@ export default function Checkout() {
               style={{ width: "25%" }} 
               name="city" 
               onChange={handleInputChange} 
+              required
             />
             <TextField 
               id="outlined-basic" 
@@ -190,6 +229,7 @@ export default function Checkout() {
               style={{ width: "25%" }} 
               name="district" 
               onChange={handleInputChange} 
+              required
             />
             <TextField 
               id="outlined-basic" 
@@ -198,6 +238,7 @@ export default function Checkout() {
               style={{ width: "25%" }} 
               name="ward" 
               onChange={handleInputChange} 
+              required
             />
           </Flex>
         </Box>
@@ -208,7 +249,7 @@ export default function Checkout() {
               <h3>Phương thức thanh toán</h3>
             </section>
             <Flex direction="column" gap="middle">
-              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })}>
+              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })} required>
                 <Space direction="vertical">
                   <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
                   <Radio value="cod">Thanh toán khi nhận hàng(đặt cọc 50%)</Radio>
