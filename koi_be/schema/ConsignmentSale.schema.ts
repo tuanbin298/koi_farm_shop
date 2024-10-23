@@ -86,8 +86,8 @@ const ConsignmentSale = list({
       label: "Trạng thái",
       defaultValue: "Còn hàng",
       options: [
-        { label: "Còn hàng", value: "Còn hàng" },
-        { label: "Đã bán", value: "Đã bán" },
+        { label: "Có sẵn", value: "Có sẵn" },
+        { label: "Không có sẵn", value: "Không có sẵn" },
       ],
     }),
   },

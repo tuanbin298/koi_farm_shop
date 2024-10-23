@@ -89,7 +89,7 @@ export default function CardConsignmentSale() {
                 {/* Link to consignment details */}
                 <Link to={`/consignmentDetail/${consignment.slug}`}>
                   <img
-                    src={consignment.image?.publicUrl}
+                    src={consignment.photo?.image?.publicUrl}
                     alt={consignment.name}
                     className="card-img-top img-fluid"
                     style={{
@@ -122,8 +122,8 @@ export default function CardConsignmentSale() {
                     {consignment.generic}
                   </p>
                   <p className="mb-1">
-                    <strong>Nguồn gốc: </strong>
-                    {consignment.origin}
+                    <strong>Chủng loại: </strong>
+                    {consignment.category}
                   </p>
                   {/* Add to cart button */}
                   <div className="text-center">

@@ -100,6 +100,10 @@ export default function CardListProduct({ products }) {
                     {formatMoney(product.price)}
                   </p>
                   <p className="mb-1">
+                    <strong>Nguồn gốc: </strong>
+                    {product.origin}
+                  </p>
+                  <p className="mb-1">
                     <strong>Kích thước </strong>
                     {product.size}
                   </p>
@@ -110,10 +114,6 @@ export default function CardListProduct({ products }) {
                   <p className="mb-1">
                     <strong>Loại: </strong>
                     {product.generic}
-                  </p>
-                  <p className="mb-1">
-                    <strong>Nguồn gốc: </strong>
-                    {product.origin}
                   </p>
                   {/* Nút thêm vào giỏ hàng */}
                   <div className="text-center">
