@@ -111,10 +111,6 @@ export default function CardProduct() {
                       {formatMoney(product.price)}
                     </p>
                     <p className="mb-1">
-                      <strong>Nguồn gốc: </strong>
-                      {product.origin}
-                    </p>
-                    <p className="mb-1">
                       <strong>Kích thước: </strong>
                       {product.size}
                     </p>
@@ -127,8 +123,8 @@ export default function CardProduct() {
                       {product.generic}
                     </p>
                     <p className="mb-1">
-                      <strong>Nguồn: </strong>
-                      Dainichi Koi Farm
+                      <strong>Nguồn gốc: </strong>
+                      {product.origin}
                     </p>
                     {/* Add to cart button */}
                     <div className="text-center">

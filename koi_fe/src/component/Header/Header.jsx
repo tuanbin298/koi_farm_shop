@@ -46,12 +46,33 @@ export default function Header() {
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
 
+  useEffect(() => {
+    if (cartData && cartData.cartItems) {
+      const itemCount = loggedIn
+        ? cartData?.cartItems?.reduce(
+            (total, item) => total + (item.quantity || 1),
+            0
+          ) || 0
+        : 0;
+      setCartItemCount(itemCount);
+    } else {
+      setCartItemCount(0);
+    }
+  }, [cartData]);
+
+  useEffect(() => {
+    const handleCartUpdate = () => {
+      refetchItems();
+    };
+
+    window.addEventListener("cartUpdated", handleCartUpdate);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+    };
+  }, [refetchItems]);
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  const cartItemCount = loggedIn?(
-    cartData?.cartItems?.reduce(
-      (total, item) => total + (item.quantity || 1),
-      0
-    ) || 0):0;
+  
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -108,8 +129,7 @@ export default function Header() {
     news: "Tin tức",
     ProductDetail: "Chi tiết",
     introduce: "Giới thiệu",
-    consignmentTracking: "Theo dõi đơn ký gửi bán"
-    
+    consignmentTracking: "Theo dõi đơn ký gửi bán",
   };
 
   // Function to generate breadcrumbs based on current URL
@@ -305,6 +325,10 @@ export default function Header() {
                 </div>
               )}
             </div>
+
+            <Link to="/consignmentList" className="linkForm">
+              Koi Ký Gửi
+            </Link>
 
             <Link to="/news" className="linkForm">
               Tin tức

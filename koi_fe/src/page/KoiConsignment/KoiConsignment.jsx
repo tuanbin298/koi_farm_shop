@@ -1,41 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import CardListProduct from "../../component/CartListProduct/CardListProduct";
-import {
-  GET_PRODUCT_BY_CATEGORY,
-  GET_ALL_PRODUCTS,
-} from "../api/Queries/product";
+import CardListConsignment from "../../component/CardListConsignment/CardListConsignment";
 import Pagination from "@mui/material/Pagination";
+import { GET_ALL_CONSIGNMENT_SALES } from "../api/Queries/consignment";
 
-function KoiListPage() {
+function KoiConsignment() {
   const [page, setPage] = useState(1);
-  const { categoryId } = useParams();
   const itemsPerPage = 6;
 
   const defaultFilter = {
     size: "all",
     price: "all",
     generic: "all",
-    origin: "all", // Add origin to the default filter
+    origin: "all",
   };
 
   const [filter, setFilter] = useState(defaultFilter);
 
-  useEffect(() => {
-    setFilter(defaultFilter);
-    setPage(1); // Reset to page 1 when category changes
-  }, [categoryId]);
-
-  const { data, loading, error } = useQuery(
-    categoryId ? GET_PRODUCT_BY_CATEGORY : GET_ALL_PRODUCTS,
-    categoryId
-      ? { variables: { categoryId: { id: { equals: categoryId } } } }
-      : undefined
-  );
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error loading Koi data!</p>;
+  const { data, loading, error } = useQuery(GET_ALL_CONSIGNMENT_SALES);
+  console.log(data);
+  if (loading) return <p>Đang tải dữ liệu...</p>;
+  if (error) return <p>Không thể tải dữ liệu cá Koi. Vui lòng thử lại sau!</p>;
 
   const sizeMap = {
     "10-15cm": [10, 15],
@@ -56,62 +41,43 @@ function KoiListPage() {
   };
 
   const filterKoi = () => {
-    if (!data || !data.products) return [];
+    if (!data || !data.consignmentSales) return []; // Thay đổi từ consignments thành consignmentSales
 
-    return data.products.filter((koi) => {
+    return data.consignmentSales.filter((koi) => {
+      // Áp dụng logic lọc như ban đầu
       if (filter.size !== "all") {
-        const koiSize = parseInt(koi.size.replace("cm", ""), 10);
+        const koiSize = koi.size;
         const [minSize, maxSize] = sizeMap[filter.size];
         if (koiSize < minSize || koiSize > maxSize) return false;
       }
-
       if (filter.price !== "all") {
         const koiPrice = koi.price;
         const [minPrice, maxPrice] = priceMap[filter.price];
         if (koiPrice < minPrice || koiPrice > maxPrice) return false;
       }
-
       if (filter.generic !== "all" && koi.generic !== filter.generic)
         return false;
-
-      // Check for origin filter
-      if (filter.origin !== "all" && koi.origin !== filter.origin) return false;
+      // if (filter.origin !== "all" && koi.origin !== filter.origin) return false;
 
       return true;
     });
   };
 
-  const filteredProducts = filterKoi();
-
-  // Calculate the products to display on the current page
+  const filteredConsignments = filterKoi();
   const startIndex = (page - 1) * itemsPerPage;
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedConsignments = filteredConsignments.slice(
     startIndex,
     startIndex + itemsPerPage
   );
+  const totalPages = Math.ceil(filteredConsignments.length / itemsPerPage);
 
-  // Calculate total pages based on filtered products
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
-
-  // Handle page change
   const handlePageChange = (event, value) => {
-    setPage(value); // Ensure state is updated with the selected page
+    setPage(value);
   };
 
   return (
     <div className="container mt-5">
-      {/* Hiển thị tên và mô tả loại nếu có */}
-      <h1 className="mb-4 border-bottom">
-        {categoryId
-          ? data.products[0]?.category?.name || "Danh sách Cá Koi theo loại"
-          : "Cá Koi Nhật"}
-      </h1>
-
-      {categoryId && data.products[0]?.category?.description && (
-        <p className="mb-4 paddingBottom">
-          {data.products[0].category.description}
-        </p>
-      )}
+      <h1 className="mb-4 border-bottom">Cá Koi Ký Gửi</h1>
 
       {/* Bộ lọc */}
       <div className="d-flex gap-3 mb-4">
@@ -153,42 +119,33 @@ function KoiListPage() {
           <option value="20000000-25000000">20,000,000 - 25,000,000 VND</option>
           <option value="above-25000000">Trên 25,000,000 VND</option>
         </select>
-
-        <select
+        {/* <select
           className="form-select w-auto btn-outline-primary"
           value={filter.origin}
-          onChange={(e) => setFilter({ ...filter, origin: e.target.value })}
+          onChange={handleFilterChange("origin")}
         >
-          <option value="all">Tất cả các nguồn gốc</option>
-          <option value="Izumiya Koi Farm">Izumiya Koi Farm</option>
-          <option value="Dainichi Koi Farm">Dainichi Koi Farm</option>
-          <option value="Marudo Koi Farm">Marudo Koi Farm</option>
-          <option value="Koi Viet">Koi Viet</option>
-        </select>
+          <option value="all">Tất cả các nguồn gốc</option> */}
+        {/* Other options */}
+        {/* </select> */}
       </div>
-
-      {/* Hiển thị sản phẩm */}
-      <div>
-        <CardListProduct products={paginatedProducts} />
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          {/* MUI Pagination Component */}
-          <Pagination
-            count={totalPages} // Total pages
-            page={page} // Current page
-            onChange={handlePageChange} // Handle page change
-            color="primary"
-          />
-        </div>
+      <CardListConsignment consignments={paginatedConsignments} />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+        }}
+      >
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={handlePageChange}
+          color="primary"
+        />
       </div>
     </div>
   );
 }
 
-export default KoiListPage;
+export default KoiConsignment;

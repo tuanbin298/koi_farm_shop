@@ -25,7 +25,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
     $medical: String!
     $size: Int!
     $description: String!
-    $origin: String!
     $generic: String!
     $image: Upload!
     $category: String!
@@ -40,7 +39,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
         medical: $medical
         size: $size
         description: $description
-        origin: $origin
         generic: $generic
         photo: { create: { image: $image, title: $name } }
         category: $category
@@ -55,7 +53,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
       medical
       size
       description
-      origin
       generic
       photo {
         image {
