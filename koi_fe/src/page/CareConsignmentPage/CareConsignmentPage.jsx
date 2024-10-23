@@ -20,52 +20,33 @@ const CareConsignmentPage = () => {
           gia hạn nếu cần thiết.
         </li>
         <li>
-          Khách hàng phải thông báo trước 7 ngày nếu muốn gia hạn hoặc kết thúc
-          thời gian ký gửi sớm hơn.
+          Thông báo trước: Khách hàng phải thông báo trước 7 ngày nếu muốn gia hạn hoặc kết thúc hợp đồng sớm hơn thời hạn đã cam kết.
         </li>
       </ul>
 
       <h5>Chi phí ký gửi:</h5>
       <ul>
         <li>
-          Phí ký gửi sẽ dựa trên kích thước cá Koi, thời gian ký gửi, và các
-          dịch vụ kèm theo như chăm sóc đặc biệt.
+        Phí ký gửi: Mức phí đồng nhất 500.000 VND/tháng cho mỗi con cá Koi, không phân biệt kích thước lớn hay nhỏ.
         </li>
         <li>
-          Chi phí cơ bản: X VND/tháng đối với cá Koi nhỏ, Y VND/tháng đối với cá
-          Koi lớn (giá cụ thể sẽ được thông báo chi tiết khi ký hợp đồng).
-        </li>
-        <li>
-          Các dịch vụ bổ sung như chăm sóc sức khỏe đặc biệt, sử dụng các loại
-          thức ăn đặc biệt sẽ có phí riêng.
-        </li>
-      </ul>
-
-      <h5>Điều kiện ký gửi:</h5>
-      <ul>
-        <li>
-          Khách hàng phải cung cấp đầy đủ thông tin về tình trạng sức khỏe của
-          cá Koi, bao gồm các giấy tờ xét nghiệm hoặc báo cáo y tế nếu có.
-        </li>
-        <li>
-          Nếu cá có yêu cầu đặc biệt về chăm sóc, khách hàng phải thông báo rõ
-          ràng và cung cấp hướng dẫn.
+        Phí dịch vụ bổ sung: Các dịch vụ như chăm sóc sức khỏe đặc biệt, sử dụng thức ăn đặc biệt sẽ có chi phí phát sinh theo yêu cầu cụ thể của khách hàng.
         </li>
       </ul>
 
       <h5>Chăm sóc và bảo vệ cá Koi:</h5>
       <ul>
         <li>
-          Chế độ dinh dưỡng: Cá Koi sẽ được cho ăn chế độ dinh dưỡng phù hợp với
-          từng giai đoạn phát triển và tình trạng sức khỏe.
+        Chế độ dinh dưỡng: Cá Koi sẽ được cho ăn theo chế độ phù hợp với
+        từng giai đoạn phát triển và tình trạng sức khỏe.
         </li>
         <li>
           Kiểm tra sức khỏe định kỳ: Cá Koi sẽ được kiểm tra sức khỏe định kỳ
           mỗi tháng, bao gồm cả kiểm tra thể trạng và xét nghiệm nếu cần.
         </li>
         <li>
-          Môi trường sống: Bể nuôi sẽ được làm sạch thường xuyên, đảm bảo môi
-          trường nước luôn trong sạch và đạt chuẩn để cá Koi phát triển tốt.
+        Môi trường sống: Bể nuôi sẽ được làm sạch thường xuyên
+        để đảm bảo môi trường nước trong sạch, đạt chuẩn, giúp cá phát triển tốt nhất
         </li>
       </ul>
 
@@ -77,14 +58,6 @@ const CareConsignmentPage = () => {
             <li>
               Cá Koi sẽ được kiểm tra sức khỏe định kỳ mỗi tháng, bao gồm cả
               kiểm tra thể trạng và xét nghiệm nếu cần.
-            </li>
-          </ul>
-
-          <h5>Môi trường sống:</h5>
-          <ul>
-            <li>
-              Bể nuôi sẽ được làm sạch thường xuyên, đảm bảo môi trường nước
-              luôn trong sạch và đạt chuẩn để cá Koi phát triển tốt.
             </li>
           </ul>
 

@@ -6,4 +6,10 @@
   .btn-custom:hover {
     background-color: #a13422; /* Màu khi hover */
   }
-  
+  .table th, .table td {
+    border-right: 1px solid #dee2e6; /* Đường kẻ dọc bên phải */
+}
+
+.table th:last-child, .table td:last-child {
+    border-right: none; /* Không có đường kẻ bên phải cho ô cuối */
+}

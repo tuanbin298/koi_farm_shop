@@ -77,7 +77,7 @@ export default function CardListConsignment({ consignments }) {
                 {/* Link tới chi tiết sản phẩm */}
                 <Link to={`/ConsignmentDetail/${consignment.slug}`}>
                   <img
-                    src={consignment.image?.publicUrl}
+                    src={consignment.photo?.image?.publicUrl}
                     alt={consignment.name}
                     className="card-img-top img-fluid"
                     style={{

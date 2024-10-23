@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
-import { GET_CATEGORY } from "../../page/api/Queries/category"; // Import the GraphQL query
+import { GET_CATEGORY } from "../../page/api/Queries/category"; 
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 
 export default function Header() {
@@ -31,13 +31,21 @@ export default function Header() {
 
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
+  const UserId = localStorage.getItem('id');
+  
   const {
     data: cartData,
     loading: cartLoading,
     error: cartError,
     refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
-    variables: { where: {} }, // Thay đổi điều kiện nếu cần
+    variables: { where: { 
+      user: {
+        id: {
+          equals: UserId
+        }
+      }
+     } },
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
 
