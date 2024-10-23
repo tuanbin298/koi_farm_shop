@@ -1,15 +1,25 @@
 .btn-custom {
-    background-color: #a13422; /* Màu đỏ nâu */
-    color: white; /* Màu chữ trắng */
-  }
-  
-  .btn-custom:hover {
-    background-color: #a13422; /* Màu khi hover */
-  }
-  .table th, .table td {
-    border-right: 1px solid #dee2e6; /* Đường kẻ dọc bên phải */
+  background-color: #a13422; /* Màu đỏ nâu */
+  color: white; /* Màu chữ trắng */
 }
 
-.table th:last-child, .table td:last-child {
-    border-right: none; /* Không có đường kẻ bên phải cho ô cuối */
+.btn-custom:hover {
+  background-color: #a13422; /* Màu khi hover */
+}
+.table th,
+.table td {
+  border-right: 1px solid #dee2e6; /* Đường kẻ dọc bên phải */
+}
+
+.table th:last-child,
+.table td:last-child {
+  border-right: none; /* Không có đường kẻ bên phải cho ô cuối */
+}
+
+.list-unstyled li {
+  cursor: pointer;
+}
+
+.list-unstyled li:hover {
+  color: #dc3545;
 }
