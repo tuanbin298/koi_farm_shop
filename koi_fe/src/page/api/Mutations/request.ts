@@ -8,7 +8,6 @@ export const CREATE_REQUEST = gql`
         id
       }
       description
-      status
       user {
         id
       }
@@ -29,7 +28,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
     $image: Upload!
     $category: String!
     $estimatedPrice: String!
-    $status: String!
   ) {
     createConsignmentSale(
       data: {
@@ -43,7 +41,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
         photo: { create: { image: $image, title: $name } }
         category: $category
         estimatedPrice: $estimatedPrice
-        status: $status
       }
     ) {
       id
@@ -62,7 +59,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
       }
       category
       estimatedPrice
-      status
     }
   }
 `;
