@@ -1,29 +1,34 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useQuery } from "@apollo/client";
+import { GET_TRACKING_REQUEST } from "../../page/api/Queries/tracking"; // Import GraphQL query
 
-const ConsignmentTrackingPage = ({ userRole }) => {
-  const [consignments, setConsignments] = useState([
-    {
-      name: "Cá Koi Kohaku",
-      date: "2023-10-10T00:00:00.000Z",
-      address: "Hà Nội, Việt Nam",
-      estimatedValue: "15,000,000",
-      confirmedValue: null,
-      status: "Đang chờ xác nhận",
-      consigner: "consigner123",
-      buyer: null,
-    },
-    {
-      name: "Cá Koi Showa",
-      date: "2023-09-15T00:00:00.000Z",
-      address: "Hồ Chí Minh, Việt Nam",
-      estimatedValue: "20,000,000",
-      confirmedValue: "20,000,000",
-      status: "Đã hoàn thành",
-      consigner: "consigner456",
-      buyer: "buyer123",
-    },
-  ]);
+const ConsignmentTrackingPage = () => {
+  // Sử dụng Apollo Client để fetch data từ GraphQL
+  const userId = localStorage.getItem("id");
+
+  const { data, loading, error } = useQuery(GET_TRACKING_REQUEST, {
+    variables: { userId },
+  });
+  console.log(userId);
+
+  // Xử lý khi đang load hoặc có lỗi
+  if (loading) return <p>Đang tải...</p>;
+  if (error) return <p>Đã xảy ra lỗi: {error.message}</p>;
+
+  // Kiểm tra nếu không có dữ liệu hoặc không có đơn ký gửi
+  const consignments =
+    data.requests.length > 0
+      ? data.requests.map((request) => ({
+          name: request.consignment.name,
+          date: request.createAt,
+          address: "N/A", // Dữ liệu địa chỉ chưa có trong truy vấn, có thể cần sửa đổi nếu muốn lấy từ nơi khác
+          estimatedValue: request.consignment.estimatedPrice,
+          confirmedValue: request.consignment.price || null,
+          status: request.status,
+          buyer: null, // Dữ liệu người mua chưa có trong truy vấn
+        }))
+      : [];
 
   // Hàm xử lý thay đổi tình trạng đơn hàng (giả lập)
   const updateStatus = (index, newStatus) => {
@@ -36,7 +41,7 @@ const ConsignmentTrackingPage = ({ userRole }) => {
       }
       return consignment;
     });
-    setConsignments(updatedConsignments); // Cập nhật danh sách ký gửi
+    // Cần thay thế bằng mutation nếu cập nhật trên server
   };
 
   return (
@@ -57,6 +62,7 @@ const ConsignmentTrackingPage = ({ userRole }) => {
               </tr>
             </thead>
             <tbody>
+              {/* Hiển thị "Không có đơn ký gửi nào" khi không có đơn hàng */}
               {consignments.length > 0 ? (
                 consignments.map((consignment, index) => (
                   <tr key={index}>
@@ -84,8 +90,8 @@ const ConsignmentTrackingPage = ({ userRole }) => {
                       </span>
                     </td>
                     <td>
-                      {/* Chỉ hiển thị các nút cập nhật trạng thái nếu người dùng là người ký gửi */}
-                      {userRole === "consigner" &&
+                      {/* Hiển thị nút cập nhật trạng thái khi đơn hàng đã có người mua */}
+                      {consignment.buyer &&
                         consignment.status === "Đang chờ xác nhận" && (
                           <button
                             className="btn btn-primary btn-sm"
@@ -96,7 +102,7 @@ const ConsignmentTrackingPage = ({ userRole }) => {
                             Xác nhận đơn hàng
                           </button>
                         )}
-                      {userRole === "consigner" &&
+                      {consignment.buyer &&
                         consignment.status === "Đang giao hàng" && (
                           <button
                             className="btn btn-success btn-sm"

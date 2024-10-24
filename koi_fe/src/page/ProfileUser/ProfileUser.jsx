@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProfileUser.css'; 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./ProfileUser.css";
 import { useMutation } from "@apollo/client";
 import { UPDATE_PROFILE } from "../api/Mutations/user";
 import toast, { Toaster } from "react-hot-toast";
+import ConsignmentTrackingPage from "../ConsignmentTrackingPage/ConsignmentTrackingPage";
 
 const ProfileUser = () => {
   const [selectedTab, setSelectedTab] = useState("accountInfo");
@@ -12,15 +13,19 @@ const ProfileUser = () => {
   const [newName, setNewName] = useState(localStorage.getItem("name") || "");
   const newEmail = localStorage.getItem("email") || ""; // Email cố định, không chỉnh sửa.
   const [newPhone, setNewPhone] = useState(localStorage.getItem("phone") || "");
-  const [newAddress, setNewAddress] = useState(localStorage.getItem("address") || ""); // Thêm lại địa chỉ
+  const [newAddress, setNewAddress] = useState(
+    localStorage.getItem("address") || ""
+  ); // Thêm lại địa chỉ
   const [errors, setErrors] = useState({});
 
-  const [updateUserProfile, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_PROFILE);
+  const [updateUserProfile, { loading: updateLoading, error: updateError }] =
+    useMutation(UPDATE_PROFILE);
 
   const validateForm = () => {
     let formErrors = {};
     if (!newName.trim()) formErrors.name = "Tên không được bỏ trống.";
-    if (!newPhone.trim()) formErrors.phone = "Số điện thoại không được bỏ trống.";
+    if (!newPhone.trim())
+      formErrors.phone = "Số điện thoại không được bỏ trống.";
     if (!newAddress.trim()) formErrors.address = "Địa chỉ không được bỏ trống.";
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
@@ -35,7 +40,7 @@ const ProfileUser = () => {
     try {
       const variables = {
         where: { id: localStorage.getItem("id") },
-        data: { name: newName, phone: newPhone, address: newAddress }, 
+        data: { name: newName, phone: newPhone, address: newAddress },
       };
 
       const result = await updateUserProfile({ variables });
@@ -43,7 +48,7 @@ const ProfileUser = () => {
       if (result.data.updateUser) {
         localStorage.setItem("name", result.data.updateUser.name);
         localStorage.setItem("phone", result.data.updateUser.phone);
-        localStorage.setItem("address", result.data.updateUser.address); 
+        localStorage.setItem("address", result.data.updateUser.address);
         setIsEditing(false);
         toast.success("Cập nhật thông tin thành công!");
       }
@@ -82,7 +87,9 @@ const ProfileUser = () => {
                     onChange={(e) => setNewPhone(e.target.value)}
                     className="form-control mt-2"
                   />
-                  {errors.phone && <p className="text-danger">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="text-danger">{errors.phone}</p>
+                  )}
                 </p>
                 <p>
                   <strong>Địa chỉ:</strong>
@@ -92,21 +99,40 @@ const ProfileUser = () => {
                     onChange={(e) => setNewAddress(e.target.value)}
                     className="form-control mt-2"
                   />
-                  {errors.address && <p className="text-danger">{errors.address}</p>}
+                  {errors.address && (
+                    <p className="text-danger">{errors.address}</p>
+                  )}
                 </p>
-                <button onClick={handleSaveChanges} className="btn btn-primary mt-2">
+                <button
+                  onClick={handleSaveChanges}
+                  className="btn btn-primary mt-2"
+                >
                   Lưu
                 </button>
                 {updateLoading && <p>Đang cập nhật...</p>}
-                {updateError && <p className="text-danger">Lỗi: {updateError.message}</p>}
+                {updateError && (
+                  <p className="text-danger">Lỗi: {updateError.message}</p>
+                )}
               </div>
             ) : (
               <div>
-                <p><strong>Email:</strong> {newEmail}</p>
-                <p><strong>Tên tài khoản:</strong> {newName}</p>
-                <p><strong>Điện thoại:</strong> {newPhone}</p>
-                <p><strong>Địa chỉ:</strong> {newAddress}</p> {/* Hiển thị địa chỉ */}
-                <button onClick={() => setIsEditing(true)} className="btn btn-secondary mt-2">
+                <p>
+                  <strong>Email:</strong> {newEmail}
+                </p>
+                <p>
+                  <strong>Tên tài khoản:</strong> {newName}
+                </p>
+                <p>
+                  <strong>Điện thoại:</strong> {newPhone}
+                </p>
+                <p>
+                  <strong>Địa chỉ:</strong> {newAddress}
+                </p>{" "}
+                {/* Hiển thị địa chỉ */}
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="btn btn-secondary mt-2"
+                >
                   Chỉnh sửa
                 </button>
               </div>
@@ -130,7 +156,9 @@ const ProfileUser = () => {
               </thead>
               <tbody>
                 <tr>
-                  <td colSpan="6" className="text-center">Không có đơn hàng.</td>
+                  <td colSpan="6" className="text-center">
+                    Không có đơn hàng.
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -139,9 +167,7 @@ const ProfileUser = () => {
       case "tracking":
         return (
           <div>
-            <h4>Theo Dõi Đơn Hàng Ký Gửi Bán</h4>
-            <p>Thông tin đơn hàng ký gửi bán sẽ được hiển thị ở đây.</p>
-            {/* Thêm nội dung theo dõi đơn hàng ký gửi bán ở đây */}
+            <ConsignmentTrackingPage />
           </div>
         );
       default:
@@ -156,27 +182,42 @@ const ProfileUser = () => {
         {/* Menu bên trái */}
         <div className="col-md-3 border-end">
           <h4 className="mt-2">TRANG TÀI KHOẢN</h4>
-          <p>Xin chào, <strong className="text-danger">{localStorage.getItem("name")}!</strong></p>
+          <p>
+            Xin chào,{" "}
+            <strong className="text-danger">
+              {localStorage.getItem("name")}!
+            </strong>
+          </p>
           <ul className="list-unstyled">
-            <li className={`mt-3 ${selectedTab === "accountInfo" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("accountInfo")}>
+            <li
+              className={`mt-3 ${
+                selectedTab === "accountInfo" ? "text-danger" : ""
+              }`}
+              onClick={() => setSelectedTab("accountInfo")}
+            >
               Thông tin tài khoản
             </li>
-            <li className={`mt-2 ${selectedTab === "orders" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("orders")}>
+            <li
+              className={`mt-2 ${
+                selectedTab === "orders" ? "text-danger" : ""
+              }`}
+              onClick={() => setSelectedTab("orders")}
+            >
               Đơn hàng của bạn
             </li>
-            <li className={`mt-2 ${selectedTab === "tracking" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("tracking")}>
+            <li
+              className={`mt-2 ${
+                selectedTab === "tracking" ? "text-danger" : ""
+              }`}
+              onClick={() => setSelectedTab("tracking")}
+            >
               Đơn hàng ký gửi bán
             </li>
           </ul>
         </div>
 
         {/* Nội dung bên phải */}
-        <div className="col-md-9">
-          {renderContent()}
-        </div>
+        <div className="col-md-9">{renderContent()}</div>
       </div>
     </div>
   );
