@@ -11,6 +11,7 @@ import ConsigmentRaising from "./ConsigmentRaisings.schema";
 import ConsignmentSale from "./ConsignmentSale.schema";
 import Request from "./Request.schema";
 import Gallery from "./Gallery.schema";
+import Status from "./Status.schema";
 
 export const lists = {
   User,
@@ -26,4 +27,5 @@ export const lists = {
   ConsignmentSale,
   Request,
   Gallery,
+  Status,
 };

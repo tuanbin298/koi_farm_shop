@@ -16,7 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import { gql, useQuery } from "@apollo/client";
-import { GET_CATEGORY } from "../../page/api/Queries/category"; // Import the GraphQL query
+import { GET_CATEGORY } from "../../page/api/Queries/category"; 
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 
 export default function Header() {
@@ -25,24 +25,26 @@ export default function Header() {
   const [userName, setUserName] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false); // Cá Koi Nhật dropdown control
   const [kiguiDropdownOpen, setKiguiDropdownOpen] = useState(false); // Ký gửi dropdown control
-  const userId = localStorage.getItem("id");
+  const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
   
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
+  const UserId = localStorage.getItem('id');
+  
   const {
     data: cartData,
     loading: cartLoading,
     error: cartError,
   } = useQuery(GET_CART_ITEMS, {
-    variables: { where: {
-      user:{
+    variables: { where: { 
+      user: {
         id: {
-          equals: userId
+          equals: UserId
         }
       }
-    } }, // Thay đổi điều kiện nếu cần
+     } },
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
 

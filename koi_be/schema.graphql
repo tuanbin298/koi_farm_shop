@@ -153,6 +153,7 @@ type Role {
   canManageCart: Boolean
   canManageConsigment: Boolean
   canManageRequest: Boolean
+  canManageStatus: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -176,6 +177,7 @@ input RoleWhereInput {
   canManageCart: BooleanFilter
   canManageConsigment: BooleanFilter
   canManageRequest: BooleanFilter
+  canManageStatus: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -202,6 +204,7 @@ input RoleOrderByInput {
   canManageCart: OrderDirection
   canManageConsigment: OrderDirection
   canManageRequest: OrderDirection
+  canManageStatus: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -215,6 +218,7 @@ input RoleUpdateInput {
   canManageCart: Boolean
   canManageConsigment: Boolean
   canManageRequest: Boolean
+  canManageStatus: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -241,6 +245,7 @@ input RoleCreateInput {
   canManageCart: Boolean
   canManageConsigment: Boolean
   canManageRequest: Boolean
+  canManageStatus: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -892,7 +897,8 @@ input ConsignmentSaleWhereInput {
   sex: StringFilter
   medical: StringFilter
   size: IntFilter
-  price: IntNullableFilter
+  price: IntFilter
+  estimatedPrice: StringFilter
   description: StringFilter
   generic: StringFilter
   photo: GalleryWhereInput
@@ -973,6 +979,8 @@ type Request {
   description: String
   consignment: ConsignmentSale
   status: String
+  statusHistory(where: StatusWhereInput! = {}, orderBy: [StatusOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StatusWhereUniqueInput): [Status!]
+  statusHistoryCount(where: StatusWhereInput! = {}): Int
   createAt: DateTime
 }
 
@@ -990,7 +998,14 @@ input RequestWhereInput {
   description: StringFilter
   consignment: ConsignmentSaleWhereInput
   status: StringNullableFilter
+  statusHistory: StatusManyRelationFilter
   createAt: DateTimeNullableFilter
+}
+
+input StatusManyRelationFilter {
+  every: StatusWhereInput
+  some: StatusWhereInput
+  none: StatusWhereInput
 }
 
 input RequestOrderByInput {
@@ -1006,6 +1021,7 @@ input RequestUpdateInput {
   description: String
   consignment: ConsignmentSaleRelateToOneForUpdateInput
   status: String
+  statusHistory: StatusRelateToManyForUpdateInput
   createAt: DateTime
 }
 
@@ -1013,6 +1029,13 @@ input ConsignmentSaleRelateToOneForUpdateInput {
   create: ConsignmentSaleCreateInput
   connect: ConsignmentSaleWhereUniqueInput
   disconnect: Boolean
+}
+
+input StatusRelateToManyForUpdateInput {
+  disconnect: [StatusWhereUniqueInput!]
+  set: [StatusWhereUniqueInput!]
+  create: [StatusCreateInput!]
+  connect: [StatusWhereUniqueInput!]
 }
 
 input RequestUpdateArgs {
@@ -1026,12 +1049,18 @@ input RequestCreateInput {
   description: String
   consignment: ConsignmentSaleRelateToOneForCreateInput
   status: String
+  statusHistory: StatusRelateToManyForCreateInput
   createAt: DateTime
 }
 
 input ConsignmentSaleRelateToOneForCreateInput {
   create: ConsignmentSaleCreateInput
   connect: ConsignmentSaleWhereUniqueInput
+}
+
+input StatusRelateToManyForCreateInput {
+  create: [StatusCreateInput!]
+  connect: [StatusWhereUniqueInput!]
 }
 
 type Gallery {
@@ -1074,6 +1103,65 @@ input GalleryCreateInput {
   title: String
   image: Upload
   product: ConsignmentSaleRelateToOneForCreateInput
+}
+
+type Status {
+  id: ID!
+  status: String
+  changeTime: DateTime
+  changedBy: User
+  request: Request
+}
+
+input StatusWhereUniqueInput {
+  id: ID
+}
+
+input StatusWhereInput {
+  AND: [StatusWhereInput!]
+  OR: [StatusWhereInput!]
+  NOT: [StatusWhereInput!]
+  id: IDFilter
+  status: StringFilter
+  changeTime: DateTimeNullableFilter
+  changedBy: UserWhereInput
+  request: RequestWhereInput
+}
+
+input StatusOrderByInput {
+  id: OrderDirection
+  status: OrderDirection
+  changeTime: OrderDirection
+}
+
+input StatusUpdateInput {
+  status: String
+  changeTime: DateTime
+  changedBy: UserRelateToOneForUpdateInput
+  request: RequestRelateToOneForUpdateInput
+}
+
+input RequestRelateToOneForUpdateInput {
+  create: RequestCreateInput
+  connect: RequestWhereUniqueInput
+  disconnect: Boolean
+}
+
+input StatusUpdateArgs {
+  where: StatusWhereUniqueInput!
+  data: StatusUpdateInput!
+}
+
+input StatusCreateInput {
+  status: String
+  changeTime: DateTime
+  changedBy: UserRelateToOneForCreateInput
+  request: RequestRelateToOneForCreateInput
+}
+
+input RequestRelateToOneForCreateInput {
+  create: RequestCreateInput
+  connect: RequestWhereUniqueInput
 }
 
 """
@@ -1160,6 +1248,12 @@ type Mutation {
   updateGalleries(data: [GalleryUpdateArgs!]!): [Gallery]
   deleteGallery(where: GalleryWhereUniqueInput!): Gallery
   deleteGalleries(where: [GalleryWhereUniqueInput!]!): [Gallery]
+  createStatus(data: StatusCreateInput!): Status
+  createStatuses(data: [StatusCreateInput!]!): [Status]
+  updateStatus(where: StatusWhereUniqueInput!, data: StatusUpdateInput!): Status
+  updateStatuses(data: [StatusUpdateArgs!]!): [Status]
+  deleteStatus(where: StatusWhereUniqueInput!): Status
+  deleteStatuses(where: [StatusWhereUniqueInput!]!): [Status]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -1224,6 +1318,9 @@ type Query {
   gallery(where: GalleryWhereUniqueInput!): Gallery
   galleries(where: GalleryWhereInput! = {}, orderBy: [GalleryOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: GalleryWhereUniqueInput): [Gallery!]
   galleriesCount(where: GalleryWhereInput! = {}): Int
+  status(where: StatusWhereUniqueInput!): Status
+  statuses(where: StatusWhereInput! = {}, orderBy: [StatusOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StatusWhereUniqueInput): [Status!]
+  statusesCount(where: StatusWhereInput! = {}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }

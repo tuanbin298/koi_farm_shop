@@ -12,19 +12,20 @@ generator client {
 }
 
 model User {
-  id                 String     @id @default(cuid())
-  name               String     @default("")
-  email              String     @unique @default("")
-  password           String
-  phone              String     @default("")
-  address            String     @default("")
-  role               Role?      @relation("User_role", fields: [roleId], references: [id])
-  roleId             String?    @map("role")
-  cart               CartItem[] @relation("CartItem_user")
-  from_Feedback_user Feedback[] @relation("Feedback_user")
-  from_Order_user    Order[]    @relation("Order_user")
-  from_Request_user  Request[]  @relation("Request_user")
-  from_Request_staff Request[]  @relation("Request_staff")
+  id                    String     @id @default(cuid())
+  name                  String     @default("")
+  email                 String     @unique @default("")
+  password              String
+  phone                 String     @default("")
+  address               String     @default("")
+  role                  Role?      @relation("User_role", fields: [roleId], references: [id])
+  roleId                String?    @map("role")
+  cart                  CartItem[] @relation("CartItem_user")
+  from_Feedback_user    Feedback[] @relation("Feedback_user")
+  from_Order_user       Order[]    @relation("Order_user")
+  from_Request_user     Request[]  @relation("Request_user")
+  from_Request_staff    Request[]  @relation("Request_staff")
+  from_Status_changedBy Status[]   @relation("Status_changedBy")
 
   @@index([roleId])
 }
@@ -41,6 +42,7 @@ model Role {
   canManageCart       Boolean @default(false)
   canManageConsigment Boolean @default(false)
   canManageRequest    Boolean @default(false)
+  canManageStatus     Boolean @default(false)
   user                User[]  @relation("User_role")
 }
 
@@ -168,6 +170,7 @@ model Request {
   consignment   ConsignmentSale? @relation("Request_consignment", fields: [consignmentId], references: [id])
   consignmentId String?          @map("consignment")
   status        String?          @default("Chờ xác nhận")
+  statusHistory Status[]         @relation("Status_request")
   createAt      DateTime?        @default(now())
 
   @@index([userId])
@@ -180,4 +183,17 @@ model Gallery {
   title   String           @default("Hình ảnh")
   image   String?
   product ConsignmentSale? @relation("ConsignmentSale_photo")
+}
+
+model Status {
+  id          String    @id @default(cuid())
+  status      String    @default("")
+  changeTime  DateTime? @default(now())
+  changedBy   User?     @relation("Status_changedBy", fields: [changedById], references: [id])
+  changedById String?   @map("changedBy")
+  request     Request?  @relation("Status_request", fields: [requestId], references: [id])
+  requestId   String?   @map("request")
+
+  @@index([changedById])
+  @@index([requestId])
 }

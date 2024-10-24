@@ -65,6 +65,10 @@ const Role = list({
       label: "Quản lý yêu cầu",
       defaultValue: false,
     }),
+    canManageStatus: checkbox({
+      label: "Quản lý trạng thái",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",

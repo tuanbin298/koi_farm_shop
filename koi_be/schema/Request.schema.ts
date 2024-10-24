@@ -46,10 +46,45 @@ const Request = list({
         { label: "Xác nhận yêu cầu", value: "Xác nhận yêu cầu" },
       ],
     }),
+    statusHistory: relationship({
+      label: "Lịch sử trạng thái",
+      ref: "Status.request",
+      many: true,
+    }),
     createAt: timestamp({
       label: "Thời gian gửi yêu cầu",
       defaultValue: { kind: "now" },
     }),
+  },
+
+  hooks: {
+    async afterOperation({ operation, resolvedData, item, context }) {
+      // When create new request
+      if (operation === "create") {
+        await context.query.Status.createOne({
+          data: {
+            status: "Chờ xác nhận",
+            request: { connect: { id: item.id } },
+            changedBy: { connect: { id: context.session.itemId } },
+          },
+        });
+      }
+
+      // When update (field status) in request
+      if (
+        operation === "update" &&
+        resolvedData.status &&
+        resolvedData !== item.status
+      ) {
+        await context.query.Status.createOne({
+          data: {
+            status: resolvedData.status,
+            request: { connect: { id: item.id } },
+            changedBy: { connect: { id: context.session.itemId } },
+          },
+        });
+      }
+    },
   },
 });
 

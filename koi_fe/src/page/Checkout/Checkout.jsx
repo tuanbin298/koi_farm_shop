@@ -1,4 +1,5 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import "./Checkout.css"
@@ -51,6 +52,11 @@ export default function Checkout() {
 
   const [createOrder] = useMutation(CREATE_ORDER);
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
+
+  const [name, setName] = useState(localStorage.getItem("name") || '');
+  const [email, setEmail] = useState(localStorage.getItem("email") || '');
+  const [phone, setPhone] = useState(localStorage.getItem("phone") || '');
+  const [address, setAddress] = useState(localStorage.getItem("address") || '');
 
   const checkoutOption1 = [
     { label: 'Thanh toán bằng thẻ tín dụng', value: 'creditCard' },
@@ -167,46 +173,42 @@ export default function Checkout() {
         </section>
         <Box>
           <Flex gap="large">
-            <TextField 
-              id="outlined-basic" 
-              label="Họ và tên" 
-              variant="outlined" 
-              style={{ width: "40%" }} 
-              name="name" 
-              onChange={handleInputChange} 
-              required
+            <TextField
+              id="name"
+              label="Họ và tên"
+              variant="outlined"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              style={{ width: "40%" }}
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Email" 
-              variant="outlined" 
-              style={{ width: "30%" }} 
-              name="email" 
-              onChange={handleInputChange} 
-              required
+            <TextField
+              id="email"
+              label="Email"
+              variant="outlined"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{ width: "30%" }}
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Số điện thoại" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="phone" 
-              onChange={handleInputChange} 
-              required
+            <TextField
+              id="phone"
+              label="Số điện thoại"
+              variant="outlined"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              style={{ width: "25%" }}
             />
           </Flex>
         </Box>
 
         <Box style={{ marginTop: "2%" }}>
           <Flex gap="large">
-            <TextField 
-              id="outlined-basic" 
-              label="Địa chỉ" 
-              variant="outlined" 
-              style={{ width: "98%" }} 
-              name="address" 
-              onChange={handleInputChange} 
-              required
+            <TextField
+              id="address"
+              label="Địa chỉ"
+              variant="outlined"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              style={{ width: "98%" }}
             />
           </Flex>
         </Box>
@@ -305,7 +307,20 @@ export default function Checkout() {
             </Link>
           </div>
           <div>
-            <Button onClick={handleCreateOrder} variant='solid' style={{ backgroundColor: "green", color: "white", padding: "20px", fontSize: "20px" }}>
+            <Button variant='solid' style={{
+              backgroundColor: "green",
+              color: "white",
+              padding: "20px",
+              fontSize: "20px"
+            }}
+              onClick={() => {
+                // Lưu dữ liệu vào localStorage (nếu cần)
+                localStorage.setItem("name", name);
+                localStorage.setItem("email", email);
+                localStorage.setItem("phone", phone);
+                localStorage.setItem("address", address);
+                alert("Thông tin đã được lưu!");
+              }}>
               Đặt hàng
             </Button>
           </div>
