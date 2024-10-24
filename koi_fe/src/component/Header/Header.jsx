@@ -37,6 +37,7 @@ export default function Header() {
     data: cartData,
     loading: cartLoading,
     error: cartError,
+    refetch: refetchItems
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { 
       user: {
@@ -132,6 +133,7 @@ export default function Header() {
     ProductDetail: "Chi tiết",
     introduce: "Giới thiệu",
     consignmentTracking: "Theo dõi đơn ký gửi bán",
+    ConsignmentDetail: "Chi tiết"
   };
 
   // Function to generate breadcrumbs based on current URL

@@ -198,7 +198,7 @@ const SalesConsignmentPage = () => {
           generic: formData.generic,
           description: formData.description || "",
           category: formData.category,
-          image: formData.image,
+          image: "",
           status: "Không có sẵn",
           medical: formData.medical,
           price: 0,

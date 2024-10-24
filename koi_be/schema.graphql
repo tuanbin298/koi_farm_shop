@@ -897,8 +897,7 @@ input ConsignmentSaleWhereInput {
   sex: StringFilter
   medical: StringFilter
   size: IntFilter
-  price: IntFilter
-  estimatedPrice: StringFilter
+  price: IntNullableFilter
   description: StringFilter
   generic: StringFilter
   photo: GalleryWhereInput

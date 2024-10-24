@@ -16,6 +16,7 @@ import ProductDetail from "./page/ProductDetail/ProductDetail";
 import SuccessPage from "./page/SuccessPage/SuccessPage";
 import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentTrackingPage";
 import KoiConsignment from "./page/KoiConsignment/KoiConsignment";
+import ConsignmentDetail from "./page/ConsignmentDetail/ConsignmentDetail";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           <Route path="/introduce" element={<IntroducePage />} />
           {/* <Route path="/ProductDetail/:id" element={<ProductDetail />} /> */}
           <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
+          <Route path="/ConsignmentDetail/:slug" element={<ConsignmentDetail/>}/>
           <Route path="/some-success-page" element={<SuccessPage />} />
           <Route
             path="/consignmentTracking"

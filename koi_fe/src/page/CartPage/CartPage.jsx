@@ -31,6 +31,7 @@ const CartPage = () => {
       },
     },
   });
+  console.log(data);
 
   useEffect(() => {
     refetchItems();
@@ -38,7 +39,11 @@ const CartPage = () => {
 
   // Calculate the total price
   data?.cartItems?.forEach((cartItem) => {
-    totalPrice += cartItem.product[0].price;
+    if (cartItem.product.length > 0) {
+      totalPrice += cartItem.product[0].price;
+    } else if (cartItem.consignmentProduct) {
+      totalPrice += cartItem.consignmentProduct[0].price;
+    }
   });
 
   // Handle delete cart item
@@ -105,58 +110,65 @@ const CartPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedItems.map((cartItem) => (
-                  cartItem && cartItem.product[0] && (
-                    <React.Fragment key={cartItem.id}>
-                      <TableRow>
-                        <TableCell>
-                          <Image
-                            width={200}
-                            src={cartItem.product[0].image?.publicUrl || ''}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          {cartItem.product[0].name}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Checkbox
-                            checked={depositFields[cartItem.id] || false}
-                            onChange={() => handleDepositToggle(cartItem.id)}
-                          />
-                          <p>Ký gửi nuôi</p>
-                        </TableCell>
-                        <TableCell align="center">
-                          {formatMoney(cartItem.product[0].price)}
-                          <Button
-                            variant="contained"
-                            color="error"
-                            style={{ marginLeft: "15%" }}
-                            onClick={() => handleDelete(cartItem.id)}
-                            disabled={isLoading}
-                          >
-                            Xóa
-                          </Button>
-                        </TableCell>
-                      </TableRow>
+              {paginatedItems.map((cartItem) => (
+  cartItem && (
+    <React.Fragment key={cartItem.id}>
+      <TableRow>
+        <TableCell>
+          <Image
+            width={200}
+            src={cartItem.product.length > 0
+              ? cartItem.product[0].image?.publicUrl || ''
+              : cartItem.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
+          />
+        </TableCell>
+        <TableCell align="center">
+          {cartItem.product.length > 0
+            ? cartItem.product[0]?.name
+            : cartItem.consignmentProduct[0]?.name}
+        </TableCell>
+        <TableCell align="center">
+          <Checkbox
+            checked={depositFields[cartItem.id] || false}
+            onChange={() => handleDepositToggle(cartItem.id)}
+          />
+          <p>Ký gửi nuôi</p>
+        </TableCell>
+        <TableCell align="center">
+          {formatMoney(cartItem.product.length > 0
+            ? cartItem.product[0]?.price
+            : cartItem.consignmentProduct[0]?.price)}
+          <Button
+            variant="contained"
+            color="error"
+            style={{ marginLeft: "15%" }}
+            onClick={() => handleDelete(cartItem.id)}
+            disabled={isLoading}
+          >
+            Xóa
+          </Button>
+        </TableCell>
+      </TableRow>
 
-                      {depositFields[cartItem.id] && (
-                        <TableRow>
-                          <TableCell colSpan={5} className="deposit-fields">
-                            <div className="deposit-fields-container">
-                              <TextField
-                                label="Ngày kết thúc"
-                                type="date"
-                                InputLabelProps={{ shrink: true }}
-                                variant="outlined"
-                                className="deposit-input"
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </React.Fragment>
-                  )
-                ))}
+      {depositFields[cartItem.id] && (
+        <TableRow>
+          <TableCell colSpan={5} className="deposit-fields">
+            <div className="deposit-fields-container">
+              <TextField
+                label="Ngày kết thúc"
+                type="date"
+                InputLabelProps={{ shrink: true }}
+                variant="outlined"
+                className="deposit-input"
+              />
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
+    </React.Fragment>
+  )
+))}
+
               </TableBody>
             </Table>
           </TableContainer>

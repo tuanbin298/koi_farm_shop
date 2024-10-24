@@ -9,6 +9,7 @@ export const CREATE_CART_ITEM = gql`
       }
       consignmentProduct {
         id
+        price
       }
     }
   }

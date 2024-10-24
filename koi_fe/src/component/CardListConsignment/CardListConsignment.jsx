@@ -11,10 +11,10 @@ export default function CardListConsignment({ consignments }) {
   if (!consignments || consignments.length === 0) {
     return <p>Không có sản phẩm nào phù hợp.</p>;
   }
-  const handleAddToCart = async (productId) => {
+  const handleAddToCart = async (consignmentId) => {
     const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
     const sessionToken = localStorage.getItem("sessionToken");
-
+    console.log(consignmentId)
     if (!userId) {
       toast.error("Thêm vào giỏ hàng không thành công");
       return;
@@ -26,7 +26,7 @@ export default function CardListConsignment({ consignments }) {
         variables: {
           data: {
             quantity: 1,
-            product: {
+            consignmentProduct: {
               connect: { id: consignmentId }, // Connect product by ID
             },
             user: {
@@ -66,6 +66,7 @@ export default function CardListConsignment({ consignments }) {
       <div className="container mt-4 species-section">
         <div className="row">
           {consignments.map((consignment) => (
+            
             <div key={consignment.id} className="col-md-4 mb-4">
               <div
                 className="card h-100 shadow-sm card-product"

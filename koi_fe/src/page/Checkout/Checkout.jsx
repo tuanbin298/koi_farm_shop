@@ -137,14 +137,14 @@ export default function Checkout() {
       // })
     }
 
-      // for (let i = 0; i < cartItems.cartItems.length; i++) {
-      //   const cartItemId = cartItems.cartItems[i].id;
-      //   await deleteCartItem({
-      //     variables: {
-      //       where: { id: cartItemId },
-      //     },
-      //   });
-      // }
+      for (let i = 0; i < cartItems.cartItems.length; i++) {
+        const cartItemId = cartItems.cartItems[i].id;
+        await deleteCartItem({
+          variables: {
+            where: { id: cartItemId },
+          },
+        });
+      }
       toast.success('Đã tạo đơn hàng!')
     } catch (error) {
       console.log(orderItemsData)
@@ -313,14 +313,7 @@ export default function Checkout() {
               padding: "20px",
               fontSize: "20px"
             }}
-              onClick={() => {
-                // Lưu dữ liệu vào localStorage (nếu cần)
-                localStorage.setItem("name", name);
-                localStorage.setItem("email", email);
-                localStorage.setItem("phone", phone);
-                localStorage.setItem("address", address);
-                alert("Thông tin đã được lưu!");
-              }}>
+              onClick={handleCreateOrder}>
               Đặt hàng
             </Button>
           </div>

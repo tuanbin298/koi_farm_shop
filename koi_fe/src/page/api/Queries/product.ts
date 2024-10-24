@@ -123,6 +123,7 @@ export function useProductBySlug(slug) {
   };
 }
 
+
 export function useProduct(id) {
   const { loading, error, data } = useQuery(GET_PRODUCT_DETAIL, {
     variables: { where: { id } },

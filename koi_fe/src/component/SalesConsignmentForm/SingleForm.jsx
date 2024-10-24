@@ -217,7 +217,7 @@ export default function SingleForm({
             className="form-control-file"
             onChange={handleChange}
             accept="image/*"
-            required
+            // required
           />
         </div>
       </div>

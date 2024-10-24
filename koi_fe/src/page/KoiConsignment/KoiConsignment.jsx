@@ -19,6 +19,7 @@ function KoiConsignment() {
 
   const { data, loading, error } = useQuery(GET_ALL_CONSIGNMENT_SALES);
   console.log(data);
+  console.log(data);
   if (loading) return <p>Đang tải dữ liệu...</p>;
   if (error) return <p>Không thể tải dữ liệu cá Koi. Vui lòng thử lại sau!</p>;
 
