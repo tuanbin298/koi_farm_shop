@@ -84,7 +84,7 @@ const ConsignmentSale = list({
     }),
     status: select({
       label: "Trạng thái",
-      defaultValue: "Còn hàng",
+      defaultValue: "Không có sẵn",
       options: [
         { label: "Có sẵn", value: "Có sẵn" },
         { label: "Không có sẵn", value: "Không có sẵn" },

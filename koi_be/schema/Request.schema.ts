@@ -40,10 +40,12 @@ const Request = list({
     }),
     status: select({
       label: "Trạng thái",
-      defaultValue: "Chờ xác nhận",
+      defaultValue: "Chờ phê duyệt",
       options: [
-        { label: "Chờ xác nhận", value: "Chờ xác nhận" },
-        { label: "Xác nhận yêu cầu", value: "Xác nhận yêu cầu" },
+        { label: "Chờ phê duyệt", value: "Chờ phê duyệt" },
+        { label: "Xác nhận phê duyệt", value: "Xác nhận phê duyệt" },
+        { label: "Xác nhận giao dịch", value: "Xác nhận giao dịch" },
+        { label: "Huỷ giao dịch", value: "Huỷ giao dịch" },
       ],
     }),
     statusHistory: relationship({
@@ -63,7 +65,7 @@ const Request = list({
       if (operation === "create") {
         await context.query.Status.createOne({
           data: {
-            status: "Chờ xác nhận",
+            status: "Chờ phê duyệt",
             request: { connect: { id: item.id } },
             changedBy: { connect: { id: context.session.itemId } },
           },

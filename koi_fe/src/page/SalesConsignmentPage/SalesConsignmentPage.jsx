@@ -22,7 +22,6 @@ const SalesConsignmentPage = () => {
     category: "",
     image: "",
     generic: "",
-    status: "",
   });
 
   const navigate = useNavigate();
@@ -199,7 +198,6 @@ const SalesConsignmentPage = () => {
           description: formData.description || "",
           category: formData.category,
           image: formData.image,
-          status: "Không có sẵn",
           medical: formData.medical,
           price: 0,
         },
@@ -218,7 +216,6 @@ const SalesConsignmentPage = () => {
           data: {
             consignment: { connect: { id: consignmentId } },
             description: `Yêu cầu ký gửi cá Koi: ${formData.name}`,
-            status: "Chờ xác nhận",
             user: { connect: { id: userId } },
           },
         },

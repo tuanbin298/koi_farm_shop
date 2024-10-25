@@ -155,7 +155,7 @@ model ConsignmentSale {
   category                         String     @default("")
   estimatedPrice                   String     @default("")
   slug                             String     @default("")
-  status                           String?    @default("Còn hàng")
+  status                           String?    @default("Không có sẵn")
   from_CartItem_consignmentProduct CartItem[] @relation("CartItem_consignmentProduct")
   from_Request_consignment         Request[]  @relation("Request_consignment")
 }
@@ -169,7 +169,7 @@ model Request {
   description   String           @default("")
   consignment   ConsignmentSale? @relation("Request_consignment", fields: [consignmentId], references: [id])
   consignmentId String?          @map("consignment")
-  status        String?          @default("Chờ xác nhận")
+  status        String?          @default("Chờ phê duyệt")
   statusHistory Status[]         @relation("Status_request")
   createAt      DateTime?        @default(now())
 
