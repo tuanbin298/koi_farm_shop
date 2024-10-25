@@ -6,9 +6,11 @@ export const GET_TRACKING_REQUEST = gql`
       id
       status
       consignment {
+        id
         name
         estimatedPrice
         price
+        status
       }
       user {
         id

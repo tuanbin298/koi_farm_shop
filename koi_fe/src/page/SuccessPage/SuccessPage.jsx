@@ -18,7 +18,7 @@ const SuccessPage = () => {
         </Link>
 
         {/* Nút theo dõi đơn ký gửi */}
-        <Link to="/consignmentTracking" className="btn btn-success text-white">
+        <Link to="/profile" className="btn btn-success text-white">
           Theo dõi đơn ký gửi
         </Link>
       </div>
