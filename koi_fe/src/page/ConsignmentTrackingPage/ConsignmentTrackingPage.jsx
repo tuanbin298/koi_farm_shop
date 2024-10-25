@@ -7,6 +7,7 @@ import {
   ACCEPT_REQUEST,
 } from "../../page/api/Mutations/request";
 import { OverlayTrigger, Tooltip, Modal, Button } from "react-bootstrap";
+import { formatMoney } from "../../utils/formatMoney";
 
 const ConsignmentTrackingPage = () => {
   const userId = localStorage.getItem("id");
@@ -203,7 +204,8 @@ const ConsignmentTrackingPage = () => {
               </p>
               <p>
                 <strong>Giá trị Xác nhận:</strong>{" "}
-                {selectedConsignment.confirmedValue || "Chưa xác nhận"} VND
+                {formatMoney(selectedConsignment.confirmedValue) ||
+                  "Chưa xác nhận"}
               </p>
 
               <h5>Thông tin Ký Gửi</h5>
