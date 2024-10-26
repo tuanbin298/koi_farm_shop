@@ -62,3 +62,33 @@ export const CREATE_CONSIGNMENT_SALE = gql`
     }
   }
 `;
+
+export const CANCEL_REQUEST = gql`
+  mutation CancelRequest($id: ID!, $status: String!) {
+    updateRequest(where: { id: $id }, data: { status: $status }) {
+      id
+      status
+    }
+  }
+`;
+
+export const ACCEPT_REQUEST = gql`
+  mutation AcceptRequest(
+    $id: ID!
+    $status: String!
+    $consignmentId: ID!
+    $consignmentStatus: String!
+  ) {
+    updateRequest(where: { id: $id }, data: { status: $status }) {
+      id
+      status
+    }
+    updateConsignmentStatus: updateConsignmentSale(
+      where: { id: $consignmentId }
+      data: { status: $consignmentStatus }
+    ) {
+      id
+      status
+    }
+  }
+`;

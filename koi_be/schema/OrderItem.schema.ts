@@ -33,6 +33,11 @@ const OrderItem = list({
       ref: "Product",
       many: false,
     }),
+    consignmentSale: relationship({
+      label: "Sản phẩm ký gửi",
+      ref: "ConsignmentSale",
+      many: false,
+    }),
     quantity: integer({
       label: "Số lượng",
       validation: {
