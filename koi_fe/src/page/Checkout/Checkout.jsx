@@ -126,17 +126,17 @@ export default function Checkout() {
         // });
         const orderItems = cartItems.cartItems.map((item) => ({
           // Use product if available, otherwise use consignmentProduct
-          // ...(item.product.length > 0
-          //   ? { product: { connect: { id: item.product[0].id } } }
-          //   : { consignmentProduct: { connect: { id: item.consignmentProduct[0].id } } }
-          // ),
-          product: {
-            connect: {
-              id: item.product[0]?.id
-                ? item.product[0].id
-                : item.consignmentProduct[0].id,
-            },
-          },
+          ...(item.product.length > 0
+            ? { product: { connect: { id: item.product[0].id } } }
+            : {
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
+          //   product: { connect: {
+          //     id: item.product[0]?.id ? item.product[0].id : item.consignmentProduct[0].id
+          //   }
+          // },
           order: { connect: { id: orderId } },
           quantity: 1,
           price:
