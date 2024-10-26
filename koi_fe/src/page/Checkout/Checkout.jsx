@@ -49,6 +49,39 @@ export default function Checkout() {
     ward: "",
     paymentMethod: "",
   });
+  const [errors, setErrors] = useState({}); // Error state for each field
+
+  // Function to validate each field
+  const validateFields = () => {
+    const newErrors = {};
+    if (!orderData.name || orderData.name.length > 50) {
+      newErrors.name = "Tên là tối đa 50 ký tự";
+    }
+    if (!orderData.email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+    if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
+      newErrors.phone = "Số điện thoại phải là 6 chữ số";
+    }
+    if (!orderData.address || orderData.address.length > 100) {
+      newErrors.address = "Địa chỉ là tối đa 100 ký tự";
+    }
+    if (!orderData.city) {
+      newErrors.city = "Vui lòng nhập tỉnh/thành";
+    }
+    if (!orderData.district) {
+      newErrors.district = "Vui lòng nhập quận/huyện";
+    }
+    if (!orderData.ward) {
+      newErrors.ward = "Vui lòng nhập phường/xã";
+    }
+    if (!orderData.paymentMethod) {
+      newErrors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   const [createOrder] = useMutation(CREATE_ORDER);
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
@@ -69,6 +102,10 @@ export default function Checkout() {
       ...orderData,
       [e.target.name]: e.target.value,
     });
+    setErrors({
+      ...errors,
+      [e.target.name]: "", // Clear error on user input
+    });
   };
   let totalPrice = 0;
   cartItems.cartItems?.forEach((cartItem) => {
@@ -80,6 +117,7 @@ export default function Checkout() {
   });
   const handleCreateOrder = async () => {
     console.log(cartItems);
+    if (validateFields()){
     if(cartItems.cartItems.length <= 0){
       toast.error("Lỗi tạo đơn hàng!");
     }
@@ -169,6 +207,10 @@ export default function Checkout() {
       toast.error("Lỗi tạo đơn hàng!");
     }
   }
+}
+else{
+  toast.error("Lỗi tạo đơn hàng!");
+}
   };
   const [page, setPage] = useState(1); // Current page
   const itemsPerPage = 3; // Items per page
@@ -192,30 +234,50 @@ export default function Checkout() {
           <Flex gap="large">
             <TextField
               id="name"
+              name="name"
               label="Họ và tên"
               variant="outlined"
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{ width: "40%" }}
+              onChange={handleInputChange}
               required
+              inputProps={{ maxLength: 50 }}
+              helperText={errors.name || "Tên tối đa 50 ký tự"}
+              error={Boolean(errors.name)}
+              style={{ width: "40%" }}
             />
+
             <TextField
               id="email"
+              name="email"
               label="Email"
               variant="outlined"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ width: "30%" }}
+              onChange={handleInputChange}
               required
+              helperText={errors.email || "Vui lòng nhập email hợp lệ"}
+              error={Boolean(errors.email)}
+              style={{ width: "30%" }}
+              inputProps={{
+                pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}",
+              }}
             />
+
             <TextField
               id="phone"
+              name="phone"
               label="Số điện thoại"
               variant="outlined"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              style={{ width: "25%" }}
+              onChange={handleInputChange}
               required
+              helperText={errors.phone || "Chỉ nhập số, tối đa 10 ký tự"}
+              error={Boolean(errors.phone)}
+              style={{ width: "25%" }}
+              inputProps={{
+                maxLength: 10,
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+              }}
             />
           </Flex>
         </Box>
@@ -224,44 +286,60 @@ export default function Checkout() {
           <Flex gap="large">
             <TextField
               id="address"
+              name="address"
               label="Địa chỉ"
               variant="outlined"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              style={{ width: "98%" }}
+              onChange={handleInputChange}
               required
+              inputProps={{ maxLength: 100 }}
+              helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
+              error={Boolean(errors.address)}
+              style={{ width: "98%" }}
             />
           </Flex>
         </Box>
 
         <Box style={{ marginTop: "2%" }}>
           <Flex gap="large">
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập tỉnh/thành" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="city" 
-              onChange={handleInputChange} 
+            <TextField
+              id="city"
+              name="city"
+              label="Nhập tỉnh/thành"
+              variant="outlined"
+              value={orderData.city}
+              onChange={handleInputChange}
               required
+              inputProps={{ maxLength: 50 }}
+              helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
+              error={Boolean(errors.city)}
+              style={{ width: "25%" }}
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập quận/huyện" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="district" 
-              onChange={handleInputChange} 
+            <TextField
+              id="district"
+              name="district"
+              label="Nhập quận/huyện"
+              variant="outlined"
+              value={orderData.district}
+              onChange={handleInputChange}
               required
+              inputProps={{ maxLength: 50 }}
+              helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
+              error={Boolean(errors.district)}
+              style={{ width: "25%" }}
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập phường/xã" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="ward" 
-              onChange={handleInputChange} 
+            <TextField
+              id="ward"
+              name="ward"
+              label="Nhập phường/xã"
+              variant="outlined"
+              value={orderData.ward}
+              onChange={handleInputChange}
               required
+              inputProps={{ maxLength: 50 }}
+              helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
+              error={Boolean(errors.ward)}
+              style={{ width: "25%" }}
             />
           </Flex>
         </Box>
@@ -305,14 +383,18 @@ export default function Checkout() {
             <section className="TitleFlexSection">
               <h3>Phương thức thanh toán</h3>
             </section>
-            <Flex direction="column" gap="middle">
-              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })} required>
-                <Space direction="vertical">
-                  <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
-                  <Radio value="cod">Thanh toán khi nhận hàng(đặt cọc 50%)</Radio>
-                </Space>
-              </Radio.Group>
-            </Flex>
+            <Flex direction="column" style={{ marginTop: "20px" }}>
+          <Radio.Group
+            onChange={(e) => setOrderData({ ...orderData, paymentMethod: e.target.value })}
+            required
+          >
+            <Space direction="vertical">
+              <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
+              <Radio value="cod">Thanh toán khi nhận hàng (đặt cọc 50%)</Radio>
+            </Space>
+          </Radio.Group>
+          {errors.paymentMethod && <p style={{ color: 'red' }}>{errors.paymentMethod}</p>}
+        </Flex>
           </div>
 
             
