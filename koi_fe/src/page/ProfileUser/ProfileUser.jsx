@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./ProfileUser.css";
-import { useMutation } from "@apollo/client";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './ProfileUser.css';
+import { useMutation, useQuery } from "@apollo/client";
 import { UPDATE_PROFILE } from "../api/Mutations/user";
 import toast, { Toaster } from "react-hot-toast";
 import ConsignmentTrackingPage from "../ConsignmentTrackingPage/ConsignmentTrackingPage";
-
+import { GET_ORDERS } from "../api/Queries/order";
 const ProfileUser = () => {
   const [selectedTab, setSelectedTab] = useState("accountInfo");
   const [isEditing, setIsEditing] = useState(false);
@@ -16,8 +16,17 @@ const ProfileUser = () => {
   const [newAddress, setNewAddress] = useState(
     localStorage.getItem("address") || ""
   ); // Thêm lại địa chỉ
+  const userId = localStorage.getItem("id");
   const [errors, setErrors] = useState({});
-
+  const {data:orders,loading,error} = useQuery(GET_ORDERS, {
+    variables:{
+      where:{
+        id:{
+          equals: userId,
+        }
+      }
+    }
+  })
   const [updateUserProfile, { loading: updateLoading, error: updateError }] =
     useMutation(UPDATE_PROFILE);
 
@@ -151,8 +160,20 @@ const ProfileUser = () => {
                   <th>Địa Chỉ</th>
                   <th>Giá Trị Đơn Hàng</th>
                   <th>Tình Trạng Đơn Hàng</th>
-                  <th>Thông Tin Giao Hàng</th>
+                  {/* <th>Thông Tin Giao Hàng</th> */}
                 </tr>
+                {orders.orders?.map(order => (
+                  <tr>
+                    <td>{order.id}</td>
+                    <td>{new Intl.DateTimeFormat('en-US', {
+                      dateStyle: 'short',
+                      timeStyle: 'short'
+                    }).format(new Date(order.createAt))}</td>
+                    <td>{order.address}</td>
+                    <td>{order.price}</td>
+                    <td>{order.status}</td>
+                  </tr>
+                ))}
               </thead>
               <tbody>
                 <tr>
