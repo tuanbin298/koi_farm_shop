@@ -16,6 +16,12 @@ const FishCareService = () => {
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
 
+    // Lấy danh sách sản phẩm từ location.state
+    useEffect(() => {
+        if (location.state && location.state.selectedProducts) {
+            setSelectedProducts(location.state.selectedProducts);
+        }
+    }, [location.state]);
 
     // Tính tổng số tiền ký gửi dựa trên ngày bắt đầu/kết thúc và giá ký gửi nuôi
     const calculateTotalPrice = () => {
@@ -57,15 +63,15 @@ const FishCareService = () => {
         <div className="web-container">
             <div style={{ padding: '20px' }}>
 
-                    <section className="back-button-section">
-                        <div className="icon-container">
-                            <FaArrowLeft className="icon" />
-                        </div>
-                        <span className="back-button-text">
-                            <Link to="/cart">Quay lại giỏ hàng</Link>
-                        </span>
-                    </section>
-                
+                <section className="back-button-section">
+                    <div className="icon-container">
+                        <FaArrowLeft className="icon" />
+                    </div>
+                    <span className="back-button-text">
+                        <Link to="/cart">Quay lại giỏ hàng</Link>
+                    </span>
+                </section>
+
                 <Typography variant="h4" gutterBottom>
                     Dịch Vụ Ký Gửi Nuôi Cá
                 </Typography>
