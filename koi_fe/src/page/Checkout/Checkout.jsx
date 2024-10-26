@@ -62,6 +62,7 @@ export default function Checkout() {
     { label: 'Thanh toán bằng thẻ tín dụng', value: 'creditCard' },
     { label: 'Thanh toán khi nhận hàng(đặt cọc 50%)', value: 'cod' }
   ];
+  const [orderItemIds, setOrderItemIds] = useState([]);
 
   const handleInputChange = (e) => {
     setOrderData({
@@ -124,30 +125,33 @@ export default function Checkout() {
       }));
 
       // Create the order items
-      await createOrderItems({
-        variables: {
-          data: orderItems,
-        },
+      const { data: createOrderItemsData } = await createOrderItems({
+        variables: { data: orderItems },
       });
-      for (let i = 0; i < orderItems.length; i++){
+
+      // Store Order Item IDs
+      const orderItemIds = createOrderItemsData.createOrderItems.map(item => item.id);
+      setOrderItemIds(orderItemIds);
+      console.log(orderItemIds)
+      for (let i = 0; i < orderItemIds.length; i++){
       // const orderItemId = orderItems[i].id;
-      console.log(orderItems);
-      // await updateOrder({
-      //   variables: {
-      //     where: {
-      //       id: orderId
-      //     },
-      //     data: {
-      //       items: {
-      //         connect: [
-      //           {
-      //             id: orderItemId
-      //           }
-      //         ]
-      //       }
-      //     }
-      //   }
-      // })
+      console.log(orderItemIds[i]);
+      await updateOrder({
+        variables: {
+          where: {
+            id: orderId
+          },
+          data: {
+            items: {
+              connect: [
+                {
+                  id: orderItemIds[i]
+                }
+              ]
+            }
+          }
+        }
+      })
     }
 
       for (let i = 0; i < cartItems.cartItems.length; i++) {
