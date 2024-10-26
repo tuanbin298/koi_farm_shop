@@ -859,10 +859,10 @@ type ConsigmentRaising {
   id: ID!
   user: User
   product: Product
-  ConsignmentDate: DateTime
-  ReturnDate: DateTime
-  ConsignmentPrice: Float
-  Status: String
+  consignmentDate: DateTime
+  returnDate: DateTime
+  consignmentPrice: Float
+  status: String
   description: String
 }
 
@@ -877,10 +877,10 @@ input ConsigmentRaisingWhereInput {
   id: IDFilter
   user: UserWhereInput
   product: ProductWhereInput
-  ConsignmentDate: DateTimeFilter
-  ReturnDate: DateTimeNullableFilter
-  ConsignmentPrice: FloatFilter
-  Status: StringNullableFilter
+  consignmentDate: DateTimeFilter
+  returnDate: DateTimeNullableFilter
+  consignmentPrice: FloatFilter
+  status: StringNullableFilter
   description: StringFilter
 }
 
@@ -908,20 +908,20 @@ input FloatFilter {
 
 input ConsigmentRaisingOrderByInput {
   id: OrderDirection
-  ConsignmentDate: OrderDirection
-  ReturnDate: OrderDirection
-  ConsignmentPrice: OrderDirection
-  Status: OrderDirection
+  consignmentDate: OrderDirection
+  returnDate: OrderDirection
+  consignmentPrice: OrderDirection
+  status: OrderDirection
   description: OrderDirection
 }
 
 input ConsigmentRaisingUpdateInput {
   user: UserRelateToOneForUpdateInput
   product: ProductRelateToOneForUpdateInput
-  ConsignmentDate: DateTime
-  ReturnDate: DateTime
-  ConsignmentPrice: Float
-  Status: String
+  consignmentDate: DateTime
+  returnDate: DateTime
+  consignmentPrice: Float
+  status: String
   description: String
 }
 
@@ -933,10 +933,10 @@ input ConsigmentRaisingUpdateArgs {
 input ConsigmentRaisingCreateInput {
   user: UserRelateToOneForCreateInput
   product: ProductRelateToOneForCreateInput
-  ConsignmentDate: DateTime
-  ReturnDate: DateTime
-  ConsignmentPrice: Float
-  Status: String
+  consignmentDate: DateTime
+  returnDate: DateTime
+  consignmentPrice: Float
+  status: String
   description: String
 }
 

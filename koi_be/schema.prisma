@@ -147,10 +147,10 @@ model ConsigmentRaising {
   userId           String?   @map("user")
   product          Product?  @relation("ConsigmentRaising_product", fields: [productId], references: [id])
   productId        String?   @map("product")
-  ConsignmentDate  DateTime
-  ReturnDate       DateTime?
-  ConsignmentPrice Float
-  Status           String?
+  consignmentDate  DateTime  @default(now())
+  returnDate       DateTime?
+  consignmentPrice Float
+  status           String?
   description      String    @default("")
 
   @@index([userId])
