@@ -261,23 +261,8 @@ export default function Checkout() {
             />
           </Flex>
         </Box>
-
         <Flex justify="space-between">
-          <div className="checkoutSection">
-            <section className="TitleFlexSection">
-              <h3>Phương thức thanh toán</h3>
-            </section>
-            <Flex direction="column" gap="middle">
-              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })} required>
-                <Space direction="vertical">
-                  <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
-                  <Radio value="cod">Thanh toán khi nhận hàng(đặt cọc 50%)</Radio>
-                </Space>
-              </Radio.Group>
-            </Flex>
-          </div>
-
-            <div className='OrderSection'>
+        <div className='OrderSection'>
             <section className='OrderTitleSection'>
               <h3>Thông tin đơn hàng</h3>
             </section>
@@ -310,6 +295,23 @@ export default function Checkout() {
               {cartItems?.cartItems?.length === 0 && <Typography variant='body2'>Giỏ hàng trống</Typography>}
             </List>
           </div>
+
+          
+          <div className="checkoutSection">
+            <section className="TitleFlexSection">
+              <h3>Phương thức thanh toán</h3>
+            </section>
+            <Flex direction="column" gap="middle">
+              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })} required>
+                <Space direction="vertical">
+                  <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
+                  <Radio value="cod">Thanh toán khi nhận hàng(đặt cọc 50%)</Radio>
+                </Space>
+              </Radio.Group>
+            </Flex>
+          </div>
+
+            
         </Flex>
 
         <Flex style={{ marginTop: "6%", justifyContent: "space-between", padding: "15px" }}>
