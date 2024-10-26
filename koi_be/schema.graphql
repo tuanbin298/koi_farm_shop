@@ -695,6 +695,7 @@ type OrderItem {
   id: ID!
   order: Order
   product: Product
+  consignmentSale: ConsignmentSale
   quantity: Int
   price: Int
   isStored: Boolean
@@ -711,6 +712,7 @@ input OrderItemWhereInput {
   id: IDFilter
   order: OrderWhereInput
   product: ProductWhereInput
+  consignmentSale: ConsignmentSaleWhereInput
   quantity: IntFilter
   price: IntFilter
   isStored: BooleanFilter
@@ -726,6 +728,7 @@ input OrderItemOrderByInput {
 input OrderItemUpdateInput {
   order: OrderRelateToOneForUpdateInput
   product: ProductRelateToOneForUpdateInput
+  consignmentSale: ConsignmentSaleRelateToOneForUpdateInput
   quantity: Int
   price: Int
   isStored: Boolean
@@ -737,6 +740,12 @@ input OrderRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
+input ConsignmentSaleRelateToOneForUpdateInput {
+  create: ConsignmentSaleCreateInput
+  connect: ConsignmentSaleWhereUniqueInput
+  disconnect: Boolean
+}
+
 input OrderItemUpdateArgs {
   where: OrderItemWhereUniqueInput!
   data: OrderItemUpdateInput!
@@ -745,6 +754,7 @@ input OrderItemUpdateArgs {
 input OrderItemCreateInput {
   order: OrderRelateToOneForCreateInput
   product: ProductRelateToOneForCreateInput
+  consignmentSale: ConsignmentSaleRelateToOneForCreateInput
   quantity: Int
   price: Int
   isStored: Boolean
@@ -753,6 +763,11 @@ input OrderItemCreateInput {
 input OrderRelateToOneForCreateInput {
   create: OrderCreateInput
   connect: OrderWhereUniqueInput
+}
+
+input ConsignmentSaleRelateToOneForCreateInput {
+  create: ConsignmentSaleCreateInput
+  connect: ConsignmentSaleWhereUniqueInput
 }
 
 type CartItem {
@@ -1024,12 +1039,6 @@ input RequestUpdateInput {
   createAt: DateTime
 }
 
-input ConsignmentSaleRelateToOneForUpdateInput {
-  create: ConsignmentSaleCreateInput
-  connect: ConsignmentSaleWhereUniqueInput
-  disconnect: Boolean
-}
-
 input StatusRelateToManyForUpdateInput {
   disconnect: [StatusWhereUniqueInput!]
   set: [StatusWhereUniqueInput!]
@@ -1050,11 +1059,6 @@ input RequestCreateInput {
   status: String
   statusHistory: StatusRelateToManyForCreateInput
   createAt: DateTime
-}
-
-input ConsignmentSaleRelateToOneForCreateInput {
-  create: ConsignmentSaleCreateInput
-  connect: ConsignmentSaleWhereUniqueInput
 }
 
 input StatusRelateToManyForCreateInput {
