@@ -43,6 +43,7 @@ const Request = list({
       defaultValue: "Chờ phê duyệt",
       options: [
         { label: "Chờ phê duyệt", value: "Chờ phê duyệt" },
+        { label: "Hủy phê duyệt", value: "Hủy phê duyệt" },
         { label: "Xác nhận phê duyệt", value: "Xác nhận phê duyệt" },
         { label: "Xác nhận giao dịch", value: "Xác nhận giao dịch" },
         { label: "Huỷ giao dịch", value: "Huỷ giao dịch" },
