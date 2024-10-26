@@ -8,7 +8,6 @@ export const CREATE_REQUEST = gql`
         id
       }
       description
-      status
       user {
         id
       }
@@ -29,7 +28,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
     $image: Upload!
     $category: String!
     $estimatedPrice: String!
-    $status: String!
   ) {
     createConsignmentSale(
       data: {
@@ -43,7 +41,6 @@ export const CREATE_CONSIGNMENT_SALE = gql`
         photo: { create: { image: $image, title: $name } }
         category: $category
         estimatedPrice: $estimatedPrice
-        status: $status
       }
     ) {
       id
@@ -62,6 +59,35 @@ export const CREATE_CONSIGNMENT_SALE = gql`
       }
       category
       estimatedPrice
+    }
+  }
+`;
+
+export const CANCEL_REQUEST = gql`
+  mutation CancelRequest($id: ID!, $status: String!) {
+    updateRequest(where: { id: $id }, data: { status: $status }) {
+      id
+      status
+    }
+  }
+`;
+
+export const ACCEPT_REQUEST = gql`
+  mutation AcceptRequest(
+    $id: ID!
+    $status: String!
+    $consignmentId: ID!
+    $consignmentStatus: String!
+  ) {
+    updateRequest(where: { id: $id }, data: { status: $status }) {
+      id
+      status
+    }
+    updateConsignmentStatus: updateConsignmentSale(
+      where: { id: $consignmentId }
+      data: { status: $consignmentStatus }
+    ) {
+      id
       status
     }
   }
