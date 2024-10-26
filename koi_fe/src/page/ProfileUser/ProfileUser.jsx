@@ -16,8 +16,17 @@ const ProfileUser = () => {
   const [newAddress, setNewAddress] = useState(
     localStorage.getItem("address") || ""
   ); // Thêm lại địa chỉ
+  const userId = localStorage.getItem("id");
   const [errors, setErrors] = useState({});
-
+  const {data:orders,loading,error} = useQuery(GET_ORDERS, {
+    variables:{
+      where:{
+        id:{
+          equals: userId,
+        }
+      }
+    }
+  })
   const [updateUserProfile, { loading: updateLoading, error: updateError }] =
     useMutation(UPDATE_PROFILE);
 
