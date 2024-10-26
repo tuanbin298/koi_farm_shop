@@ -70,10 +70,15 @@ export default function Checkout() {
     });
   };
   let totalPrice = 0;
-  cartItems?.cartItems?.forEach((cartItem) => {
-    totalPrice += cartItem.product[0].price;
+  cartItems.cartItems?.forEach((cartItem) => {
+    if (cartItem.product.length > 0) {
+      totalPrice += cartItem.product[0].price;
+    } else if (cartItem.consignmentProduct) {
+      totalPrice += cartItem.consignmentProduct[0].price;
+    }
   });
   const handleCreateOrder = async () => {
+    console.log(cartItems);
     if(cartItems.cartItems.length <= 0){
       toast.error("Lỗi tạo đơn hàng!");
     }
@@ -104,10 +109,18 @@ export default function Checkout() {
       //   },
       // });
       const orderItems = cartItems.cartItems.map((item) => ({
-        product: { connect: { id: item.product[0].id } },
+        // Use product if available, otherwise use consignmentProduct
+        // ...(item.product.length > 0
+        //   ? { product: { connect: { id: item.product[0].id } } }
+        //   : { consignmentProduct: { connect: { id: item.consignmentProduct[0].id } } }
+        // ),
+        product: { connect: { 
+          id: item.product[0]?.id ? item.product[0].id : item.consignmentProduct[0].id 
+        } 
+      },
         order: { connect: { id: orderId } },
         quantity: 1,
-        price: item.product[0].price, // Assuming price is stored in the cart item
+        price: item.product.length > 0 ? item.product[0].price : item.consignmentProduct[0].price,
       }));
 
       // Create the order items
@@ -180,6 +193,7 @@ export default function Checkout() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               style={{ width: "40%" }}
+              required
             />
             <TextField
               id="email"
@@ -188,6 +202,7 @@ export default function Checkout() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ width: "30%" }}
+              required
             />
             <TextField
               id="phone"
@@ -196,6 +211,7 @@ export default function Checkout() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               style={{ width: "25%" }}
+              required
             />
           </Flex>
         </Box>
@@ -209,6 +225,7 @@ export default function Checkout() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               style={{ width: "98%" }}
+              required
             />
           </Flex>
         </Box>
@@ -260,40 +277,37 @@ export default function Checkout() {
             </Flex>
           </div>
 
-          <div className="OrderSection">
-            <section className="OrderTitleSection">
+            <div className='OrderSection'>
+            <section className='OrderTitleSection'>
               <h3>Thông tin đơn hàng</h3>
             </section>
             <List>
               {paginatedItems.map((item, index) => (
                 <div key={index}>
                   <ListItem>
-                  <ListItemAvatar>
-                  <Image
-                            width={75}
-                            src={item.product[0].image?.publicUrl || ''}
-                          />
+                    <ListItemAvatar>
+                      <Image
+                        width={75}
+                        src={item.product[0]?.image?.publicUrl || item.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
+                      />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={item.product[0].name}  // Assuming product[0] has a name
-                      secondary={`Giá: ${item.product[0].price} VND`}
+                      primary={item.product[0]?.name || item.consignmentProduct[0]?.name}
+                      secondary={`Giá: ${item.product[0]?.price || item.consignmentProduct[0]?.price} VND`}
                     />
                   </ListItem>
                   <Divider />
-                  
                 </div>
               ))}
-              <Box display="flex" justifyContent="center" marginTop={2}>
-            <Pagination
-              count={Math.ceil((cartItems?.cartItems?.length || 0) / itemsPerPage)}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-            />
-          </Box>
-              {cartItems?.cartItems?.length === 0 && (
-                <Typography variant="body2">Giỏ hàng trống</Typography>
-              )}
+              <Box display='flex' justifyContent='center' marginTop={2}>
+                <Pagination
+                  count={Math.ceil((cartItems?.cartItems?.length || 0) / itemsPerPage)}
+                  page={page}
+                  onChange={handlePageChange}
+                  color='primary'
+                />
+              </Box>
+              {cartItems?.cartItems?.length === 0 && <Typography variant='body2'>Giỏ hàng trống</Typography>}
             </List>
           </div>
         </Flex>

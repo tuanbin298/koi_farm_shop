@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProfileUser.css'; 
-import { useMutation } from "@apollo/client";
+import './ProfileUser.css';
+import { useMutation, useQuery } from "@apollo/client";
 import { UPDATE_PROFILE } from "../api/Mutations/user";
 import toast, { Toaster } from "react-hot-toast";
-
+import { GET_ORDERS } from "../api/Queries/order";
 const ProfileUser = () => {
   const [selectedTab, setSelectedTab] = useState("accountInfo");
   const [isEditing, setIsEditing] = useState(false);
@@ -16,7 +16,15 @@ const ProfileUser = () => {
   const [errors, setErrors] = useState({});
 
   const [updateUserProfile, { loading: updateLoading, error: updateError }] = useMutation(UPDATE_PROFILE);
-
+  const userId = localStorage.getItem("id");
+  const { data: orders, loading, error } = useQuery(GET_ORDERS, {
+    variables: {
+      where: {
+        user: { id: { equals: userId } },
+      },
+    },
+  })
+  console.log(orders.orders)
   const validateForm = () => {
     let formErrors = {};
     if (!newName.trim()) formErrors.name = "Tên không được bỏ trống.";
@@ -35,7 +43,7 @@ const ProfileUser = () => {
     try {
       const variables = {
         where: { id: localStorage.getItem("id") },
-        data: { name: newName, phone: newPhone, address: newAddress }, 
+        data: { name: newName, phone: newPhone, address: newAddress },
       };
 
       const result = await updateUserProfile({ variables });
@@ -43,7 +51,7 @@ const ProfileUser = () => {
       if (result.data.updateUser) {
         localStorage.setItem("name", result.data.updateUser.name);
         localStorage.setItem("phone", result.data.updateUser.phone);
-        localStorage.setItem("address", result.data.updateUser.address); 
+        localStorage.setItem("address", result.data.updateUser.address);
         setIsEditing(false);
         toast.success("Cập nhật thông tin thành công!");
       }
@@ -125,8 +133,20 @@ const ProfileUser = () => {
                   <th>Địa Chỉ</th>
                   <th>Giá Trị Đơn Hàng</th>
                   <th>Tình Trạng Đơn Hàng</th>
-                  <th>Thông Tin Giao Hàng</th>
+                  {/* <th>Thông Tin Giao Hàng</th> */}
                 </tr>
+                {orders.orders?.map(order => (
+                  <tr>
+                    <td>{order.id}</td>
+                    <td>{new Intl.DateTimeFormat('en-US', {
+                      dateStyle: 'short',
+                      timeStyle: 'short'
+                    }).format(new Date(order.createAt))}</td>
+                    <td>{order.address}</td>
+                    <td>{order.price}</td>
+                    <td>{order.status}</td>
+                  </tr>
+                ))}
               </thead>
               <tbody>
                 <tr>
@@ -159,15 +179,15 @@ const ProfileUser = () => {
           <p>Xin chào, <strong className="text-danger">{localStorage.getItem("name")}!</strong></p>
           <ul className="list-unstyled">
             <li className={`mt-3 ${selectedTab === "accountInfo" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("accountInfo")}>
+              onClick={() => setSelectedTab("accountInfo")}>
               Thông tin tài khoản
             </li>
             <li className={`mt-2 ${selectedTab === "orders" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("orders")}>
+              onClick={() => setSelectedTab("orders")}>
               Đơn hàng của bạn
             </li>
             <li className={`mt-2 ${selectedTab === "tracking" ? "text-danger" : ""}`}
-                onClick={() => setSelectedTab("tracking")}>
+              onClick={() => setSelectedTab("tracking")}>
               Đơn hàng ký gửi bán
             </li>
           </ul>
