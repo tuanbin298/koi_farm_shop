@@ -18,6 +18,7 @@ import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentT
 import KoiConsignment from "./page/KoiConsignment/KoiConsignment";
 import ConsignmentDetail from "./page/ConsignmentDetail/ConsignmentDetail";
 import Payment from "./page/payment/payment";
+import FishCareServide from "./page/FishCareService/FishCareService"
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
           />
           <Route path="/consignmentList" element={<KoiConsignment />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/fishcareservice" element={<FishCareServide/>} />
         </Routes>
       </BrowserRouter>
       <Footer />
