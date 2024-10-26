@@ -1,28 +1,42 @@
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import "./Checkout.css"
-import { Button, Flex, Radio,  Space, Image } from 'antd';
-import {Link} from "react-router-dom"
-import {CREATE_ORDER, UPDATE_ORDER} from ".././api/Mutations/order"
-import {CREATE_ORDER_ITEMS} from ".././api/Mutations/orderItem"
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_CART_ITEMS } from '../api/Queries/cartItem';
-import { DELETE_CART_ITEM } from '../api/Mutations/deletecartItem';
+import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import "./Checkout.css";
+import { Button, Flex, Radio, Space, Image } from "antd";
+import { Link } from "react-router-dom";
+import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
+import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_CART_ITEMS } from "../api/Queries/cartItem";
+import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { formatMoney } from "../../utils/formatMoney";
-import { GET_ORDER_ITEM_ID } from '../api/Queries/orderItem';
-import { List, ListItem, ListItemText, Divider, Typography, ListItemAvatar, Avatar
-  , Pagination
- } from '@mui/material';
+import { GET_ORDER_ITEM_ID } from "../api/Queries/orderItem";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Typography,
+  ListItemAvatar,
+  Avatar,
+  Pagination,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 export default function Checkout() {
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const userId = localStorage.getItem("id");
   const [orderItemsData, setOrderItemsData] = useState([]);
   const [linkOrderId, setLinkOrderId] = useState(null);
-  const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+  const {
+    loading,
+    error,
+    data: cartItems,
+    refetch: refetchItems,
+  } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: { id: { equals: userId } },
@@ -30,14 +44,17 @@ export default function Checkout() {
     },
   });
 
-  const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(GET_ORDER_ITEM_ID, {
-    variables: {
-      where: {
-        order: { id: { equals: linkOrderId } }, // Use the orderId state here
+  const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(
+    GET_ORDER_ITEM_ID,
+    {
+      variables: {
+        where: {
+          order: { id: { equals: linkOrderId } }, // Use the orderId state here
+        },
       },
-    },
-    skip: !linkOrderId, // Skip the query until the orderId is set
-  });
+      skip: !linkOrderId, // Skip the query until the orderId is set
+    }
+  );
   console.log(orderItemIDs);
   const [orderData, setOrderData] = useState({
     name: "",
@@ -53,14 +70,14 @@ export default function Checkout() {
   const [createOrder] = useMutation(CREATE_ORDER);
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
 
-  const [name, setName] = useState(localStorage.getItem("name") || '');
-  const [email, setEmail] = useState(localStorage.getItem("email") || '');
-  const [phone, setPhone] = useState(localStorage.getItem("phone") || '');
-  const [address, setAddress] = useState(localStorage.getItem("address") || '');
+  const [name, setName] = useState(localStorage.getItem("name") || "");
+  const [email, setEmail] = useState(localStorage.getItem("email") || "");
+  const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
 
   const checkoutOption1 = [
-    { label: 'Thanh toán bằng thẻ tín dụng', value: 'creditCard' },
-    { label: 'Thanh toán khi nhận hàng(đặt cọc 50%)', value: 'cod' }
+    { label: "Thanh toán bằng thẻ tín dụng", value: "creditCard" },
+    { label: "Thanh toán khi nhận hàng(đặt cọc 50%)", value: "cod" },
   ];
 
   const handleInputChange = (e) => {
@@ -79,108 +96,114 @@ export default function Checkout() {
   });
   const handleCreateOrder = async () => {
     console.log(cartItems);
-    if(cartItems.cartItems.length <= 0){
+    if (cartItems.cartItems.length <= 0) {
       toast.error("Lỗi tạo đơn hàng!");
-    }
-    else{
-    try {
-      // Create Order
-      const { data } = await createOrder({
-        variables: {
-          data: {
-            user: {
-              connect: { id: userId },
-            },
-            price: totalPrice,
-            // address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-            address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-          },
-        },
-      });
-
-      const orderId = data.createOrder.id;
-      setLinkOrderId(orderId);
-      // Create Order Items (replace with actual items from cart)
-      // setOrderItemsData(cartItems)
-      // console.log(cartItems);
-      // await createOrderItems({
-      //   variables: {
-      //     data: cartItems,
-      //   },
-      // });
-      const orderItems = cartItems.cartItems.map((item) => ({
-        // Use product if available, otherwise use consignmentProduct
-        // ...(item.product.length > 0
-        //   ? { product: { connect: { id: item.product[0].id } } }
-        //   : { consignmentProduct: { connect: { id: item.consignmentProduct[0].id } } }
-        // ),
-        product: { connect: { 
-          id: item.product[0]?.id ? item.product[0].id : item.consignmentProduct[0].id 
-        } 
-      },
-        order: { connect: { id: orderId } },
-        quantity: 1,
-        price: item.product.length > 0 ? item.product[0].price : item.consignmentProduct[0].price,
-      }));
-
-      // Create the order items
-      await createOrderItems({
-        variables: {
-          data: orderItems,
-        },
-      });
-      for (let i = 0; i < orderItems.length; i++){
-      // const orderItemId = orderItems[i].id;
-      console.log(orderItems);
-      // await updateOrder({
-      //   variables: {
-      //     where: {
-      //       id: orderId
-      //     },
-      //     data: {
-      //       items: {
-      //         connect: [
-      //           {
-      //             id: orderItemId
-      //           }
-      //         ]
-      //       }
-      //     }
-      //   }
-      // })
-    }
-
-      for (let i = 0; i < cartItems.cartItems.length; i++) {
-        const cartItemId = cartItems.cartItems[i].id;
-        await deleteCartItem({
+    } else {
+      try {
+        // Create Order
+        const { data } = await createOrder({
           variables: {
-            where: { id: cartItemId },
+            data: {
+              user: {
+                connect: { id: userId },
+              },
+              price: totalPrice,
+              // address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
+              address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
+            },
           },
         });
+
+        const orderId = data.createOrder.id;
+        setLinkOrderId(orderId);
+        // Create Order Items (replace with actual items from cart)
+        // setOrderItemsData(cartItems)
+        // console.log(cartItems);
+        // await createOrderItems({
+        //   variables: {
+        //     data: cartItems,
+        //   },
+        // });
+        const orderItems = cartItems.cartItems.map((item) => ({
+          // Use product if available, otherwise use consignmentProduct
+          // ...(item.product.length > 0
+          //   ? { product: { connect: { id: item.product[0].id } } }
+          //   : { consignmentProduct: { connect: { id: item.consignmentProduct[0].id } } }
+          // ),
+          product: {
+            connect: {
+              id: item.product[0]?.id
+                ? item.product[0].id
+                : item.consignmentProduct[0].id,
+            },
+          },
+          order: { connect: { id: orderId } },
+          quantity: 1,
+          price:
+            item.product.length > 0
+              ? item.product[0].price
+              : item.consignmentProduct[0].price,
+        }));
+
+        // Create the order items
+        await createOrderItems({
+          variables: {
+            data: orderItems,
+          },
+        });
+        for (let i = 0; i < orderItems.length; i++) {
+          // const orderItemId = orderItems[i].id;
+          console.log(orderItems);
+          // await updateOrder({
+          //   variables: {
+          //     where: {
+          //       id: orderId
+          //     },
+          //     data: {
+          //       items: {
+          //         connect: [
+          //           {
+          //             id: orderItemId
+          //           }
+          //         ]
+          //       }
+          //     }
+          //   }
+          // })
+        }
+
+        for (let i = 0; i < cartItems.cartItems.length; i++) {
+          const cartItemId = cartItems.cartItems[i].id;
+          await deleteCartItem({
+            variables: {
+              where: { id: cartItemId },
+            },
+          });
+        }
+        toast.success("Đã tạo đơn hàng!");
+      } catch (error) {
+        console.log(orderItemsData);
+        console.error("Error creating order:", error);
+        toast.error("Lỗi tạo đơn hàng!");
       }
-      toast.success('Đã tạo đơn hàng!')
-    } catch (error) {
-      console.log(orderItemsData)
-      console.error("Error creating order:", error);
-      toast.error("Lỗi tạo đơn hàng!");
     }
-  }
   };
+
   const [page, setPage] = useState(1); // Current page
   const itemsPerPage = 3; // Items per page
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = cartItems?.cartItems?.slice(startIndex, endIndex) || [];
+  const paginatedItems =
+    cartItems?.cartItems?.slice(startIndex, endIndex) || [];
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
-  
   return (
     <>
-    <Toaster position="top-center" reverseOrder={false} />
-      <div className='checkOutInfo' style={{ padding: "20px" }}>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="checkOutInfo" style={{ padding: "20px" }}>
         <section className="TitleSection">
           <h3>Thông tin giao/nhận hàng</h3>
         </section>
@@ -232,38 +255,38 @@ export default function Checkout() {
 
         <Box style={{ marginTop: "2%" }}>
           <Flex gap="large">
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập tỉnh/thành" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="city" 
-              onChange={handleInputChange} 
+            <TextField
+              id="outlined-basic"
+              label="Nhập tỉnh/thành"
+              variant="outlined"
+              style={{ width: "25%" }}
+              name="city"
+              onChange={handleInputChange}
               required
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập quận/huyện" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="district" 
-              onChange={handleInputChange} 
+            <TextField
+              id="outlined-basic"
+              label="Nhập quận/huyện"
+              variant="outlined"
+              style={{ width: "25%" }}
+              name="district"
+              onChange={handleInputChange}
               required
             />
-            <TextField 
-              id="outlined-basic" 
-              label="Nhập phường/xã" 
-              variant="outlined" 
-              style={{ width: "25%" }} 
-              name="ward" 
-              onChange={handleInputChange} 
+            <TextField
+              id="outlined-basic"
+              label="Nhập phường/xã"
+              variant="outlined"
+              style={{ width: "25%" }}
+              name="ward"
+              onChange={handleInputChange}
               required
             />
           </Flex>
         </Box>
         <Flex justify="space-between">
-        <div className='OrderSection'>
-            <section className='OrderTitleSection'>
+          <div className="OrderSection">
+            <section className="OrderTitleSection">
               <h3>Thông tin đơn hàng</h3>
             </section>
             <List>
@@ -273,63 +296,94 @@ export default function Checkout() {
                     <ListItemAvatar>
                       <Image
                         width={75}
-                        src={item.product[0]?.image?.publicUrl || item.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
+                        src={
+                          item.product[0]?.image?.publicUrl ||
+                          item.consignmentProduct[0]?.photo?.image?.publicUrl ||
+                          ""
+                        }
                       />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={item.product[0]?.name || item.consignmentProduct[0]?.name}
-                      secondary={`Giá: ${item.product[0]?.price || item.consignmentProduct[0]?.price} VND`}
+                      primary={
+                        item.product[0]?.name ||
+                        item.consignmentProduct[0]?.name
+                      }
+                      secondary={`Giá: ${
+                        item.product[0]?.price ||
+                        item.consignmentProduct[0]?.price
+                      } VND`}
                     />
                   </ListItem>
                   <Divider />
                 </div>
               ))}
-              <Box display='flex' justifyContent='center' marginTop={2}>
+              <Box display="flex" justifyContent="center" marginTop={2}>
                 <Pagination
-                  count={Math.ceil((cartItems?.cartItems?.length || 0) / itemsPerPage)}
+                  count={Math.ceil(
+                    (cartItems?.cartItems?.length || 0) / itemsPerPage
+                  )}
                   page={page}
                   onChange={handlePageChange}
-                  color='primary'
+                  color="primary"
                 />
               </Box>
-              {cartItems?.cartItems?.length === 0 && <Typography variant='body2'>Giỏ hàng trống</Typography>}
+              {cartItems?.cartItems?.length === 0 && (
+                <Typography variant="body2">Giỏ hàng trống</Typography>
+              )}
             </List>
           </div>
 
-          
           <div className="checkoutSection">
             <section className="TitleFlexSection">
               <h3>Phương thức thanh toán</h3>
             </section>
             <Flex direction="column" gap="middle">
-              <Radio.Group onChange={(e) => setOrderData({...orderData, paymentMethod: e.target.value })} required>
+              <Radio.Group
+                onChange={(e) =>
+                  setOrderData({ ...orderData, paymentMethod: e.target.value })
+                }
+                required
+              >
                 <Space direction="vertical">
                   <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
-                  <Radio value="cod">Thanh toán khi nhận hàng(đặt cọc 50%)</Radio>
+                  <Radio value="cod">
+                    Thanh toán khi nhận hàng(đặt cọc 50%)
+                  </Radio>
                 </Space>
               </Radio.Group>
             </Flex>
           </div>
-
-            
         </Flex>
 
-        <Flex style={{ marginTop: "6%", justifyContent: "space-between", padding: "15px" }}>
+        <Flex
+          style={{
+            marginTop: "6%",
+            justifyContent: "space-between",
+            padding: "15px",
+          }}
+        >
           <div>
             <Link to="/cart">
-              <Button color="danger" variant="solid" style={{ padding: "20px", fontSize: "20px" }}>
+              <Button
+                color="danger"
+                variant="solid"
+                style={{ padding: "20px", fontSize: "20px" }}
+              >
                 Quay lại giỏ hàng
               </Button>
             </Link>
           </div>
           <div>
-            <Button variant='solid' style={{
-              backgroundColor: "green",
-              color: "white",
-              padding: "20px",
-              fontSize: "20px"
-            }}
-              onClick={handleCreateOrder}>
+            <Button
+              variant="solid"
+              style={{
+                backgroundColor: "green",
+                color: "white",
+                padding: "20px",
+                fontSize: "20px",
+              }}
+              onClick={handleCreateOrder}
+            >
               Đặt hàng
             </Button>
           </div>
