@@ -12,6 +12,9 @@ mutation CreateOrder($data: [OrderItemCreateInput!]!) {
     }
     quantity
     price
+    consignmentSale {
+      id
+    }
   }
 }
 
