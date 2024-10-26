@@ -38,7 +38,7 @@ export default function CardConsignmentSale() {
         variables: {
           data: {
             quantity: 1,
-            consignment: {
+            consignmentProduct: {
               connect: { id: consignmentId }, // Connect consignment by ID
             },
             user: {

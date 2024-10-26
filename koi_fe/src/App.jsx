@@ -17,6 +17,8 @@ import SuccessPage from "./page/SuccessPage/SuccessPage";
 import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentTrackingPage";
 import KoiConsignment from "./page/KoiConsignment/KoiConsignment";
 import ConsignmentDetail from "./page/ConsignmentDetail/ConsignmentDetail";
+import Payment from "./page/payment/payment";
+import FishCareServide from "./page/FishCareService/FishCareService"
 
 function App() {
   return (
@@ -36,15 +38,19 @@ function App() {
           <Route path="/news" element={<NewsArticle />} />
           <Route path="/profile" element={<ProfileUser />} />
           <Route path="/introduce" element={<IntroducePage />} />
-          {/* <Route path="/ProductDetail/:id" element={<ProductDetail />} /> */}
           <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
-          <Route path="/ConsignmentDetail/:slug" element={<ConsignmentDetail/>}/>
+          <Route
+            path="/ConsignmentDetail/:slug"
+            element={<ConsignmentDetail />}
+          />
           <Route path="/some-success-page" element={<SuccessPage />} />
           <Route
             path="/consignmentTracking"
             element={<ConsignmentTrackingPage />}
           />
           <Route path="/consignmentList" element={<KoiConsignment />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/fishcareservice" element={<FishCareServide/>} />
         </Routes>
       </BrowserRouter>
       <Footer />

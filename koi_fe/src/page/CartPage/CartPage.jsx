@@ -84,7 +84,17 @@ const CartPage = () => {
 
   if (loading) return <p>Đang tải giỏ hàng...</p>;
   if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
-
+  // Xử lý tiếp tục đến trang dịch vụ ký gửi
+  const handleProceedToFishCareService = () => {
+    const selectedProducts = data?.cartItems?.filter(item => depositFields[item.id]) || [];
+    return (
+      <Link to="/fishcareservice" state={{ selectedProducts }}> {/* Truyền sản phẩm đã chọn */}
+        <Button variant="contained" color="primary">
+          Tiếp tục Ký gửi
+        </Button>
+      </Link>
+    );
+  };
   return (
     <div className="cart-container">
       <section className="back-button-section">
@@ -110,64 +120,48 @@ const CartPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-              {paginatedItems.map((cartItem) => (
-  cartItem && (
-    <React.Fragment key={cartItem.id}>
-      <TableRow>
-        <TableCell>
-          <Image
-            width={200}
-            src={cartItem.product.length > 0
-              ? cartItem.product[0].image?.publicUrl || ''
-              : cartItem.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
-          />
-        </TableCell>
-        <TableCell align="center">
-          {cartItem.product.length > 0
-            ? cartItem.product[0]?.name
-            : cartItem.consignmentProduct[0]?.name}
-        </TableCell>
-        <TableCell align="center">
-          <Checkbox
-            checked={depositFields[cartItem.id] || false}
-            onChange={() => handleDepositToggle(cartItem.id)}
-          />
-          <p>Ký gửi nuôi</p>
-        </TableCell>
-        <TableCell align="center">
-          {formatMoney(cartItem.product.length > 0
-            ? cartItem.product[0]?.price
-            : cartItem.consignmentProduct[0]?.price)}
-          <Button
-            variant="contained"
-            color="error"
-            style={{ marginLeft: "15%" }}
-            onClick={() => handleDelete(cartItem.id)}
-            disabled={isLoading}
-          >
-            Xóa
-          </Button>
-        </TableCell>
-      </TableRow>
-
-      {depositFields[cartItem.id] && (
-        <TableRow>
-          <TableCell colSpan={5} className="deposit-fields">
-            <div className="deposit-fields-container">
-              <TextField
-                label="Ngày kết thúc"
-                type="date"
-                InputLabelProps={{ shrink: true }}
-                variant="outlined"
-                className="deposit-input"
-              />
-            </div>
-          </TableCell>
-        </TableRow>
-      )}
-    </React.Fragment>
-  )
-))}
+                {paginatedItems.map((cartItem) => (
+                  cartItem && (
+                    <React.Fragment key={cartItem.id}>
+                      <TableRow>
+                        <TableCell>
+                          <Image
+                            width={200}
+                            src={cartItem.product.length > 0
+                              ? cartItem.product[0].image?.publicUrl || ''
+                              : cartItem.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
+                          />
+                        </TableCell>
+                        <TableCell align="center">
+                          {cartItem.product.length > 0
+                            ? cartItem.product[0]?.name
+                            : cartItem.consignmentProduct[0]?.name}
+                        </TableCell>
+                        <TableCell align="center">
+                          <Checkbox
+                            checked={depositFields[cartItem.id] || false}
+                            onChange={() => handleDepositToggle(cartItem.id)}
+                          />
+                          <p>Ký gửi nuôi</p>
+                        </TableCell>
+                        <TableCell align="center">
+                          {formatMoney(cartItem.product.length > 0
+                            ? cartItem.product[0]?.price
+                            : cartItem.consignmentProduct[0]?.price)}
+                          <Button
+                            variant="contained"
+                            color="error"
+                            style={{ marginLeft: "15%" }}
+                            onClick={() => handleDelete(cartItem.id)}
+                            disabled={isLoading}
+                          >
+                            Xóa
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
+                  )
+                ))}
 
               </TableBody>
             </Table>
@@ -195,13 +189,16 @@ const CartPage = () => {
               {formatMoney(totalPrice)}
             </Typography>
           </Box>
-
-          <Box display="flex" justifyContent="flex-end">
-            <Button variant="contained" color="success">
-             {data.cartItems.length <= 0?
-             (<Link to="/cart">Tiến hành thanh toán <FaShoppingCart /></Link>):
-             (<Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link>)} 
-            </Button>
+          <Box display="flex" justifyContent="flex-end" marginTop={2}>
+            {Object.values(depositFields).some((isSelected) => isSelected) ? (
+              handleProceedToFishCareService() // Gọi hàm để lấy liên kết với sản phẩm đã chọn
+            ) : (
+              <Button variant="contained" color="success">
+                {data.cartItems.length <= 0 ?
+                  (<Link to="/cart">Tiến hành thanh toán <FaShoppingCart /></Link>) :
+                  (<Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link>)}
+              </Button>
+            )}
           </Box>
         </section>
       </main>
