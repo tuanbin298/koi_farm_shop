@@ -954,6 +954,7 @@ type ConsignmentSale {
   category: String
   estimatedPrice: String
   slug: String
+  request: Request
   status: String
 }
 
@@ -978,6 +979,7 @@ input ConsignmentSaleWhereInput {
   category: StringFilter
   estimatedPrice: StringFilter
   slug: StringFilter
+  request: RequestWhereInput
   status: StringNullableFilter
 }
 
@@ -1010,12 +1012,19 @@ input ConsignmentSaleUpdateInput {
   category: String
   estimatedPrice: String
   slug: String
+  request: RequestRelateToOneForUpdateInput
   status: String
 }
 
 input GalleryRelateToOneForUpdateInput {
   create: GalleryCreateInput
   connect: GalleryWhereUniqueInput
+  disconnect: Boolean
+}
+
+input RequestRelateToOneForUpdateInput {
+  create: RequestCreateInput
+  connect: RequestWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -1037,12 +1046,18 @@ input ConsignmentSaleCreateInput {
   category: String
   estimatedPrice: String
   slug: String
+  request: RequestRelateToOneForCreateInput
   status: String
 }
 
 input GalleryRelateToOneForCreateInput {
   create: GalleryCreateInput
   connect: GalleryWhereUniqueInput
+}
+
+input RequestRelateToOneForCreateInput {
+  create: RequestCreateInput
+  connect: RequestWhereUniqueInput
 }
 
 type Request {
@@ -1203,12 +1218,6 @@ input StatusUpdateInput {
   request: RequestRelateToOneForUpdateInput
 }
 
-input RequestRelateToOneForUpdateInput {
-  create: RequestCreateInput
-  connect: RequestWhereUniqueInput
-  disconnect: Boolean
-}
-
 input StatusUpdateArgs {
   where: StatusWhereUniqueInput!
   data: StatusUpdateInput!
@@ -1219,11 +1228,6 @@ input StatusCreateInput {
   changeTime: DateTime
   changedBy: UserRelateToOneForCreateInput
   request: RequestRelateToOneForCreateInput
-}
-
-input RequestRelateToOneForCreateInput {
-  create: RequestCreateInput
-  connect: RequestWhereUniqueInput
 }
 
 """
