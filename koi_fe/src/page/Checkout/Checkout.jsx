@@ -22,15 +22,18 @@ import {
   ListItemAvatar,
   Avatar,
   Pagination,
+  darken,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 export default function Checkout() {
+  const navigate = useNavigate();
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const userId = localStorage.getItem("id");
   const [orderItemsData, setOrderItemsData] = useState([]);
   const [linkOrderId, setLinkOrderId] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState("full");
   const {
     loading,
     error,
@@ -76,8 +79,8 @@ export default function Checkout() {
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
 
   const checkoutOption1 = [
-    { label: "Thanh toán bằng thẻ tín dụng", value: "creditCard" },
-    { label: "Thanh toán khi nhận hàng(đặt cọc 50%)", value: "cod" },
+    { label: "Thanh toán hết", value: "full" },
+    { label: "Thanh toán khi nhận hàng (đặt cọc 50%)", value: "cod" },
   ];
 
   const handleInputChange = (e) => {
@@ -94,99 +97,9 @@ export default function Checkout() {
       totalPrice += cartItem.consignmentProduct[0].price;
     }
   });
+
   const handleCreateOrder = async () => {
-    console.log(cartItems);
-    if (cartItems.cartItems.length <= 0) {
-      toast.error("Lỗi tạo đơn hàng!");
-    } else {
-      try {
-        // Create Order
-        const { data } = await createOrder({
-          variables: {
-            data: {
-              user: {
-                connect: { id: userId },
-              },
-              price: totalPrice,
-              // address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-              address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-            },
-          },
-        });
-
-        const orderId = data.createOrder.id;
-        setLinkOrderId(orderId);
-        // Create Order Items (replace with actual items from cart)
-        // setOrderItemsData(cartItems)
-        // console.log(cartItems);
-        // await createOrderItems({
-        //   variables: {
-        //     data: cartItems,
-        //   },
-        // });
-        const orderItems = cartItems.cartItems.map((item) => ({
-          // Use product if available, otherwise use consignmentProduct
-          ...(item.product.length > 0
-            ? { product: { connect: { id: item.product[0].id } } }
-            : {
-                consignmentSale: {
-                  connect: { id: item.consignmentProduct[0].id },
-                },
-              }),
-          //   product: { connect: {
-          //     id: item.product[0]?.id ? item.product[0].id : item.consignmentProduct[0].id
-          //   }
-          // },
-          order: { connect: { id: orderId } },
-          quantity: 1,
-          price:
-            item.product.length > 0
-              ? item.product[0].price
-              : item.consignmentProduct[0].price,
-        }));
-
-        // Create the order items
-        await createOrderItems({
-          variables: {
-            data: orderItems,
-          },
-        });
-        for (let i = 0; i < orderItems.length; i++) {
-          // const orderItemId = orderItems[i].id;
-          console.log(orderItems);
-          // await updateOrder({
-          //   variables: {
-          //     where: {
-          //       id: orderId
-          //     },
-          //     data: {
-          //       items: {
-          //         connect: [
-          //           {
-          //             id: orderItemId
-          //           }
-          //         ]
-          //       }
-          //     }
-          //   }
-          // })
-        }
-
-        for (let i = 0; i < cartItems.cartItems.length; i++) {
-          const cartItemId = cartItems.cartItems[i].id;
-          await deleteCartItem({
-            variables: {
-              where: { id: cartItemId },
-            },
-          });
-        }
-        toast.success("Đã tạo đơn hàng!");
-      } catch (error) {
-        console.log(orderItemsData);
-        console.error("Error creating order:", error);
-        toast.error("Lỗi tạo đơn hàng!");
-      }
-    }
+    navigate(`/payment?paymentMethod=${paymentMethod}`);
   };
 
   const [page, setPage] = useState(1); // Current page
@@ -339,16 +252,16 @@ export default function Checkout() {
             </section>
             <Flex direction="column" gap="middle">
               <Radio.Group
-                onChange={(e) =>
-                  setOrderData({ ...orderData, paymentMethod: e.target.value })
-                }
+                onChange={(e) => {
+                  setPaymentMethod(e.target.value);
+                  setOrderData({ ...orderData, paymentMethod: e.target.value });
+                }}
                 required
               >
                 <Space direction="vertical">
-                  <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
-                  <Radio value="cod">
-                    Thanh toán khi nhận hàng(đặt cọc 50%)
-                  </Radio>
+                  {checkoutOption1.map((option) => (
+                    <Radio value={option.value}>{option.label}</Radio>
+                  ))}
                 </Space>
               </Radio.Group>
             </Flex>
