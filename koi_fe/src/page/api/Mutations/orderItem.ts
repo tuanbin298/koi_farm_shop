@@ -14,6 +14,7 @@ mutation CreateOrder($data: [OrderItemCreateInput!]!) {
     price
     consignmentSale {
       id
+      name
     }
   }
 }
