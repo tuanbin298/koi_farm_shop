@@ -16,10 +16,17 @@ const FishCareService = () => {
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
 
+    const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     // Lấy danh sách sản phẩm từ location.state
     useEffect(() => {
         if (location.state && location.state.selectedProducts) {
             setSelectedProducts(location.state.selectedProducts);
+            // Khởi tạo ngày bắt đầu cho mỗi sản phẩm
+            const initialDates = {};
+            location.state.selectedProducts.forEach((product) => {
+                initialDates[product.id] = { startDate: today, endDate: '' };
+            });
+            setDates(initialDates);
         }
     }, [location.state]);
 
@@ -27,11 +34,12 @@ const FishCareService = () => {
     const calculateTotalPrice = () => {
         let total = 0;
         selectedProducts.forEach((product) => {
-            const pricePerDay = product.product[0]?.price || product.consignmentProduct[0]?.price;
             const { startDate, endDate } = dates[product.id] || {};
             if (startDate && endDate) {
-                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-                total += days * 50000;
+                const days = Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24));
+                if (days >= 7 && days <= 180) {
+                    total += days * 50000;
+                }
             }
         });
         setTotalCarePrice(total);
@@ -98,32 +106,46 @@ const FishCareService = () => {
                                     <TableCell align="center">
                                         <TextField
                                             type="date"
-                                            value={dates[product.id]?.startDate || ''}
-                                            onChange={(e) => handleDateChange(product.id, 'startDate', e.target.value)}
-                                            InputLabelProps={{ shrink: true }}
+                                            value={dates[product.id]?.startDate || today}
+                                            InputProps={{ readOnly: true }}
                                         />
                                     </TableCell>
                                     <TableCell align="center">
                                         <TextField
                                             type="date"
                                             value={dates[product.id]?.endDate || ''}
-                                            onChange={(e) => handleDateChange(product.id, 'endDate', e.target.value)}
+                                            onChange={(e) =>
+                                                handleDateChange(product.id, 'endDate', e.target.value)
+                                            }
                                             InputLabelProps={{ shrink: true }}
+                                            error={
+                                                dates[product.id]?.endDate &&
+                                                ((new Date(dates[product.id]?.endDate) - new Date(today)) / (1000 * 60 * 60 * 24) < 7 ||
+                                                    (new Date(dates[product.id]?.endDate) - new Date(today)) / (1000 * 60 * 60 * 24) > 180)
+                                            }
+                                            helperText={
+                                                dates[product.id]?.endDate &&
+                                                    ((new Date(dates[product.id]?.endDate) - new Date(today)) / (1000 * 60 * 60 * 24) < 7 ||
+                                                        (new Date(dates[product.id]?.endDate) - new Date(today)) / (1000 * 60 * 60 * 24) > 180)
+                                                    ? 'Ngày kết thúc phải từ 7 đến 180 ngày kể từ hôm nay.'
+                                                    : ''
+                                            }
                                         />
                                     </TableCell>
                                     <TableCell align="center">
                                         {(() => {
-                                            const pricePerDay = 50000; // Giá ký gửi 50.000 VND/ngày
                                             const { startDate, endDate } = dates[product.id] || {};
                                             let totalDeposit = 0;
 
-                                            // Tính tiền ký gửi theo ngày nếu có ngày bắt đầu và kết thúc
                                             if (startDate && endDate) {
-                                                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-                                                totalDeposit = days * pricePerDay; // Tính tổng tiền ký gửi
+                                                const days = Math.ceil(
+                                                    (new Date(endDate) - new Date(startDate)) /
+                                                    (1000 * 60 * 60 * 24)
+                                                );
+                                                totalDeposit = days * 50000;
                                             }
 
-                                            return formatMoney(totalDeposit); // Trả về giá ký gửi đã tính
+                                            return formatMoney(totalDeposit);
                                         })()}
                                     </TableCell>
                                 </TableRow>
@@ -184,6 +206,7 @@ const FishCareService = () => {
                 </Box>
 
                 {/* Nút Tiếp Tục Thanh Toán */}
+                {agreeToPolicy && (
                 <Box display="flex" justifyContent="flex-end" marginTop={2}>
                     <Button
                         variant="contained"
@@ -193,6 +216,7 @@ const FishCareService = () => {
                         Tiến hành thanh toán
                     </Button>
                 </Box>
+                )}
             </div>
         </div>
     );
