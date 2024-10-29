@@ -7,9 +7,12 @@ import {
   CardElement,
 } from "@stripe/react-stripe-js";
 import Button from "@mui/material/Button";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishCare";
+import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
+import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
+import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
@@ -48,7 +51,7 @@ const CheckoutForm = () => {
 
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
-      toast.error("Error creating order!");
+      toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
       try {

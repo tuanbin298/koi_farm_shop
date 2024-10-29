@@ -76,10 +76,14 @@ const CartPage = () => {
   }, [refetchConsigns]);
 
   // Separate cart items into "Farm Koi" and "Consignment Koi"
+  // Separate cart items into "Farm Koi" and "Consignment Koi"
   const farmKoiItems =
-    data?.cartItems?.filter((item) => item.product.length > 0) || [];
+    data?.cartItems?.filter((item) => item.product?.length > 0) || [];
   const consignmentKoiItems =
-    data?.cartItems?.filter((item) => item.consignmentProduct.length > 0) || [];
+    data?.cartItems?.filter((item) => item.consignmentProduct?.length > 0) ||
+    [];
+
+  // Map through cart items and consignment raisings to find consigned products
 
   // Determine current items based on the selected tab
   const currentItems = tab === 0 ? farmKoiItems : consignmentKoiItems;
@@ -96,12 +100,12 @@ const CartPage = () => {
   const consignedCartItemIds = [];
   if (data?.cartItems && consignedFish?.consigmentRaisings) {
     data.cartItems.forEach((cartItem) => {
-      const productId = cartItem.product[0].id;
+      const productId = cartItem.product?.[0]?.id; // Check if product exists and has an id
       const isConsigned = consignedFish.consigmentRaisings.some(
-        (consignedItem) => consignedItem.product.id === productId
+        (consignedItem) => consignedItem.product?.id === productId // Check if consigned item has product id
       );
 
-      if (isConsigned) {
+      if (isConsigned && productId) {
         consignedCartItemIds.push(cartItem.id);
       }
     });
