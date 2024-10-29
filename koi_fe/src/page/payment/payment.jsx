@@ -47,6 +47,8 @@ const CheckoutForm = () => {
     });
 
     handlePaymentMethodResult(result);
+
+    console.log("[PaymentMethod]", result);
   };
 
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
