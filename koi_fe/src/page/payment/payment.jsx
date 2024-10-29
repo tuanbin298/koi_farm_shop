@@ -153,7 +153,7 @@ const CheckoutForm = () => {
           disabled={!stripe || !elements}
           className="w-100"
         >
-          Pay Now
+          Thanh Toán
         </Button>
       </form>
     </>
@@ -171,7 +171,6 @@ function Payment() {
   });
 
   const [totalAmount, setTotalAmount] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (dataCart) {
@@ -194,8 +193,18 @@ function Payment() {
       setTotalAmount(total > 0 ? total : 0);
     }
   }, [dataCart]);
+  console.log(totalAmount);
 
-  const stripePromise = loadStripe("your-publishable-key");
+  const stripePromise = loadStripe(
+    "pk_test_51PZy5CRwV3ieMSE0yi4gEMKnnM1gg4TArSRYf1WAjEmBvMz3MOWXZQOPqSxBbIortJdLmhZnDnmFnO1Njqfa7YUV00F4HhRF80"
+  );
+
+  const options = {
+    mode: "payment",
+    amount: totalAmount,
+    currency: "vnd",
+  };
+  console.log(options);
 
   return (
     <section className="container mt-5">
