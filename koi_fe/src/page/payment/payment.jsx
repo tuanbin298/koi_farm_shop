@@ -19,14 +19,15 @@ import { useNavigate } from "react-router-dom";
 const userId = localStorage.getItem("id");
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
-const navigate = useNavigate();
-const [createOrder] = useMutation(CREATE_ORDER);
-const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
-const [updateOrder] = useMutation(UPDATE_ORDER);
-const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
+
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
+  const [createOrder] = useMutation(CREATE_ORDER);
+  const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
+  const [updateOrder] = useMutation(UPDATE_ORDER);
+  const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -126,7 +127,11 @@ const CheckoutForm = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <form onSubmit={handleSubmit}>
         <CardElement />
-        <Button variant="contained" type="submit" disabled={!stripe || !elements}>
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!stripe || !elements}
+        >
           Thanh toán
         </Button>
       </form>
