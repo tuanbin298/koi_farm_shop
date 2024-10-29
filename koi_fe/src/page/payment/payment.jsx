@@ -7,14 +7,23 @@ import {
   CardElement,
 } from "@stripe/react-stripe-js";
 import Button from "@mui/material/Button";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
+import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
+import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
+import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
+import toast, { Toaster } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 // User information
 const userId = localStorage.getItem("id");
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
-
+const navigate = useNavigate();
+const [createOrder] = useMutation(CREATE_ORDER);
+const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
+const [updateOrder] = useMutation(UPDATE_ORDER);
+const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
@@ -44,21 +53,84 @@ const CheckoutForm = () => {
 
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
+      toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
-      // Send paymentMethod.id to your server (see Step 3)
-      // call api to create order based on cart info
-      // return to success page
+      navigate("/");
+      // try {
+      //   // Create the order
+      //   const { data: orderData } = await createOrder({
+      //     variables: {
+      //       data: {
+      //         user: { connect: { id: userId } },
+      //         price: totalAmount,
+      //         address: `${localStorage.getItem("address")}`,
+      //       },
+      //     },
+      //   });
+
+      //   const orderId = orderData.createOrder.id;
+
+      //   // Create order items
+      //   const orderItems = dataCart.cartItems.map((item) => ({
+      //     ...(item.product.length > 0
+      //       ? { product: { connect: { id: item.product[0].id } } }
+      //       : { consignmentSale: { connect: { id: item.consignmentProduct[0].id } } }),
+      //     order: { connect: { id: orderId } },
+      //     quantity: 1,
+      //     price: item.product.length > 0 ? item.product[0].price : item.consignmentProduct[0].price,
+      //   }));
+
+      //   const { data: createOrderItemsData } = await createOrderItems({
+      //     variables: { data: orderItems },
+      //   });
+
+      //   // Link order items to the order
+      //   const orderItemIds = createOrderItemsData.createOrderItems.map((item) => item.id);
+      //   await updateOrder({
+      //     variables: {
+      //       where: {
+      //         id: orderId
+      //       },
+      //       data: {
+      //         items:
+      //         {
+      //           connect:
+      //             orderItemIds.map((id) => ({ id }))
+      //         }
+      //       }
+      //     },
+      //   });
+
+      //   // Delete items from the cart
+
+      //   for (let i = 0; i < cartItems.cartItems.length; i++) {
+      //     const cartItemId = cartItems.cartItems[i].id;
+      //     await deleteCartItem({
+      //       variables: {
+      //         where: { id: cartItemId },
+      //       },
+      //     });
+      //   }
+
+      //   toast.success("Đã tạo đơn hàng!");
+      // } catch (error) {
+      //   console.error("Error creating order:", error);
+      //   toast.error("Lỗi tạo đơn hàng!");
+      // }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <Button variant="contained" type="submit" disabled={!stripe || !elements}>
-        Thanh toán
-      </Button>
-    </form>
+    <>
+      <Toaster position="top-center" reverseOrder={false} />
+      <form onSubmit={handleSubmit}>
+        <CardElement />
+        <Button variant="contained" type="submit" disabled={!stripe || !elements}>
+          Thanh toán
+        </Button>
+      </form>
+    </>
   );
 };
 
