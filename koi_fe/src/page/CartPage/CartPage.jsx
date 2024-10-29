@@ -21,6 +21,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import { formatMoney } from "../../utils/formatMoney";
+import { GET_FISH_CARE, GET_ALL_FISH_CARE } from "../api/Queries/fishcare";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -48,10 +49,35 @@ const CartPage = () => {
     },
   });
   console.log(data);
+  const{data: consignedFish, refetch: refetchConsigns} = useQuery(GET_ALL_FISH_CARE, {
+    variables:{
+      where:{
+        user:{
+        id:{
+          equals: userId
+        }
+      }
+      }
+    }
+  })
+  console.log(consignedFish);
+  const consignedIds = consignedFish?.consigmentRaisings
+  ? consignedFish.consigmentRaisings.map(item => item.product.id)
+  : [];
 
+
+  const consignedFishIds = consignedFish?.consigmentRaisings
+  ? consignedFish.consigmentRaisings.map(item => item.id)
+  : [];
+  
+  console.log(consignedIds);
+  console.log(consignedFishIds);
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
+  useEffect(() => {
+    refetchConsigns();
+  }, [refetchConsigns])
 
   // Calculate the total price
   data?.cartItems?.forEach((cartItem) => {
@@ -61,6 +87,24 @@ const CartPage = () => {
       totalPrice += cartItem.consignmentProduct[0].price;
     }
   });
+
+  const consignedCartItemIds = [];
+  if (data?.cartItems && consignedFish?.consigmentRaisings) {
+    data.cartItems.forEach(cartItem => {
+    const productId = cartItem.product[0].id;
+    const isConsigned = consignedFish.consigmentRaisings.some(consignedItem => consignedItem.product.id === productId);
+
+    if (isConsigned) {
+      consignedCartItemIds.push(cartItem.id);
+    }
+  });
+}
+  // Check if a specific cart item is consigned based on its unique cart item ID
+const handleCheckedConsign = (cartItem) => {
+  console.log(consignedCartItemIds)
+  // Verify if the cartItemId exists in consignedFishIds
+  return consignedCartItemIds.includes(cartItem.id);
+};
 
   // Handle delete cart item
   const handleDelete = async (cartItemId) => {
@@ -162,8 +206,9 @@ const CartPage = () => {
                           </TableCell>
                           <TableCell align="center">
                             <Checkbox
-                              checked={depositFields[cartItem.id] || false}
+                              checked={handleCheckedConsign(cartItem) || depositFields[cartItem.id] || false}
                               onChange={() => handleDepositToggle(cartItem.id)}
+                               disabled={handleCheckedConsign(cartItem)}
                             />
                             <p>Ký gửi nuôi</p>
                           </TableCell>
