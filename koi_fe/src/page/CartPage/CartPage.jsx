@@ -32,11 +32,6 @@ const CartPage = () => {
   const [tab, setTab] = useState(0); // Current tab
   const [isDeleting, setIsDeleting] = useState(false);
   const itemsPerPage = 3;
-  const [isLoading] = useState(false);
-  const [deleteError] = useState(null);
-  const [consignedCartItemIds, setConsignedCartItemIds] = useState(
-    JSON.parse(localStorage.getItem("consignedCartItemIds")) || []
-  );
 
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
   const {
@@ -47,15 +42,19 @@ const CartPage = () => {
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
   });
-  const{data: consignedFish, refetch: refetchConsigns} = useQuery(GET_ALL_FISH_CARE, {
-    variables:{
-      where:{
-        user:{
-        id:{
-          equals: userId
-        }
-      }
-      }
+  console.log(data);
+  const { data: consignedFish, refetch: refetchConsigns } = useQuery(
+    GET_ALL_FISH_CARE,
+    {
+      variables: {
+        where: {
+          user: {
+            id: {
+              equals: userId,
+            },
+          },
+        },
+      },
     }
   );
   console.log(consignedFish);
@@ -64,11 +63,11 @@ const CartPage = () => {
     : [];
 
   const consignedFishIds = consignedFish?.consigmentRaisings
-  ? consignedFish.consigmentRaisings.map(item => item.id)
-  : [];
-  
-  // console.log(consignedIds);
-  // console.log(consignedFishIds);
+    ? consignedFish.consigmentRaisings.map((item) => item.id)
+    : [];
+
+  console.log(consignedIds);
+  console.log(consignedFishIds);
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
@@ -97,21 +96,20 @@ const CartPage = () => {
         : cartItem.consignmentProduct[0].price;
     return sum + price;
   }, 0);
-  useEffect(() => {
-    localStorage.setItem("consignedCartItemIds", JSON.stringify(consignedCartItemIds));
-  }, [consignedCartItemIds]);
 
-//   const consignedCartItemIds = [];
-//   if (data?.cartItems && consignedFish?.consigmentRaisings) {
-//     data.cartItems.forEach(cartItem => {
-//     const productId = cartItem.product[0].id;
-//     const isConsigned = consignedFish.consigmentRaisings.some(consignedItem => consignedItem.product.id === productId);
+  const consignedCartItemIds = [];
+  if (data?.cartItems && consignedFish?.consigmentRaisings) {
+    data.cartItems.forEach((cartItem) => {
+      const productId = cartItem.product?.[0]?.id; // Check if product exists and has an id
+      const isConsigned = consignedFish.consigmentRaisings.some(
+        (consignedItem) => consignedItem.product?.id === productId // Check if consigned item has product id
+      );
 
       if (isConsigned && productId) {
         consignedCartItemIds.push(cartItem.id);
       }
-    };
-  
+    });
+  }
   // Check if a specific cart item is consigned based on its unique cart item ID
   const handleCheckedConsign = (cartItem) => {
     console.log(consignedCartItemIds);
@@ -123,19 +121,7 @@ const CartPage = () => {
   const handleDelete = async (cartItemId) => {
     try {
       setIsDeleting(true);
-      await deleteCartItem({
-        variables: {
-          where: {
-            id: cartItemId,
-          },
-        },
-      });
-      setConsignedCartItemIds((prev) => {
-      const updatedIds = prev.filter((id) => id !== cartItemId);
-      localStorage.setItem("consignedCartItemIds", JSON.stringify(updatedIds)); // Update localStorage
-      return updatedIds; // Update state
-    });
-
+      await deleteCartItem({ variables: { where: { id: cartItemId } } });
       refetchItems();
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
@@ -147,16 +133,7 @@ const CartPage = () => {
 
   // Toggle deposit selection
   const handleDepositToggle = (productId) => {
-    setDepositFields((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
-    setConsignedCartItemIds((prev) => {
-      if (prev.includes(productId)) {
-        return prev.filter((id) => id !== productId); // Deselect if exists
-      }
-      return [...prev, productId]; // Add if not exists
-    });
+    setDepositFields((prev) => ({ ...prev, [productId]: !prev[productId] }));
   };
 
   // Handle pagination page change

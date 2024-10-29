@@ -9,7 +9,7 @@ import {
 import Button from "@mui/material/Button";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
-import { GET_FISH_CARE } from "../api/Queries/fishCare";
+import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
 import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
@@ -35,7 +35,11 @@ const CheckoutForm = () => {
   const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
-        user: { id: { equals: userId } },
+        user: { 
+          id: { 
+            equals: userId 
+          } 
+        },
       },
     },
   });
