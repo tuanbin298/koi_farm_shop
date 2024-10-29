@@ -1,28 +1,45 @@
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import "./Checkout.css"
-import { Button, Flex, Radio,  Space, Image } from 'antd';
-import {Link} from "react-router-dom"
-import {CREATE_ORDER, UPDATE_ORDER} from ".././api/Mutations/order"
-import {CREATE_ORDER_ITEMS} from ".././api/Mutations/orderItem"
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_CART_ITEMS } from '../api/Queries/cartItem';
-import { DELETE_CART_ITEM } from '../api/Mutations/deletecartItem';
+import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import "./Checkout.css";
+import { Button, Flex, Radio, Space, Image } from "antd";
+import { Link } from "react-router-dom";
+import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
+import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_CART_ITEMS } from "../api/Queries/cartItem";
+import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { formatMoney } from "../../utils/formatMoney";
-import { GET_ORDER_ITEM_ID } from '../api/Queries/orderItem';
-import { List, ListItem, ListItemText, Divider, Typography, ListItemAvatar, Avatar
-  , Pagination
- } from '@mui/material';
+import { GET_ORDER_ITEM_ID } from "../api/Queries/orderItem";
+import {
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Typography,
+  ListItemAvatar,
+  Avatar,
+  Pagination,
+  darken,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+
 export default function Checkout() {
+  const navigate = useNavigate();
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const userId = localStorage.getItem("id");
   const [orderItemsData, setOrderItemsData] = useState([]);
   const [linkOrderId, setLinkOrderId] = useState(null);
-  const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+  const [paymentMethod, setPaymentMethod] = useState("full");
+  const {
+    loading,
+    error,
+    data: cartItems,
+    refetch: refetchItems,
+  } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: { id: { equals: userId } },
@@ -30,14 +47,17 @@ export default function Checkout() {
     },
   });
 
-  const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(GET_ORDER_ITEM_ID, {
-    variables: {
-      where: {
-        order: { id: { equals: linkOrderId } }, // Use the orderId state here
+  const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(
+    GET_ORDER_ITEM_ID,
+    {
+      variables: {
+        where: {
+          order: { id: { equals: linkOrderId } }, // Use the orderId state here
+        },
       },
-    },
-    skip: !linkOrderId, // Skip the query until the orderId is set
-  });
+      skip: !linkOrderId, // Skip the query until the orderId is set
+    }
+  );
   console.log(orderItemIDs);
   const [orderData, setOrderData] = useState({
     name: "",
@@ -54,46 +74,48 @@ export default function Checkout() {
   // Function to validate each field
   const validateFields = () => {
     const newErrors = {};
-    // if (!orderData.name) {
-    //   newErrors.name = "Tên là tối đa 50 ký tự";
-    // }
-    // // if (!orderData.email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)) {
-    //   newErrors.email = "Email không hợp lệ";
-    // // }
-    // if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
-    //   newErrors.phone = "Số điện thoại phải là 6 chữ số";
-    // }
-    // if (!orderData.address) {
-    //   newErrors.address = "Địa chỉ là tối đa 100 ký tự";
-    // }
-    // if (!orderData.city) {
-    //   newErrors.city = "Vui lòng nhập tỉnh/thành";
-    // }
-    // if (!orderData.district) {
-    //   newErrors.district = "Vui lòng nhập quận/huyện";
-    // }
-    // if (!orderData.ward) {
-    //   newErrors.ward = "Vui lòng nhập phường/xã";
-    // }
-    // if (!orderData.paymentMethod) {
-    //   newErrors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
-    // }
+    if (!orderData.name || orderData.name.length > 50) {
+      newErrors.name = "Tên là tối đa 50 ký tự";
+    }
+    if (
+      !orderData.email ||
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)
+    ) {
+      newErrors.email = "Email không hợp lệ";
+    }
+    if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
+      newErrors.phone = "Số điện thoại phải là 6 chữ số";
+    }
+    if (!orderData.address || orderData.address.length > 100) {
+      newErrors.address = "Địa chỉ là tối đa 100 ký tự";
+    }
+    if (!orderData.city) {
+      newErrors.city = "Vui lòng nhập tỉnh/thành";
+    }
+    if (!orderData.district) {
+      newErrors.district = "Vui lòng nhập quận/huyện";
+    }
+    if (!orderData.ward) {
+      newErrors.ward = "Vui lòng nhập phường/xã";
+    }
+    if (!orderData.paymentMethod) {
+      newErrors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
   const [createOrder] = useMutation(CREATE_ORDER);
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
 
-  const [name, setName] = useState(localStorage.getItem("name") || '');
-  const [email, setEmail] = useState(localStorage.getItem("email") || '');
-  const [phone, setPhone] = useState(localStorage.getItem("phone") || '');
-  const [address, setAddress] = useState(localStorage.getItem("address") || '');
+  const [name, setName] = useState(localStorage.getItem("name") || "");
+  const [email, setEmail] = useState(localStorage.getItem("email") || "");
+  const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
 
   const checkoutOption1 = [
-    { label: 'Thanh toán bằng thẻ tín dụng', value: 'creditCard' },
-    { label: 'Thanh toán khi nhận hàng(đặt cọc 50%)', value: 'cod' }
+    { label: "Thanh toán hết", value: "full" },
+    { label: "Thanh toán khi nhận hàng (đặt cọc 50%)", value: "cod" },
   ];
   const [orderItemIds, setOrderItemIds] = useState([]);
 
@@ -115,118 +137,117 @@ export default function Checkout() {
       totalPrice += cartItem.consignmentProduct[0].price;
     }
   });
+
   const handleCreateOrder = async () => {
+    navigate(`/payment?paymentMethod=${paymentMethod}`);
     console.log(cartItems);
-    if (validateFields()){
-    if(cartItems.cartItems.length <= 0){
-      toast.error("Lỗi tạo đơn hàng!");
-    }
-    else{
-    try {
-      // Create Order
-      const { data } = await createOrder({
-        variables: {
-          data: {
-            user: {
-              connect: { id: userId },
+
+    if (validateFields()) {
+      if (cartItems.cartItems.length <= 0) {
+        toast.error("Lỗi tạo đơn hàng!");
+      } else {
+        try {
+          // Create Order
+          const { data } = await createOrder({
+            variables: {
+              data: {
+                user: {
+                  connect: { id: userId },
+                },
+                price: totalPrice,
+                address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
+              },
             },
-            price: totalPrice,
-            // address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-            address: `${orderData.address}, ${orderData.city}, ${orderData.district}, ${orderData.ward}`,
-          },
-        },
-      });
+          });
 
-      const orderId = data.createOrder.id;
-      setLinkOrderId(orderId);
-      // Create Order Items (replace with actual items from cart)
-      // setOrderItemsData(cartItems)
-      // console.log(cartItems);
-      // await createOrderItems({
-      //   variables: {
-      //     data: cartItems,
-      //   },
-      // });
-      const orderItems = cartItems.cartItems.map((item) => ({
-        // Use product if available, otherwise use consignmentProduct
-        ...(item.product.length > 0
-          ? { product: { connect: { id: item.product[0].id } } }
-          : { consignmentSale: { connect: { id: item.consignmentProduct[0].id } } }
-        ),
-      //   product: { connect: { 
-      //     id: item.product[0]?.id ? item.product[0].id : item.consignmentProduct[0].id 
-      //   } 
-      // },
-        order: { connect: { id: orderId } },
-        quantity: 1,
-        price: item.product.length > 0 ? item.product[0].price : item.consignmentProduct[0].price,
-      }));
+          const orderId = data.createOrder.id;
+          setLinkOrderId(orderId);
 
-      // Create the order items
-      const { data: createOrderItemsData } = await createOrderItems({
-        variables: { data: orderItems },
-      });
+          const orderItems = cartItems.cartItems.map((item) => ({
+            // Use product if available, otherwise use consignmentProduct
+            ...(item.product.length > 0
+              ? { product: { connect: { id: item.product[0].id } } }
+              : {
+                  consignmentSale: {
+                    connect: { id: item.consignmentProduct[0].id },
+                  },
+                }),
 
-      // Store Order Item IDs
-      const orderItemIds = createOrderItemsData.createOrderItems.map(item => item.id);
-      setOrderItemIds(orderItemIds);
-      console.log(orderItemIds)
-      for (let i = 0; i < orderItemIds.length; i++){
-      // const orderItemId = orderItems[i].id;
-      console.log(orderItemIds[i]);
-      await updateOrder({
-        variables: {
-          where: {
-            id: orderId
-          },
-          data: {
-            items: {
-              connect: [
-                {
-                  id: orderItemIds[i]
-                }
-              ]
-            }
+            order: { connect: { id: orderId } },
+            quantity: 1,
+            price:
+              item.product.length > 0
+                ? item.product[0].price
+                : item.consignmentProduct[0].price,
+          }));
+
+          // Create the order items
+          const { data: createOrderItemsData } = await createOrderItems({
+            variables: { data: orderItems },
+          });
+
+          // Store Order Item IDs
+          const orderItemIds = createOrderItemsData.createOrderItems.map(
+            (item) => item.id
+          );
+          setOrderItemIds(orderItemIds);
+          console.log(orderItemIds);
+          for (let i = 0; i < orderItemIds.length; i++) {
+            // const orderItemId = orderItems[i].id;
+            console.log(orderItemIds[i]);
+            await updateOrder({
+              variables: {
+                where: {
+                  id: orderId,
+                },
+                data: {
+                  items: {
+                    connect: [
+                      {
+                        id: orderItemIds[i],
+                      },
+                    ],
+                  },
+                },
+              },
+            });
           }
-        }
-      })
-    }
 
-      for (let i = 0; i < cartItems.cartItems.length; i++) {
-        const cartItemId = cartItems.cartItems[i].id;
-        await deleteCartItem({
-          variables: {
-            where: { id: cartItemId },
-          },
-        });
+          for (let i = 0; i < cartItems.cartItems.length; i++) {
+            const cartItemId = cartItems.cartItems[i].id;
+            await deleteCartItem({
+              variables: {
+                where: { id: cartItemId },
+              },
+            });
+          }
+          toast.success("Đã tạo đơn hàng!");
+        } catch (error) {
+          console.log(orderItemsData);
+          console.error("Error creating order:", error);
+          toast.error("Lỗi tạo đơn hàng!");
+        }
       }
-      toast.success('Đã tạo đơn hàng!')
-    } catch (error) {
-      console.log(orderItemsData)
-      console.error("Error creating order:", error);
+    } else {
       toast.error("Lỗi tạo đơn hàng!");
     }
-  }
-}
-else{
-  toast.error("Lỗi tạo đơn hàng!");
-}
   };
+
   const [page, setPage] = useState(1); // Current page
   const itemsPerPage = 3; // Items per page
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = cartItems?.cartItems?.slice(startIndex, endIndex) || [];
+  const paginatedItems =
+    cartItems?.cartItems?.slice(startIndex, endIndex) || [];
 
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
-  
   return (
     <>
-    <Toaster position="top-center" reverseOrder={false} />
-      <div className='checkOutInfo' style={{ padding: "20px" }}>
+      <Toaster position="top-center" reverseOrder={false} />
+      <div className="checkOutInfo" style={{ padding: "20px" }}>
         <section className="TitleSection">
           <h3>Thông tin giao/nhận hàng</h3>
         </section>
@@ -344,8 +365,8 @@ else{
           </Flex>
         </Box>
         <Flex justify="space-between">
-        <div className='OrderSection'>
-            <section className='OrderTitleSection'>
+          <div className="OrderSection">
+            <section className="OrderTitleSection">
               <h3>Thông tin đơn hàng</h3>
             </section>
             <List>
@@ -355,67 +376,94 @@ else{
                     <ListItemAvatar>
                       <Image
                         width={75}
-                        src={item.product[0]?.image?.publicUrl || item.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
+                        src={
+                          item.product[0]?.image?.publicUrl ||
+                          item.consignmentProduct[0]?.photo?.image?.publicUrl ||
+                          ""
+                        }
                       />
                     </ListItemAvatar>
                     <ListItemText
-                      primary={item.product[0]?.name || item.consignmentProduct[0]?.name}
-                      secondary={`Giá: ${item.product[0]?.price || item.consignmentProduct[0]?.price} VND`}
+                      primary={
+                        item.product[0]?.name ||
+                        item.consignmentProduct[0]?.name
+                      }
+                      secondary={`Giá: ${
+                        item.product[0]?.price ||
+                        item.consignmentProduct[0]?.price
+                      } VND`}
                     />
                   </ListItem>
                   <Divider />
                 </div>
               ))}
-              <Box display='flex' justifyContent='center' marginTop={2}>
+              <Box display="flex" justifyContent="center" marginTop={2}>
                 <Pagination
-                  count={Math.ceil((cartItems?.cartItems?.length || 0) / itemsPerPage)}
+                  count={Math.ceil(
+                    (cartItems?.cartItems?.length || 0) / itemsPerPage
+                  )}
                   page={page}
                   onChange={handlePageChange}
-                  color='primary'
+                  color="primary"
                 />
               </Box>
-              {cartItems?.cartItems?.length === 0 && <Typography variant='body2'>Giỏ hàng trống</Typography>}
+              {cartItems?.cartItems?.length === 0 && (
+                <Typography variant="body2">Giỏ hàng trống</Typography>
+              )}
             </List>
           </div>
 
-          
           <div className="checkoutSection">
             <section className="TitleFlexSection">
               <h3>Phương thức thanh toán</h3>
             </section>
-            <Flex direction="column" style={{ marginTop: "20px" }}>
-          <Radio.Group
-            onChange={(e) => setOrderData({ ...orderData, paymentMethod: e.target.value })}
-            required
-          >
-            <Space direction="vertical">
-              <Radio value="creditCard">Thanh toán bằng thẻ tín dụng</Radio>
-              <Radio value="cod">Thanh toán khi nhận hàng (đặt cọc 50%)</Radio>
-            </Space>
-          </Radio.Group>
-          {errors.paymentMethod && <p style={{ color: 'red' }}>{errors.paymentMethod}</p>}
-        </Flex>
+            <Flex direction="column" gap="middle">
+              <Radio.Group
+                onChange={(e) => {
+                  setPaymentMethod(e.target.value);
+                  setOrderData({ ...orderData, paymentMethod: e.target.value });
+                }}
+                required
+              >
+                <Space direction="vertical">
+                  {checkoutOption1.map((option) => (
+                    <Radio value={option.value}>{option.label}</Radio>
+                  ))}
+                </Space>
+              </Radio.Group>
+            </Flex>
           </div>
-
-            
         </Flex>
 
-        <Flex style={{ marginTop: "6%", justifyContent: "space-between", padding: "15px" }}>
+        <Flex
+          style={{
+            marginTop: "6%",
+            justifyContent: "space-between",
+            padding: "15px",
+          }}
+        >
           <div>
             <Link to="/cart">
-              <Button color="danger" variant="solid" style={{ padding: "20px", fontSize: "20px" }}>
+              <Button
+                color="danger"
+                variant="solid"
+                style={{ padding: "20px", fontSize: "20px" }}
+              >
                 Quay lại giỏ hàng
               </Button>
             </Link>
           </div>
           <div>
-            <Button variant='solid' style={{
-              backgroundColor: "green",
-              color: "white",
-              padding: "20px",
-              fontSize: "20px"
-            }}
-              onClick={handleCreateOrder}>
+            <Button
+              variant="solid"
+              style={{
+                backgroundColor: "green",
+                color: "white",
+                padding: "20px",
+                fontSize: "20px",
+              }}
+              onClick={handleCreateOrder}
+            >
               Đặt hàng
             </Button>
           </div>

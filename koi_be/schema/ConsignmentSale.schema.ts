@@ -82,6 +82,10 @@ const ConsignmentSale = list({
         itemView: { fieldMode: "hidden" },
       },
     }),
+    request: relationship({
+      label: "Yêu cầu",
+      ref: "Request.consignment",
+    }),
     status: select({
       label: "Trạng thái",
       defaultValue: "Không có sẵn",

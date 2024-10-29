@@ -11,9 +11,9 @@ const User = list({
       update: allowAll,
       delete: allowAll,
     },
-    // filter: {
-    //   query: filters.canReadUser,
-    // },
+    filter: {
+      query: filters.canReadUser,
+    },
   },
 
   ui: {

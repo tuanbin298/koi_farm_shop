@@ -36,7 +36,8 @@ const Request = list({
     }),
     consignment: relationship({
       label: "Đơn hàng ký gửi",
-      ref: "ConsignmentSale",
+      ref: "ConsignmentSale.request",
+      many: false,
     }),
     status: select({
       label: "Trạng thái",
@@ -86,6 +87,46 @@ const Request = list({
             changedBy: { connect: { id: context.session.itemId } },
           },
         });
+      }
+    },
+
+    async beforeOperation({ operation, item, context }) {
+      if (operation === "delete") {
+        // Delete consignment of request
+        const consignments = await context.query.ConsignmentSale.findMany({
+          where: {
+            request: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+
+        if (consignments.length > 0) {
+          const consignmentId = consignments[0].id;
+          await context.query.ConsignmentSale.deleteOne({
+            where: { id: consignmentId },
+          });
+        }
+
+        // Delete status of request
+        const statuses = await context.query.Status.findMany({
+          where: {
+            request: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(statuses);
+
+        if (statuses.length > 0) {
+          for (const status of statuses) {
+            await context.query.Status.deleteOne({
+              where: { id: status.id },
+            });
+          }
+        }
       }
     },
   },

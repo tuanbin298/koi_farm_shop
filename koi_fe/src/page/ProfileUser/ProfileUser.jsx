@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './ProfileUser.css';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./ProfileUser.css";
 import { useMutation, useQuery } from "@apollo/client";
 import { UPDATE_PROFILE } from "../api/Mutations/user";
 import toast, { Toaster } from "react-hot-toast";
@@ -18,15 +18,19 @@ const ProfileUser = () => {
   ); // Thêm lại địa chỉ
   const userId = localStorage.getItem("id");
   const [errors, setErrors] = useState({});
-  const {data:orders,loading,error} = useQuery(GET_ORDERS, {
-    variables:{
-      where:{
-        id:{
+  const {
+    data: orders,
+    loading,
+    error,
+  } = useQuery(GET_ORDERS, {
+    variables: {
+      where: {
+        id: {
           equals: userId,
-        }
-      }
-    }
-  })
+        },
+      },
+    },
+  });
   const [updateUserProfile, { loading: updateLoading, error: updateError }] =
     useMutation(UPDATE_PROFILE);
 
@@ -162,13 +166,15 @@ const ProfileUser = () => {
                   <th>Tình Trạng Đơn Hàng</th>
                   {/* <th>Thông Tin Giao Hàng</th> */}
                 </tr>
-                {orders.orders?.map(order => (
+                {orders.orders?.map((order) => (
                   <tr>
                     <td>{order.id}</td>
-                    <td>{new Intl.DateTimeFormat('en-US', {
-                      dateStyle: 'short',
-                      timeStyle: 'short'
-                    }).format(new Date(order.createAt))}</td>
+                    <td>
+                      {new Intl.DateTimeFormat("en-US", {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      }).format(new Date(order.createAt))}
+                    </td>
                     <td>{order.address}</td>
                     <td>{order.price}</td>
                     <td>{order.status}</td>

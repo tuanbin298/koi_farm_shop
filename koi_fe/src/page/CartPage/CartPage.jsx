@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, Checkbox, TextField, Box, Typography, Button, Pagination
-} from '@mui/material';
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Checkbox,
+  TextField,
+  Box,
+  Typography,
+  Button,
+  Pagination,
+} from "@mui/material";
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { Image } from 'antd';
+import { Image } from "antd";
 import { useQuery, useMutation } from "@apollo/client";
-import { GET_CART_ITEMS } from '../api/Queries/cartItem';
-import { DELETE_CART_ITEM } from '../api/Mutations/deletecartItem';
+import { GET_CART_ITEMS } from "../api/Queries/cartItem";
+import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import { formatMoney } from "../../utils/formatMoney";
-import './CartPage.css';
+import "./CartPage.css";
 
 const CartPage = () => {
   const userId = localStorage.getItem("id");
@@ -24,7 +35,12 @@ const CartPage = () => {
 
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 
-  const { loading, error, data, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+  const {
+    loading,
+    error,
+    data,
+    refetch: refetchItems,
+  } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: { id: { equals: userId } },
@@ -53,12 +69,12 @@ const CartPage = () => {
         variables: {
           where: {
             id: cartItemId,
-          }
-        }
+          },
+        },
       });
 
       refetchItems();
-      window.dispatchEvent(new Event("cartUpdated"));  // Custom event
+      window.dispatchEvent(new Event("cartUpdated")); // Custom event
     } catch (err) {
       console.error("Delete fail: ", err);
     }
@@ -86,9 +102,12 @@ const CartPage = () => {
   if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
   // Xử lý tiếp tục đến trang dịch vụ ký gửi
   const handleProceedToFishCareService = () => {
-    const selectedProducts = data?.cartItems?.filter(item => depositFields[item.id]) || [];
+    const selectedProducts =
+      data?.cartItems?.filter((item) => depositFields[item.id]) || [];
     return (
-      <Link to="/fishcareservice" state={{ selectedProducts }}> {/* Truyền sản phẩm đã chọn */}
+      <Link to="/fishcareservice" state={{ selectedProducts }}>
+        {" "}
+        {/* Truyền sản phẩm đã chọn */}
         <Button variant="contained" color="primary">
           Tiếp tục Ký gửi
         </Button>
@@ -120,56 +139,59 @@ const CartPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedItems.map((cartItem) => (
-                  cartItem && (
-                    <React.Fragment key={cartItem.id}>
-                      <TableRow>
-                        <TableCell>
-                          <Image
-                            width={200}
-                            src={cartItem.product.length > 0
-                              ? cartItem.product[0].image?.publicUrl || ''
-                              : cartItem.consignmentProduct[0]?.photo?.image?.publicUrl || ''}
-                          />
-                        </TableCell>
-                        <TableCell align="center">
-                          {cartItem.product.length > 0
-                            ? cartItem.product[0]?.name
-                            : cartItem.consignmentProduct[0]?.name}
-                        </TableCell>
-                        <TableCell align="center">
-                          <Checkbox
-                            checked={depositFields[cartItem.id] || false}
-                            onChange={() => handleDepositToggle(cartItem.id)}
-                          />
-                          <p>Ký gửi nuôi</p>
-                        </TableCell>
-                        <TableCell align="center">
-                          {formatMoney(cartItem.product.length > 0
-                            ? cartItem.product[0]?.price
-                            : cartItem.consignmentProduct[0]?.price)}
-                          <Button
-                            variant="contained"
-                            color="error"
-                            style={{ marginLeft: "15%" }}
-                            onClick={() => handleDelete(cartItem.id)}
-                            disabled={isLoading}
-                          >
-                            Xóa
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  )
-                ))}
-
+                {paginatedItems.map(
+                  (cartItem) =>
+                    cartItem && (
+                      <React.Fragment key={cartItem.id}>
+                        <TableRow>
+                          <TableCell>
+                            <Image
+                              width={200}
+                              src={
+                                cartItem.product.length > 0
+                                  ? cartItem.product[0].image?.publicUrl || ""
+                                  : cartItem.consignmentProduct[0]?.photo?.image
+                                      ?.publicUrl || ""
+                              }
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            {cartItem.product.length > 0
+                              ? cartItem.product[0]?.name
+                              : cartItem.consignmentProduct[0]?.name}
+                          </TableCell>
+                          <TableCell align="center">
+                            <Checkbox
+                              checked={depositFields[cartItem.id] || false}
+                              onChange={() => handleDepositToggle(cartItem.id)}
+                            />
+                            <p>Ký gửi nuôi</p>
+                          </TableCell>
+                          <TableCell align="center">
+                            {formatMoney(
+                              cartItem.product.length > 0
+                                ? cartItem.product[0]?.price
+                                : cartItem.consignmentProduct[0]?.price
+                            )}
+                            <Button
+                              variant="contained"
+                              color="error"
+                              style={{ marginLeft: "15%" }}
+                              onClick={() => handleDelete(cartItem.id)}
+                              disabled={isLoading}
+                            >
+                              Xóa
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      </React.Fragment>
+                    )
+                )}
               </TableBody>
             </Table>
           </TableContainer>
 
-          {deleteError && (
-            <p style={{ color: 'red' }}>Lỗi: {deleteError}</p>
-          )}
+          {deleteError && <p style={{ color: "red" }}>Lỗi: {deleteError}</p>}
 
           {/* Pagination Controls */}
           <Box display="flex" justifyContent="center" marginTop={2}>
@@ -181,7 +203,12 @@ const CartPage = () => {
             />
           </Box>
 
-          <Box display="flex" flexDirection="column" alignItems="flex-end" padding={2}>
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="flex-end"
+            padding={2}
+          >
             <Typography variant="h6" fontWeight="bold" gutterBottom>
               Tổng tiền
             </Typography>
@@ -194,9 +221,15 @@ const CartPage = () => {
               handleProceedToFishCareService() // Gọi hàm để lấy liên kết với sản phẩm đã chọn
             ) : (
               <Button variant="contained" color="success">
-                {data.cartItems.length <= 0 ?
-                  (<Link to="/cart">Tiến hành thanh toán <FaShoppingCart /></Link>) :
-                  (<Link to="/checkout">Tiến hành thanh toán <FaShoppingCart /></Link>)}
+                {data.cartItems.length <= 0 ? (
+                  <Link to="/cart">
+                    Tiến hành thanh toán <FaShoppingCart />
+                  </Link>
+                ) : (
+                  <Link to="/checkout">
+                    Tiến hành thanh toán <FaShoppingCart />
+                  </Link>
+                )}
               </Button>
             )}
           </Box>

@@ -1,6 +1,13 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { text, integer, float, relationship, timestamp, select } from "@keystone-6/core/fields";
+import {
+  text,
+  integer,
+  float,
+  relationship,
+  timestamp,
+  select,
+} from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
 
 const ConsigmentRaising = list({
