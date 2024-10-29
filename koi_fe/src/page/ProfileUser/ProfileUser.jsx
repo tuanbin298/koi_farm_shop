@@ -6,6 +6,7 @@ import { UPDATE_PROFILE } from "../api/Mutations/user";
 import toast, { Toaster } from "react-hot-toast";
 import ConsignmentTrackingPage from "../ConsignmentTrackingPage/ConsignmentTrackingPage";
 import { GET_ORDERS } from "../api/Queries/order";
+import KoiFishOrdersPage from "../KoiFishOrdersPage/KoiFishOrdersPage";
 const ProfileUser = () => {
   const [selectedTab, setSelectedTab] = useState("accountInfo");
   const [isEditing, setIsEditing] = useState(false);
@@ -155,40 +156,7 @@ const ProfileUser = () => {
       case "orders":
         return (
           <div>
-            <h4>Đơn Hàng Của Bạn</h4>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Đơn Hàng</th>
-                  <th>Ngày</th>
-                  <th>Địa Chỉ</th>
-                  <th>Giá Trị Đơn Hàng</th>
-                  <th>Tình Trạng Đơn Hàng</th>
-                  {/* <th>Thông Tin Giao Hàng</th> */}
-                </tr>
-                {orders.orders?.map((order) => (
-                  <tr>
-                    <td>{order.id}</td>
-                    <td>
-                      {new Intl.DateTimeFormat("en-US", {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      }).format(new Date(order.createAt))}
-                    </td>
-                    <td>{order.address}</td>
-                    <td>{order.price}</td>
-                    <td>{order.status}</td>
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                <tr>
-                  <td colSpan="6" className="text-center">
-                    Không có đơn hàng.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <KoiFishOrdersPage/>
           </div>
         );
       case "tracking":
