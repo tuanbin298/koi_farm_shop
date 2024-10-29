@@ -17,3 +17,23 @@ query ConsigmentRaising($where: ConsigmentRaisingWhereUniqueInput!) {
   }
 }
 `;
+
+export const GET_ALL_FISH_CARE = gql`
+query ConsigmentRaisings($where: ConsigmentRaisingWhereInput!) {
+  consigmentRaisings(where: $where) {
+    id
+    user {
+      id
+      name
+    }
+    product {
+      id
+      name
+    }
+    consignmentDate
+    returnDate
+    consignmentPrice
+    status
+  }
+}
+`

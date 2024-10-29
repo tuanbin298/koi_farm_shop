@@ -22,6 +22,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import { formatMoney } from "../../utils/formatMoney";
+import { GET_FISH_CARE, GET_ALL_FISH_CARE } from "../api/Queries/fishcare";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -41,10 +42,38 @@ const CartPage = () => {
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
   });
+  console.log(data);
+  const { data: consignedFish, refetch: refetchConsigns } = useQuery(
+    GET_ALL_FISH_CARE,
+    {
+      variables: {
+        where: {
+          user: {
+            id: {
+              equals: userId,
+            },
+          },
+        },
+      },
+    }
+  );
+  console.log(consignedFish);
+  const consignedIds = consignedFish?.consigmentRaisings
+    ? consignedFish.consigmentRaisings.map((item) => item.product.id)
+    : [];
 
+  const consignedFishIds = consignedFish?.consigmentRaisings
+    ? consignedFish.consigmentRaisings.map((item) => item.id)
+    : [];
+
+  console.log(consignedIds);
+  console.log(consignedFishIds);
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
+  useEffect(() => {
+    refetchConsigns();
+  }, [refetchConsigns]);
 
   // Separate cart items into "Farm Koi" and "Consignment Koi"
   const farmKoiItems =
@@ -63,6 +92,26 @@ const CartPage = () => {
         : cartItem.consignmentProduct[0].price;
     return sum + price;
   }, 0);
+
+  const consignedCartItemIds = [];
+  if (data?.cartItems && consignedFish?.consigmentRaisings) {
+    data.cartItems.forEach((cartItem) => {
+      const productId = cartItem.product[0].id;
+      const isConsigned = consignedFish.consigmentRaisings.some(
+        (consignedItem) => consignedItem.product.id === productId
+      );
+
+      if (isConsigned) {
+        consignedCartItemIds.push(cartItem.id);
+      }
+    });
+  }
+  // Check if a specific cart item is consigned based on its unique cart item ID
+  const handleCheckedConsign = (cartItem) => {
+    console.log(consignedCartItemIds);
+    // Verify if the cartItemId exists in consignedFishIds
+    return consignedCartItemIds.includes(cartItem.id);
+  };
 
   // Handle delete cart item
   const handleDelete = async (cartItemId) => {

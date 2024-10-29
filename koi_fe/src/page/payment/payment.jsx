@@ -25,6 +25,10 @@ const CheckoutForm = () => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
+  const [createOrder] = useMutation(CREATE_ORDER);
+  const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
+  const [updateOrder] = useMutation(UPDATE_ORDER);
+  const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -47,7 +51,74 @@ const CheckoutForm = () => {
       toast.error("Error creating order!");
       console.error(error.message);
     } else {
-      navigate("/");
+      try {
+        // Create the order
+        const { data: orderData } = await createOrder({
+          variables: {
+            data: {
+              user: { connect: { id: userId } },
+              price: totalAmount,
+              address: `${localStorage.getItem("address")}`,
+            },
+          },
+        });
+
+        const orderId = orderData.createOrder.id;
+
+        // Create order items
+        const orderItems = dataCart.cartItems.map((item) => ({
+          ...(item.product.length > 0
+            ? { product: { connect: { id: item.product[0].id } } }
+            : {
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
+          order: { connect: { id: orderId } },
+          quantity: 1,
+          price:
+            item.product.length > 0
+              ? item.product[0].price
+              : item.consignmentProduct[0].price,
+        }));
+
+        const { data: createOrderItemsData } = await createOrderItems({
+          variables: { data: orderItems },
+        });
+
+        // Link order items to the order
+        const orderItemIds = createOrderItemsData.createOrderItems.map(
+          (item) => item.id
+        );
+        await updateOrder({
+          variables: {
+            where: {
+              id: orderId,
+            },
+            data: {
+              items: {
+                connect: orderItemIds.map((id) => ({ id })),
+              },
+            },
+          },
+        });
+
+        // Delete items from the cart
+
+        for (let i = 0; i < cartItems.cartItems.length; i++) {
+          const cartItemId = cartItems.cartItems[i].id;
+          await deleteCartItem({
+            variables: {
+              where: { id: cartItemId },
+            },
+          });
+        }
+        toast.success("Đã tạo đơn hàng!");
+        navigate("/");
+      } catch (error) {
+        console.error("Error creating order:", error);
+        toast.error("Lỗi tạo đơn hàng!");
+      }
     }
   };
 

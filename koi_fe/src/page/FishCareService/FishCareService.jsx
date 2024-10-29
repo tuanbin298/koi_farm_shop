@@ -77,21 +77,15 @@ const FishCareService = () => {
             });
 
             try {
-                // Await the mutation execution
                 await createConsignmentRaisings({
                     variables: { data: consignmentData },
                 });
-
-                // Show the toast and wait for it to display
                 toast.success("Ký gửi nuôi thành công!", {
-                    icon: "🎉",
-                    duration: 2000, // Set the duration as needed
+                    duration: 2000,
                 });
-
-                // Delay navigation to allow the user to see the toast
                 setTimeout(() => {
                     navigate('/checkout', { state: { totalCarePrice } });
-                }, 2000); // Match this delay to the toast duration
+                }, 2000);
             } catch (error) {
                 console.error("Error creating consignment:", error);
                 toast.error("Ký gửi nuôi không thành công!");
