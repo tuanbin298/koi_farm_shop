@@ -7,7 +7,9 @@ import {
 import { formatMoney } from '../../utils/formatMoney';
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom"
-
+import { CREATE_CONSIGNMENT_RAISING } from '../api/Mutations/fishcare';
+import { useQuery, useMutation } from "@apollo/client";
+import toast, { Toaster } from "react-hot-toast";
 const FishCareService = () => {
     const location = useLocation();  // Lấy danh sách sản phẩm được chọn từ CartPage
     const navigate = useNavigate();  // Chuyển hướng sang trang thanh toán
@@ -15,14 +17,15 @@ const FishCareService = () => {
     const [totalCarePrice, setTotalCarePrice] = useState(0);
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
-
+    const userId = localStorage.getItem("id");
+    
     // Lấy danh sách sản phẩm từ location.state
     useEffect(() => {
         if (location.state && location.state.selectedProducts) {
             setSelectedProducts(location.state.selectedProducts);
         }
     }, [location.state]);
-
+    const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
     // Tính tổng số tiền ký gửi dựa trên ngày bắt đầu/kết thúc và giá ký gửi nuôi
     const calculateTotalPrice = () => {
         let total = 0;
@@ -39,21 +42,61 @@ const FishCareService = () => {
 
     // Cập nhật ngày bắt đầu/kết thúc cho giá ký gửi nuôi
     const handleDateChange = (productId, field, value) => {
+        // Convert selected date to full ISO 8601 date-time string
+        const isoDate = new Date(value).toISOString().split("T")[0]; // Outputs full format: YYYY-MM-DDTHH:mm:ss.sssZ
+        console.log(isoDate);
         setDates((prevDates) => ({
             ...prevDates,
-            [productId]: { ...prevDates[productId], [field]: value },
+            [productId]: { ...prevDates[productId], [field]: isoDate },
         }));
     };
-
     // Tính lại tổng tiền ký gửi mỗi khi ngày được thay đổi
     useEffect(() => {
         calculateTotalPrice();
     }, [dates]);
 
     // Điều hướng sang trang thanh toán
-    const handleProceedToCheckout = () => {
+    const handleProceedToCheckout = async () => {
         if (agreeToPolicy) {
-            navigate('/checkout', { state: { totalCarePrice } });
+            const consignmentData = selectedProducts.map((product) => {
+                console.log(product.product[0].id);    
+                const { startDate, endDate } = dates[product.id] || {};
+                const pricePerDay = 50000;
+                const days = startDate && endDate
+                    ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
+                    : 0;
+
+                return {
+                    user: { connect: { id: userId } },
+                    product: { connect: { id: product.product[0].id } },
+                    returnDate: new Date(endDate).toISOString(),
+                    consignmentPrice: days * pricePerDay,
+                    status: "Đang xử lý",
+                    description: "Consignment for fish care"
+                };
+            });
+
+            try {
+                // Await the mutation execution
+                await createConsignmentRaisings({
+                    variables: { data: consignmentData },
+                });
+
+                // Show the toast and wait for it to display
+                toast.success("Ký gửi nuôi thành công!", {
+                    icon: "🎉",
+                    duration: 2000, // Set the duration as needed
+                });
+
+                // Delay navigation to allow the user to see the toast
+                setTimeout(() => {
+                    navigate('/checkout', { state: { totalCarePrice } });
+                }, 2000); // Match this delay to the toast duration
+            } catch (error) {
+                console.error("Error creating consignment:", error);
+                toast.error("Ký gửi nuôi không thành công!");
+            }
+            
         } else {
             alert('Bạn cần đồng ý với chính sách ký gửi trước khi tiếp tục.');
         }

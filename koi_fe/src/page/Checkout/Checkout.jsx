@@ -54,30 +54,30 @@ export default function Checkout() {
   // Function to validate each field
   const validateFields = () => {
     const newErrors = {};
-    if (!orderData.name || orderData.name.length > 50) {
-      newErrors.name = "Tên là tối đa 50 ký tự";
-    }
-    if (!orderData.email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)) {
-      newErrors.email = "Email không hợp lệ";
-    }
-    if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
-      newErrors.phone = "Số điện thoại phải là 6 chữ số";
-    }
-    if (!orderData.address || orderData.address.length > 100) {
-      newErrors.address = "Địa chỉ là tối đa 100 ký tự";
-    }
-    if (!orderData.city) {
-      newErrors.city = "Vui lòng nhập tỉnh/thành";
-    }
-    if (!orderData.district) {
-      newErrors.district = "Vui lòng nhập quận/huyện";
-    }
-    if (!orderData.ward) {
-      newErrors.ward = "Vui lòng nhập phường/xã";
-    }
-    if (!orderData.paymentMethod) {
-      newErrors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
-    }
+    // if (!orderData.name) {
+    //   newErrors.name = "Tên là tối đa 50 ký tự";
+    // }
+    // // if (!orderData.email || !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)) {
+    //   newErrors.email = "Email không hợp lệ";
+    // // }
+    // if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
+    //   newErrors.phone = "Số điện thoại phải là 6 chữ số";
+    // }
+    // if (!orderData.address) {
+    //   newErrors.address = "Địa chỉ là tối đa 100 ký tự";
+    // }
+    // if (!orderData.city) {
+    //   newErrors.city = "Vui lòng nhập tỉnh/thành";
+    // }
+    // if (!orderData.district) {
+    //   newErrors.district = "Vui lòng nhập quận/huyện";
+    // }
+    // if (!orderData.ward) {
+    //   newErrors.ward = "Vui lòng nhập phường/xã";
+    // }
+    // if (!orderData.paymentMethod) {
+    //   newErrors.paymentMethod = "Vui lòng chọn phương thức thanh toán";
+    // }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };

@@ -26,7 +26,7 @@ export default function CardProduct() {
   const handleAddToCart = async (productId) => {
     const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
     const sessionToken = localStorage.getItem("sessionToken");
-
+    console.log(productId);
     if (!userId) {
       alert("User ID not found. Please log in.");
       return;

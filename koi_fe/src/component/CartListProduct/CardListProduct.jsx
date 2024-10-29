@@ -14,7 +14,7 @@ export default function CardListProduct({ products }) {
   const handleAddToCart = async (productId) => {
     const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
     const sessionToken = localStorage.getItem("sessionToken");
-
+    console.log(productId);
     if (!userId) {
       toast.error("Thêm vào giỏ hàng không thành công");
       return;
