@@ -1,0 +1,10 @@
+/* In CartPage.css or equivalent */
+.no-borders {
+  border: none !important;
+}
+
+.no-borders th,
+.no-borders td,
+.no-borders tr {
+  border: none !important;
+}

@@ -8,11 +8,12 @@ import {
   TableRow,
   Paper,
   Checkbox,
-  TextField,
   Box,
   Typography,
   Button,
   Pagination,
+  Tabs,
+  Tab,
 } from "@mui/material";
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -26,30 +27,25 @@ import "./CartPage.css";
 
 const CartPage = () => {
   const userId = localStorage.getItem("id");
-  let totalPrice = 0;
-
   const [depositFields, setDepositFields] = useState({});
+  const [page, setPage] = useState(1);
+  const [tab, setTab] = useState(0); // Current tab
+  const [isDeleting, setIsDeleting] = useState(false);
+  const itemsPerPage = 3;
   const [isLoading] = useState(false);
   const [deleteError] = useState(null);
-  const [page, setPage] = useState(1); // Current page
-  const itemsPerPage = 3; // Items per page
   const [consignedCartItemIds, setConsignedCartItemIds] = useState(
     JSON.parse(localStorage.getItem("consignedCartItemIds")) || []
   );
 
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  console.log(consignedCartItemIds);
   const {
     loading,
     error,
     data,
     refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
-    variables: {
-      where: {
-        user: { id: { equals: userId } },
-      },
-    },
+    variables: { where: { user: { id: { equals: userId } } } },
   });
   const{data: consignedFish, refetch: refetchConsigns} = useQuery(GET_ALL_FISH_CARE, {
     variables:{
@@ -61,12 +57,11 @@ const CartPage = () => {
       }
       }
     }
-  })
-  // console.log(consignedFish);
+  );
+  console.log(consignedFish);
   const consignedIds = consignedFish?.consigmentRaisings
-  ? consignedFish.consigmentRaisings.map(item => item.product.id)
-  : [];
-
+    ? consignedFish.consigmentRaisings.map((item) => item.product.id)
+    : [];
 
   const consignedFishIds = consignedFish?.consigmentRaisings
   ? consignedFish.consigmentRaisings.map(item => item.id)
@@ -79,18 +74,32 @@ const CartPage = () => {
   }, [refetchItems]);
   useEffect(() => {
     refetchConsigns();
-  }, [refetchConsigns])
+  }, [refetchConsigns]);
+
+  // Separate cart items into "Farm Koi" and "Consignment Koi"
+  // Separate cart items into "Farm Koi" and "Consignment Koi"
+  const farmKoiItems =
+    data?.cartItems?.filter((item) => item.product?.length > 0) || [];
+  const consignmentKoiItems =
+    data?.cartItems?.filter((item) => item.consignmentProduct?.length > 0) ||
+    [];
+
+  // Map through cart items and consignment raisings to find consigned products
+
+  // Determine current items based on the selected tab
+  const currentItems = tab === 0 ? farmKoiItems : consignmentKoiItems;
+
+  // Calculate total price for the current tab's items
+  const totalPrice = currentItems.reduce((sum, cartItem) => {
+    const price =
+      cartItem.product.length > 0
+        ? cartItem.product[0].price
+        : cartItem.consignmentProduct[0].price;
+    return sum + price;
+  }, 0);
   useEffect(() => {
     localStorage.setItem("consignedCartItemIds", JSON.stringify(consignedCartItemIds));
   }, [consignedCartItemIds]);
-  // Calculate the total price
-  data?.cartItems?.forEach((cartItem) => {
-    if (cartItem.product.length > 0) {
-      totalPrice += cartItem.product[0].price;
-    } else if (cartItem.consignmentProduct) {
-      totalPrice += cartItem.consignmentProduct[0].price;
-    }
-  });
 
 //   const consignedCartItemIds = [];
 //   if (data?.cartItems && consignedFish?.consigmentRaisings) {
@@ -98,21 +107,22 @@ const CartPage = () => {
 //     const productId = cartItem.product[0].id;
 //     const isConsigned = consignedFish.consigmentRaisings.some(consignedItem => consignedItem.product.id === productId);
 
-//     if (isConsigned) {
-//       consignedCartItemIds.push(cartItem.id);
-//     }
-//   });
-// }
+      if (isConsigned && productId) {
+        consignedCartItemIds.push(cartItem.id);
+      }
+    };
+  
   // Check if a specific cart item is consigned based on its unique cart item ID
-const handleCheckedConsign = (cartItem) => {
-  // console.log(consignedCartItemIds)
-  // Verify if the cartItemId exists in consignedFishIds
-  return consignedCartItemIds.includes(cartItem.id);
-};
+  const handleCheckedConsign = (cartItem) => {
+    console.log(consignedCartItemIds);
+    // Verify if the cartItemId exists in consignedFishIds
+    return consignedCartItemIds.includes(cartItem.id);
+  };
 
   // Handle delete cart item
   const handleDelete = async (cartItemId) => {
     try {
+      setIsDeleting(true);
       await deleteCartItem({
         variables: {
           where: {
@@ -127,13 +137,15 @@ const handleCheckedConsign = (cartItem) => {
     });
 
       refetchItems();
-      window.dispatchEvent(new Event("cartUpdated")); // Custom event
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
-      console.error("Delete fail: ", err);
+      console.error("Delete failed: ", err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
-  // Handle deposit toggle
+  // Toggle deposit selection
   const handleDepositToggle = (productId) => {
     setDepositFields((prev) => ({
       ...prev,
@@ -152,27 +164,33 @@ const handleCheckedConsign = (cartItem) => {
     setPage(value);
   };
 
-  // Pagination logic - slice the data to show items per page
+  // Pagination logic
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = data?.cartItems?.slice(startIndex, endIndex) || [];
+  const paginatedItems = currentItems.slice(startIndex, endIndex) || [];
 
   if (loading) return <p>Đang tải giỏ hàng...</p>;
   if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
-  // Xử lý tiếp tục đến trang dịch vụ ký gửi
+
+  // Handle tab change
+  const handleTabChange = (event, newTab) => {
+    setTab(newTab);
+    setPage(1); // Reset to first page on tab change
+  };
+
+  // Handle proceed to fish care service
   const handleProceedToFishCareService = () => {
     const selectedProducts =
       data?.cartItems?.filter((item) => depositFields[item.id]) || [];
     return (
       <Link to="/fishcareservice" state={{ selectedProducts }}>
-        {" "}
-        {/* Truyền sản phẩm đã chọn */}
         <Button variant="contained" color="primary">
           Tiếp tục Ký gửi
         </Button>
       </Link>
     );
   };
+
   return (
     <div className="cart-container">
       <section className="back-button-section">
@@ -187,82 +205,86 @@ const handleCheckedConsign = (cartItem) => {
       <main className="cart-content">
         <section>
           <h2>Giỏ hàng</h2>
+
+          {/* Tabs for Farm Koi and Consignment Koi */}
+          <Tabs value={tab} onChange={handleTabChange} centered>
+            <Tab label="Cá Koi Trang trại" />
+            <Tab label="Cá Koi Ký gửi" />
+          </Tabs>
+
           <TableContainer component={Paper}>
             <Table aria-label="cart table">
               <TableHead>
                 <TableRow>
                   <TableCell>Sản phẩm</TableCell>
                   <TableCell></TableCell>
-                  <TableCell align="center">Ký gửi nuôi</TableCell>
+                  {tab === 0 && (
+                    <TableCell align="center">Ký gửi nuôi</TableCell>
+                  )}
                   <TableCell align="center">Thành tiền (VND)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedItems.map(
-                  (cartItem) =>
-                    cartItem && (
-                      <React.Fragment key={cartItem.id}>
-                        <TableRow>
-                          <TableCell>
-                            <Image
-                              width={200}
-                              src={
-                                cartItem.product.length > 0
-                                  ? cartItem.product[0].image?.publicUrl || ""
-                                  : cartItem.consignmentProduct[0]?.photo?.image
-                                      ?.publicUrl || ""
-                              }
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            {cartItem.product.length > 0
-                              ? cartItem.product[0]?.name
-                              : cartItem.consignmentProduct[0]?.name}
-                          </TableCell>
-                          <TableCell align="center">
-                            <Checkbox
-                              checked={handleCheckedConsign(cartItem) || depositFields[cartItem.id] || false}
-                              onChange={() => handleDepositToggle(cartItem.id)}
-                               disabled={handleCheckedConsign(cartItem)}
-                            />
-                            <p>Ký gửi nuôi</p>
-                          </TableCell>
-                          <TableCell align="center">
-                            {formatMoney(
-                              cartItem.product.length > 0
-                                ? cartItem.product[0]?.price
-                                : cartItem.consignmentProduct[0]?.price
-                            )}
-                            <Button
-                              variant="contained"
-                              color="error"
-                              style={{ marginLeft: "15%" }}
-                              onClick={() => handleDelete(cartItem.id)}
-                              disabled={isLoading}
-                            >
-                              Xóa
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      </React.Fragment>
-                    )
-                )}
+                {paginatedItems.map((cartItem) => (
+                  <TableRow key={cartItem.id}>
+                    <TableCell>
+                      <Image
+                        width={200}
+                        src={
+                          cartItem.product.length > 0
+                            ? cartItem.product[0].image?.publicUrl || ""
+                            : cartItem.consignmentProduct[0]?.photo?.image
+                                ?.publicUrl || ""
+                        }
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      {cartItem.product.length > 0
+                        ? cartItem.product[0]?.name
+                        : cartItem.consignmentProduct[0]?.name}
+                    </TableCell>
+                    {tab === 0 && (
+                      <TableCell align="center">
+                        <Checkbox
+                          checked={depositFields[cartItem.id] || false}
+                          onChange={() => handleDepositToggle(cartItem.id)}
+                        />
+                        <p>Ký gửi nuôi</p>
+                      </TableCell>
+                    )}
+                    <TableCell align="center">
+                      {formatMoney(
+                        cartItem.product.length > 0
+                          ? cartItem.product[0]?.price
+                          : cartItem.consignmentProduct[0]?.price
+                      )}
+                      <Button
+                        variant="contained"
+                        color="error"
+                        style={{ marginLeft: "15%" }}
+                        onClick={() => handleDelete(cartItem.id)}
+                        disabled={loading || isDeleting}
+                      >
+                        Xóa
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </TableContainer>
 
-          {deleteError && <p style={{ color: "red" }}>Lỗi: {deleteError}</p>}
-
           {/* Pagination Controls */}
           <Box display="flex" justifyContent="center" marginTop={2}>
             <Pagination
-              count={Math.ceil((data?.cartItems?.length || 0) / itemsPerPage)}
+              count={Math.ceil(currentItems.length / itemsPerPage)}
               page={page}
               onChange={handlePageChange}
               color="primary"
             />
           </Box>
 
+          {/* Total Price Display */}
           <Box
             display="flex"
             flexDirection="column"
@@ -276,20 +298,17 @@ const handleCheckedConsign = (cartItem) => {
               {formatMoney(totalPrice)}
             </Typography>
           </Box>
+
+          {/* Proceed to Checkout or Fish Care Service */}
           <Box display="flex" justifyContent="flex-end" marginTop={2}>
-            {Object.values(depositFields).some((isSelected) => isSelected) ? (
-              handleProceedToFishCareService() // Gọi hàm để lấy liên kết với sản phẩm đã chọn
+            {tab === 0 &&
+            Object.values(depositFields).some((isSelected) => isSelected) ? (
+              handleProceedToFishCareService()
             ) : (
               <Button variant="contained" color="success">
-                {data.cartItems.length <= 0 ? (
-                  <Link to="/cart">
-                    Tiến hành thanh toán <FaShoppingCart />
-                  </Link>
-                ) : (
-                  <Link to="/checkout">
-                    Tiến hành thanh toán <FaShoppingCart />
-                  </Link>
-                )}
+                <Link to="/checkout">
+                  Tiến hành thanh toán <FaShoppingCart />
+                </Link>
               </Button>
             )}
           </Box>
