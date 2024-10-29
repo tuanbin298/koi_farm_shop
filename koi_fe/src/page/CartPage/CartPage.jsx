@@ -33,9 +33,12 @@ const CartPage = () => {
   const [deleteError] = useState(null);
   const [page, setPage] = useState(1); // Current page
   const itemsPerPage = 3; // Items per page
+  const [consignedCartItemIds, setConsignedCartItemIds] = useState(
+    JSON.parse(localStorage.getItem("consignedCartItemIds")) || []
+  );
 
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-
+  console.log(consignedCartItemIds);
   const {
     loading,
     error,
@@ -48,7 +51,6 @@ const CartPage = () => {
       },
     },
   });
-  console.log(data);
   const{data: consignedFish, refetch: refetchConsigns} = useQuery(GET_ALL_FISH_CARE, {
     variables:{
       where:{
@@ -60,7 +62,7 @@ const CartPage = () => {
       }
     }
   })
-  console.log(consignedFish);
+  // console.log(consignedFish);
   const consignedIds = consignedFish?.consigmentRaisings
   ? consignedFish.consigmentRaisings.map(item => item.product.id)
   : [];
@@ -70,15 +72,17 @@ const CartPage = () => {
   ? consignedFish.consigmentRaisings.map(item => item.id)
   : [];
   
-  console.log(consignedIds);
-  console.log(consignedFishIds);
+  // console.log(consignedIds);
+  // console.log(consignedFishIds);
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
   useEffect(() => {
     refetchConsigns();
   }, [refetchConsigns])
-
+  useEffect(() => {
+    localStorage.setItem("consignedCartItemIds", JSON.stringify(consignedCartItemIds));
+  }, [consignedCartItemIds]);
   // Calculate the total price
   data?.cartItems?.forEach((cartItem) => {
     if (cartItem.product.length > 0) {
@@ -88,20 +92,20 @@ const CartPage = () => {
     }
   });
 
-  const consignedCartItemIds = [];
-  if (data?.cartItems && consignedFish?.consigmentRaisings) {
-    data.cartItems.forEach(cartItem => {
-    const productId = cartItem.product[0].id;
-    const isConsigned = consignedFish.consigmentRaisings.some(consignedItem => consignedItem.product.id === productId);
+//   const consignedCartItemIds = [];
+//   if (data?.cartItems && consignedFish?.consigmentRaisings) {
+//     data.cartItems.forEach(cartItem => {
+//     const productId = cartItem.product[0].id;
+//     const isConsigned = consignedFish.consigmentRaisings.some(consignedItem => consignedItem.product.id === productId);
 
-    if (isConsigned) {
-      consignedCartItemIds.push(cartItem.id);
-    }
-  });
-}
+//     if (isConsigned) {
+//       consignedCartItemIds.push(cartItem.id);
+//     }
+//   });
+// }
   // Check if a specific cart item is consigned based on its unique cart item ID
 const handleCheckedConsign = (cartItem) => {
-  console.log(consignedCartItemIds)
+  // console.log(consignedCartItemIds)
   // Verify if the cartItemId exists in consignedFishIds
   return consignedCartItemIds.includes(cartItem.id);
 };
@@ -116,6 +120,11 @@ const handleCheckedConsign = (cartItem) => {
           },
         },
       });
+      setConsignedCartItemIds((prev) => {
+      const updatedIds = prev.filter((id) => id !== cartItemId);
+      localStorage.setItem("consignedCartItemIds", JSON.stringify(updatedIds)); // Update localStorage
+      return updatedIds; // Update state
+    });
 
       refetchItems();
       window.dispatchEvent(new Event("cartUpdated")); // Custom event
@@ -130,6 +139,12 @@ const handleCheckedConsign = (cartItem) => {
       ...prev,
       [productId]: !prev[productId],
     }));
+    setConsignedCartItemIds((prev) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId); // Deselect if exists
+      }
+      return [...prev, productId]; // Add if not exists
+    });
   };
 
   // Handle pagination page change

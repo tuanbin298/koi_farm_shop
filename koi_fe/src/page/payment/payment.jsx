@@ -28,8 +28,15 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-
+  const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: { id: { equals: userId } },
+      },
+    },
+  });
   const handleSubmit = async (event) => {
+    
     event.preventDefault();
 
     if (!stripe || !elements) {
@@ -51,20 +58,28 @@ const CheckoutForm = () => {
 
     console.log("[PaymentMethod]", result);
   };
-
+  let totalPrice = 0;
+  
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
       toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
       
+      cartItems.cartItems?.forEach((cartItem) => {
+        if (cartItem.product.length > 0) {
+          totalPrice += cartItem.product[0].price;
+        } else if (cartItem.consignmentProduct) {
+          totalPrice += cartItem.consignmentProduct[0].price;
+        }
+      });
       try {
         // Create the order
         const { data: orderData } = await createOrder({
           variables: {
             data: {
               user: { connect: { id: userId } },
-              price: totalAmount,
+              price: totalPrice,
               address: `${localStorage.getItem("address")}`,
             },
           },
@@ -73,7 +88,7 @@ const CheckoutForm = () => {
         const orderId = orderData.createOrder.id;
 
         // Create order items
-        const orderItems = dataCart.cartItems.map((item) => ({
+        const orderItems = cartItems.cartItems.map((item) => ({
           ...(item.product.length > 0
             ? { product: { connect: { id: item.product[0].id } } }
             : { consignmentSale: { connect: { id: item.consignmentProduct[0].id } } }),
@@ -88,20 +103,26 @@ const CheckoutForm = () => {
 
         // Link order items to the order
         const orderItemIds = createOrderItemsData.createOrderItems.map((item) => item.id);
-        await updateOrder({
-          variables: {
-            where: {
-              id: orderId
-            },
-            data: {
-              items:
-              {
-                connect:
-                  orderItemIds.map((id) => ({ id }))
+        for (let i = 0; i < orderItemIds.length; i++){
+          // const orderItemId = orderItems[i].id;
+          console.log(orderItemIds[i]);
+          await updateOrder({
+            variables: {
+              where: {
+                id: orderId
+              },
+              data: {
+                items: {
+                  connect: [
+                    {
+                      id: orderItemIds[i]
+                    }
+                  ]
+                }
               }
             }
-          },
-        });
+          })
+        }
 
         // Delete items from the cart
 
