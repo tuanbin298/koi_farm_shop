@@ -32,19 +32,23 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+  const {
+    loading,
+    error,
+    data: cartItems,
+    refetch: refetchItems,
+  } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
-        user: { 
-          id: { 
-            equals: userId 
-          } 
+        user: {
+          id: {
+            equals: userId,
+          },
         },
       },
     },
   });
   const handleSubmit = async (event) => {
-    
     event.preventDefault();
     if (!stripe || !elements) return;
 
@@ -62,13 +66,12 @@ const CheckoutForm = () => {
     console.log("[PaymentMethod]", result);
   };
   let totalPrice = 0;
-  
+
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
-      toast.error("Lỗi tạo đơn hàng!");
+      //   toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
-      
       cartItems.cartItems?.forEach((cartItem) => {
         if (cartItem.product.length > 0) {
           totalPrice += cartItem.product[0].price;
@@ -112,26 +115,28 @@ const CheckoutForm = () => {
         });
 
         // Link order items to the order
-        const orderItemIds = createOrderItemsData.createOrderItems.map((item) => item.id);
-        for (let i = 0; i < orderItemIds.length; i++){
+        const orderItemIds = createOrderItemsData.createOrderItems.map(
+          (item) => item.id
+        );
+        for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
           console.log(orderItemIds[i]);
           await updateOrder({
             variables: {
               where: {
-                id: orderId
+                id: orderId,
               },
               data: {
                 items: {
                   connect: [
                     {
-                      id: orderItemIds[i]
-                    }
-                  ]
-                }
-              }
-            }
-          })
+                      id: orderItemIds[i],
+                    },
+                  ],
+                },
+              },
+            },
+          });
         }
 
         // Delete items from the cart

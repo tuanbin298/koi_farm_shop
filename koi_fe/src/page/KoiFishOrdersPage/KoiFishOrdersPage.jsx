@@ -1,56 +1,94 @@
-import React, { useState } from 'react';
-import { Table, Button, Form } from 'react-bootstrap';
-import { FaStar } from 'react-icons/fa';
-import './KoiFishOrdersPage.css';
+import React, { useState } from "react";
+import { Table, Button, Form } from "react-bootstrap";
+import { FaStar } from "react-icons/fa";
+import "./KoiFishOrdersPage.css";
+import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
+import toast from "react-hot-toast";
+import { useMutation } from "@apollo/client";
 
 const KoiFishOrdersPage = () => {
-  const [feedback, setFeedback] = useState('');
-  const [rating, setRating] = useState(0);
-
   const orders = [
     {
       id: 1,
-      name: 'Cá Koi Nhật',
-      purchaseDate: '29/10/2024',
-      depositDate: '01/11/2024',
+      name: "Cá Koi Nhật",
+      purchaseDate: "29/10/2024",
+      depositDate: "01/11/2024",
       price: 2000000,
       depositPrice: 500000,
-      status: 'Đang nuôi ký gửi',
+      status: "Đang nuôi ký gửi",
     },
     {
       id: 2,
-      name: 'Cá Betta Fancy',
-      purchaseDate: '28/10/2024',
-      depositDate: '30/10/2024',
+      name: "Cá Betta Fancy",
+      purchaseDate: "28/10/2024",
+      depositDate: "30/10/2024",
       price: 500000,
       depositPrice: 100000,
-      status: 'Đã hoàn thành',
+      status: "Đã hoàn thành",
     },
     {
       id: 3,
-      name: 'Cá Rồng Đỏ',
-      purchaseDate: '27/10/2024',
-      depositDate: '05/11/2024',
+      name: "Cá Rồng Đỏ",
+      purchaseDate: "27/10/2024",
+      depositDate: "05/11/2024",
       price: 10000000,
       depositPrice: 2000000,
-      status: 'Đang nuôi ký gửi',
+      status: "Đang nuôi ký gửi",
     },
   ];
 
+  const userId = localStorage.getItem("id");
+
+  const [feedback, setFeedback] = useState({
+    comment: "",
+  });
+  const [rating, setRating] = useState(0);
+
   const handleFeedbackChange = (e) => {
-    setFeedback(e.target.value);
+    setFeedback({ ...feedback, comment: e.target.value });
   };
 
   const handleRatingChange = (star) => {
     setRating(star);
   };
 
-  const handleSubmitFeedback = () => {
-    console.log('Rating:', rating);
-    console.log('Customer feedback:', feedback);
-    setFeedback('');
-    setRating(0);
+  const handleSubmitFeedback = async (e) => {
+    e.preventDefault();
+
+    if (feedback.comment.trim() === "") {
+      toast.error("Form đánh giá không được rỗng");
+      return;
+    }
+
+    if (rating == 0) {
+      toast.error("Hãy chọn số ngôi sao để đánh giá");
+      return;
+    }
+
+    try {
+      await createFeedback({
+        variables: {
+          data: {
+            comment: feedback.comment,
+            user: {
+              connect: { id: userId },
+            },
+            rating: rating,
+          },
+        },
+      });
+
+      toast.success("Gửi đánh giá thành công");
+      setFeedback({ comment: "" });
+      setRating(0);
+    } catch (err) {
+      toast.error(`Lỗi khi đánh giá: ${err.message}`);
+    }
+
+    console.log("Customer feedback:", feedback);
   };
+
+  const [createFeedback] = useMutation(CREATE_FEEDBACK);
 
   return (
     <div className="container mt-4">
@@ -60,7 +98,8 @@ const KoiFishOrdersPage = () => {
           <tr>
             <th>Tên cá Koi</th>
             <th>
-              Ngày mua<br />
+              Ngày mua
+              <br />
               Ngày bắt đầu nuôi
             </th>
             <th>Ngày kết thúc</th>
@@ -92,9 +131,9 @@ const KoiFishOrdersPage = () => {
               <FaStar
                 key={star}
                 className="star"
-                color={star <= rating ? '#FFD700' : '#E0E0E0'}
+                color={star <= rating ? "#FFD700" : "#E0E0E0"}
                 onClick={() => handleRatingChange(star)}
-                style={{ cursor: 'pointer', fontSize: '24px', margin: '2px' }}
+                style={{ cursor: "pointer", fontSize: "24px", margin: "2px" }}
               />
             ))}
           </div>
@@ -105,9 +144,10 @@ const KoiFishOrdersPage = () => {
             as="textarea"
             rows={3}
             placeholder="Nhập phản hồi của bạn"
-            value={feedback}
+            name="comment"
+            value={feedback.comment}
             onChange={handleFeedbackChange}
-            style={{ resize: 'none' }}
+            style={{ resize: "none" }}
           />
           <Button
             variant="primary"

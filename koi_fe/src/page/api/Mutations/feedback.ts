@@ -1,0 +1,13 @@
+import { gql } from "@apollo/client";
+
+export const CREATE_FEEDBACK = gql`
+  mutation Mutation($data: FeedbackCreateInput!) {
+    createFeedback(data: $data) {
+      user {
+        id
+      }
+      comment
+      rating
+    }
+  }
+`;
