@@ -38,12 +38,6 @@ const OrderItem = list({
       ref: "ConsignmentSale",
       many: false,
     }),
-    quantity: integer({
-      label: "Số lượng",
-      validation: {
-        isRequired: true,
-      },
-    }),
     price: integer({
       label: "Gía",
       validation: {

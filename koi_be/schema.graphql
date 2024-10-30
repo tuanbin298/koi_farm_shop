@@ -523,9 +523,9 @@ input ArticleCreateInput {
 type Feedback {
   id: ID!
   user: User
-  product: Product
   comment: String
   createdAt: DateTime
+  rating: Int
 }
 
 scalar DateTime @specifiedBy(url: "https://datatracker.ietf.org/doc/html/rfc3339#section-5.6")
@@ -540,9 +540,9 @@ input FeedbackWhereInput {
   NOT: [FeedbackWhereInput!]
   id: IDFilter
   user: UserWhereInput
-  product: ProductWhereInput
   comment: StringFilter
   createdAt: DateTimeNullableFilter
+  rating: IntNullableFilter
 }
 
 input DateTimeNullableFilter {
@@ -556,28 +556,34 @@ input DateTimeNullableFilter {
   not: DateTimeNullableFilter
 }
 
+input IntNullableFilter {
+  equals: Int
+  in: [Int!]
+  notIn: [Int!]
+  lt: Int
+  lte: Int
+  gt: Int
+  gte: Int
+  not: IntNullableFilter
+}
+
 input FeedbackOrderByInput {
   id: OrderDirection
   comment: OrderDirection
   createdAt: OrderDirection
+  rating: OrderDirection
 }
 
 input FeedbackUpdateInput {
   user: UserRelateToOneForUpdateInput
-  product: ProductRelateToOneForUpdateInput
   comment: String
   createdAt: DateTime
+  rating: Int
 }
 
 input UserRelateToOneForUpdateInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
-  disconnect: Boolean
-}
-
-input ProductRelateToOneForUpdateInput {
-  create: ProductCreateInput
-  connect: ProductWhereUniqueInput
   disconnect: Boolean
 }
 
@@ -588,19 +594,14 @@ input FeedbackUpdateArgs {
 
 input FeedbackCreateInput {
   user: UserRelateToOneForCreateInput
-  product: ProductRelateToOneForCreateInput
   comment: String
   createdAt: DateTime
+  rating: Int
 }
 
 input UserRelateToOneForCreateInput {
   create: UserCreateInput
   connect: UserWhereUniqueInput
-}
-
-input ProductRelateToOneForCreateInput {
-  create: ProductCreateInput
-  connect: ProductWhereUniqueInput
 }
 
 type Order {
@@ -612,6 +613,7 @@ type Order {
   createAt: DateTime
   address: String
   status: String
+  statusHistory: Status
 }
 
 input OrderWhereUniqueInput {
@@ -629,23 +631,13 @@ input OrderWhereInput {
   createAt: DateTimeNullableFilter
   address: StringFilter
   status: StringNullableFilter
+  statusHistory: StatusWhereInput
 }
 
 input OrderItemManyRelationFilter {
   every: OrderItemWhereInput
   some: OrderItemWhereInput
   none: OrderItemWhereInput
-}
-
-input IntNullableFilter {
-  equals: Int
-  in: [Int!]
-  notIn: [Int!]
-  lt: Int
-  lte: Int
-  gt: Int
-  gte: Int
-  not: IntNullableFilter
 }
 
 input OrderOrderByInput {
@@ -663,6 +655,7 @@ input OrderUpdateInput {
   createAt: DateTime
   address: String
   status: String
+  statusHistory: StatusRelateToOneForUpdateInput
 }
 
 input OrderItemRelateToManyForUpdateInput {
@@ -670,6 +663,12 @@ input OrderItemRelateToManyForUpdateInput {
   set: [OrderItemWhereUniqueInput!]
   create: [OrderItemCreateInput!]
   connect: [OrderItemWhereUniqueInput!]
+}
+
+input StatusRelateToOneForUpdateInput {
+  create: StatusCreateInput
+  connect: StatusWhereUniqueInput
+  disconnect: Boolean
 }
 
 input OrderUpdateArgs {
@@ -684,11 +683,17 @@ input OrderCreateInput {
   createAt: DateTime
   address: String
   status: String
+  statusHistory: StatusRelateToOneForCreateInput
 }
 
 input OrderItemRelateToManyForCreateInput {
   create: [OrderItemCreateInput!]
   connect: [OrderItemWhereUniqueInput!]
+}
+
+input StatusRelateToOneForCreateInput {
+  create: StatusCreateInput
+  connect: StatusWhereUniqueInput
 }
 
 type OrderItem {
@@ -740,6 +745,12 @@ input OrderRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
+input ProductRelateToOneForUpdateInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
+  disconnect: Boolean
+}
+
 input ConsignmentSaleRelateToOneForUpdateInput {
   create: ConsignmentSaleCreateInput
   connect: ConsignmentSaleWhereUniqueInput
@@ -763,6 +774,11 @@ input OrderItemCreateInput {
 input OrderRelateToOneForCreateInput {
   create: OrderCreateInput
   connect: OrderWhereUniqueInput
+}
+
+input ProductRelateToOneForCreateInput {
+  create: ProductCreateInput
+  connect: ProductWhereUniqueInput
 }
 
 input ConsignmentSaleRelateToOneForCreateInput {
@@ -1188,6 +1204,7 @@ type Status {
   changeTime: DateTime
   changedBy: User
   request: Request
+  order: Order
 }
 
 input StatusWhereUniqueInput {
@@ -1203,6 +1220,7 @@ input StatusWhereInput {
   changeTime: DateTimeNullableFilter
   changedBy: UserWhereInput
   request: RequestWhereInput
+  order: OrderWhereInput
 }
 
 input StatusOrderByInput {
@@ -1216,6 +1234,7 @@ input StatusUpdateInput {
   changeTime: DateTime
   changedBy: UserRelateToOneForUpdateInput
   request: RequestRelateToOneForUpdateInput
+  order: OrderRelateToOneForUpdateInput
 }
 
 input StatusUpdateArgs {
@@ -1228,6 +1247,7 @@ input StatusCreateInput {
   changeTime: DateTime
   changedBy: UserRelateToOneForCreateInput
   request: RequestRelateToOneForCreateInput
+  order: OrderRelateToOneForCreateInput
 }
 
 """
