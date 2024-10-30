@@ -83,7 +83,7 @@ export default function Checkout() {
     ) {
       newErrors.email = "Email không hợp lệ";
     }
-    if (!orderData.phone || !/^\d{6}$/.test(orderData.phone)) {
+    if (!orderData.phone) {
       newErrors.phone = "Số điện thoại phải là 6 chữ số";
     }
     if (!orderData.address || orderData.address.length > 100) {
@@ -139,6 +139,10 @@ export default function Checkout() {
   });
 
   const handleCreateOrder = async () => {
+    if (!validateFields()) {
+      toast.error("Please correct the errors in the form before submitting.");
+      return; // Stop further execution if validation fails
+    }
     navigate(`/payment?paymentMethod=${paymentMethod}`);
     
   };

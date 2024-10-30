@@ -1,0 +1,17 @@
+.table {
+    font-size: 14px; /* Adjust the font size as needed */
+  }
+  
+  .table th,
+  .table td {
+    text-align: center; /* Center the text in the table cells */
+  }
+  
+  .table th {
+    font-weight: bold; /* Keep headers bold for clarity */
+  }
+  
+  .star {
+    cursor: pointer;
+  }
+  
