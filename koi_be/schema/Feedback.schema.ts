@@ -1,6 +1,12 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { relationship, text, timestamp } from "@keystone-6/core/fields";
+import {
+  integer,
+  relationship,
+  text,
+  timestamp,
+} from "@keystone-6/core/fields";
+import { permissions } from "../auth/access";
 
 const Feedback = list({
   access: {
@@ -12,14 +18,19 @@ const Feedback = list({
     },
   },
 
+  ui: {
+    hideCreate(args) {
+      return !permissions.canManageFeedback(args);
+    },
+    hideDelete(args) {
+      return !permissions.canManageFeedback(args);
+    },
+  },
+
   fields: {
     user: relationship({
       label: "Người đánh giá",
       ref: "User",
-    }),
-    product: relationship({
-      label: "Sản phẩm",
-      ref: "Product",
     }),
     comment: text({
       label: "Đánh giá",
@@ -27,6 +38,13 @@ const Feedback = list({
     createdAt: timestamp({
       label: "Thời gian đánh giá",
       defaultValue: { kind: "now" },
+    }),
+    rating: integer({
+      label: "Số ngôi sao",
+      validation: {
+        min: 0,
+        max: 5,
+      },
     }),
   },
 });

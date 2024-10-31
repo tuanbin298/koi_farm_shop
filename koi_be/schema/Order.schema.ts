@@ -64,6 +64,9 @@ const Order = list({
         { label: "Huỷ đơn hàng", value: "Huỷ đơn hàng" },
       ],
     }),
+    statusHistory: relationship({
+      ref: "Status",
+    }),
   },
 });
 

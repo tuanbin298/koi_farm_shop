@@ -1,22 +1,20 @@
 import { gql } from "@apollo/client";
 
 export const CREATE_ORDER_ITEMS = gql`
-mutation CreateOrder($data: [OrderItemCreateInput!]!) {
-  createOrderItems(data: $data) {
-    id
-    order {
+  mutation CreateOrder($data: [OrderItemCreateInput!]!) {
+    createOrderItems(data: $data) {
       id
-    }
-    product {
-      id
-    }
-    quantity
-    price
-    consignmentSale {
-      id
-      name
+      order {
+        id
+      }
+      product {
+        id
+      }
+      price
+      consignmentSale {
+        id
+        name
+      }
     }
   }
-}
-
-`
+`;

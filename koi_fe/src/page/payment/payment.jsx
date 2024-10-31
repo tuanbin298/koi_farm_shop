@@ -57,8 +57,8 @@ const CheckoutForm = () => {
       where: {
         user: {
           id: {
-            equals: userId
-          }
+            equals: userId,
+          },
         },
       },
     },
@@ -78,12 +78,14 @@ const CheckoutForm = () => {
     });
 
     handlePaymentMethodResult(result);
+
+    console.log("[PaymentMethod]", result);
   };
   let totalPrice = 0;
 
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
-      toast.error("Lỗi tạo đơn hàng!");
+      //   toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
 
@@ -118,7 +120,6 @@ const CheckoutForm = () => {
               },
             }),
           order: { connect: { id: orderId } },
-          quantity: 1,
           price:
             item.product.length > 0
               ? item.product[0].price
@@ -160,19 +161,19 @@ const CheckoutForm = () => {
           await updateOrder({
             variables: {
               where: {
-                id: orderId
+                id: orderId,
               },
               data: {
                 items: {
                   connect: [
                     {
-                      id: orderItemIds[i]
-                    }
-                  ]
-                }
-              }
-            }
-          })
+                      id: orderItemIds[i],
+                    },
+                  ],
+                },
+              },
+            },
+          });
         }
 
         // Delete items from the cart
@@ -186,7 +187,7 @@ const CheckoutForm = () => {
           });
         }
         toast.success("Đã tạo đơn hàng!");
-        navigate("/");
+        navigate("/someSuccessPage");
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");

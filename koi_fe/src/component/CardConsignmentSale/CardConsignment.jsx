@@ -1,13 +1,11 @@
 import React from "react";
 import { GET_CONSIGNMENT_SALES } from "../../page/api/Queries/consignment";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
-// import "./CardConsignmentSale.css";
 
 export default function CardConsignmentSale() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
@@ -16,15 +14,16 @@ export default function CardConsignmentSale() {
     loading: consignmentLoading,
     error: consignmentError,
   } = useQuery(GET_CONSIGNMENT_SALES, {
-    variables: { take: 6 }, // Fetch 6 consignments
+    variables: { take: 6 },
   });
+
+  const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
 
   // Loading and error states
   if (consignmentLoading) return <p>Loading ...</p>;
   if (consignmentError) return <p>Error loading consignments.</p>;
 
   const handleAddToCart = async (consignmentId) => {
-    const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
     const sessionToken = localStorage.getItem("sessionToken");
 
     if (!userId) {
@@ -33,13 +32,12 @@ export default function CardConsignmentSale() {
     }
 
     try {
-      // Add item to the cart
       await createCartItem({
         variables: {
           data: {
             quantity: 1,
             consignmentProduct: {
-              connect: { id: consignmentId }, // Connect consignment by ID
+              connect: { id: consignmentId },
             },
             user: {
               connect: {
@@ -62,13 +60,8 @@ export default function CardConsignmentSale() {
         },
       });
     } catch (error) {
-      if (error.message.includes("Access denied")) {
-        toast.error("Thêm vào giỏ hàng không thành công");
-        console.log(error);
-      } else {
-        toast.error("Thêm vào giỏ hàng không thành công");
-        alert("Failed to add item to cart. Please try again.");
-      }
+      toast.error("Thêm vào giỏ hàng không thành công");
+      console.log(error);
     }
   };
 
@@ -77,67 +70,86 @@ export default function CardConsignmentSale() {
       <Toaster position="top-center" reverseOrder={false} />
       <div className="container mt-4 species-section">
         <div className="row">
-          {consignmentData?.consignmentSales.map((consignment) => (
-            <div key={consignment.id} className="col-md-4 mb-4">
-              <div
-                className="card h-100 shadow-sm card-product"
-                style={{
-                  maxWidth: "350px",
-                  margin: "0 auto",
-                }}
-              >
-                {/* Link to consignment details */}
-                <Link to={`/consignmentDetail/${consignment.slug}`}>
-                  <img
-                    src={consignment.photo?.image?.publicUrl}
-                    alt={consignment.name}
-                    className="card-img-top img-fluid"
-                    style={{
-                      height: "360px",
-                      width: "100%",
-                      objectFit: "fill",
-                    }}
-                  />
-                </Link>
+          {consignmentData?.consignmentSales.map((consignment) => {
+            const isOwner = consignment.request?.user?.id === userId; // Check if the consignment belongs to the current user
 
+            return (
+              <div key={consignment.id} className="col-md-4 mb-4">
                 <div
-                  className="card-body text-start"
-                  style={{ padding: "25px" }}
+                  className="card h-100 shadow-sm card-product"
+                  style={{
+                    maxWidth: "350px",
+                    margin: "0 auto",
+                    border: isOwner ? "2px solid #198754" : "", // Highlight card if it's the user's item
+                  }}
                 >
-                  <h4 className="card-title">{consignment.name}</h4>
-                  <p className="mb-1 text-danger">
-                    <strong>Giá: </strong>
-                    {formatMoney(consignment.price)}
-                  </p>
-                  <p className="mb-1">
-                    <strong>Kích thước: </strong>
-                    {consignment.size}cm
-                  </p>
-                  <p className="mb-1">
-                    <strong>Giới tính: </strong>
-                    {consignment.sex}
-                  </p>
-                  <p className="mb-1">
-                    <strong>Loại: </strong>
-                    {consignment.generic}
-                  </p>
-                  <p className="mb-1">
-                    <strong>Chủng loại: </strong>
-                    {consignment.category}
-                  </p>
-                  {/* Add to cart button */}
-                  <div className="text-center">
-                    <button
-                      className="btn btn-success mt-3"
-                      onClick={() => handleAddToCart(consignment.id)} // Pass consignment ID
-                    >
-                      Thêm vào giỏ hàng
-                    </button>
+                  {/* Link to consignment details */}
+                  <Link to={`/consignmentDetail/${consignment.slug}`}>
+                    <img
+                      src={consignment.photo?.image?.publicUrl}
+                      alt={consignment.name}
+                      className="card-img-top img-fluid"
+                      style={{
+                        height: "360px",
+                        width: "100%",
+                        objectFit: "fill",
+                      }}
+                    />
+                  </Link>
+
+                  <div
+                    className="card-body text-start"
+                    style={{ padding: "25px" }}
+                  >
+                    <h4 className="card-title">
+                      {consignment.name}
+                      {isOwner && (
+                        <span
+                          className="badge bg-success ms-2"
+                          style={{ fontSize: "0.8rem" }}
+                        >
+                          Cá của bạn
+                        </span>
+                      )}
+                    </h4>
+                    <p className="mb-1 text-danger">
+                      <strong>Giá: </strong>
+                      {formatMoney(consignment.price)}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Kích thước: </strong>
+                      {consignment.size}cm
+                    </p>
+                    <p className="mb-1">
+                      <strong>Giới tính: </strong>
+                      {consignment.sex}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Loại: </strong>
+                      {consignment.generic}
+                    </p>
+                    <p className="mb-1">
+                      <strong>Chủng loại: </strong>
+                      {consignment.category}
+                    </p>
+
+                    {/* Add to cart button */}
+                    <div className="text-center">
+                      <button
+                        className="btn btn-success mt-3"
+                        onClick={() => handleAddToCart(consignment.id)}
+                        disabled={isOwner} // Disable button if the consignment belongs to the user
+                      >
+                        {isOwner
+                          ? "Không thể thêm vào giỏ hàng"
+                          : "Thêm vào giỏ hàng"}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </>

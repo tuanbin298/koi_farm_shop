@@ -212,9 +212,6 @@ export default function Checkout() {
               helperText={errors.email || "Vui lòng nhập email hợp lệ"}
               error={Boolean(errors.email)}
               style={{ width: "30%" }}
-              inputProps={{
-                pattern: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}",
-              }}
             />
 
             <TextField
@@ -225,14 +222,7 @@ export default function Checkout() {
               value={phone}
               onChange={handleInputChange}
               required
-              helperText={errors.phone || "Chỉ nhập số, tối đa 10 ký tự"}
-              error={Boolean(errors.phone)}
               style={{ width: "25%" }}
-              inputProps={{
-                maxLength: 10,
-                inputMode: "numeric",
-                pattern: "[0-9]*",
-              }}
             />
           </Flex>
         </Box>
@@ -248,8 +238,6 @@ export default function Checkout() {
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 100 }}
-              helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
-              error={Boolean(errors.address)}
               style={{ width: "98%" }}
             />
           </Flex>
@@ -266,8 +254,6 @@ export default function Checkout() {
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 50 }}
-              helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
-              error={Boolean(errors.city)}
               style={{ width: "25%" }}
             />
             <TextField
@@ -279,8 +265,6 @@ export default function Checkout() {
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 50 }}
-              helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
-              error={Boolean(errors.district)}
               style={{ width: "25%" }}
             />
             <TextField
@@ -292,8 +276,6 @@ export default function Checkout() {
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 50 }}
-              helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
-              error={Boolean(errors.ward)}
               style={{ width: "25%" }}
             />
           </Flex>

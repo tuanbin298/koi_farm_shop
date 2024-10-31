@@ -22,6 +22,11 @@ export const GET_CONSIGNMENT_SALES = gql`
           publicUrl
         }
       }
+      request {
+        user {
+          id
+        }
+      }
     }
   }
 `;
@@ -47,15 +52,18 @@ export const GET_ALL_CONSIGNMENT_SALES = gql`
           publicUrl
         }
       }
+      request {
+        user {
+          id
+        }
+      }
     }
   }
 `;
 
-
-
 export const GET_CONSIGNMENT_SALES_BY_SLUG = gql`
-query ConsignmentSales($where: ConsignmentSaleWhereInput!) {
-    consignmentSales(where: $where){
+  query ConsignmentSales($where: ConsignmentSaleWhereInput!) {
+    consignmentSales(where: $where) {
       id
       name
       generic
@@ -76,8 +84,7 @@ query ConsignmentSales($where: ConsignmentSaleWhereInput!) {
       }
     }
   }
-`
-
+`;
 
 export const useConsignmentBySlug = (slug) => {
   const { loading, error, data } = useQuery(GET_CONSIGNMENT_SALES_BY_SLUG, {

@@ -33,11 +33,14 @@ const Status = list({
     changedBy: relationship({
       label: "Người thay đổi trạng thái",
       ref: "User",
-    }), 
+    }),
     request: relationship({
       label: "Yêu cầu",
       ref: "Request.statusHistory",
       many: false,
+    }),
+    order: relationship({
+      ref: "Order",
     }),
   },
 });
