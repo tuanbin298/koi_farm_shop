@@ -17,10 +17,12 @@ const FishCareService = () => {
     const [totalCarePrice, setTotalCarePrice] = useState(0);
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
+    const [depositsArray, setDepositsArray] = useState([]);
 
     const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     const userId = localStorage.getItem("id");
-    
+    console.log(location.state.selectedProducts);
+    console.log(dates);
     // Lấy danh sách sản phẩm từ location.state
     useEffect(() => {
         if (location.state && location.state.selectedProducts) {
@@ -33,7 +35,30 @@ const FishCareService = () => {
             setDates(initialDates);
         }
     }, [location.state]);
-    const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
+
+    {/*Show consignment price for each consignment product */}
+    const calculateDeposits = () => {
+        const deposits = selectedProducts.map((product) => {
+            const { startDate, endDate } = dates[product.id] || {};
+            let totalDeposit = 0;
+            
+            if (startDate && endDate) {
+                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                if (days >= 7 && days <= 180) {
+                    totalDeposit = days * 50000;
+                }
+            }
+            return { cartId: product.id, totalDeposit };
+        });
+
+        setDepositsArray(deposits); // Update the state with cartId and totalDeposit array
+    };
+
+    useEffect(() => {
+        calculateDeposits();
+    }, [dates]);
+    console.log(depositsArray);
+
     // Tính tổng số tiền ký gửi dựa trên ngày bắt đầu/kết thúc và giá ký gửi nuôi
     const calculateTotalPrice = () => {
         let total = 0;
@@ -67,39 +92,16 @@ const FishCareService = () => {
     // Điều hướng sang trang thanh toán
     const handleProceedToCheckout = async () => {
         if (agreeToPolicy) {
-            const consignmentData = selectedProducts.map((product) => {
-                console.log(product.product[0].id);    
-                const { startDate, endDate } = dates[product.id] || {};
-                const pricePerDay = 50000;
-                const days = startDate && endDate
-                    ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
-                    : 0;
-
-                return {
-                    user: { connect: { id: userId } },
-                    product: { connect: { id: product.product[0].id } },
-                    returnDate: new Date(endDate).toISOString(),
-                    consignmentPrice: days * pricePerDay,
-                    status: "Đang xử lý",
-                    description: "Consignment for fish care"
-                };
+            setTimeout(() => {
+                navigate('/checkout', { state: 
+                    { 
+                    totalCarePrice: totalCarePrice,  
+                    selectedProducts: selectedProducts,
+                    dates: dates,
+                    depositsArray: depositsArray
+                } 
             });
-
-            try {
-                await createConsignmentRaisings({
-                    variables: { data: consignmentData },
-                });
-                toast.success("Ký gửi nuôi thành công!", {
-                    duration: 2000,
-                });
-                setTimeout(() => {
-                    navigate('/checkout', { state: { totalCarePrice } });
-                }, 2000);
-            } catch (error) {
-                console.error("Error creating consignment:", error);
-                toast.error("Ký gửi nuôi không thành công!");
-            }
-            
+            }, 2000);
         } else {
             alert('Bạn cần đồng ý với chính sách ký gửi trước khi tiếp tục.');
         }

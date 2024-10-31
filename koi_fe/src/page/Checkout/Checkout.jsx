@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -24,16 +24,33 @@ import {
   Pagination,
   darken,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-
+import { useLocation, useNavigate } from 'react-router-dom';
 export default function Checkout() {
   const navigate = useNavigate();
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const userId = localStorage.getItem("id");
   const [orderItemsData, setOrderItemsData] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [dates, setDates] = useState({});
   const [linkOrderId, setLinkOrderId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("full");
+  const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
+  const location = useLocation();
+  const [totalCarePrice, setTotalCarePrice] = useState(0);
+  const [depositsArray, setDepositsArray] = useState([]);
+  useEffect(() => {
+    if (location.state && location.state.selectedProducts) {
+        setSelectedProducts(location.state.selectedProducts);
+        setDates(location.state.dates);
+        setTotalCarePrice(location.state.totalCarePrice)
+        setDepositsArray(location.state.depositsArray);
+    }
+}, [location.state]); 
+  console.log(selectedProducts);
+  console.log(dates);
+  console.log(totalCarePrice);
+  
   const {
     loading,
     error,
@@ -143,7 +160,15 @@ export default function Checkout() {
     //   toast.error("Please correct the errors in the form before submitting.");
     //   return; // Stop further execution if validation fails
     // }
-    navigate(`/payment?paymentMethod=${paymentMethod}`);
+    navigate(`/payment?paymentMethod=${paymentMethod}`, { state: 
+      { 
+        totalCarePrice: totalCarePrice,  
+        selectedProducts: selectedProducts,
+        dates: dates,
+        depositsArray: depositsArray
+      } 
+    });
+    
   };
 
   const [page, setPage] = useState(1); // Current page

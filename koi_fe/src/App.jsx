@@ -43,7 +43,7 @@ function App() {
             path="/ConsignmentDetail/:slug"
             element={<ConsignmentDetail />}
           />
-          <Route path="/some-success-page" element={<SuccessPage />} />
+          <Route path="/someSuccessPage" element={<SuccessPage />} />
           <Route
             path="/consignmentTracking"
             element={<ConsignmentTrackingPage />}

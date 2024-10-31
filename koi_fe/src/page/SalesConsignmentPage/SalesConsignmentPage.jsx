@@ -222,7 +222,7 @@ const SalesConsignmentPage = () => {
       });
 
       console.log("Request thành công:", requestData);
-      navigate("/some-success-page");
+      navigate("/someSuccessPage", { state: { from: "/sales" } });
     } catch (error) {
       console.error("Đã xảy ra lỗi khi gửi dữ liệu:", error);
     }
