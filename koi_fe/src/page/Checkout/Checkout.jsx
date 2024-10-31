@@ -38,16 +38,19 @@ export default function Checkout() {
   const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
+  const [depositsArray, setDepositsArray] = useState([]);
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
         setSelectedProducts(location.state.selectedProducts);
         setDates(location.state.dates);
         setTotalCarePrice(location.state.totalCarePrice)
+        setDepositsArray(location.state.depositsArray);
     }
 }, [location.state]); 
   console.log(selectedProducts);
   console.log(dates);
   console.log(totalCarePrice);
+  
   const {
     loading,
     error,
@@ -162,6 +165,7 @@ export default function Checkout() {
         totalCarePrice: totalCarePrice,  
         selectedProducts: selectedProducts,
         dates: dates,
+        depositsArray: depositsArray
       } 
     });
     

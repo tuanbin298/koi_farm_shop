@@ -39,11 +39,15 @@ const CheckoutForm = () => {
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
+  const [depositsArray, setDepositsArray] = useState([]);
+
+
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
       setSelectedProducts(location.state.selectedProducts);
       setDates(location.state.dates);
-      setTotalCarePrice(location.state.totalCarePrice)
+      setTotalCarePrice(location.state.totalCarePrice);
+      setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
   console.log(selectedProducts.length);
@@ -241,7 +245,8 @@ function Payment() {
   });
 
   const [totalAmount, setTotalAmount] = useState(null);
-
+  const [depositsArray, setDepositsArray] = useState([]);
+  const location = useLocation();
   useEffect(() => {
     if (dataCart) {
       let total = dataCart.cartItems.reduce((sum, cartItem) => {
@@ -252,6 +257,7 @@ function Payment() {
         }
         return sum;
       }, 0);
+      
 
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
@@ -263,6 +269,11 @@ function Payment() {
       setTotalAmount(total > 0 ? total : 0);
     }
   }, [dataCart]);
+  useEffect(() => {
+    if (location.state && location.state.selectedProducts) {
+      setDepositsArray(location.state.depositsArray);
+    }
+  }, [location.state]);
   console.log(totalAmount);
 
   const stripePromise = loadStripe(
@@ -316,13 +327,17 @@ function Payment() {
                   const consignmentFee = consignmentItem
                     ? consignmentItem.ConsignmentPrice
                     : 0;
-
+                  
+                    // Find the deposit amount from depositsArray based on cartItem.id
+                    const depositEntry = depositsArray.find((deposit) => deposit.cartId === item.id);
+                    const depositAmount = depositEntry ? depositEntry.totalDeposit : 0;
+                    console.log(depositEntry)
                   return (
                     <tr key={item.id}>
                       <td>{product.name}</td>
                       <td>{formatMoney(price)}</td>
                       <td>
-                        {consignmentFee > 0 ? formatMoney(consignmentFee) : "-"}
+                        {depositAmount > 0 ? formatMoney(depositAmount) : "-"}
                       </td>
                     </tr>
                   );

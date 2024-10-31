@@ -17,6 +17,7 @@ const FishCareService = () => {
     const [totalCarePrice, setTotalCarePrice] = useState(0);
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
+    const [depositsArray, setDepositsArray] = useState([]);
 
     const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     const userId = localStorage.getItem("id");
@@ -34,7 +35,30 @@ const FishCareService = () => {
             setDates(initialDates);
         }
     }, [location.state]);
-    const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
+
+    {/*Show consignment price for each consignment product */}
+    const calculateDeposits = () => {
+        const deposits = selectedProducts.map((product) => {
+            const { startDate, endDate } = dates[product.id] || {};
+            let totalDeposit = 0;
+            
+            if (startDate && endDate) {
+                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                if (days >= 7 && days <= 180) {
+                    totalDeposit = days * 50000;
+                }
+            }
+            return { cartId: product.id, totalDeposit };
+        });
+
+        setDepositsArray(deposits); // Update the state with cartId and totalDeposit array
+    };
+
+    useEffect(() => {
+        calculateDeposits();
+    }, [dates]);
+    console.log(depositsArray);
+
     // Tính tổng số tiền ký gửi dựa trên ngày bắt đầu/kết thúc và giá ký gửi nuôi
     const calculateTotalPrice = () => {
         let total = 0;
@@ -74,6 +98,7 @@ const FishCareService = () => {
                     totalCarePrice: totalCarePrice,  
                     selectedProducts: selectedProducts,
                     dates: dates,
+                    depositsArray: depositsArray
                 } 
             });
             }, 2000);
