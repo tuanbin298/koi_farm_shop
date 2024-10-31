@@ -150,7 +150,7 @@ const CheckoutForm = () => {
           });
         }
         toast.success("Đã tạo đơn hàng!");
-        navigate("/");
+        navigate("/someSuccessPage");
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
