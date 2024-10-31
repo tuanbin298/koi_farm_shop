@@ -185,7 +185,8 @@ export default function Checkout() {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      <div className="checkOutInfo" style={{ padding: "20px" }}>
+      <Flex style={{ justifyContent: "space-between", width: "100%" }}>
+      <Box className="checkOutInfo" style={{ padding: "20px", width: "65%" }}>
         <section className="TitleSection">
           <h3>Thông tin giao/nhận hàng</h3>
         </section>
@@ -284,14 +285,18 @@ export default function Checkout() {
             />
           </Flex>
         </Box>
-        <Flex justify="space-between" >
+      </Box>
+      <Box style={{ padding: "20px", width: "35%" }}> 
+        <Flex justify="space-between" vertical>
           <div className="OrderSection">
-            <section className="OrderTitleSection">
+            <section className="OrderTitleSection" style={{
+              width:"75%"
+            }}>
               <h3>Thông tin đơn hàng</h3>
             </section>
             <List>
               {paginatedItems.map((item, index) => (
-                <div key={index}>
+                <div key={index} >
                   <ListItem>
                     <ListItemAvatar>
                       <Image
@@ -334,7 +339,9 @@ export default function Checkout() {
           </div>
 
           <div className="checkoutSection">
-            <section className="TitleFlexSection">
+            <section className="TitleFlexSection" style={{
+              width:"75%"
+            }}>
               <h3>Phương thức thanh toán</h3>
             </section>
             <Flex direction="column" gap="middle">
@@ -354,7 +361,12 @@ export default function Checkout() {
             </Flex>
           </div>
         </Flex>
-
+        </Box>
+        
+      </Flex>
+      <Box style={{
+        padding:"50px"
+      }}>
         <Flex
           style={{
             marginTop: "6%",
@@ -388,7 +400,7 @@ export default function Checkout() {
             </Button>
           </div>
         </Flex>
-      </div>
+        </Box>
     </>
   );
 }
