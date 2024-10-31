@@ -1,11 +1,10 @@
-
 .containe {
-  min-height: 70vh; /* will cover the 100% of viewport */
+  min-height: 50vh; /* will cover the 100% of viewport */
   overflow: hidden;
   display: block;
   position: relative;
   padding-bottom: 50px;
-   /* height of your footer */
+  /* height of your footer */
   width: 100%;
 }
 
@@ -82,7 +81,6 @@
   display: flex;
   border-radius: 100px;
   align-items: center;
-  
 }
 
 .footer_contact span {
@@ -99,4 +97,3 @@
   border-top: 1px solid #ccc;
   margin-top: 20px;
 }
-

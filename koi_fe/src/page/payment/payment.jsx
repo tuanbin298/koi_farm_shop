@@ -17,7 +17,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { FaArrowLeft } from "react-icons/fa";
-import { CREATE_CONSIGNMENT_RAISING } from '../api/Mutations/fishcare';
+import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
 import "./payment.css";
 
 // User information
@@ -33,14 +33,13 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
+  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
-
 
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
@@ -56,7 +55,12 @@ const CheckoutForm = () => {
     console.log(`Start date for product ${product.id}:`, startDate);
   });
   console.log(totalCarePrice);
-  const { loading, error, data: cartItems, refetch: refetchItems } = useQuery(GET_CART_ITEMS, {
+  const {
+    loading,
+    error,
+    data: cartItems,
+    refetch: refetchItems,
+  } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: {
@@ -68,7 +72,6 @@ const CheckoutForm = () => {
     },
   });
   const handleSubmit = async (event) => {
-
     event.preventDefault();
     if (!stripe || !elements) return;
 
@@ -92,7 +95,6 @@ const CheckoutForm = () => {
       //   toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
     } else {
-
       cartItems.cartItems?.forEach((cartItem) => {
         if (cartItem.product.length > 0) {
           totalPrice += cartItem.product[0].price;
@@ -119,10 +121,10 @@ const CheckoutForm = () => {
           ...(item.product.length > 0
             ? { product: { connect: { id: item.product[0].id } } }
             : {
-              consignmentSale: {
-                connect: { id: item.consignmentProduct[0].id },
-              },
-            }),
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
           order: { connect: { id: orderId } },
           price:
             item.product.length > 0
@@ -130,24 +132,28 @@ const CheckoutForm = () => {
               : item.consignmentProduct[0].price,
         }));
         //Fish consignment
-        if(selectedProducts.length != 0){
-        const consignmentData = selectedProducts.map((product) => {
-          console.log(product.product[0].id);
-          const { startDate, endDate } = dates[product.id] || {};
-          const pricePerDay = 50000;
-          const days = startDate && endDate
-            ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
-            : 0;
+        if (selectedProducts.length != 0) {
+          const consignmentData = selectedProducts.map((product) => {
+            console.log(product.product[0].id);
+            const { startDate, endDate } = dates[product.id] || {};
+            const pricePerDay = 50000;
+            const days =
+              startDate && endDate
+                ? Math.ceil(
+                    (new Date(endDate) - new Date(startDate)) /
+                      (1000 * 60 * 60 * 24)
+                  )
+                : 0;
 
-          return {
-            user: { connect: { id: userId } },
-            product: { connect: { id: product.product[0].id } },
-            returnDate: new Date(endDate).toISOString(),
-            consignmentPrice: days * pricePerDay,
-            status: "Đang xử lý",
-            description: "Consignment for fish care"
-          };
-        });
+            return {
+              user: { connect: { id: userId } },
+              product: { connect: { id: product.product[0].id } },
+              returnDate: new Date(endDate).toISOString(),
+              consignmentPrice: days * pricePerDay,
+              status: "Đang xử lý",
+              description: "Consignment for fish care",
+            };
+          });
 
           await createConsignmentRaisings({
             variables: { data: consignmentData },
@@ -158,7 +164,9 @@ const CheckoutForm = () => {
         });
 
         // Link order items to the order
-        const orderItemIds = createOrderItemsData.createOrderItems.map((item) => item.id);
+        const orderItemIds = createOrderItemsData.createOrderItems.map(
+          (item) => item.id
+        );
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
           console.log(orderItemIds[i]);
@@ -257,7 +265,6 @@ function Payment() {
         }
         return sum;
       }, 0);
-      
 
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
@@ -289,15 +296,16 @@ function Payment() {
 
   return (
     <section className="container mt-5">
-      <section className="back-button-section">
-        <div className="icon-container">
-          <FaArrowLeft className="icon" />
-        </div>
-        <span className="back-button-text">
-          <Link to="/checkout">Quay lại trang điền thông tin</Link>
-        </span>
-      </section>
-
+      <Link to="/checkout">
+        <section className="back-button-section">
+          <div className="icon-container">
+            <FaArrowLeft className="icon" />
+          </div>
+          <span className="back-button-text">
+            Quay lại trang điền thông tin
+          </span>
+        </section>
+      </Link>
       <section className="row">
         {/* Order Summary Section */}
         <article className="col-md-6">
@@ -327,11 +335,15 @@ function Payment() {
                   const consignmentFee = consignmentItem
                     ? consignmentItem.ConsignmentPrice
                     : 0;
-                  
-                    // Find the deposit amount from depositsArray based on cartItem.id
-                    const depositEntry = depositsArray.find((deposit) => deposit.cartId === item.id);
-                    const depositAmount = depositEntry ? depositEntry.totalDeposit : 0;
-                    console.log(depositEntry)
+
+                  // Find the deposit amount from depositsArray based on cartItem.id
+                  const depositEntry = depositsArray.find(
+                    (deposit) => deposit.cartId === item.id
+                  );
+                  const depositAmount = depositEntry
+                    ? depositEntry.totalDeposit
+                    : 0;
+                  console.log(depositEntry);
                   return (
                     <tr key={item.id}>
                       <td>{product.name}</td>
