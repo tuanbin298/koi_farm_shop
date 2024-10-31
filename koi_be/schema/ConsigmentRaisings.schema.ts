@@ -31,27 +31,26 @@ const ConsigmentRaising = list({
 
   fields: {
     user: relationship({
-      label: "Người Ký Gửi Nuôi",
+      label: "Người ký gửi nuôi",
       ref: "User",
     }),
     product: relationship({
-      label: "Tên Cá Ký Gửi Nuôi",
+      label: "Cá ký gửi nuôi",
       ref: "Product",
       many: false,
     }),
     consignmentDate: timestamp({
-      label: "Ngày Bắt Đầu Ký Gửi Nuôi",
+      label: "Ngày bắt đầu ký gửi nuôi",
       validation: {
         isRequired: true,
       },
       defaultValue: { kind: "now" },
     }),
     returnDate: timestamp({
-      label: "Ngày Kết Thúc Ký Gửi Nuôi",
+      label: "Ngày kết thúc ký gửi nuôi",
     }),
-
     consignmentPrice: float({
-      label: "Giá Ký Gửi Nuôi",
+      label: "Giá ký gửi nuôi",
       validation: {
         isRequired: true,
       },
@@ -60,8 +59,8 @@ const ConsigmentRaising = list({
       label: "Trạng thái",
       options: [
         { label: "Đang xử lý", value: "Đang xử lý" },
-        { label: "Đang Chăm Sóc", value: "Đang Chăm Sóc" },
-        { label: "Đang Giao hàng", value: "Đang Giao hàng" },
+        { label: "Đang chăm sóc", value: "Đang chăm sóc" },
+        { label: "Đang giao hàng", value: "Đang giao hàng" },
         { label: "Đã hoàn thành", value: "Đã hoàn thành" },
       ],
     }),

@@ -38,6 +38,11 @@ const OrderItem = list({
       ref: "ConsignmentSale",
       many: false,
     }),
+    consignmentRaising: relationship({
+      label: "Thông tin ký gửi nuôi",
+      ref: "ConsigmentRaising",
+      many: false,
+    }),
     price: integer({
       label: "Gía",
       validation: {

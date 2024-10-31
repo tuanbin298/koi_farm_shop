@@ -69,6 +69,10 @@ const Role = list({
       label: "Quản lý trạng thái",
       defaultValue: false,
     }),
+    canManageGallery: checkbox({
+      label: "Quản lý hình ảnh",
+      defaultValue: false,
+    }),
     user: relationship({
       label: "Người dùng",
       ref: "User.role",

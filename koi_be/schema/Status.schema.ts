@@ -40,7 +40,8 @@ const Status = list({
       many: false,
     }),
     order: relationship({
-      ref: "Order",
+      label: "Đơn hàng",
+      ref: "Order.statusHistory",
     }),
   },
 });

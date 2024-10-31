@@ -49,6 +49,7 @@ const { withAuth } = createAuth({
       canManageConsigment
       canManageRequest
       canManageStatus
+      canManageGallery
     }
   `,
   secretField: "password",
@@ -74,6 +75,7 @@ const { withAuth } = createAuth({
           canManageConsigment: true,
           canManageRequest: true,
           canManageStatus: true,
+          canManageGallery: true,
         },
       },
     },

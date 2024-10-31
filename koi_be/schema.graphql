@@ -154,6 +154,7 @@ type Role {
   canManageConsigment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
+  canManageGallery: Boolean
   user(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   userCount(where: UserWhereInput! = {}): Int
 }
@@ -178,6 +179,7 @@ input RoleWhereInput {
   canManageConsigment: BooleanFilter
   canManageRequest: BooleanFilter
   canManageStatus: BooleanFilter
+  canManageGallery: BooleanFilter
   user: UserManyRelationFilter
 }
 
@@ -205,6 +207,7 @@ input RoleOrderByInput {
   canManageConsigment: OrderDirection
   canManageRequest: OrderDirection
   canManageStatus: OrderDirection
+  canManageGallery: OrderDirection
 }
 
 input RoleUpdateInput {
@@ -219,6 +222,7 @@ input RoleUpdateInput {
   canManageConsigment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
+  canManageGallery: Boolean
   user: UserRelateToManyForUpdateInput
 }
 
@@ -246,6 +250,7 @@ input RoleCreateInput {
   canManageConsigment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
+  canManageGallery: Boolean
   user: UserRelateToManyForCreateInput
 }
 
@@ -613,7 +618,8 @@ type Order {
   createAt: DateTime
   address: String
   status: String
-  statusHistory: Status
+  statusHistory(where: StatusWhereInput! = {}, orderBy: [StatusOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StatusWhereUniqueInput): [Status!]
+  statusHistoryCount(where: StatusWhereInput! = {}): Int
 }
 
 input OrderWhereUniqueInput {
@@ -631,13 +637,19 @@ input OrderWhereInput {
   createAt: DateTimeNullableFilter
   address: StringFilter
   status: StringNullableFilter
-  statusHistory: StatusWhereInput
+  statusHistory: StatusManyRelationFilter
 }
 
 input OrderItemManyRelationFilter {
   every: OrderItemWhereInput
   some: OrderItemWhereInput
   none: OrderItemWhereInput
+}
+
+input StatusManyRelationFilter {
+  every: StatusWhereInput
+  some: StatusWhereInput
+  none: StatusWhereInput
 }
 
 input OrderOrderByInput {
@@ -655,7 +667,7 @@ input OrderUpdateInput {
   createAt: DateTime
   address: String
   status: String
-  statusHistory: StatusRelateToOneForUpdateInput
+  statusHistory: StatusRelateToManyForUpdateInput
 }
 
 input OrderItemRelateToManyForUpdateInput {
@@ -665,10 +677,11 @@ input OrderItemRelateToManyForUpdateInput {
   connect: [OrderItemWhereUniqueInput!]
 }
 
-input StatusRelateToOneForUpdateInput {
-  create: StatusCreateInput
-  connect: StatusWhereUniqueInput
-  disconnect: Boolean
+input StatusRelateToManyForUpdateInput {
+  disconnect: [StatusWhereUniqueInput!]
+  set: [StatusWhereUniqueInput!]
+  create: [StatusCreateInput!]
+  connect: [StatusWhereUniqueInput!]
 }
 
 input OrderUpdateArgs {
@@ -683,7 +696,7 @@ input OrderCreateInput {
   createAt: DateTime
   address: String
   status: String
-  statusHistory: StatusRelateToOneForCreateInput
+  statusHistory: StatusRelateToManyForCreateInput
 }
 
 input OrderItemRelateToManyForCreateInput {
@@ -691,9 +704,9 @@ input OrderItemRelateToManyForCreateInput {
   connect: [OrderItemWhereUniqueInput!]
 }
 
-input StatusRelateToOneForCreateInput {
-  create: StatusCreateInput
-  connect: StatusWhereUniqueInput
+input StatusRelateToManyForCreateInput {
+  create: [StatusCreateInput!]
+  connect: [StatusWhereUniqueInput!]
 }
 
 type OrderItem {
@@ -701,6 +714,7 @@ type OrderItem {
   order: Order
   product: Product
   consignmentSale: ConsignmentSale
+  consignmentRaising: ConsigmentRaising
   price: Int
   isStored: Boolean
 }
@@ -717,6 +731,7 @@ input OrderItemWhereInput {
   order: OrderWhereInput
   product: ProductWhereInput
   consignmentSale: ConsignmentSaleWhereInput
+  consignmentRaising: ConsigmentRaisingWhereInput
   price: IntFilter
   isStored: BooleanFilter
 }
@@ -731,6 +746,7 @@ input OrderItemUpdateInput {
   order: OrderRelateToOneForUpdateInput
   product: ProductRelateToOneForUpdateInput
   consignmentSale: ConsignmentSaleRelateToOneForUpdateInput
+  consignmentRaising: ConsigmentRaisingRelateToOneForUpdateInput
   price: Int
   isStored: Boolean
 }
@@ -753,6 +769,12 @@ input ConsignmentSaleRelateToOneForUpdateInput {
   disconnect: Boolean
 }
 
+input ConsigmentRaisingRelateToOneForUpdateInput {
+  create: ConsigmentRaisingCreateInput
+  connect: ConsigmentRaisingWhereUniqueInput
+  disconnect: Boolean
+}
+
 input OrderItemUpdateArgs {
   where: OrderItemWhereUniqueInput!
   data: OrderItemUpdateInput!
@@ -762,6 +784,7 @@ input OrderItemCreateInput {
   order: OrderRelateToOneForCreateInput
   product: ProductRelateToOneForCreateInput
   consignmentSale: ConsignmentSaleRelateToOneForCreateInput
+  consignmentRaising: ConsigmentRaisingRelateToOneForCreateInput
   price: Int
   isStored: Boolean
 }
@@ -779,6 +802,11 @@ input ProductRelateToOneForCreateInput {
 input ConsignmentSaleRelateToOneForCreateInput {
   create: ConsignmentSaleCreateInput
   connect: ConsignmentSaleWhereUniqueInput
+}
+
+input ConsigmentRaisingRelateToOneForCreateInput {
+  create: ConsigmentRaisingCreateInput
+  connect: ConsigmentRaisingWhereUniqueInput
 }
 
 type CartItem {
@@ -1101,12 +1129,6 @@ input RequestWhereInput {
   createAt: DateTimeNullableFilter
 }
 
-input StatusManyRelationFilter {
-  every: StatusWhereInput
-  some: StatusWhereInput
-  none: StatusWhereInput
-}
-
 input RequestOrderByInput {
   id: OrderDirection
   description: OrderDirection
@@ -1124,13 +1146,6 @@ input RequestUpdateInput {
   createAt: DateTime
 }
 
-input StatusRelateToManyForUpdateInput {
-  disconnect: [StatusWhereUniqueInput!]
-  set: [StatusWhereUniqueInput!]
-  create: [StatusCreateInput!]
-  connect: [StatusWhereUniqueInput!]
-}
-
 input RequestUpdateArgs {
   where: RequestWhereUniqueInput!
   data: RequestUpdateInput!
@@ -1144,11 +1159,6 @@ input RequestCreateInput {
   status: String
   statusHistory: StatusRelateToManyForCreateInput
   createAt: DateTime
-}
-
-input StatusRelateToManyForCreateInput {
-  create: [StatusCreateInput!]
-  connect: [StatusWhereUniqueInput!]
 }
 
 type Gallery {
