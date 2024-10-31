@@ -296,15 +296,16 @@ function Payment() {
 
   return (
     <section className="container mt-5">
-      <section className="back-button-section">
-        <div className="icon-container">
-          <FaArrowLeft className="icon" />
-        </div>
-        <span className="back-button-text">
-          <Link to="/checkout">Quay lại trang điền thông tin</Link>
-        </span>
-      </section>
-
+      <Link to="/checkout">
+        <section className="back-button-section">
+          <div className="icon-container">
+            <FaArrowLeft className="icon" />
+          </div>
+          <span className="back-button-text">
+            Quay lại trang điền thông tin
+          </span>
+        </section>
+      </Link>
       <section className="row">
         {/* Order Summary Section */}
         <article className="col-md-6">

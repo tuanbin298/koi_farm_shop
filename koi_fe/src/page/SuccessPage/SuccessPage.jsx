@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FaHome, FaCheckCircle, FaRegEye } from "react-icons/fa";
 
 const SuccessPage = () => {
   const location = useLocation();
@@ -15,6 +16,8 @@ const SuccessPage = () => {
 
   return (
     <div className="container text-center my-5">
+      {/* Success Icon */}
+      <FaCheckCircle size={72} color="#28a745" className="mb-3" />
       <h1>
         {isSalesPath
           ? "Yêu cầu ký gửi thành công!"
@@ -22,7 +25,7 @@ const SuccessPage = () => {
           ? "Đặt hàng thành công!"
           : "Thành công!"}
       </h1>
-      <p>
+      <p className="text-muted">
         {isSalesPath
           ? "Cảm ơn bạn đã đăng ký ký gửi cá Koi. Chúng tôi sẽ liên hệ với bạn sớm."
           : isPaymentPath
@@ -30,16 +33,24 @@ const SuccessPage = () => {
           : "Cảm ơn bạn!"}
       </p>
 
-      <div className="mt-4">
-        <button onClick={goToHome} className="btn btn-primary me-2 text-white">
+      <div className="mt-4 d-flex justify-content-center">
+        <button
+          onClick={goToHome}
+          className="btn btn-primary me-3 d-flex align-items-center"
+        >
+          <FaHome className="me-2" />
           Quay lại trang chủ
         </button>
 
-        {isSalesPath || isPaymentPath ? (
-          <button onClick={goToTracking} className="btn btn-success text-white">
+        {(isSalesPath || isPaymentPath) && (
+          <button
+            onClick={goToTracking}
+            className="btn btn-success d-flex align-items-center"
+          >
+            <FaRegEye className="me-2" />
             {isSalesPath ? "Theo dõi đơn ký gửi" : "Theo dõi đơn hàng"}
           </button>
-        ) : null}
+        )}
       </div>
     </div>
   );
