@@ -284,7 +284,7 @@ export default function Checkout() {
             />
           </Flex>
         </Box>
-        <Flex justify="space-between">
+        <Flex justify="space-between" >
           <div className="OrderSection">
             <section className="OrderTitleSection">
               <h3>Thông tin đơn hàng</h3>
