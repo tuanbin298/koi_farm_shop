@@ -44,6 +44,7 @@ model Role {
   canManageConsigment Boolean @default(false)
   canManageRequest    Boolean @default(false)
   canManageStatus     Boolean @default(false)
+  canManageGallery    Boolean @default(false)
   user                User[]  @relation("User_role")
 }
 
@@ -104,30 +105,30 @@ model Order {
   createAt             DateTime?   @default(now())
   address              String      @default("")
   status               String?     @default("Chờ xác nhận")
-  statusHistory        Status?     @relation("Order_statusHistory", fields: [statusHistoryId], references: [id])
-  statusHistoryId      String?     @map("statusHistory")
+  statusHistory        Status[]    @relation("Status_order")
   from_OrderItem_order OrderItem[] @relation("OrderItem_order")
-  from_Status_order    Status[]    @relation("Status_order")
 
   @@index([userId])
-  @@index([statusHistoryId])
 }
 
 model OrderItem {
-  id                String           @id @default(cuid())
-  order             Order?           @relation("OrderItem_order", fields: [orderId], references: [id])
-  orderId           String?          @map("order")
-  product           Product?         @relation("OrderItem_product", fields: [productId], references: [id])
-  productId         String?          @map("product")
-  consignmentSale   ConsignmentSale? @relation("OrderItem_consignmentSale", fields: [consignmentSaleId], references: [id])
-  consignmentSaleId String?          @map("consignmentSale")
-  price             Int
-  isStored          Boolean          @default(false)
-  from_Order_items  Order[]          @relation("Order_items")
+  id                   String             @id @default(cuid())
+  order                Order?             @relation("OrderItem_order", fields: [orderId], references: [id])
+  orderId              String?            @map("order")
+  product              Product?           @relation("OrderItem_product", fields: [productId], references: [id])
+  productId            String?            @map("product")
+  consignmentSale      ConsignmentSale?   @relation("OrderItem_consignmentSale", fields: [consignmentSaleId], references: [id])
+  consignmentSaleId    String?            @map("consignmentSale")
+  consignmentRaising   ConsigmentRaising? @relation("OrderItem_consignmentRaising", fields: [consignmentRaisingId], references: [id])
+  consignmentRaisingId String?            @map("consignmentRaising")
+  price                Int
+  isStored             Boolean            @default(false)
+  from_Order_items     Order[]            @relation("Order_items")
 
   @@index([orderId])
   @@index([productId])
   @@index([consignmentSaleId])
+  @@index([consignmentRaisingId])
 }
 
 model CartItem {
@@ -142,16 +143,17 @@ model CartItem {
 }
 
 model ConsigmentRaising {
-  id               String    @id @default(cuid())
-  user             User?     @relation("ConsigmentRaising_user", fields: [userId], references: [id])
-  userId           String?   @map("user")
-  product          Product?  @relation("ConsigmentRaising_product", fields: [productId], references: [id])
-  productId        String?   @map("product")
-  consignmentDate  DateTime  @default(now())
-  returnDate       DateTime?
-  consignmentPrice Float
-  status           String?
-  description      String    @default("")
+  id                                String      @id @default(cuid())
+  user                              User?       @relation("ConsigmentRaising_user", fields: [userId], references: [id])
+  userId                            String?     @map("user")
+  product                           Product?    @relation("ConsigmentRaising_product", fields: [productId], references: [id])
+  productId                         String?     @map("product")
+  consignmentDate                   DateTime    @default(now())
+  returnDate                        DateTime?
+  consignmentPrice                  Float
+  status                            String?
+  description                       String      @default("")
+  from_OrderItem_consignmentRaising OrderItem[] @relation("OrderItem_consignmentRaising")
 
   @@index([userId])
   @@index([productId])
@@ -203,16 +205,15 @@ model Gallery {
 }
 
 model Status {
-  id                       String    @id @default(cuid())
-  status                   String    @default("")
-  changeTime               DateTime? @default(now())
-  changedBy                User?     @relation("Status_changedBy", fields: [changedById], references: [id])
-  changedById              String?   @map("changedBy")
-  request                  Request?  @relation("Status_request", fields: [requestId], references: [id])
-  requestId                String?   @map("request")
-  order                    Order?    @relation("Status_order", fields: [orderId], references: [id])
-  orderId                  String?   @map("order")
-  from_Order_statusHistory Order[]   @relation("Order_statusHistory")
+  id          String    @id @default(cuid())
+  status      String    @default("")
+  changeTime  DateTime? @default(now())
+  changedBy   User?     @relation("Status_changedBy", fields: [changedById], references: [id])
+  changedById String?   @map("changedBy")
+  request     Request?  @relation("Status_request", fields: [requestId], references: [id])
+  requestId   String?   @map("request")
+  order       Order?    @relation("Status_order", fields: [orderId], references: [id])
+  orderId     String?   @map("order")
 
   @@index([changedById])
   @@index([requestId])

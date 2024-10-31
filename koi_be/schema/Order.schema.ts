@@ -65,8 +65,38 @@ const Order = list({
       ],
     }),
     statusHistory: relationship({
-      ref: "Status",
+      label: "Lịch sử trạng thái",
+      ref: "Status.order",
+      many: true,
     }),
+  },
+
+  hooks: {
+    async afterOperation({ operation, resolvedData, item, context }) {
+      if (operation === "create") {
+        await context.query.Status.createOne({
+          data: {
+            status: "Chờ xác nhận",
+            order: { connect: { id: item.id } },
+            changedBy: { connect: { id: context.session.itemId } },
+          },
+        });
+      }
+
+      if (
+        operation === "update" &&
+        resolvedData.status &&
+        resolvedData !== item.status
+      ) {
+        await context.query.Status.createOne({
+          data: {
+            status: resolvedData.status,
+            order: { connect: { id: item.id } },
+            changedBy: { connect: { id: context.session.itemId } },
+          },
+        });
+      }
+    },
   },
 });
 

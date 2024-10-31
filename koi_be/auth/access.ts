@@ -17,6 +17,7 @@ export type Session = {
       canManageConsigment: boolean;
       canManageRequest: boolean;
       canManageStatus: boolean;
+      canManageGallery: boolean;
     };
   };
 };
@@ -48,6 +49,8 @@ export const permissions = {
     session?.data.role?.canManageRequest ?? false,
   canManageStatus: ({ session }: AccessArgs) =>
     session?.data.role?.canManageStatus ?? false,
+  canManageGallery: ({ session }: AccessArgs) =>
+    session?.data.role?.canManageGallery ?? false,
 };
 
 export const filters = {
