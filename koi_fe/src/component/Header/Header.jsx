@@ -28,7 +28,7 @@ export default function Header() {
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
   const location = useLocation(); // To get the current path
-  
+
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
   const UserId = localStorage.getItem("id");
@@ -37,7 +37,7 @@ export default function Header() {
     data: cartData,
     loading: cartLoading,
     error: cartError,
-    refetch: refetchItems
+    refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
@@ -77,7 +77,6 @@ export default function Header() {
     };
   }, [refetchItems]);
   // Tính tổng số lượng sản phẩm trong giỏ hàng
-  
 
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
@@ -135,7 +134,8 @@ export default function Header() {
     ProductDetail: "Chi tiết",
     introduce: "Giới thiệu",
     consignmentTracking: "Theo dõi đơn ký gửi bán",
-    ConsignmentDetail: "Chi tiết"
+    ConsignmentDetail: "Chi tiết",
+    payment: "Thanh Toán",
   };
 
   // Function to generate breadcrumbs based on current URL

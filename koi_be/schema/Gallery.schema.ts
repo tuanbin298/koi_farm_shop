@@ -3,6 +3,7 @@ import { allowAll } from "@keystone-6/core/access";
 import { text, relationship } from "@keystone-6/core/fields";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
 import "dotenv/config";
+import { permissions } from "../auth/access";
 
 export const cloudinary = {
   cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
@@ -18,6 +19,15 @@ const Gallery = list({
       create: allowAll,
       update: allowAll,
       delete: allowAll,
+    },
+  },
+
+  ui: {
+    hideCreate(args) {
+      return !permissions.canManageGallery(args);
+    },
+    hideDelete(args) {
+      return !permissions.canManageGallery(args);
     },
   },
 
