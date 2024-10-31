@@ -49,6 +49,14 @@ const Request = list({
         { label: "Xác nhận giao dịch", value: "Xác nhận giao dịch" },
         { label: "Huỷ giao dịch", value: "Huỷ giao dịch" },
       ],
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+          fieldMode(args) {
+            return permissions.canManageRequest(args) ? "edit" : "read";
+          },
+        },
+      },
     }),
     statusHistory: relationship({
       label: "Lịch sử trạng thái",
@@ -58,6 +66,11 @@ const Request = list({
     createAt: timestamp({
       label: "Thời gian gửi yêu cầu",
       defaultValue: { kind: "now" },
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
   },
 

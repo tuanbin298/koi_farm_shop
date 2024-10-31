@@ -105,9 +105,17 @@ const Product = list({
     status: select({
       label: "Trạng thái",
       options: [
-        { label: "Còn hàng", value: "Còn hàng" },
-        { label: "Hết hàng", value: "Hết hàng" },
+        { label: "Có sẵn", value: "Có sẵn" },
+        { label: "Không có sẵn", value: "Không có sẵn" },
       ],
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+          fieldMode(args) {
+            return permissions.canManageRequest(args) ? "edit" : "read";
+          },
+        },
+      },
     }),
   },
 
