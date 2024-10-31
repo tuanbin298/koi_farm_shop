@@ -121,7 +121,6 @@ model OrderItem {
   productId         String?          @map("product")
   consignmentSale   ConsignmentSale? @relation("OrderItem_consignmentSale", fields: [consignmentSaleId], references: [id])
   consignmentSaleId String?          @map("consignmentSale")
-  quantity          Int
   price             Int
   isStored          Boolean          @default(false)
   from_Order_items  Order[]          @relation("Order_items")
