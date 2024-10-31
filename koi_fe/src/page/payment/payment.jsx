@@ -103,7 +103,6 @@ const CheckoutForm = () => {
                 },
               }),
           order: { connect: { id: orderId } },
-          quantity: 1,
           price:
             item.product.length > 0
               ? item.product[0].price
