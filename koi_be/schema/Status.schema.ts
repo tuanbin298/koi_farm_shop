@@ -29,6 +29,11 @@ const Status = list({
     changeTime: timestamp({
       label: "Thời gian thay đổi trạng thái",
       defaultValue: { kind: "now" },
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
     changedBy: relationship({
       label: "Người thay đổi trạng thái",

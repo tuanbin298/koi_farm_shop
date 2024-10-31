@@ -104,6 +104,7 @@ model Order {
   price                Int?
   createAt             DateTime?   @default(now())
   address              String      @default("")
+  paymentMethod        String?
   status               String?     @default("Chờ xác nhận")
   statusHistory        Status[]    @relation("Status_order")
   from_OrderItem_order OrderItem[] @relation("OrderItem_order")

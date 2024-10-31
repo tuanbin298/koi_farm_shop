@@ -38,6 +38,11 @@ const Feedback = list({
     createdAt: timestamp({
       label: "Thời gian đánh giá",
       defaultValue: { kind: "now" },
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
     rating: integer({
       label: "Số ngôi sao",

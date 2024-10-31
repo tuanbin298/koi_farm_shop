@@ -7,13 +7,6 @@ export function formatDate(sValue) {
 }
 
 export function formatTime(sValue) {
-  // console.log(sValue);
-  // const sHou = sValue.slice(0, 2);
-  // const sMin = sValue.slice(3, 5);
-  // const sSec = sValue.slice(7, 9);
-
-  // return sHou + ":" + sMin + ":" + sSec;
-
   const date = new Date(sValue);
 
   const sHou = date.getHours();

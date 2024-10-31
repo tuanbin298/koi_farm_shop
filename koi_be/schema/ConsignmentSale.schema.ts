@@ -93,6 +93,14 @@ const ConsignmentSale = list({
         { label: "Có sẵn", value: "Có sẵn" },
         { label: "Không có sẵn", value: "Không có sẵn" },
       ],
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+          fieldMode(args) {
+            return permissions.canManageConsigment(args) ? "edit" : "read";
+          },
+        },
+      },
     }),
   },
 

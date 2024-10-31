@@ -39,7 +39,7 @@ const OrderItem = list({
       many: false,
     }),
     consignmentRaising: relationship({
-      label: "Thông tin ký gửi nuôi",
+      label: "Sản phẩm ký gửi nuôi",
       ref: "ConsigmentRaising",
       many: false,
     }),

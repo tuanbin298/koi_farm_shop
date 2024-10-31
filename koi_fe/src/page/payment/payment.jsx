@@ -290,7 +290,7 @@ function Payment() {
   const options = {
     mode: "payment",
     amount: totalAmount,
-    currency: "vnd",
+    currency: "USD",
   };
   console.log(options);
 
