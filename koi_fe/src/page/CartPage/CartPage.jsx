@@ -170,14 +170,16 @@ const CartPage = () => {
 
   return (
     <div className="cart-container">
-      <section className="back-button-section">
-        <div className="icon-container">
-          <FaArrowLeft className="icon" />
-        </div>
-        <span className="back-button-text">
-          <Link to="/koiList">Tiếp tục mua hàng / Quay lại trang chủ</Link>
-        </span>
-      </section>
+      <Link to="/koiList">
+        <section className="back-button-section">
+          <div className="icon-container">
+            <FaArrowLeft className="icon" />
+          </div>
+          <span className="back-button-text">
+            Tiếp tục mua hàng / Quay lại trang chủ
+          </span>
+        </section>
+      </Link>
 
       <main className="cart-content">
         <section>
