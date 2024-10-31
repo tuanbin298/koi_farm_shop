@@ -191,7 +191,7 @@ const CheckoutForm = () => {
           });
         }
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage");
+        navigate("/someSuccessPage", { state: { from: "/payment" } });
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
