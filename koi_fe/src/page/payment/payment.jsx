@@ -11,7 +11,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
-import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
+import { CREATE_ORDER_ITEMS, UPDATE_ORDER_ITEM } from ".././api/Mutations/orderItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -40,7 +40,8 @@ const CheckoutForm = () => {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
-
+  const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
+  let consignmentRaisingIds = [];
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
       setSelectedProducts(location.state.selectedProducts);
@@ -49,11 +50,10 @@ const CheckoutForm = () => {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-  const orderAddress = location.state.orderData.address + "," + location.state.orderData.city + "," + 
-  location.state.orderData.district + "," +
-  location.state.orderData.ward;
-  console.log(orderAddress);
-  console.log(selectedProducts.length);
+  const orderAddress = location.state.orderData.address + "," + location.state.orderData.city + "," +
+    location.state.orderData.district + "," +
+    location.state.orderData.ward;
+
   selectedProducts.forEach((product) => {
     const startDate = dates[product.id]?.startDate;
     console.log(`Start date for product ${product.id}:`, startDate);
@@ -82,6 +82,9 @@ const CheckoutForm = () => {
       },
     },
   });
+  useEffect(() => {
+    refetchItems();
+  }, [refetchItems]);
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!stripe || !elements) return;
@@ -127,16 +130,15 @@ const CheckoutForm = () => {
         });
 
         const orderId = orderData.createOrder.id;
-
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => ({
           ...(item.product.length > 0
             ? { product: { connect: { id: item.product[0].id } } }
             : {
-                consignmentSale: {
-                  connect: { id: item.consignmentProduct[0].id },
-                },
-              }),
+              consignmentSale: {
+                connect: { id: item.consignmentProduct[0].id },
+              },
+            }),
           order: { connect: { id: orderId } },
           price:
             item.product.length > 0
@@ -145,7 +147,7 @@ const CheckoutForm = () => {
           isStored: checkConsigned(item)
         }));
         //Fish consignment
-        if (selectedProducts.length != 0) {
+        
           const consignmentData = selectedProducts.map((product) => {
             console.log(product.product[0].id);
             const { startDate, endDate } = dates[product.id] || {};
@@ -153,9 +155,9 @@ const CheckoutForm = () => {
             const days =
               startDate && endDate
                 ? Math.ceil(
-                    (new Date(endDate) - new Date(startDate)) /
-                      (1000 * 60 * 60 * 24)
-                  )
+                  (new Date(endDate) - new Date(startDate)) /
+                  (1000 * 60 * 60 * 24)
+                )
                 : 0;
 
             return {
@@ -168,18 +170,55 @@ const CheckoutForm = () => {
             };
           });
 
-          await createConsignmentRaisings({
+          const { data: consignmentDataResponse } = await createConsignmentRaisings({
             variables: { data: consignmentData },
           });
-        }
+          if (consignmentDataResponse && consignmentDataResponse.createConsigmentRaisings) {
+            consignmentRaisingIds = consignmentDataResponse.createConsigmentRaisings.map(
+              (item) => item.id
+            );
+            console.log("Consignment Raising IDs:", consignmentRaisingIds);
+          }
+          else {
+            console.error("Unexpected response structure:", consignmentDataResponse);
+          }
+          const cartItemIds = cartItems.cartItems.map((item) => item.id);
+
+          // Pair each cartItemId with its consignmentRaisingId
+          const cartConsignmentPairs = cartItemIds.map((cartItemId, index) => ({
+            cartItemId,
+            consignmentRaisingId: consignmentRaisingIds[index] || null,
+          }));
         const { data: createOrderItemsData } = await createOrderItems({
           variables: { data: orderItems },
         });
+        console.log(consignmentRaisingIds);
 
         // Link order items to the order
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
+        for (let i = 0; i < cartItemIds.length; i++) {
+          const cartItemId = cartItemIds[i];
+          console.log(cartItemId)
+          console.log(cartConsignmentPairs)
+          const consignment = cartConsignmentPairs.find(
+            (pair) => pair.cartItemId === cartItemId
+          );
+          console.log(consignment)
+          if (consignment && consignment.consignmentRaisingId) {
+            await updateOrderItem({
+              variables: {
+                where: { id: orderItemIds[i] },
+                data: {
+                  consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
+                },
+              },
+            });
+            console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
+          }
+        }
+
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
           console.log(orderItemIds[i]);
