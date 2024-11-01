@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -24,7 +24,7 @@ import {
   Pagination,
   darken,
 } from "@mui/material";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 export default function Checkout() {
   const navigate = useNavigate();
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
@@ -35,7 +35,7 @@ export default function Checkout() {
   const [dates, setDates] = useState({});
   const [linkOrderId, setLinkOrderId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("all");
-  const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
+  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
@@ -43,18 +43,18 @@ export default function Checkout() {
 
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
-        setSelectedProducts(location.state.selectedProducts);
-        setDates(location.state.dates);
-        setTotalCarePrice(location.state.totalCarePrice)
-        setDepositsArray(location.state.depositsArray);
+      setSelectedProducts(location.state.selectedProducts);
+      setDates(location.state.dates);
+      setTotalCarePrice(location.state.totalCarePrice);
+      setDepositsArray(location.state.depositsArray);
     }
-}, [location.state]); 
-console.log(paymentMethod)
-useEffect(() => {
-  // Extract product IDs from selectedProducts and set them in state
-  const ids = selectedProducts.map((product) => product.id);
-  setConsignedIDs(ids);
-}, [selectedProducts]);
+  }, [location.state]);
+  console.log(paymentMethod);
+  useEffect(() => {
+    // Extract product IDs from selectedProducts and set them in state
+    const ids = selectedProducts.map((product) => product.id);
+    setConsignedIDs(ids);
+  }, [selectedProducts]);
   console.log(selectedProducts);
   console.log(dates);
   console.log(totalCarePrice);
@@ -84,8 +84,7 @@ useEffect(() => {
     }
   );
   console.log(orderItemIDs);
-  
-  
+
   const [errors, setErrors] = useState({}); // Error state for each field
 
   // Function to validate each field
@@ -155,7 +154,7 @@ useEffect(() => {
       [e.target.name]: "", // Clear error on user input
     });
   };
-  console.log(orderData)
+  console.log(orderData);
   let totalPrice = 0;
   cartItems.cartItems?.forEach((cartItem) => {
     if (cartItem.product.length > 0) {
@@ -166,27 +165,24 @@ useEffect(() => {
   });
 
   const handleCreateOrder = async () => {
-    // if (!validateFields()) {
-    //   toast.error("Please correct the errors in the form before submitting.");
-    //   return; // Stop further execution if validation fails
-    // }
-    if (!validateFields()){
-      if(cartItems.cartItems.length <= 0){
-        toast.error("Lỗi tạo đơn hàng!");
-      }
+    if (!validateFields()) {
+      toast.error("Vui lòng nhập thông tin đầy đủ trước khi đặt hàng.");
+      return;
     }
-    else{
-    navigate(`/payment?paymentMethod=${paymentMethod}`, { state: 
-      { 
-        totalCarePrice: totalCarePrice,  
+    if (!paymentMethod) {
+      toast.error("Vui lòng chọn phương thức thanh toán.");
+      return;
+    }
+    navigate(`/payment?paymentMethod=${paymentMethod}`, {
+      state: {
+        totalCarePrice: totalCarePrice,
         selectedProducts: selectedProducts,
         dates: dates,
         depositsArray: depositsArray,
         paymentMethod: paymentMethod,
-        orderData: orderData
-      } 
+        orderData: orderData,
+      },
     });
-  }
   };
 
   const [page, setPage] = useState(1); // Current page
@@ -204,195 +200,211 @@ useEffect(() => {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <Flex style={{ justifyContent: "space-between", width: "100%" }}>
-      <Box className="checkOutInfo" style={{ padding: "20px", width: "65%" }}>
-        <section className="TitleSection">
-          <h3>Thông tin giao/nhận hàng</h3>
-        </section>
-        <Box>
-          <Flex gap="large">
-            <TextField
-              id="name"
-              name="name"
-              label="Họ và tên"
-              variant="outlined"
-              value={orderData.name}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.name || "Tên tối đa 50 ký tự"}
-              error={Boolean(errors.name)}
-              style={{ width: "40%" }}
-            />
-
-            <TextField
-              id="email"
-              name="email"
-              label="Email"
-              variant="outlined"
-              value={orderData.email}
-              onChange={handleInputChange}
-              required
-              style={{ width: "30%" }}
-              disabled
-            />
-
-            <TextField
-              id="phone"
-              name="phone"
-              label="Số điện thoại"
-              variant="outlined"
-              value={orderData.phone}
-              onChange={handleInputChange}
-              required
-              style={{ width: "25%" }}
-              disabled
-            />
-          </Flex>
-        </Box>
-
-        <Box style={{ marginTop: "2%" }}>
-          <Flex gap="large">
-            <TextField
-              id="address"
-              name="address"
-              label="Địa chỉ"
-              variant="outlined"
-              value={orderData.address}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 100 }}
-              style={{ width: "98%" }}
-              error={Boolean(errors.address)}
-              helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
-            />
-          </Flex>
-        </Box>
-
-        <Box style={{ marginTop: "2%" }}>
-          <Flex gap="large">
-            <TextField
-              id="city"
-              name="city"
-              label="Nhập tỉnh/thành"
-              variant="outlined"
-              value={orderData.city}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              error={Boolean(errors.city)}
-              helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
-            />
-            <TextField
-              id="district"
-              name="district"
-              label="Nhập quận/huyện"
-              variant="outlined"
-              value={orderData.district}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              error={Boolean(errors.district)}
-              helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
-            />
-            <TextField
-              id="ward"
-              name="ward"
-              label="Nhập phường/xã"
-              variant="outlined"
-              value={orderData.ward}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
-              error={Boolean(errors.ward)}
-            />
-          </Flex>
-        </Box>
-      </Box>
-      <Box style={{ padding: "20px", width: "35%" }}> 
-        <Flex justify="space-between" vertical>
-          <div className="OrderSection">
-            <section className="OrderTitleSection" style={{
-              width:"75%"
-            }}>
-              <h3>Thông tin đơn hàng</h3>
-            </section>
-            <List>
-              {paginatedItems.map((item, index) => (
-                <div key={index} >
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Image
-                        width={75}
-                        src={
-                          item.product[0]?.image?.publicUrl ||
-                          item.consignmentProduct[0]?.photo?.image?.publicUrl ||
-                          ""
-                        }
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        item.product[0]?.name ||
-                        item.consignmentProduct[0]?.name
-                      }
-                      secondary={`Giá: ${
-                        item.product[0]?.price ||
-                        item.consignmentProduct[0]?.price
-                      } VND`}
-                    />
-                  </ListItem>
-                  <Divider />
-                </div>
-              ))}
-              <Box display="flex" justifyContent="center" marginTop={2}>
-                <Pagination
-                  count={Math.ceil(
-                    (cartItems?.cartItems?.length || 0) / itemsPerPage
-                  )}
-                  page={page}
-                  onChange={handlePageChange}
-                  color="primary"
-                />
-              </Box>
-              {cartItems?.cartItems?.length === 0 && (
-                <Typography variant="body2">Giỏ hàng trống</Typography>
-              )}
-            </List>
-          </div>
-
-          <div className="checkoutSection">
-            <section className="TitleFlexSection" style={{
-              width:"75%"
-            }}>
-              <h3>Phương thức thanh toán</h3>
-            </section>
-            <Flex direction="column" gap="middle">
-              <Radio.Group
-                onChange={(e) => {
-                  setPaymentMethod(e.target.value);
-                  setOrderData({ ...orderData, paymentMethod: e.target.value });
-                }}
+        <Box className="checkOutInfo" style={{ padding: "20px", width: "65%" }}>
+          <section className="TitleSection">
+            <h3>Thông tin giao/nhận hàng</h3>
+          </section>
+          <Box>
+            <div>
+              <TextField
+                id="name"
+                name="name"
+                label="Họ và tên"
+                variant="outlined"
+                value={orderData.name}
+                onChange={handleInputChange}
                 required
-              >
-                <Space direction="vertical">
-                  {checkoutOption1.map((option) => (
-                    <Radio value={option.value}>{option.label}</Radio>
-                  ))}
-                </Space>
-              </Radio.Group>
-            </Flex>
-          </div>
-        </Flex>
+                inputProps={{ maxLength: 50 }}
+                helperText={errors.name || "Tên tối đa 50 ký tự"}
+                error={Boolean(errors.name)}
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                variant="outlined"
+                value={orderData.email}
+                onChange={handleInputChange}
+                required
+                style={{ width: "30%" }}
+                disabled
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+
+              <TextField
+                id="phone"
+                name="phone"
+                label="Số điện thoại"
+                variant="outlined"
+                value={orderData.phone}
+                onChange={handleInputChange}
+                required
+                style={{ width: "25%" }}
+                disabled
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+
+              <TextField
+                id="address"
+                name="address"
+                label="Địa chỉ"
+                variant="outlined"
+                value={orderData.address}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 100 }}
+                style={{ width: "98%" }}
+                error={Boolean(errors.address)}
+                helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+
+              <TextField
+                id="city"
+                name="city"
+                label="Nhập tỉnh/thành"
+                variant="outlined"
+                value={orderData.city}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                error={Boolean(errors.city)}
+                helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                id="district"
+                name="district"
+                label="Nhập quận/huyện"
+                variant="outlined"
+                value={orderData.district}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                error={Boolean(errors.district)}
+                helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+              <TextField
+                id="ward"
+                name="ward"
+                label="Nhập phường/xã"
+                variant="outlined"
+                value={orderData.ward}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
+                error={Boolean(errors.ward)}
+                fullWidth
+                style={{ marginBottom: "15px" }}
+              />
+            </div>
+          </Box>
         </Box>
-        
+        <Box style={{ padding: "20px", width: "35%" }}>
+          <Flex justify="space-between" vertical>
+            <div className="OrderSection">
+              <section
+                className="OrderTitleSection"
+                style={{
+                  width: "75%",
+                }}
+              >
+                <h3>Thông tin đơn hàng</h3>
+              </section>
+              <List>
+                {paginatedItems.map((item, index) => (
+                  <div key={index}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Image
+                          width={75}
+                          src={
+                            item.product[0]?.image?.publicUrl ||
+                            item.consignmentProduct[0]?.photo?.image
+                              ?.publicUrl ||
+                            ""
+                          }
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          item.product[0]?.name ||
+                          item.consignmentProduct[0]?.name
+                        }
+                        secondary={`Giá: ${
+                          item.product[0]?.price ||
+                          item.consignmentProduct[0]?.price
+                        } VND`}
+                      />
+                    </ListItem>
+                    <Divider />
+                  </div>
+                ))}
+                <Box display="flex" justifyContent="center" marginTop={2}>
+                  <Pagination
+                    count={Math.ceil(
+                      (cartItems?.cartItems?.length || 0) / itemsPerPage
+                    )}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
+                {cartItems?.cartItems?.length === 0 && (
+                  <Typography variant="body2">Giỏ hàng trống</Typography>
+                )}
+              </List>
+            </div>
+
+            <div className="checkoutSection">
+              <section
+                className="TitleFlexSection"
+                style={{
+                  width: "75%",
+                }}
+              >
+                <h3>Phương thức thanh toán</h3>
+              </section>
+              <Flex direction="column" gap="middle">
+                <Radio.Group
+                  onChange={(e) => {
+                    setPaymentMethod(e.target.value);
+                    setOrderData({
+                      ...orderData,
+                      paymentMethod: e.target.value,
+                    });
+                  }}
+                  required
+                >
+                  <Space direction="vertical">
+                    {checkoutOption1.map((option) => (
+                      <Radio value={option.value}>{option.label}</Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Flex>
+            </div>
+          </Flex>
+        </Box>
       </Flex>
-      <Box style={{
-        padding:"50px"
-      }}>
+      <Box
+        style={{
+          padding: "50px",
+        }}
+      >
         <Flex
           style={{
             marginTop: "6%",
@@ -426,7 +438,7 @@ useEffect(() => {
             </Button>
           </div>
         </Flex>
-        </Box>
+      </Box>
     </>
   );
 }
