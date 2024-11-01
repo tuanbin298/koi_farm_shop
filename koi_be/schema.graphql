@@ -617,6 +617,7 @@ type Order {
   price: Int
   createAt: DateTime
   address: String
+  paymentMethod: String
   status: String
   statusHistory(where: StatusWhereInput! = {}, orderBy: [StatusOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StatusWhereUniqueInput): [Status!]
   statusHistoryCount(where: StatusWhereInput! = {}): Int
@@ -636,6 +637,7 @@ input OrderWhereInput {
   price: IntNullableFilter
   createAt: DateTimeNullableFilter
   address: StringFilter
+  paymentMethod: StringNullableFilter
   status: StringNullableFilter
   statusHistory: StatusManyRelationFilter
 }
@@ -657,6 +659,7 @@ input OrderOrderByInput {
   price: OrderDirection
   createAt: OrderDirection
   address: OrderDirection
+  paymentMethod: OrderDirection
   status: OrderDirection
 }
 
@@ -666,6 +669,7 @@ input OrderUpdateInput {
   price: Int
   createAt: DateTime
   address: String
+  paymentMethod: String
   status: String
   statusHistory: StatusRelateToManyForUpdateInput
 }
@@ -695,6 +699,7 @@ input OrderCreateInput {
   price: Int
   createAt: DateTime
   address: String
+  paymentMethod: String
   status: String
   statusHistory: StatusRelateToManyForCreateInput
 }

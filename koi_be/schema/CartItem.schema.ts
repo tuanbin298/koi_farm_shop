@@ -36,9 +36,6 @@ const CartItem = list({
       validation: {
         isRequired: true,
       },
-      ui: {
-        itemView: { fieldMode: "read" },
-      },
     }),
     product: relationship({
       label: "Sản phẩm",

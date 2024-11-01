@@ -15,6 +15,7 @@ export const CREATE_ORDER_ITEMS = gql`
         id
         name
       }
+      isStored
     }
   }
 `;

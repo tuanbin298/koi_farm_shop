@@ -45,9 +45,19 @@ const ConsigmentRaising = list({
         isRequired: true,
       },
       defaultValue: { kind: "now" },
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
     returnDate: timestamp({
       label: "Ngày kết thúc ký gửi nuôi",
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
     consignmentPrice: float({
       label: "Giá ký gửi nuôi",

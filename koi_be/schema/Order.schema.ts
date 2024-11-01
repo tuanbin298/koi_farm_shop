@@ -44,12 +44,24 @@ const Order = list({
     createAt: timestamp({
       label: "Thời gian thanh toán",
       defaultValue: { kind: "now" },
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+        },
+      },
     }),
     address: text({
       label: "Địa chỉ giao hàng",
       validation: {
         isRequired: true,
       },
+    }),
+    paymentMethod: select({
+      label: "Phương thức thanh toán",
+      options: [
+        { label: "Đặt cọc (50%)", value: "cod" },
+        { label: "Thanh toán hết", value: "all" },
+      ],
     }),
     status: select({
       label: "Trạng thái",
@@ -63,6 +75,14 @@ const Order = list({
         },
         { label: "Huỷ đơn hàng", value: "Huỷ đơn hàng" },
       ],
+      ui: {
+        itemView: {
+          fieldPosition: "sidebar",
+          fieldMode(args) {
+            return permissions.canManageOrder(args) ? "edit" : "read";
+          },
+        },
+      },
     }),
     statusHistory: relationship({
       label: "Lịch sử trạng thái",
