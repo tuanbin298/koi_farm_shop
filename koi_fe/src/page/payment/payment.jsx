@@ -40,7 +40,7 @@ const CheckoutForm = () => {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
-  const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
+  // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
@@ -130,65 +130,77 @@ const CheckoutForm = () => {
         });
 
         const orderId = orderData.createOrder.id;
-        // Create order items
-        const orderItems = cartItems.cartItems.map((item) => ({
-          ...(item.product.length > 0
-            ? { product: { connect: { id: item.product[0].id } } }
-            : {
-              consignmentSale: {
-                connect: { id: item.consignmentProduct[0].id },
-              },
-            }),
-          order: { connect: { id: orderId } },
-          price:
-            item.product.length > 0
-              ? item.product[0].price
-              : item.consignmentProduct[0].price,
-          isStored: checkConsigned(item)
-        }));
+
         //Fish consignment
-        
-          const consignmentData = selectedProducts.map((product) => {
-            console.log(product.product[0].id);
-            const { startDate, endDate } = dates[product.id] || {};
-            const pricePerDay = 50000;
-            const days =
-              startDate && endDate
-                ? Math.ceil(
-                  (new Date(endDate) - new Date(startDate)) /
-                  (1000 * 60 * 60 * 24)
-                )
-                : 0;
 
-            return {
-              user: { connect: { id: userId } },
-              product: { connect: { id: product.product[0].id } },
-              returnDate: new Date(endDate).toISOString(),
-              consignmentPrice: days * pricePerDay,
-              status: "Đang xử lý",
-              description: "Consignment for fish care",
-            };
-          });
+        const consignmentData = selectedProducts.map((product) => {
+          console.log(product.product[0].id);
+          const { startDate, endDate } = dates[product.id] || {};
+          const pricePerDay = 50000;
+          const days =
+            startDate && endDate
+              ? Math.ceil(
+                (new Date(endDate) - new Date(startDate)) /
+                (1000 * 60 * 60 * 24)
+              )
+              : 0;
 
-          const { data: consignmentDataResponse } = await createConsignmentRaisings({
-            variables: { data: consignmentData },
-          });
-          if (consignmentDataResponse && consignmentDataResponse.createConsigmentRaisings) {
-            consignmentRaisingIds = consignmentDataResponse.createConsigmentRaisings.map(
-              (item) => item.id
-            );
-            console.log("Consignment Raising IDs:", consignmentRaisingIds);
-          }
-          else {
-            console.error("Unexpected response structure:", consignmentDataResponse);
-          }
-          const cartItemIds = cartItems.cartItems.map((item) => item.id);
+          return {
+            user: { connect: { id: userId } },
+            product: { connect: { id: product.product[0].id } },
+            returnDate: new Date(endDate).toISOString(),
+            consignmentPrice: days * pricePerDay,
+            status: "Đang xử lý",
+            description: "Consignment for fish care",
+          };
+        });
 
-          // Pair each cartItemId with its consignmentRaisingId
-          const cartConsignmentPairs = cartItemIds.map((cartItemId, index) => ({
-            cartItemId,
-            consignmentRaisingId: consignmentRaisingIds[index] || null,
-          }));
+        const { data: consignmentDataResponse } = await createConsignmentRaisings({
+          variables: { data: consignmentData },
+        });
+        if (consignmentDataResponse && consignmentDataResponse.createConsigmentRaisings) {
+          consignmentRaisingIds = consignmentDataResponse.createConsigmentRaisings.map(
+            (item) => item.id
+          );
+          console.log("Consignment Raising IDs:", consignmentRaisingIds);
+        }
+        else {
+          console.error("Unexpected response structure:", consignmentDataResponse);
+        }
+        const cartItemIds = cartItems.cartItems.map((item) => item.id);
+
+        // Pair each cartItemId with its consignmentRaisingId
+        const cartConsignmentPairs = cartItemIds.map((cartItemId, index) => ({
+          cartItemId,
+          consignmentRaisingId: consignmentRaisingIds[index] || null,
+        }));
+        // Create order items
+        const orderItems = cartItems.cartItems.map((item) => {
+          // Check if there is a matching consignment entry for this cart item
+          const matchingPair = cartConsignmentPairs.find(
+            (pair) => pair.cartItemId === item.id
+          );
+
+          return {
+            ...(item.product.length > 0
+              ? { product: { connect: { id: item.product[0].id } } }
+              : {
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
+            order: { connect: { id: orderId } },
+            price:
+              item.product.length > 0
+                ? item.product[0].price
+                : item.consignmentProduct[0].price,
+            isStored: checkConsigned(item),
+            ...(matchingPair && matchingPair.consignmentRaisingId
+              ? { consignmentRaising: { connect: { id: matchingPair.consignmentRaisingId } } }
+              : {}),
+          };
+        });
+        //create order items
         const { data: createOrderItemsData } = await createOrderItems({
           variables: { data: orderItems },
         });
@@ -198,26 +210,26 @@ const CheckoutForm = () => {
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
-        for (let i = 0; i < cartItemIds.length; i++) {
-          const cartItemId = cartItemIds[i];
-          console.log(cartItemId)
-          console.log(cartConsignmentPairs)
-          const consignment = cartConsignmentPairs.find(
-            (pair) => pair.cartItemId === cartItemId
-          );
-          console.log(consignment)
-          if (consignment && consignment.consignmentRaisingId) {
-            await updateOrderItem({
-              variables: {
-                where: { id: orderItemIds[i] },
-                data: {
-                  consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
-                },
-              },
-            });
-            console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
-          }
-        }
+        // for (let i = 0; i < cartItemIds.length; i++) {
+        //   const cartItemId = cartItemIds[i];
+        //   console.log(cartItemId)
+        //   console.log(cartConsignmentPairs)
+        //   const consignment = cartConsignmentPairs.find(
+        //     (pair) => pair.cartItemId === cartItemId
+        //   );
+        //   console.log(consignment)
+        //   if (consignment && consignment.consignmentRaisingId) {
+        //     await updateOrderItem({
+        //       variables: {
+        //         where: { id: orderItemIds[i] },
+        //         data: {
+        //           consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
+        //         },
+        //       },
+        //     });
+        //     console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
+        //   }
+        // }
 
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
