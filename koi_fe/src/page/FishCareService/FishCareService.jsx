@@ -22,7 +22,9 @@ const FishCareService = () => {
     const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     const userId = localStorage.getItem("id");
     console.log(location.state.selectedProducts);
-    console.log(dates);
+    selectedProducts.map((product) => (
+        console.log(localStorage.getItem(`${product.id}`)
+        )))
     // Lấy danh sách sản phẩm từ location.state
     useEffect(() => {
         if (location.state && location.state.selectedProducts) {
@@ -36,12 +38,12 @@ const FishCareService = () => {
         }
     }, [location.state]);
 
-    {/*Show consignment price for each consignment product */}
+    {/*Show consignment price for each consignment product */ }
     const calculateDeposits = () => {
         const deposits = selectedProducts.map((product) => {
             const { startDate, endDate } = dates[product.id] || {};
             let totalDeposit = 0;
-            
+
             if (startDate && endDate) {
                 const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
                 if (days >= 7 && days <= 180) {
@@ -93,14 +95,22 @@ const FishCareService = () => {
     const handleProceedToCheckout = async () => {
         if (agreeToPolicy) {
             setTimeout(() => {
-                navigate('/checkout', { state: 
-                    { 
-                    totalCarePrice: totalCarePrice,  
-                    selectedProducts: selectedProducts,
-                    dates: dates,
-                    depositsArray: depositsArray
-                } 
-            });
+                selectedProducts.forEach((product) => {
+                    localStorage.setItem(`${product.id}`, product.id);
+                });
+                localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+                localStorage.setItem("dates", JSON.stringify(dates));
+                localStorage.setItem("totalCarePrice", totalCarePrice);
+                localStorage.setItem("depositsArray", JSON.stringify(depositsArray));
+                navigate('/checkout', {
+                    state:
+                    {
+                        totalCarePrice: totalCarePrice,
+                        selectedProducts: selectedProducts,
+                        dates: dates,
+                        depositsArray: depositsArray
+                    }
+                });
             }, 2000);
         } else {
             alert('Bạn cần đồng ý với chính sách ký gửi trước khi tiếp tục.');
@@ -247,15 +257,15 @@ const FishCareService = () => {
 
                 {/* Nút Tiếp Tục Thanh Toán */}
                 {agreeToPolicy && (
-                <Box display="flex" justifyContent="flex-end" marginTop={2}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleProceedToCheckout}
-                    >
-                        Tiến hành thanh toán
-                    </Button>
-                </Box>
+                    <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleProceedToCheckout}
+                        >
+                            Tiến hành thanh toán
+                        </Button>
+                    </Box>
                 )}
             </div>
         </div>

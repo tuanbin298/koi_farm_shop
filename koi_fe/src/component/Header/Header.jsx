@@ -136,6 +136,7 @@ export default function Header() {
     consignmentTracking: "Theo dõi đơn ký gửi bán",
     ConsignmentDetail: "Chi tiết",
     payment: "Thanh Toán",
+    someSuccessPage: "Xác nhận thanh toán"
   };
 
   // Function to generate breadcrumbs based on current URL

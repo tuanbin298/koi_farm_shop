@@ -277,7 +277,7 @@ function Payment() {
     }
   }, [dataCart]);
   useEffect(() => {
-    if (location.state && location.state.selectedProducts) {
+    if (location.state && location.state.depositsArray) {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);

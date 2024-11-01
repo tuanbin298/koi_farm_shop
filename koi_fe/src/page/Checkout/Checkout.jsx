@@ -39,6 +39,8 @@ export default function Checkout() {
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [consignedIDs, setConsignedIDs] = useState([]);
+
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
         setSelectedProducts(location.state.selectedProducts);
@@ -47,10 +49,16 @@ export default function Checkout() {
         setDepositsArray(location.state.depositsArray);
     }
 }, [location.state]); 
+
+useEffect(() => {
+  // Extract product IDs from selectedProducts and set them in state
+  const ids = selectedProducts.map((product) => product.id);
+  setConsignedIDs(ids);
+}, [selectedProducts]);
   console.log(selectedProducts);
   console.log(dates);
   console.log(totalCarePrice);
-  
+  console.log(consignedIDs);
   const {
     loading,
     error,
