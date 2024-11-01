@@ -34,11 +34,13 @@ export default function Checkout() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const [linkOrderId, setLinkOrderId] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("full");
+  const [paymentMethod, setPaymentMethod] = useState("all");
   const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [consignedIDs, setConsignedIDs] = useState([]);
+
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
         setSelectedProducts(location.state.selectedProducts);
@@ -47,10 +49,16 @@ export default function Checkout() {
         setDepositsArray(location.state.depositsArray);
     }
 }, [location.state]); 
+console.log(paymentMethod)
+useEffect(() => {
+  // Extract product IDs from selectedProducts and set them in state
+  const ids = selectedProducts.map((product) => product.id);
+  setConsignedIDs(ids);
+}, [selectedProducts]);
   console.log(selectedProducts);
   console.log(dates);
   console.log(totalCarePrice);
-  
+  console.log(consignedIDs);
   const {
     loading,
     error,
@@ -76,16 +84,8 @@ export default function Checkout() {
     }
   );
   console.log(orderItemIDs);
-  const [orderData, setOrderData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    district: "",
-    ward: "",
-    paymentMethod: "",
-  });
+  
+  
   const [errors, setErrors] = useState({}); // Error state for each field
 
   // Function to validate each field
@@ -94,15 +94,15 @@ export default function Checkout() {
     if (!orderData.name || orderData.name.length > 50) {
       newErrors.name = "Tên là tối đa 50 ký tự";
     }
-    if (
-      !orderData.email ||
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)
-    ) {
-      newErrors.email = "Email không hợp lệ";
-    }
-    if (!orderData.phone) {
-      newErrors.phone = "Số điện thoại phải là 6 chữ số";
-    }
+    // if (
+    //   !orderData.email ||
+    //   !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)
+    // ) {
+    //   newErrors.email = "Email không hợp lệ";
+    // }
+    // if (!orderData.phone) {
+    //   newErrors.phone = "Số điện thoại phải là 6 chữ số";
+    // }
     if (!orderData.address || orderData.address.length > 100) {
       newErrors.address = "Địa chỉ là tối đa 100 ký tự";
     }
@@ -129,9 +129,18 @@ export default function Checkout() {
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
   const [address, setAddress] = useState(localStorage.getItem("address") || "");
-
+  const [orderData, setOrderData] = useState({
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    city: "",
+    district: "",
+    ward: "",
+    paymentMethod: "",
+  });
   const checkoutOption1 = [
-    { label: "Thanh toán hết", value: "full" },
+    { label: "Thanh toán hết", value: "all" },
     { label: "Thanh toán khi nhận hàng (đặt cọc 50%)", value: "cod" },
   ];
   const [orderItemIds, setOrderItemIds] = useState([]);
@@ -146,6 +155,7 @@ export default function Checkout() {
       [e.target.name]: "", // Clear error on user input
     });
   };
+  console.log(orderData)
   let totalPrice = 0;
   cartItems.cartItems?.forEach((cartItem) => {
     if (cartItem.product.length > 0) {
@@ -160,15 +170,23 @@ export default function Checkout() {
     //   toast.error("Please correct the errors in the form before submitting.");
     //   return; // Stop further execution if validation fails
     // }
+    if (!validateFields()){
+      if(cartItems.cartItems.length <= 0){
+        toast.error("Lỗi tạo đơn hàng!");
+      }
+    }
+    else{
     navigate(`/payment?paymentMethod=${paymentMethod}`, { state: 
       { 
         totalCarePrice: totalCarePrice,  
         selectedProducts: selectedProducts,
         dates: dates,
-        depositsArray: depositsArray
+        depositsArray: depositsArray,
+        paymentMethod: paymentMethod,
+        orderData: orderData
       } 
     });
-    
+  }
   };
 
   const [page, setPage] = useState(1); // Current page
@@ -197,7 +215,7 @@ export default function Checkout() {
               name="name"
               label="Họ và tên"
               variant="outlined"
-              value={name}
+              value={orderData.name}
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 50 }}
@@ -211,12 +229,11 @@ export default function Checkout() {
               name="email"
               label="Email"
               variant="outlined"
-              value={email}
+              value={orderData.email}
               onChange={handleInputChange}
               required
-              helperText={errors.email || "Vui lòng nhập email hợp lệ"}
-              error={Boolean(errors.email)}
               style={{ width: "30%" }}
+              disabled
             />
 
             <TextField
@@ -224,10 +241,11 @@ export default function Checkout() {
               name="phone"
               label="Số điện thoại"
               variant="outlined"
-              value={phone}
+              value={orderData.phone}
               onChange={handleInputChange}
               required
               style={{ width: "25%" }}
+              disabled
             />
           </Flex>
         </Box>
@@ -239,11 +257,13 @@ export default function Checkout() {
               name="address"
               label="Địa chỉ"
               variant="outlined"
-              value={address}
+              value={orderData.address}
               onChange={handleInputChange}
               required
               inputProps={{ maxLength: 100 }}
               style={{ width: "98%" }}
+              error={Boolean(errors.address)}
+              helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
             />
           </Flex>
         </Box>
@@ -260,6 +280,8 @@ export default function Checkout() {
               required
               inputProps={{ maxLength: 50 }}
               style={{ width: "25%" }}
+              error={Boolean(errors.city)}
+              helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
             />
             <TextField
               id="district"
@@ -271,6 +293,8 @@ export default function Checkout() {
               required
               inputProps={{ maxLength: 50 }}
               style={{ width: "25%" }}
+              error={Boolean(errors.district)}
+              helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
             />
             <TextField
               id="ward"
@@ -282,6 +306,8 @@ export default function Checkout() {
               required
               inputProps={{ maxLength: 50 }}
               style={{ width: "25%" }}
+              helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
+              error={Boolean(errors.ward)}
             />
           </Flex>
         </Box>

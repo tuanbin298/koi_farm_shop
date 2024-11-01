@@ -16,7 +16,7 @@ import {
   Tab,
 } from "@mui/material";
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Image } from "antd";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
@@ -26,14 +26,18 @@ import { GET_FISH_CARE, GET_ALL_FISH_CARE } from "../api/Queries/fishcare";
 import "./CartPage.css";
 
 const CartPage = () => {
+  const navigate = useNavigate();
   const userId = localStorage.getItem("id");
   const [depositFields, setDepositFields] = useState({});
   const [page, setPage] = useState(1);
   const [tab, setTab] = useState(0); // Current tab
   const [isDeleting, setIsDeleting] = useState(false);
   const itemsPerPage = 3;
-
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
+  const [dates, setDates] = useState({});
+  const [totalCarePrice, setTotalCarePrice] = useState(0);
+  const [depositsArray, setDepositsArray] = useState([]);
   const {
     loading,
     error,
@@ -74,8 +78,31 @@ const CartPage = () => {
   useEffect(() => {
     refetchConsigns();
   }, [refetchConsigns]);
+  useEffect(() => {
+    // Retrieve and parse selectedProducts from localStorage
+    const storedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
+    if (storedProducts) {
+      setSelectedProducts(storedProducts);
+    }
 
-  // Separate cart items into "Farm Koi" and "Consignment Koi"
+    const storedDates = JSON.parse(localStorage.getItem("dates"));
+    if (storedDates) {
+      setDates(storedDates);
+    }
+
+    const storedTotalCarePrice = localStorage.getItem("totalCarePrice")
+    setTotalCarePrice(storedTotalCarePrice);
+
+    const storedDepositsArray = JSON.parse(localStorage.getItem("depositsArray"));
+    if (storedDepositsArray) {
+      setDepositsArray(storedDepositsArray);
+    }
+  }, []);
+  console.log(selectedProducts);
+  console.log(dates);
+  console.log(totalCarePrice);
+  console.log(depositsArray);
+
   // Separate cart items into "Farm Koi" and "Consignment Koi"
   const farmKoiItems =
     data?.cartItems?.filter((item) => item.product?.length > 0) || [];
@@ -112,11 +139,23 @@ const CartPage = () => {
   }
   // Check if a specific cart item is consigned based on its unique cart item ID
   const handleCheckedConsign = (cartItem) => {
-    console.log(consignedCartItemIds);
-    // Verify if the cartItemId exists in consignedFishIds
-    return consignedCartItemIds.includes(cartItem.id);
-  };
+    // Extract IDs from selectedProducts
+    const selectedProductIds = selectedProducts.map(product => product.id);
 
+    // Check if cartItem.id is in selectedProductIds
+    return selectedProductIds.includes(cartItem.id);
+  };
+  {/* handle to checkout with consigned products */ }
+  const handleToCheckOut = () => {
+    navigate("/checkout", {
+      state: {
+        totalCarePrice: totalCarePrice,
+        selectedProducts: selectedProducts,
+        dates: dates,
+        depositsArray: depositsArray
+      }
+    })
+  }
   // Handle delete cart item
   const handleDelete = async (cartItemId) => {
     try {
@@ -213,7 +252,7 @@ const CartPage = () => {
                           cartItem.product.length > 0
                             ? cartItem.product[0].image?.publicUrl || ""
                             : cartItem.consignmentProduct[0]?.photo?.image
-                                ?.publicUrl || ""
+                              ?.publicUrl || ""
                         }
                       />
                     </TableCell>
@@ -225,7 +264,8 @@ const CartPage = () => {
                     {tab === 0 && (
                       <TableCell align="center">
                         <Checkbox
-                          checked={depositFields[cartItem.id] || false}
+                          checked={handleCheckedConsign(cartItem) || depositFields[cartItem.id] || false}
+                          disabled={handleCheckedConsign(cartItem)}
                           onChange={() => handleDepositToggle(cartItem.id)}
                         />
                         <p>Ký gửi nuôi</p>
@@ -281,13 +321,11 @@ const CartPage = () => {
           {/* Proceed to Checkout or Fish Care Service */}
           <Box display="flex" justifyContent="flex-end" marginTop={2}>
             {tab === 0 &&
-            Object.values(depositFields).some((isSelected) => isSelected) ? (
+              Object.values(depositFields).some((isSelected) => isSelected) ? (
               handleProceedToFishCareService()
             ) : (
-              <Button variant="contained" color="success">
-                <Link to="/checkout">
-                  Tiến hành thanh toán <FaShoppingCart />
-                </Link>
+              <Button variant="contained" color="success" onClick={handleToCheckOut}>
+                Tiến hành thanh toán <FaShoppingCart />
               </Button>
             )}
           </Box>

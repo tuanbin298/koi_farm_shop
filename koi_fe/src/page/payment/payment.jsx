@@ -49,12 +49,23 @@ const CheckoutForm = () => {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
+  const orderAddress = location.state.orderData.address + "," + location.state.orderData.city + "," + 
+  location.state.orderData.district + "," +
+  location.state.orderData.ward;
+  console.log(orderAddress);
   console.log(selectedProducts.length);
   selectedProducts.forEach((product) => {
     const startDate = dates[product.id]?.startDate;
     console.log(`Start date for product ${product.id}:`, startDate);
   });
   console.log(totalCarePrice);
+  const checkConsigned = (cartItem) => {
+    // Extract IDs from selectedProducts
+    const selectedProductIds = selectedProducts.map(product => product.id);
+
+    // Check if cartItem.id is in selectedProductIds
+    return selectedProductIds.includes(cartItem.id);
+  };
   const {
     loading,
     error,
@@ -109,7 +120,8 @@ const CheckoutForm = () => {
             data: {
               user: { connect: { id: userId } },
               price: totalPrice,
-              address: `${localStorage.getItem("address")}`,
+              address: orderAddress,
+              paymentMethod: location.state.paymentMethod
             },
           },
         });
@@ -130,6 +142,7 @@ const CheckoutForm = () => {
             item.product.length > 0
               ? item.product[0].price
               : item.consignmentProduct[0].price,
+          isStored: checkConsigned(item)
         }));
         //Fish consignment
         if (selectedProducts.length != 0) {
@@ -277,7 +290,7 @@ function Payment() {
     }
   }, [dataCart]);
   useEffect(() => {
-    if (location.state && location.state.selectedProducts) {
+    if (location.state && location.state.depositsArray) {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
