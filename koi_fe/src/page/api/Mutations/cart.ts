@@ -15,3 +15,11 @@ export const CREATE_CART_ITEM = gql`
     }
   }
 `;
+
+export const UPDATE_CART_ITEM = gql`
+mutation Mutation($where: CartItemWhereUniqueInput!, $data: CartItemUpdateInput!) {
+  updateCartItem(where: $where, data: $data) {
+    isStored
+  }
+}
+`

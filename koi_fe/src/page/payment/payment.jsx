@@ -182,18 +182,21 @@ const CheckoutForm = () => {
           );
         }
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
-
+        console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
-        const cartConsignmentPairs = cartItemIds.map((cartItemId, index) => ({
-          cartItemId,
-          consignmentRaisingId: consignmentRaisingIds[index] || null,
+        const cartConsignmentPairs = cartItems.cartItems.map((cartItem, index) => ({
+          cartItemId: cartItem.id,
+          consignmentRaisingId: cartItem.isStored ? consignmentRaisingIds[index] : null,
         }));
+        console.log(cartConsignmentPairs);
+        
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
           // Check if there is a matching consignment entry for this cart item
           const matchingPair = cartConsignmentPairs.find(
             (pair) => pair.cartItemId === item.id
           );
+          console.log(matchingPair);
 
           return {
             ...(item.product.length > 0
