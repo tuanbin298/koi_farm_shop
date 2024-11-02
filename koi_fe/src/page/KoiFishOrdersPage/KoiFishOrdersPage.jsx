@@ -14,7 +14,7 @@ const KoiFishOrdersPage = () => {
   const { loading, error, data } = useQuery(GET_ORDERS, {
     variables: {
       where: {
-        user:{
+        user: {
           id: {
             equals: userId,
           },
