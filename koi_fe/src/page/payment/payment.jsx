@@ -174,12 +174,15 @@ const CheckoutForm = () => {
           cartItemId,
           consignmentRaisingId: consignmentRaisingIds[index] || null,
         }));
+
+        
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
           // Check if there is a matching consignment entry for this cart item
           const matchingPair = cartConsignmentPairs.find(
             (pair) => pair.cartItemId === item.id
           );
+          console.log(matchingPair);
 
           return {
             ...(item.product.length > 0
