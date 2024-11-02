@@ -79,7 +79,7 @@ export default function ConsignmentDetail() {
         variables: {
           data: {
             quantity: 1,
-            product: {
+            consignmentProduct: {
               connect: { id: product.id },
             },
             user: {
@@ -113,6 +113,7 @@ export default function ConsignmentDetail() {
 
   return (
     <>
+    <Toaster position="top-center" reverseOrder={false} />
       <div className="web-container">
         <Box style={{ paddingTop: "1%", padding: "1%" }}>
           <Flex gap="large" justify="space-around">

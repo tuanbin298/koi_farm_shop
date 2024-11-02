@@ -54,7 +54,7 @@ const ConsignmentSale = list({
       },
     }),
     price: integer({
-      label: "Giá",
+      label: "Mức giá cuối cùng",
     }),
     description: text({
       label: "Mô tả",

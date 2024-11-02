@@ -822,6 +822,7 @@ type CartItem {
   productCount(where: ProductWhereInput! = {}): Int
   consignmentProduct(where: ConsignmentSaleWhereInput! = {}, orderBy: [ConsignmentSaleOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ConsignmentSaleWhereUniqueInput): [ConsignmentSale!]
   consignmentProductCount(where: ConsignmentSaleWhereInput! = {}): Int
+  isStored: Boolean
 }
 
 input CartItemWhereUniqueInput {
@@ -837,6 +838,7 @@ input CartItemWhereInput {
   quantity: IntFilter
   product: ProductManyRelationFilter
   consignmentProduct: ConsignmentSaleManyRelationFilter
+  isStored: BooleanFilter
 }
 
 input ProductManyRelationFilter {
@@ -854,6 +856,7 @@ input ConsignmentSaleManyRelationFilter {
 input CartItemOrderByInput {
   id: OrderDirection
   quantity: OrderDirection
+  isStored: OrderDirection
 }
 
 input CartItemUpdateInput {
@@ -861,6 +864,7 @@ input CartItemUpdateInput {
   quantity: Int
   product: ProductRelateToManyForUpdateInput
   consignmentProduct: ConsignmentSaleRelateToManyForUpdateInput
+  isStored: Boolean
 }
 
 input ProductRelateToManyForUpdateInput {
@@ -887,6 +891,7 @@ input CartItemCreateInput {
   quantity: Int
   product: ProductRelateToManyForCreateInput
   consignmentProduct: ConsignmentSaleRelateToManyForCreateInput
+  isStored: Boolean
 }
 
 input ProductRelateToManyForCreateInput {

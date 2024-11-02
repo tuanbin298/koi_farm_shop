@@ -9,8 +9,17 @@ export const CREATE_CART_ITEM = gql`
       }
       consignmentProduct {
         id
+        name
         price
       }
     }
   }
 `;
+
+export const UPDATE_CART_ITEM = gql`
+mutation Mutation($where: CartItemWhereUniqueInput!, $data: CartItemUpdateInput!) {
+  updateCartItem(where: $where, data: $data) {
+    isStored
+  }
+}
+`
