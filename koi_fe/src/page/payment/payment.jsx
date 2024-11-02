@@ -184,10 +184,15 @@ const CheckoutForm = () => {
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
         console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
-        const cartConsignmentPairs = cartItems.cartItems.map((cartItem, index) => ({
-          cartItemId: cartItem.id,
-          consignmentRaisingId: cartItem.isStored ? consignmentRaisingIds[index] : null,
-        }));
+        const cartConsignmentPairs = cartItems.cartItems.map((cartItem) => {
+          const isConsigned = checkConsigned(cartItem);
+          const consignmentId = isConsigned ? consignmentRaisingIds.shift() : null;
+          return {
+            cartItemId: cartItem.id,
+            consignmentRaisingId: consignmentId,
+          };
+        });
+    
         console.log(cartConsignmentPairs);
         
         // Create order items
