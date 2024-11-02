@@ -1,6 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { integer, relationship } from "@keystone-6/core/fields";
+import { checkbox, integer, relationship } from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
 
 const CartItem = list({
@@ -52,6 +52,9 @@ const CartItem = list({
       ui: {
         itemView: { fieldMode: "read" },
       },
+    }),
+    isStored: checkbox({
+      label: "Ký gửi nuôi",
     }),
   },
 });
