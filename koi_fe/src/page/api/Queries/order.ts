@@ -1,13 +1,31 @@
 import { gql } from "@apollo/client";
 
 export const GET_ORDERS = gql`
-query Query($where: OrderWhereInput!) {
+query Orders($where: OrderWhereInput!) {
   orders(where: $where) {
-    createAt
-    address
     price
-    status
+    address
     id
+    status
+    createAt
+    items {
+      product {
+        name
+        price
+      }
+      consignmentSale {
+        name
+      }
+      consignmentRaising {
+        product {
+          name
+        }
+        consignmentDate
+        returnDate
+        consignmentPrice
+        status
+      }
+    }
   }
 }
 `
