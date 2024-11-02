@@ -165,6 +165,10 @@ export default function Checkout() {
   });
 
   const handleCreateOrder = async () => {
+    // if (!validateFields()) {
+    //   toast.error("Please correct the errors in the form before submitting.");
+    //   return; // Stop further execution if validation fails
+    // }
     if (!validateFields()) {
       toast.error("Vui lòng nhập thông tin đầy đủ trước khi đặt hàng.");
       return;
@@ -173,16 +177,27 @@ export default function Checkout() {
       toast.error("Vui lòng chọn phương thức thanh toán.");
       return;
     }
-    navigate(`/payment?paymentMethod=${paymentMethod}`, {
-      state: {
-        totalCarePrice: totalCarePrice,
-        selectedProducts: selectedProducts,
-        dates: dates,
-        depositsArray: depositsArray,
-        paymentMethod: paymentMethod,
-        orderData: orderData,
-      },
-    });
+    if (!validateFields()) {
+      if (cartItems.cartItems.length <= 0) {
+        toast.error("Lỗi tạo đơn hàng!");
+        return;
+      }
+      if (!paymentMethod) {
+        toast.error("Vui lòng chọn phương thức thanh toán.");
+        return;
+      }
+    } else {
+      navigate(`/payment?paymentMethod=${paymentMethod}`, {
+        state: {
+          totalCarePrice: totalCarePrice,
+          selectedProducts: selectedProducts,
+          dates: dates,
+          depositsArray: depositsArray,
+          paymentMethod: paymentMethod,
+          orderData: orderData,
+        },
+      });
+    }
   };
 
   const [page, setPage] = useState(1); // Current page
@@ -205,7 +220,7 @@ export default function Checkout() {
             <h3>Thông tin giao/nhận hàng</h3>
           </section>
           <Box>
-            <div>
+            <Flex gap="large">
               <TextField
                 id="name"
                 name="name"
@@ -217,8 +232,7 @@ export default function Checkout() {
                 inputProps={{ maxLength: 50 }}
                 helperText={errors.name || "Tên tối đa 50 ký tự"}
                 error={Boolean(errors.name)}
-                fullWidth
-                style={{ marginBottom: "15px" }}
+                style={{ width: "40%" }}
               />
 
               <TextField
@@ -231,8 +245,6 @@ export default function Checkout() {
                 required
                 style={{ width: "30%" }}
                 disabled
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
 
               <TextField
@@ -245,10 +257,12 @@ export default function Checkout() {
                 required
                 style={{ width: "25%" }}
                 disabled
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
+            </Flex>
+          </Box>
 
+          <Box style={{ marginTop: "2%" }}>
+            <Flex gap="large">
               <TextField
                 id="address"
                 name="address"
@@ -261,10 +275,12 @@ export default function Checkout() {
                 style={{ width: "98%" }}
                 error={Boolean(errors.address)}
                 helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
+            </Flex>
+          </Box>
 
+          <Box style={{ marginTop: "2%" }}>
+            <Flex gap="large">
               <TextField
                 id="city"
                 name="city"
@@ -277,8 +293,6 @@ export default function Checkout() {
                 style={{ width: "25%" }}
                 error={Boolean(errors.city)}
                 helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
               <TextField
                 id="district"
@@ -292,8 +306,6 @@ export default function Checkout() {
                 style={{ width: "25%" }}
                 error={Boolean(errors.district)}
                 helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
               <TextField
                 id="ward"
@@ -307,10 +319,8 @@ export default function Checkout() {
                 style={{ width: "25%" }}
                 helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
                 error={Boolean(errors.ward)}
-                fullWidth
-                style={{ marginBottom: "15px" }}
               />
-            </div>
+            </Flex>
           </Box>
         </Box>
         <Box style={{ padding: "20px", width: "35%" }}>
