@@ -11,7 +11,10 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
-import { CREATE_ORDER_ITEMS, UPDATE_ORDER_ITEM } from ".././api/Mutations/orderItem";
+import {
+  CREATE_ORDER_ITEMS,
+  UPDATE_ORDER_ITEM,
+} from ".././api/Mutations/orderItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate, Link, useLocation } from "react-router-dom";
@@ -50,8 +53,13 @@ const CheckoutForm = () => {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-  const orderAddress = location.state.orderData.address + "," + location.state.orderData.city + "," +
-    location.state.orderData.district + "," +
+  const orderAddress =
+    location.state.orderData.address +
+    "," +
+    location.state.orderData.city +
+    "," +
+    location.state.orderData.district +
+    "," +
     location.state.orderData.ward;
 
   selectedProducts.forEach((product) => {
@@ -61,7 +69,7 @@ const CheckoutForm = () => {
   console.log(totalCarePrice);
   const checkConsigned = (cartItem) => {
     // Extract IDs from selectedProducts
-    const selectedProductIds = selectedProducts.map(product => product.id);
+    const selectedProductIds = selectedProducts.map((product) => product.id);
 
     // Check if cartItem.id is in selectedProductIds
     return selectedProductIds.includes(cartItem.id);
@@ -124,7 +132,7 @@ const CheckoutForm = () => {
               user: { connect: { id: userId } },
               price: totalPrice,
               address: orderAddress,
-              paymentMethod: location.state.paymentMethod
+              paymentMethod: location.state.paymentMethod,
             },
           },
         });
@@ -132,7 +140,6 @@ const CheckoutForm = () => {
         const orderId = orderData.createOrder.id;
 
         //Fish consignment
-
         const consignmentData = selectedProducts.map((product) => {
           console.log(product.product[0].id);
           const { startDate, endDate } = dates[product.id] || {};
@@ -140,9 +147,9 @@ const CheckoutForm = () => {
           const days =
             startDate && endDate
               ? Math.ceil(
-                (new Date(endDate) - new Date(startDate)) /
-                (1000 * 60 * 60 * 24)
-              )
+                  (new Date(endDate) - new Date(startDate)) /
+                    (1000 * 60 * 60 * 24)
+                )
               : 0;
 
           return {
@@ -155,17 +162,24 @@ const CheckoutForm = () => {
           };
         });
 
-        const { data: consignmentDataResponse } = await createConsignmentRaisings({
-          variables: { data: consignmentData },
-        });
-        if (consignmentDataResponse && consignmentDataResponse.createConsigmentRaisings) {
-          consignmentRaisingIds = consignmentDataResponse.createConsigmentRaisings.map(
-            (item) => item.id
-          );
+        const { data: consignmentDataResponse } =
+          await createConsignmentRaisings({
+            variables: { data: consignmentData },
+          });
+        if (
+          consignmentDataResponse &&
+          consignmentDataResponse.createConsigmentRaisings
+        ) {
+          consignmentRaisingIds =
+            consignmentDataResponse.createConsigmentRaisings.map(
+              (item) => item.id
+            );
           console.log("Consignment Raising IDs:", consignmentRaisingIds);
-        }
-        else {
-          console.error("Unexpected response structure:", consignmentDataResponse);
+        } else {
+          console.error(
+            "Unexpected response structure:",
+            consignmentDataResponse
+          );
         }
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
         console.log(cartItems.cartItems);
@@ -193,10 +207,10 @@ const CheckoutForm = () => {
             ...(item.product.length > 0
               ? { product: { connect: { id: item.product[0].id } } }
               : {
-                consignmentSale: {
-                  connect: { id: item.consignmentProduct[0].id },
-                },
-              }),
+                  consignmentSale: {
+                    connect: { id: item.consignmentProduct[0].id },
+                  },
+                }),
             order: { connect: { id: orderId } },
             price:
               item.product.length > 0
@@ -204,7 +218,11 @@ const CheckoutForm = () => {
                 : item.consignmentProduct[0].price,
             isStored: checkConsigned(item),
             ...(matchingPair && matchingPair.consignmentRaisingId
-              ? { consignmentRaising: { connect: { id: matchingPair.consignmentRaisingId } } }
+              ? {
+                  consignmentRaising: {
+                    connect: { id: matchingPair.consignmentRaisingId },
+                  },
+                }
               : {}),
           };
         });
