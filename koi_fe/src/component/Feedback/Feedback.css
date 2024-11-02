@@ -1,49 +1,80 @@
 .feedback-slider {
-  max-width: 1000px; /* Tối đa chiều rộng */
-  margin: auto; /* Giữa màn hình */
-  position: relative; /* Để các nút điều hướng có thể sử dụng position: absolute */
+  max-width: 1000px;
+  margin: auto;
+  position: relative;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light background for contrast */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .feedback-section {
-  display: flex; /* Sử dụng flexbox để sắp xếp */
-  justify-content: space-between; /* Căn giữa các phần tử */
-  gap: 20px; /* Khoảng cách giữa các phần tử */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Center elements for smaller screens */
+  gap: 20px;
 }
 
 .feedback-card {
-  width: calc(33.33% - 20px); /* Chiều rộng của mỗi thẻ feedback */
-  transition: transform 0.3s; /* Hiệu ứng chuyển động */
-  border: 1px solid #e0e0e0; /* Viền cho thẻ feedback */
-  border-radius: 5px; /* Bo góc cho thẻ */
+  flex: 1 1 calc(33.33% - 20px);
+  max-width: calc(33.33% - 20px);
+  min-width: 280px; /* Minimum width for mobile responsiveness */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.feedback-card:hover {
+  transform: translateY(-10px); /* Hover effect for cards */
+}
+
+.feedback-card .fa-star {
+  font-size: 1em; /* Larger star icons */
+  color: #ffc107; /* Highlighted color */
+}
+
+.feedback-card .text-muted {
+  font-size: 0.9em;
 }
 
 .feedback-nav-btn {
-  position: absolute; /* Sử dụng vị trí tuyệt đối */
-  top: 60%; /* Căn giữa theo chiều dọc */
-  transform: translateY(-50%); /* Đảm bảo nút nằm chính giữa */
-  width: 40px;
-  height: 40px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #007bff; /* Primary color */
+  color: white;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  z-index: 10; /* Đảm bảo nút nổi trên các phần tử khác */
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .feedback-nav-btn.left {
-  left: -30px; /* Đẩy nút trái ra sát cạnh */
+  left: -25px;
 }
 
 .feedback-nav-btn.right {
-  right: -30px; /* Đẩy nút phải ra sát cạnh */
+  right: -25px;
 }
 
 .feedback-nav-btn:hover {
-  background-color: #f0f0f0;
-  transform: scale(1.1); /* Hiệu ứng hover */
+  background-color: #0056b3; /* Darker shade on hover */
+  transform: scale(1.1);
+}
+
+.empty-feedback {
+  opacity: 0.5;
+  background-color: #f1f1f1;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
