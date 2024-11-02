@@ -7,7 +7,7 @@ import {
 import { formatMoney } from '../../utils/formatMoney';
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom"
-import { CREATE_CONSIGNMENT_RAISING } from '../api/Mutations/fishcare';
+import { UPDATE_CART_ITEM } from '../api/Mutations/cart';
 import { useQuery, useMutation } from "@apollo/client";
 import toast, { Toaster } from "react-hot-toast";
 const FishCareService = () => {
@@ -18,7 +18,7 @@ const FishCareService = () => {
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
     const [depositsArray, setDepositsArray] = useState([]);
-
+    const [updateCartItem] = useMutation(UPDATE_CART_ITEM);
     const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     const userId = localStorage.getItem("id");
     console.log(location.state.selectedProducts);
@@ -94,6 +94,18 @@ const FishCareService = () => {
     // Điều hướng sang trang thanh toán
     const handleProceedToCheckout = async () => {
         if (agreeToPolicy) {
+            for(let i = 0; i < selectedProducts.length; i++){
+                await updateCartItem({
+                    variables: {
+                        where:{
+                            id: selectedProducts[i].id
+                        },
+                        data:{
+                            isStored: true
+                        }
+                    }
+                })
+            }
             setTimeout(() => {
                 selectedProducts.forEach((product) => {
                     localStorage.setItem(`${product.id}`, product.id);

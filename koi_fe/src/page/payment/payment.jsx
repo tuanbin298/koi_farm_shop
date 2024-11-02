@@ -168,13 +168,13 @@ const CheckoutForm = () => {
           console.error("Unexpected response structure:", consignmentDataResponse);
         }
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
-
+        console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
-        const cartConsignmentPairs = cartItemIds.map((cartItemId, index) => ({
-          cartItemId,
-          consignmentRaisingId: consignmentRaisingIds[index] || null,
+        const cartConsignmentPairs = cartItems.cartItems.map((cartItem, index) => ({
+          cartItemId: cartItem.id,
+          consignmentRaisingId: cartItem.isStored ? consignmentRaisingIds[index] : null,
         }));
-
+        console.log(cartConsignmentPairs);
         
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
