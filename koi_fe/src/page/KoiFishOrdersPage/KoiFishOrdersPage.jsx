@@ -10,10 +10,20 @@ import toast from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 
 const KoiFishOrdersPage = () => {
-  
+  const userId = localStorage.getItem("id");
   const { loading, error, data } = useQuery(GET_ORDERS, {
-    variables: { where: {} }, // Adjust filters as needed
+    variables: {
+      where: {
+        user:{
+          id: {
+            equals: userId,
+          },
+        }
+
+      },
+    }, // Adjust filters as needed
   });
+
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [feedback, setFeedback] = useState({ comment: "" });
@@ -73,7 +83,7 @@ const KoiFishOrdersPage = () => {
 
     console.log("Customer feedback:", feedback);
   };
-  
+
   if (loading) return <Spinner animation="border" variant="primary" />;
   if (error) return <Alert variant="danger">Failed to load orders</Alert>;
 
