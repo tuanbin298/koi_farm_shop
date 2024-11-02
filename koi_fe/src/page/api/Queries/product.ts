@@ -3,7 +3,7 @@ import { gql, useQuery } from "@apollo/client";
 // Query để lấy tất cả sản phẩm
 export const GET_ALL_PRODUCTS = gql`
   query GetAllProducts {
-    products {
+    products(where: { status: { equals: "Có sẵn" } }) {
       id
       name
       birth
@@ -49,7 +49,7 @@ export const GET_PRODUCT_BY_CATEGORY = gql`
 
 export const GET_PRODUCT = gql`
   query Products($take: Int) {
-    products(take: $take) {
+    products(where: { status: { equals: "Có sẵn" } }, take: $take) {
       id
       name
       origin
@@ -122,7 +122,6 @@ export function useProductBySlug(slug) {
     product: data?.product,
   };
 }
-
 
 export function useProduct(id) {
   const { loading, error, data } = useQuery(GET_PRODUCT_DETAIL, {
