@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Table, Button, Form } from "react-bootstrap";
-import { FaStar } from "react-icons/fa";
+import { Table, Button, Form, Card } from "react-bootstrap";
+import { FaStar, FaPaperPlane } from "react-icons/fa";
 import "./KoiFishOrdersPage.css";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
 import toast from "react-hot-toast";
@@ -91,7 +91,7 @@ const KoiFishOrdersPage = () => {
   const [createFeedback] = useMutation(CREATE_FEEDBACK);
 
   return (
-    <div className="container mt-4">
+    <div className="order container mt-4">
       <h2>ĐƠN HÀNG CỦA BẠN</h2>
       <Table striped bordered hover>
         <thead>
@@ -122,42 +122,48 @@ const KoiFishOrdersPage = () => {
         </tbody>
       </Table>
 
-      <div className="mt-4 text-center">
-        <h3>Đánh giá của bạn</h3>
+      <Card className="mt-4">
+        <Card.Body className="text-center">
+          <h3 className="mb-4">Đánh giá của bạn</h3>
 
-        <Form.Group>
-          <div className="d-flex justify-content-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FaStar
-                key={star}
-                className="star"
-                color={star <= rating ? "#FFD700" : "#E0E0E0"}
-                onClick={() => handleRatingChange(star)}
-                style={{ cursor: "pointer", fontSize: "24px", margin: "2px" }}
-              />
-            ))}
-          </div>
-        </Form.Group>
+          <Form.Group className="mb-4">
+            <div className="d-flex justify-content-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar
+                  key={star}
+                  className={`star ${star <= rating ? "star-selected" : ""}`}
+                  onClick={() => handleRatingChange(star)}
+                />
+              ))}
+            </div>
+          </Form.Group>
 
-        <Form.Group controlId="feedback">
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Nhập phản hồi của bạn"
-            name="comment"
-            value={feedback.comment}
-            onChange={handleFeedbackChange}
-            style={{ resize: "none" }}
-          />
+          <Form.Group controlId="feedback" className="mb-3">
+            <Form.Control
+              as="textarea"
+              rows={3}
+              maxLength={200} // Max character limit
+              placeholder="Nhập phản hồi của bạn"
+              name="comment"
+              value={feedback.comment}
+              onChange={handleFeedbackChange}
+              style={{ resize: "none", borderRadius: "0.25rem" }}
+            />
+            <div className="text-muted text-end mt-1">
+              {feedback.comment.length} / 200 characters
+            </div>
+          </Form.Group>
+
           <Button
             variant="primary"
             onClick={handleSubmitFeedback}
-            className="mt-2"
+            className="mt-2 w-100 submit-button"
           >
+            <FaPaperPlane style={{ marginRight: "8px" }} />
             Gửi
           </Button>
-        </Form.Group>
-      </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 };
