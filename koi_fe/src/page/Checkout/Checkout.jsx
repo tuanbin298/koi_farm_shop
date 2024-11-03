@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { styled } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import "./Checkout.css";
 import { Button, Flex, Radio, Space, Image } from "antd";
 import { Link } from "react-router-dom";
-import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
-import { CREATE_ORDER_ITEMS } from ".././api/Mutations/orderItem";
-import { useMutation, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
-import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import toast, { Toaster } from "react-hot-toast";
 import { formatMoney } from "../../utils/formatMoney";
 import { GET_ORDER_ITEM_ID } from "../api/Queries/orderItem";
@@ -20,49 +16,27 @@ import {
   Divider,
   Typography,
   ListItemAvatar,
-  Avatar,
   Pagination,
-  darken,
 } from "@mui/material";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
+
 export default function Checkout() {
   const navigate = useNavigate();
-  const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const [updateOrder] = useMutation(UPDATE_ORDER);
+  const location = useLocation();
   const userId = localStorage.getItem("id");
-  const [orderItemsData, setOrderItemsData] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const [linkOrderId, setLinkOrderId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("all");
-  const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
-  const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
   const [consignedIDs, setConsignedIDs] = useState([]);
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (location.state && location.state.selectedProducts) {
-        setSelectedProducts(location.state.selectedProducts);
-        setDates(location.state.dates);
-        setTotalCarePrice(location.state.totalCarePrice)
-        setDepositsArray(location.state.depositsArray);
-    }
-}, [location.state]); 
-console.log(paymentMethod)
-useEffect(() => {
-  // Extract product IDs from selectedProducts and set them in state
-  const ids = selectedProducts.map((product) => product.id);
-  setConsignedIDs(ids);
-}, [selectedProducts]);
-  console.log(selectedProducts);
-  console.log(dates);
-  console.log(totalCarePrice);
-  console.log(consignedIDs);
   const {
-    loading,
-    error,
     data: cartItems,
+    loading: loadingCart,
+    error: errorCart,
     refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: {
@@ -71,6 +45,27 @@ useEffect(() => {
       },
     },
   });
+  console.log(cartItems);
+
+  useEffect(() => {
+    if (location.state && location.state.selectedProducts) {
+      setSelectedProducts(location.state.selectedProducts);
+      setDates(location.state.dates);
+      setTotalCarePrice(location.state.totalCarePrice);
+      setDepositsArray(location.state.depositsArray);
+    }
+  }, [location.state]);
+  console.log(paymentMethod);
+
+  useEffect(() => {
+    // Extract product IDs from selectedProducts and set them in state
+    const ids = selectedProducts.map((product) => product.id);
+    setConsignedIDs(ids);
+  }, [selectedProducts]);
+  console.log(selectedProducts);
+  console.log(dates);
+  console.log(totalCarePrice);
+  console.log(consignedIDs);
 
   const { data: orderItemIDs, refetch: refetchOrderItems } = useQuery(
     GET_ORDER_ITEM_ID,
@@ -84,9 +79,6 @@ useEffect(() => {
     }
   );
   console.log(orderItemIDs);
-  
-  
-  const [errors, setErrors] = useState({}); // Error state for each field
 
   // Function to validate each field
   const validateFields = () => {
@@ -94,15 +86,6 @@ useEffect(() => {
     if (!orderData.name || orderData.name.length > 50) {
       newErrors.name = "Tên là tối đa 50 ký tự";
     }
-    // if (
-    //   !orderData.email ||
-    //   !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(orderData.email)
-    // ) {
-    //   newErrors.email = "Email không hợp lệ";
-    // }
-    // if (!orderData.phone) {
-    //   newErrors.phone = "Số điện thoại phải là 6 chữ số";
-    // }
     if (!orderData.address || orderData.address.length > 100) {
       newErrors.address = "Địa chỉ là tối đa 100 ký tự";
     }
@@ -122,9 +105,6 @@ useEffect(() => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const [createOrder] = useMutation(CREATE_ORDER);
-  const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
-
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
@@ -143,7 +123,6 @@ useEffect(() => {
     { label: "Thanh toán hết", value: "all" },
     { label: "Thanh toán khi nhận hàng (đặt cọc 50%)", value: "cod" },
   ];
-  const [orderItemIds, setOrderItemIds] = useState([]);
 
   const handleInputChange = (e) => {
     setOrderData({
@@ -155,38 +134,41 @@ useEffect(() => {
       [e.target.name]: "", // Clear error on user input
     });
   };
-  console.log(orderData)
+  console.log(orderData);
+
   let totalPrice = 0;
-  cartItems.cartItems?.forEach((cartItem) => {
-    if (cartItem.product.length > 0) {
-      totalPrice += cartItem.product[0].price;
-    } else if (cartItem.consignmentProduct) {
-      totalPrice += cartItem.consignmentProduct[0].price;
+
+  useEffect(() => {
+    if (!loadingCart && cartItems) {
+      let totalPrice = 0;
+      cartItems.cartItems.forEach((cartItem) => {
+        if (cartItem.product?.length > 0) {
+          totalPrice += cartItem.product[0].price;
+        } else if (cartItem.consignmentProduct) {
+          totalPrice += cartItem.consignmentProduct[0].price;
+        }
+      });
+      console.log("Total Price:", totalPrice);
     }
-  });
+  }, [loadingCart, cartItems]);
 
   const handleCreateOrder = async () => {
-    // if (!validateFields()) {
-    //   toast.error("Please correct the errors in the form before submitting.");
-    //   return; // Stop further execution if validation fails
-    // }
-    if (!validateFields()){
-      if(cartItems.cartItems.length <= 0){
+    if (!validateFields()) {
+      if (cartItems.cartItems.length <= 0) {
         toast.error("Lỗi tạo đơn hàng!");
       }
+    } else {
+      navigate(`/payment?paymentMethod=${paymentMethod}`, {
+        state: {
+          totalCarePrice: totalCarePrice,
+          selectedProducts: selectedProducts,
+          dates: dates,
+          depositsArray: depositsArray,
+          paymentMethod: paymentMethod,
+          orderData: orderData,
+        },
+      });
     }
-    else{
-    navigate(`/payment?paymentMethod=${paymentMethod}`, { state: 
-      { 
-        totalCarePrice: totalCarePrice,  
-        selectedProducts: selectedProducts,
-        dates: dates,
-        depositsArray: depositsArray,
-        paymentMethod: paymentMethod,
-        orderData: orderData
-      } 
-    });
-  }
   };
 
   const [page, setPage] = useState(1); // Current page
@@ -204,195 +186,206 @@ useEffect(() => {
     <>
       <Toaster position="top-center" reverseOrder={false} />
       <Flex style={{ justifyContent: "space-between", width: "100%" }}>
-      <Box className="checkOutInfo" style={{ padding: "20px", width: "65%" }}>
-        <section className="TitleSection">
-          <h3>Thông tin giao/nhận hàng</h3>
-        </section>
-        <Box>
-          <Flex gap="large">
-            <TextField
-              id="name"
-              name="name"
-              label="Họ và tên"
-              variant="outlined"
-              value={orderData.name}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              helperText={errors.name || "Tên tối đa 50 ký tự"}
-              error={Boolean(errors.name)}
-              style={{ width: "40%" }}
-            />
-
-            <TextField
-              id="email"
-              name="email"
-              label="Email"
-              variant="outlined"
-              value={orderData.email}
-              onChange={handleInputChange}
-              required
-              style={{ width: "30%" }}
-              disabled
-            />
-
-            <TextField
-              id="phone"
-              name="phone"
-              label="Số điện thoại"
-              variant="outlined"
-              value={orderData.phone}
-              onChange={handleInputChange}
-              required
-              style={{ width: "25%" }}
-              disabled
-            />
-          </Flex>
-        </Box>
-
-        <Box style={{ marginTop: "2%" }}>
-          <Flex gap="large">
-            <TextField
-              id="address"
-              name="address"
-              label="Địa chỉ"
-              variant="outlined"
-              value={orderData.address}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 100 }}
-              style={{ width: "98%" }}
-              error={Boolean(errors.address)}
-              helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
-            />
-          </Flex>
-        </Box>
-
-        <Box style={{ marginTop: "2%" }}>
-          <Flex gap="large">
-            <TextField
-              id="city"
-              name="city"
-              label="Nhập tỉnh/thành"
-              variant="outlined"
-              value={orderData.city}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              error={Boolean(errors.city)}
-              helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
-            />
-            <TextField
-              id="district"
-              name="district"
-              label="Nhập quận/huyện"
-              variant="outlined"
-              value={orderData.district}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              error={Boolean(errors.district)}
-              helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
-            />
-            <TextField
-              id="ward"
-              name="ward"
-              label="Nhập phường/xã"
-              variant="outlined"
-              value={orderData.ward}
-              onChange={handleInputChange}
-              required
-              inputProps={{ maxLength: 50 }}
-              style={{ width: "25%" }}
-              helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
-              error={Boolean(errors.ward)}
-            />
-          </Flex>
-        </Box>
-      </Box>
-      <Box style={{ padding: "20px", width: "35%" }}> 
-        <Flex justify="space-between" vertical>
-          <div className="OrderSection">
-            <section className="OrderTitleSection" style={{
-              width:"75%"
-            }}>
-              <h3>Thông tin đơn hàng</h3>
-            </section>
-            <List>
-              {paginatedItems.map((item, index) => (
-                <div key={index} >
-                  <ListItem>
-                    <ListItemAvatar>
-                      <Image
-                        width={75}
-                        src={
-                          item.product[0]?.image?.publicUrl ||
-                          item.consignmentProduct[0]?.photo?.image?.publicUrl ||
-                          ""
-                        }
-                      />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        item.product[0]?.name ||
-                        item.consignmentProduct[0]?.name
-                      }
-                      secondary={`Giá: ${
-                        item.product[0]?.price ||
-                        item.consignmentProduct[0]?.price
-                      } VND`}
-                    />
-                  </ListItem>
-                  <Divider />
-                </div>
-              ))}
-              <Box display="flex" justifyContent="center" marginTop={2}>
-                <Pagination
-                  count={Math.ceil(
-                    (cartItems?.cartItems?.length || 0) / itemsPerPage
-                  )}
-                  page={page}
-                  onChange={handlePageChange}
-                  color="primary"
-                />
-              </Box>
-              {cartItems?.cartItems?.length === 0 && (
-                <Typography variant="body2">Giỏ hàng trống</Typography>
-              )}
-            </List>
-          </div>
-
-          <div className="checkoutSection">
-            <section className="TitleFlexSection" style={{
-              width:"75%"
-            }}>
-              <h3>Phương thức thanh toán</h3>
-            </section>
-            <Flex direction="column" gap="middle">
-              <Radio.Group
-                onChange={(e) => {
-                  setPaymentMethod(e.target.value);
-                  setOrderData({ ...orderData, paymentMethod: e.target.value });
-                }}
+        <Box className="checkOutInfo" style={{ padding: "20px", width: "65%" }}>
+          <section className="TitleSection">
+            <h3>Thông tin giao/nhận hàng</h3>
+          </section>
+          <Box>
+            <Flex gap="large">
+              <TextField
+                id="name"
+                name="name"
+                label="Họ và tên"
+                variant="outlined"
+                value={orderData.name}
+                onChange={handleInputChange}
                 required
-              >
-                <Space direction="vertical">
-                  {checkoutOption1.map((option) => (
-                    <Radio value={option.value}>{option.label}</Radio>
-                  ))}
-                </Space>
-              </Radio.Group>
+                inputProps={{ maxLength: 50 }}
+                helperText={errors.name || "Tên tối đa 50 ký tự"}
+                error={Boolean(errors.name)}
+                style={{ width: "40%" }}
+              />
+
+              <TextField
+                id="email"
+                name="email"
+                label="Email"
+                variant="outlined"
+                value={orderData.email}
+                onChange={handleInputChange}
+                required
+                style={{ width: "30%" }}
+                disabled
+              />
+
+              <TextField
+                id="phone"
+                name="phone"
+                label="Số điện thoại"
+                variant="outlined"
+                value={orderData.phone}
+                onChange={handleInputChange}
+                required
+                style={{ width: "25%" }}
+                disabled
+              />
             </Flex>
-          </div>
-        </Flex>
+          </Box>
+
+          <Box style={{ marginTop: "2%" }}>
+            <Flex gap="large">
+              <TextField
+                id="address"
+                name="address"
+                label="Địa chỉ"
+                variant="outlined"
+                value={orderData.address}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 100 }}
+                style={{ width: "98%" }}
+                error={Boolean(errors.address)}
+                helperText={errors.address || "Địa chỉ tối đa 100 ký tự"}
+              />
+            </Flex>
+          </Box>
+
+          <Box style={{ marginTop: "2%" }}>
+            <Flex gap="large">
+              <TextField
+                id="city"
+                name="city"
+                label="Nhập tỉnh/thành"
+                variant="outlined"
+                value={orderData.city}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                error={Boolean(errors.city)}
+                helperText={errors.city || "Tên tỉnh/thành tối đa 50 ký tự"}
+              />
+              <TextField
+                id="district"
+                name="district"
+                label="Nhập quận/huyện"
+                variant="outlined"
+                value={orderData.district}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                error={Boolean(errors.district)}
+                helperText={errors.district || "Tên quận/huyện tối đa 50 ký tự"}
+              />
+              <TextField
+                id="ward"
+                name="ward"
+                label="Nhập phường/xã"
+                variant="outlined"
+                value={orderData.ward}
+                onChange={handleInputChange}
+                required
+                inputProps={{ maxLength: 50 }}
+                style={{ width: "25%" }}
+                helperText={errors.ward || "Tên phường/xã tối đa 50 ký tự"}
+                error={Boolean(errors.ward)}
+              />
+            </Flex>
+          </Box>
         </Box>
-        
+        <Box style={{ padding: "20px", width: "35%" }}>
+          <Flex justify="space-between" vertical>
+            <div className="OrderSection">
+              <section
+                className="OrderTitleSection"
+                style={{
+                  width: "75%",
+                }}
+              >
+                <h3>Thông tin đơn hàng</h3>
+              </section>
+              <List>
+                {paginatedItems.map((item, index) => (
+                  <div key={index}>
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Image
+                          width={75}
+                          src={
+                            item.product[0]?.image?.publicUrl ||
+                            item.consignmentProduct[0]?.photo?.image
+                              ?.publicUrl ||
+                            ""
+                          }
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          item.product[0]?.name ||
+                          item.consignmentProduct[0]?.name
+                        }
+                        secondary={`Giá: ${formatMoney(
+                          item.product[0]?.price ||
+                            item.consignmentProduct[0]?.price
+                        )} `}
+                      />
+                    </ListItem>
+                    <Divider />
+                  </div>
+                ))}
+                <Box display="flex" justifyContent="center" marginTop={2}>
+                  <Pagination
+                    count={Math.ceil(
+                      (cartItems?.cartItems?.length || 0) / itemsPerPage
+                    )}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
+                {cartItems?.cartItems?.length === 0 && (
+                  <Typography variant="body2">Giỏ hàng trống</Typography>
+                )}
+              </List>
+            </div>
+
+            <div className="checkoutSection">
+              <section
+                className="TitleFlexSection"
+                style={{
+                  width: "75%",
+                }}
+              >
+                <h3>Phương thức thanh toán</h3>
+              </section>
+              <Flex direction="column" gap="middle">
+                <Radio.Group
+                  onChange={(e) => {
+                    setPaymentMethod(e.target.value);
+                    setOrderData({
+                      ...orderData,
+                      paymentMethod: e.target.value,
+                    });
+                  }}
+                  required
+                >
+                  <Space direction="vertical">
+                    {checkoutOption1.map((option) => (
+                      <Radio value={option.value}>{option.label}</Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Flex>
+            </div>
+          </Flex>
+        </Box>
       </Flex>
-      <Box style={{
-        padding:"50px"
-      }}>
+      <Box
+        style={{
+          padding: "50px",
+        }}
+      >
         <Flex
           style={{
             marginTop: "6%",
@@ -426,7 +419,7 @@ useEffect(() => {
             </Button>
           </div>
         </Flex>
-        </Box>
+      </Box>
     </>
   );
 }
