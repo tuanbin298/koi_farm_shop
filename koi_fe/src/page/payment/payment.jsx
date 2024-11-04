@@ -257,6 +257,7 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
+
   const { data: dataCart } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
   });
@@ -269,6 +270,11 @@ function Payment() {
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
   const location = useLocation();
+  const [totalCarePrice, setTotalCarePrice] = useState(0);
+  useEffect(() => {
+    setTotalCarePrice(location.state.totalCarePrice);
+}, [location.state]);
+console.log(totalCarePrice)
   useEffect(() => {
     if (dataCart) {
       let total = dataCart.cartItems.reduce((sum, cartItem) => {
@@ -279,7 +285,7 @@ function Payment() {
         }
         return sum;
       }, 0);
-
+      total += parseInt(totalCarePrice)
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
 
