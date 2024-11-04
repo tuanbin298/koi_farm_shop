@@ -114,19 +114,32 @@ const CartPage = () => {
     data?.cartItems?.filter((item) => item.consignmentProduct?.length > 0) ||
     [];
 
+    {/*Count total of products from koi farm, consignment sales farm and total farm*/}
+    const farmTotal = farmKoiItems.reduce((sum, item) => {
+      return sum + (item.product[0]?.price || 0);
+    }, 0);
+
+    const consignmentTotal = consignmentKoiItems.reduce((sum, item) => {
+      return sum + (item.consignmentProduct[0]?.price || 0);
+    }, 0);
+    console.log(farmTotal)
+    console.log(consignmentTotal)
+
+    const totalPrice = farmTotal + consignmentTotal
+    
   // Map through cart items and consignment raisings to find consigned products
 
   // Determine current items based on the selected tab
   const currentItems = tab === 0 ? farmKoiItems : consignmentKoiItems;
 
   // Calculate total price for the current tab's items
-  const totalPrice = currentItems.reduce((sum, cartItem) => {
-    const price =
-      cartItem.product.length > 0
-        ? cartItem.product[0].price
-        : cartItem.consignmentProduct[0].price;
-    return sum + price;
-  }, 0);
+  // const totalPrice = currentItems.reduce((sum, cartItem) => {
+  //   const price =
+  //     cartItem.product.length > 0
+  //       ? cartItem.product[0].price
+  //       : cartItem.consignmentProduct[0].price;
+  //   return sum + price;
+  // }, 0);
 
   const consignedCartItemIds = [];
   if (data?.cartItems && consignedFish?.consigmentRaisings) {
