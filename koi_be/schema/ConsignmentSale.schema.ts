@@ -16,10 +16,10 @@ const ConsignmentSale = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageConsigment(args);
+      return !permissions.canManageConsignment(args);
     },
     hideDelete(args) {
-      return !permissions.canManageConsigment(args);
+      return !permissions.canManageConsignment(args);
     },
   },
 
@@ -97,7 +97,7 @@ const ConsignmentSale = list({
         itemView: {
           fieldPosition: "sidebar",
           fieldMode(args) {
-            return permissions.canManageConsigment(args) ? "edit" : "read";
+            return permissions.canManageConsignment(args) ? "edit" : "read";
           },
         },
       },

@@ -22,10 +22,10 @@ const ConsigmentRaising = list({
 
   ui: {
     hideCreate(args) {
-      return !permissions.canManageConsigment(args);
+      return !permissions.canManageConsignment(args);
     },
     hideDelete(args) {
-      return !permissions.canManageConsigment(args);
+      return !permissions.canManageConsignment(args);
     },
   },
 
