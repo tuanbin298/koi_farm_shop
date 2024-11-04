@@ -114,6 +114,8 @@ export default function Header() {
     localStorage.removeItem("email");
     localStorage.removeItem("phone");
     localStorage.removeItem("cartId");
+    localStorage.removeItem("totalCarePrice");
+    localStorage.removeItem("depositsArray")
     setLoggedIn(false);
     setAnchorEl(null);
     navigate("/login");
