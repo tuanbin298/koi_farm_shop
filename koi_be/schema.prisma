@@ -123,6 +123,7 @@ model OrderItem {
   consignmentRaising   ConsigmentRaising? @relation("OrderItem_consignmentRaising", fields: [consignmentRaisingId], references: [id])
   consignmentRaisingId String?            @map("consignmentRaising")
   price                Int
+  status               String?
   isStored             Boolean            @default(false)
   from_Order_items     Order[]            @relation("Order_items")
 

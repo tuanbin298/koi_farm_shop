@@ -39,7 +39,7 @@ export async function createSuccessConsignmentSaleEmail(
   { to, consignmentId }: Arguments,
   context: KeystoneContext
 ): Promise<String> {
-  const consignment = await context.query.ConsignmentSale.findOne({
+  const consignment = await context.sudo().query.ConsignmentSale.findOne({
     where: {
       id: consignmentId,
     },
@@ -84,7 +84,9 @@ export async function createSuccessLoginEmail(
   { to, userId }: ArgumentsLogin,
   context: KeystoneContext
 ): Promise<String> {
-  const user = await context.query.User.findOne({
+  console.log("User ID:", userId);
+
+  const user = await context.sudo().query.User.findOne({
     where: {
       id: userId,
     },
