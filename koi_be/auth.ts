@@ -46,7 +46,7 @@ const { withAuth } = createAuth({
       canManageOrder
       canManageFeedback
       canManageCart
-      canManageConsigment
+      canManageConsignment
       canManageRequest
       canManageStatus
       canManageGallery
@@ -72,7 +72,7 @@ const { withAuth } = createAuth({
           canManageOrder: true,
           canManageFeedback: true,
           canManageCart: true,
-          canManageConsigment: true,
+          canManageConsignment: true,
           canManageRequest: true,
           canManageStatus: true,
           canManageGallery: true,
