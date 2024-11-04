@@ -15,6 +15,7 @@ query Orders($where: OrderWhereInput!) {
       }
       consignmentSale {
         name
+        price
       }
       consignmentRaising {
         product {
@@ -23,7 +24,6 @@ query Orders($where: OrderWhereInput!) {
         consignmentDate
         returnDate
         consignmentPrice
-        status
       }
     }
   }
