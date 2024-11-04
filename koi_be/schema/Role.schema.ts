@@ -57,7 +57,7 @@ const Role = list({
       label: "Quản lý giỏ hàng",
       defaultValue: false,
     }),
-    canManageConsigment: checkbox({
+    canManageConsignment: checkbox({
       label: "Quản lý hàng ký gửi",
       defaultValue: false,
     }),

@@ -57,7 +57,13 @@ input StringFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: NestedStringFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
 }
 
 input NestedStringFilter {
@@ -151,7 +157,7 @@ type Role {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -176,7 +182,7 @@ input RoleWhereInput {
   canManageOrder: BooleanFilter
   canManageFeedback: BooleanFilter
   canManageCart: BooleanFilter
-  canManageConsigment: BooleanFilter
+  canManageConsignment: BooleanFilter
   canManageRequest: BooleanFilter
   canManageStatus: BooleanFilter
   canManageGallery: BooleanFilter
@@ -204,7 +210,7 @@ input RoleOrderByInput {
   canManageOrder: OrderDirection
   canManageFeedback: OrderDirection
   canManageCart: OrderDirection
-  canManageConsigment: OrderDirection
+  canManageConsignment: OrderDirection
   canManageRequest: OrderDirection
   canManageStatus: OrderDirection
   canManageGallery: OrderDirection
@@ -219,7 +225,7 @@ input RoleUpdateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -247,7 +253,7 @@ input RoleCreateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -369,6 +375,7 @@ input StringNullableFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: StringNullableFilter
 }
 
@@ -1359,6 +1366,8 @@ type Mutation {
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
   createInvoice(items: [OrderItemCreateInput!]!, user: String!, price: Int!, address: String!): Order
+  createSuccessConsignmentSaleEmail(to: String!, consignmentId: String!): String
+  createSuccessLoginEmail(to: String!, userId: String!): String
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
@@ -1513,11 +1522,6 @@ enum KeystoneAdminUIFieldMetaItemViewFieldMode {
 enum KeystoneAdminUIFieldMetaItemViewFieldPosition {
   form
   sidebar
-}
-
-enum QueryMode {
-  default
-  insensitive
 }
 
 type KeystoneAdminUIFieldGroupMeta {
