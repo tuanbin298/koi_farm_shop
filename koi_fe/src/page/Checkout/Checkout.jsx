@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import "./Checkout.css";
@@ -29,8 +28,6 @@ export default function Checkout() {
   const [dates, setDates] = useState({});
   const [linkOrderId, setLinkOrderId] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("all");
-  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
-  const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
   const [consignedIDs, setConsignedIDs] = useState([]);
@@ -59,6 +56,7 @@ export default function Checkout() {
     }
   }, [location.state]);
   console.log(paymentMethod);
+
   useEffect(() => {
     // Extract product IDs from selectedProducts and set them in state
     const ids = selectedProducts.map((product) => product.id);
@@ -81,8 +79,6 @@ export default function Checkout() {
     }
   );
   console.log(orderItemIDs);
-
-  const [errors, setErrors] = useState({}); // Error state for each field
 
   // Function to validate each field
   const validateFields = () => {
@@ -139,6 +135,7 @@ export default function Checkout() {
     });
   };
   console.log(orderData);
+
   let totalPrice = 0;
 
   useEffect(() => {
@@ -156,26 +153,9 @@ export default function Checkout() {
   }, [loadingCart, cartItems]);
 
   const handleCreateOrder = async () => {
-    // if (!validateFields()) {
-    //   toast.error("Please correct the errors in the form before submitting.");
-    //   return; // Stop further execution if validation fails
-    // }
-    if (!validateFields()) {
-      toast.error("Vui lòng nhập thông tin đầy đủ trước khi đặt hàng.");
-      return;
-    }
-    if (!paymentMethod) {
-      toast.error("Vui lòng chọn phương thức thanh toán.");
-      return;
-    }
     if (!validateFields()) {
       if (cartItems.cartItems.length <= 0) {
         toast.error("Lỗi tạo đơn hàng!");
-        return;
-      }
-      if (!paymentMethod) {
-        toast.error("Vui lòng chọn phương thức thanh toán.");
-        return;
       }
     } else {
       navigate(`/payment?paymentMethod=${paymentMethod}`, {
@@ -345,10 +325,10 @@ export default function Checkout() {
                           item.product[0]?.name ||
                           item.consignmentProduct[0]?.name
                         }
-                        secondary={`Giá: ${
+                        secondary={`Giá: ${formatMoney(
                           item.product[0]?.price ||
-                          item.consignmentProduct[0]?.price
-                        } VND`}
+                            item.consignmentProduct[0]?.price
+                        )} `}
                       />
                     </ListItem>
                     <Divider />

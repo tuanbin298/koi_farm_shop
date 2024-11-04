@@ -21,10 +21,6 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { FaArrowLeft } from "react-icons/fa";
 import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
-import {
-  UPDATE_PRODUCT_STATUS,
-  UPDATE_CONSIGNMENT_PRODUCT_STATUS,
-} from "../api/Mutations/updateproduct";
 import "./payment.css";
 
 // User information
@@ -40,11 +36,7 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
-  const [updateConsignmentProductStatus] = useMutation(
-    UPDATE_CONSIGNMENT_PRODUCT_STATUS
-  );
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const location = useLocation();
@@ -61,7 +53,6 @@ const CheckoutForm = () => {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-
   const orderAddress =
     location.state.orderData.address +
     "," +
@@ -71,19 +62,31 @@ const CheckoutForm = () => {
     "," +
     location.state.orderData.ward;
 
+  selectedProducts.forEach((product) => {
+    const startDate = dates[product.id]?.startDate;
+    console.log(`Start date for product ${product.id}:`, startDate);
+  });
+  console.log(totalCarePrice);
   const checkConsigned = (cartItem) => {
+    // Extract IDs from selectedProducts
     const selectedProductIds = selectedProducts.map((product) => product.id);
+
+    // Check if cartItem.id is in selectedProductIds
     return selectedProductIds.includes(cartItem.id);
   };
-
   const {
     loading,
     error,
     data: cartItems,
+    refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
-        user: { id: { equals: userId } },
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
       },
     },
   });
@@ -97,60 +100,50 @@ const CheckoutForm = () => {
     const result = await stripe.createPaymentMethod({
       type: "card",
       card: elements.getElement(CardElement),
-      billing_details: { name: userName, email: userEmail },
+      billing_details: {
+        name: userName,
+        email: userEmail,
+      },
     });
 
     handlePaymentMethodResult(result);
+
     console.log("[PaymentMethod]", result);
   };
+  let totalPrice = 0;
 
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
+      //   toast.error("Lỗi tạo đơn hàng!");
       console.error(error.message);
-      return;
-    }
-
-    let totalPrice = 0;
-    cartItems.cartItems?.forEach((cartItem) => {
-      totalPrice +=
-        cartItem.product.length > 0
-          ? cartItem.product[0].price
-          : cartItem.consignmentProduct[0].price;
-    });
-
-    try {
-      const { data: orderData } = await createOrder({
-        variables: {
-          data: {
-            user: { connect: { id: userId } },
-            price: totalPrice,
-            address: orderAddress,
-            paymentMethod: location.state.paymentMethod,
-          },
-        },
+    } else {
+      cartItems.cartItems?.forEach((cartItem) => {
+        if (cartItem.product.length > 0) {
+          totalPrice += cartItem.product[0].price;
+        } else if (cartItem.consignmentProduct) {
+          totalPrice += cartItem.consignmentProduct[0].price;
+        }
       });
+      try {
+        // Create the order
+        const { data: orderData } = await createOrder({
+          variables: {
+            data: {
+              user: { connect: { id: userId } },
+              price: totalPrice,
+              address: orderAddress,
+              paymentMethod: location.state.paymentMethod,
+            },
+          },
+        });
 
-      const orderId = orderData.createOrder.id;
+        const orderId = orderData.createOrder.id;
 
-      const orderItems = cartItems.cartItems.map((item) => ({
-        ...(item.product.length > 0
-          ? { product: { connect: { id: item.product[0].id } } }
-          : {
-              consignmentSale: {
-                connect: { id: item.consignmentProduct[0].id },
-              },
-            }),
-        order: { connect: { id: orderId } },
-        price:
-          item.product.length > 0
-            ? item.product[0].price
-            : item.consignmentProduct[0].price,
-        isStored: checkConsigned(item),
-      }));
-
-      if (selectedProducts.length !== 0) {
+        //Fish consignment
         const consignmentData = selectedProducts.map((product) => {
+          console.log(product.product[0].id);
           const { startDate, endDate } = dates[product.id] || {};
+          const pricePerDay = 50000;
           const days =
             startDate && endDate
               ? Math.ceil(
@@ -163,25 +156,109 @@ const CheckoutForm = () => {
             user: { connect: { id: userId } },
             product: { connect: { id: product.product[0].id } },
             returnDate: new Date(endDate).toISOString(),
-            consignmentPrice: days * 50000,
+            consignmentPrice: days * pricePerDay,
             status: "Đang xử lý",
             description: "Consignment for fish care",
           };
         });
 
-        await createConsignmentRaisings({
-          variables: { data: consignmentData },
+        const { data: consignmentDataResponse } =
+          await createConsignmentRaisings({
+            variables: { data: consignmentData },
+          });
+        if (
+          consignmentDataResponse &&
+          consignmentDataResponse.createConsigmentRaisings
+        ) {
+          consignmentRaisingIds =
+            consignmentDataResponse.createConsigmentRaisings.map(
+              (item) => item.id
+            );
+          console.log("Consignment Raising IDs:", consignmentRaisingIds);
+        } else {
+          console.error(
+            "Unexpected response structure:",
+            consignmentDataResponse
+          );
+        }
+        const cartItemIds = cartItems.cartItems.map((item) => item.id);
+        console.log(cartItems.cartItems);
+        // Pair each cartItemId with its consignmentRaisingId
+        const cartConsignmentPairs = cartItems.cartItems.map((cartItem) => {
+          const isConsigned = checkConsigned(cartItem);
+          const consignmentId = isConsigned
+            ? consignmentRaisingIds.shift()
+            : null;
+          return {
+            cartItemId: cartItem.id,
+            consignmentRaisingId: consignmentId,
+          };
         });
-      }
 
-      const { data: createOrderItemsData } = await createOrderItems({
-        variables: { data: orderItems },
-      });
+        console.log(cartConsignmentPairs);
+
+        // Create order items
+        const orderItems = cartItems.cartItems.map((item) => {
+          // Check if there is a matching consignment entry for this cart item
+          const matchingPair = cartConsignmentPairs.find(
+            (pair) => pair.cartItemId === item.id
+          );
+          console.log(matchingPair);
+
+          return {
+            ...(item.product.length > 0
+              ? { product: { connect: { id: item.product[0].id } } }
+              : {
+                  consignmentSale: {
+                    connect: { id: item.consignmentProduct[0].id },
+                  },
+                }),
+            order: { connect: { id: orderId } },
+            price:
+              item.product.length > 0
+                ? item.product[0].price
+                : item.consignmentProduct[0].price,
+            isStored: checkConsigned(item),
+            ...(matchingPair && matchingPair.consignmentRaisingId
+              ? {
+                  consignmentRaising: {
+                    connect: { id: matchingPair.consignmentRaisingId },
+                  },
+                }
+              : {}),
+          };
+        });
+        //create order items
+        const { data: createOrderItemsData } = await createOrderItems({
+          variables: { data: orderItems },
+        });
+        console.log(consignmentRaisingIds);
 
         // Link order items to the order
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
+        // for (let i = 0; i < cartItemIds.length; i++) {
+        //   const cartItemId = cartItemIds[i];
+        //   console.log(cartItemId)
+        //   console.log(cartConsignmentPairs)
+        //   const consignment = cartConsignmentPairs.find(
+        //     (pair) => pair.cartItemId === cartItemId
+        //   );
+        //   console.log(consignment)
+        //   if (consignment && consignment.consignmentRaisingId) {
+        //     await updateOrderItem({
+        //       variables: {
+        //         where: { id: orderItemIds[i] },
+        //         data: {
+        //           consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
+        //         },
+        //       },
+        //     });
+        //     console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
+        //   }
+        // }
+
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
           console.log(orderItemIds[i]);
@@ -190,36 +267,35 @@ const CheckoutForm = () => {
               where: {
                 id: orderId,
               },
-            });
-          } else if (consignmentProductId) {
-            console.log(
-              "Updating consignment product status for product:",
-              consignmentProductId
-            );
-            await updateConsignmentProductStatus({
-              variables: {
-                where: { id: consignmentProductId },
-                data: { status: "Không có sẵn" },
+              data: {
+                items: {
+                  connect: [
+                    {
+                      id: orderItemIds[i],
+                    },
+                  ],
+                },
               },
-            });
-          }
-        } catch (error) {
-          console.error("Error updating status:", error);
+            },
+          });
         }
-      }
 
-      for (let i = 0; i < cartItems.cartItems.length; i++) {
-        const cartItemId = cartItems.cartItems[i].id;
-        await deleteCartItem({
-          variables: { where: { id: cartItemId } },
-        });
-      }
+        // Delete items from the cart
 
-      toast.success("Đã tạo đơn hàng!");
-      navigate("/someSuccessPage", { state: { from: "/payment" } });
-    } catch (error) {
-      console.error("Error creating order:", error);
-      toast.error("Lỗi tạo đơn hàng!");
+        for (let i = 0; i < cartItems.cartItems.length; i++) {
+          const cartItemId = cartItems.cartItems[i].id;
+          await deleteCartItem({
+            variables: {
+              where: { id: cartItemId },
+            },
+          });
+        }
+        toast.success("Đã tạo đơn hàng!");
+        navigate("/someSuccessPage", { state: { from: "/payment" } });
+      } catch (error) {
+        console.error("Error creating order:", error);
+        toast.error("Lỗi tạo đơn hàng!");
+      }
     }
   };
 
@@ -237,7 +313,9 @@ const CheckoutForm = () => {
               base: {
                 fontSize: "16px",
                 color: "#495057",
-                "::placeholder": { color: "#6c757d" },
+                "::placeholder": {
+                  color: "#6c757d",
+                },
               },
             },
           }}
@@ -257,7 +335,6 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-
   const { data: dataCart } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
   });
@@ -273,8 +350,8 @@ function Payment() {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   useEffect(() => {
     setTotalCarePrice(location.state.totalCarePrice);
-}, [location.state]);
-console.log(totalCarePrice)
+  }, [location.state]);
+  console.log(totalCarePrice);
   useEffect(() => {
     if (dataCart) {
       let total = dataCart.cartItems.reduce((sum, cartItem) => {
@@ -285,7 +362,7 @@ console.log(totalCarePrice)
         }
         return sum;
       }, 0);
-      total += parseInt(totalCarePrice)
+      total += parseInt(totalCarePrice);
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
 
