@@ -728,6 +728,7 @@ type OrderItem {
   consignmentSale: ConsignmentSale
   consignmentRaising: ConsigmentRaising
   price: Int
+  status: String
   isStored: Boolean
 }
 
@@ -745,12 +746,14 @@ input OrderItemWhereInput {
   consignmentSale: ConsignmentSaleWhereInput
   consignmentRaising: ConsigmentRaisingWhereInput
   price: IntFilter
+  status: StringNullableFilter
   isStored: BooleanFilter
 }
 
 input OrderItemOrderByInput {
   id: OrderDirection
   price: OrderDirection
+  status: OrderDirection
   isStored: OrderDirection
 }
 
@@ -760,6 +763,7 @@ input OrderItemUpdateInput {
   consignmentSale: ConsignmentSaleRelateToOneForUpdateInput
   consignmentRaising: ConsigmentRaisingRelateToOneForUpdateInput
   price: Int
+  status: String
   isStored: Boolean
 }
 
@@ -798,6 +802,7 @@ input OrderItemCreateInput {
   consignmentSale: ConsignmentSaleRelateToOneForCreateInput
   consignmentRaising: ConsigmentRaisingRelateToOneForCreateInput
   price: Int
+  status: String
   isStored: Boolean
 }
 

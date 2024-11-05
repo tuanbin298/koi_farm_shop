@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { REGISTER_MUTATION } from "../api/Mutations/user";
 import { GET_ROLE_BY_NAME } from "../api/Queries/role";
+import { MUTATION_REGISTER_EMAIL } from "../api/Mutations/mail";
 
 const RegisterPage = () => {
   // Take role "khách hàng" to connect with user
@@ -31,6 +32,8 @@ const RegisterPage = () => {
 
   const [errors, setErrors] = useState({});
   const [register, { loading, error }] = useMutation(REGISTER_MUTATION);
+
+  const [registerEmail] = useMutation(MUTATION_REGISTER_EMAIL);
 
   // useNavigate hook for navigation
   const navigate = useNavigate();
@@ -115,8 +118,21 @@ const RegisterPage = () => {
         });
         console.log("Account registered successfully:", response.data);
 
-        // Redirect to home page after successful registration
-        navigate("/login"); // Programmatic navigation to the login page
+        // Send mail when user registe success
+        if (response.data.createUser) {
+          try {
+            await registerEmail({
+              variables: {
+                to: response.data.createUser.email,
+                userId: response.data.createUser.id,
+              },
+            });
+          } catch (err) {
+            console.log("Lỗi gửi thông báo: ", err);
+          }
+        }
+
+        navigate("/login");
       } catch (err) {
         console.error("Error registering account:", err);
       }

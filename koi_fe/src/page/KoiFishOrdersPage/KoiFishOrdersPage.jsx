@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { GET_ORDERS } from '../api/Queries/order';
 import { gql, useQuery, useMutation } from '@apollo/client';
-import { Table, Collapse, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
+import { Table, Collapse, Button, Spinner, Alert, Modal, Form, Card } from 'react-bootstrap';
 import { formatMoney } from '../../utils/formatMoney';
 import "./KoiFishOrdersPage.css";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaPaperPlane } from "react-icons/fa";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
 import toast from "react-hot-toast";
 
@@ -86,7 +86,7 @@ const KoiFishOrdersPage = () => {
   const orders = data.orders;
 
   return (
-    <div className="container mt-4">
+    <div className="order container mt-4">
       <h2>ĐƠN HÀNG CỦA BẠN</h2>
       <Table striped bordered hover>
         <thead>
@@ -255,12 +255,13 @@ const KoiFishOrdersPage = () => {
           <Button
             variant="primary"
             onClick={handleSubmitFeedback}
-            className="mt-2"
+            className="mt-2 w-100 submit-button"
           >
+            <FaPaperPlane style={{ marginRight: "8px" }} />
             Gửi
           </Button>
-        </Form.Group>
-      </div>
+        </Card.Body>
+      </Card>
     </div>
   );
 };

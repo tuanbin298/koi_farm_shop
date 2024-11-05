@@ -19,11 +19,17 @@ const FishCareService = () => {
     const [agreeToPolicy, setAgreeToPolicy] = useState(false); // Khai báo agreeToPolicy
     const [dates, setDates] = useState({});
     const [depositsArray, setDepositsArray] = useState([]);
+    const [storedDepositsArray, setStoredDepositsArray] = useState([])
+    {/* total care price displayed on this page */}
+    const [totalDisplayCarePrice, setTotalDisplayCarePrice] = useState([]);
+    {/* get total care price stored from localStorage, then later add up to totalCarePrice */}
+
+    const [storedTotalCarePrice, setStoredTotalCarePrice] = useState(0);
     const [updateCartItem] = useMutation(UPDATE_CART_ITEM);
     const today = new Date().toISOString().split('T')[0]; // Ngày hiện tại
     const userId = localStorage.getItem("id");
-
-    // Load selected products from location
+    
+    // Lấy danh sách sản phẩm từ location.state
     useEffect(() => {
         if (location.state && location.state.selectedProducts) {
             setSelectedProducts(location.state.selectedProducts);
@@ -35,7 +41,17 @@ const FishCareService = () => {
             setDates(initialDates);
         }
     }, [location.state]);
+    useEffect(() => {
+        // Get the stored values, using fallback defaults if they are null
+    const storedTotalCarePrice = localStorage.getItem("totalCarePrice");
+    const storedDepositsArray = localStorage.getItem("depositsArray");
 
+    // Parse or set default if `storedDepositsArray` is null
+    setStoredTotalCarePrice(storedTotalCarePrice ? parseInt(storedTotalCarePrice) : 0);
+    setStoredDepositsArray(storedDepositsArray ? JSON.parse(storedDepositsArray) : []);
+    }, [])
+    console.log(storedTotalCarePrice)
+    console.log(storedDepositsArray)
     {/*Show consignment price for each consignment product */ }
     const calculateDeposits = () => {
         const deposits = selectedProducts.map((product) => {
@@ -50,9 +66,13 @@ const FishCareService = () => {
             }
             return { cartId: product.id, totalDeposit };
         });
-        setDepositsArray(deposits); // Update the state with cartId and totalDeposit array
-    };
 
+        const combinedDeposits = [...storedDepositsArray];
+        deposits.forEach((deposit) => combinedDeposits.push(deposit));
+
+        setDepositsArray(combinedDeposits); // Update the state with cartId and totalDeposit array
+    };
+    console.log(depositsArray)
     useEffect(() => {
         calculateDeposits();
     }, [dates]);
@@ -69,11 +89,13 @@ const FishCareService = () => {
                 }
             }
         });
-        setTotalCarePrice(total);
+        setTotalDisplayCarePrice(total)
+        setTotalCarePrice(parseInt(storedTotalCarePrice) + parseInt(total));
     };
     // Cập nhật ngày bắt đầu/kết thúc cho giá ký gửi nuôi
     const handleDateChange = (productId, field, value) => {
-        const isoDate = new Date(value).toISOString().split("T")[0];
+        // Convert selected date to full ISO 8601 date-time string
+        const isoDate = new Date(value).toISOString().split("T")[0]; // Outputs full format: YYYY-MM-DDTHH:mm:ss.sssZ
         setDates((prevDates) => ({
             ...prevDates,
             [productId]: { ...prevDates[productId], [field]: isoDate },
@@ -218,7 +240,7 @@ const FishCareService = () => {
                 {/* Tổng tiền ký gửi */}
                 <Box display="flex" justifyContent="flex-end" marginTop={2}>
                     <Typography variant="h6" gutterBottom>
-                        Tổng tiền ký gửi: {formatMoney(totalCarePrice)}
+                        Tổng tiền ký gửi: {formatMoney(totalDisplayCarePrice)}
                     </Typography>
                 </Box>
                 {/* Chính sách ký gửi */}
