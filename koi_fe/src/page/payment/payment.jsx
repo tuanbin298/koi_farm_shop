@@ -74,7 +74,6 @@ const CheckoutForm = () => {
     const startDate = dates[product.id]?.startDate;
     console.log(`Start date for product ${product.id}:`, startDate);
   });
-  console.log(totalCarePrice);
   const checkConsigned = (cartItem) => {
     // Extract IDs from selectedProducts
     const selectedProductIds = selectedProducts.map((product) => product.id);
@@ -323,6 +322,10 @@ const CheckoutForm = () => {
         }
         toast.success("Đã tạo đơn hàng!");
         navigate("/someSuccessPage", { state: { from: "/payment" } });
+        localStorage.removeItem("selectedProducts");
+        localStorage.removeItem("dates");
+        localStorage.removeItem("totalCarePrice");
+        localStorage.removeItem("depositsArray");
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
@@ -366,13 +369,25 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart } = useQuery(GET_CART_ITEMS, {
-    variables: { where: { user: { id: { equals: userId } } } },
-  });
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(
+    GET_CART_ITEMS,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+    }
+  );
 
   // Fetch consignment care data
-  const { data: dataFishCare } = useQuery(GET_FISH_CARE, {
-    variables: { where: { user: { id: { equals: userId } } } },
+  const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
+    GET_FISH_CARE,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+    }
+  );
+  useEffect(() => {
+    refetchFishCare;
+  }, [refetchFishCare]);
+  useEffect(() => {
+    refetchCartItems(), [refetchCartItems];
   });
 
   const [totalAmount, setTotalAmount] = useState(null);
@@ -385,7 +400,7 @@ function Payment() {
   console.log(totalCarePrice);
   useEffect(() => {
     if (dataCart) {
-      let total = dataCart.cartItems.reduce((sum, cartItem) => {
+      let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
         if (cartItem.product.length > 0) {
           return sum + cartItem.product[0].price;
         } else if (cartItem.consignmentProduct.length > 0) {
@@ -393,23 +408,25 @@ function Payment() {
         }
         return sum;
       }, 0);
-      total += parseInt(totalCarePrice);
+
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
 
       if (paymentMethod === "cod") {
-        total = total / 2;
+        cartTotal /= 2;
       }
 
-      setTotalAmount(total > 0 ? total : 0);
+      // Include consignment care price
+      const totalWithCarePrice = cartTotal + parseInt(totalCarePrice);
+      setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
     }
-  }, [dataCart]);
+  }, [dataCart, totalCarePrice, depositsArray]);
   useEffect(() => {
     if (location.state && location.state.depositsArray) {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-  console.log(totalAmount);
+  console.log(parseInt(totalAmount) + parseInt(totalCarePrice));
 
   const stripePromise = loadStripe(
     "pk_test_51PZy5CRwV3ieMSE0yi4gEMKnnM1gg4TArSRYf1WAjEmBvMz3MOWXZQOPqSxBbIortJdLmhZnDnmFnO1Njqfa7YUV00F4HhRF80"
@@ -420,7 +437,7 @@ function Payment() {
     amount: totalAmount,
     currency: "USD",
   };
-  console.log(options);
+  console.log(options.amount);
 
   return (
     <section className="container mt-5">
@@ -485,7 +502,7 @@ function Payment() {
               </tbody>
             </table>
             <h5 className="mt-3">
-              <strong>Tổng cộng:</strong> {formatMoney(totalAmount)}
+              <strong>Tổng cộng:</strong> {formatMoney(options.amount)}
             </h5>
           </section>
         </article>

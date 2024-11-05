@@ -112,7 +112,7 @@ const Product = list({
         itemView: {
           fieldPosition: "sidebar",
           fieldMode(args) {
-            return permissions.canManageRequest(args) ? "edit" : "read";
+            return permissions.canManageProduct(args) ? "edit" : "read";
           },
         },
       },
