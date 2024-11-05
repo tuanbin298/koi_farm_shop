@@ -21,6 +21,10 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { FaArrowLeft } from "react-icons/fa";
 import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
+import {
+  UPDATE_PRODUCT_STATUS,
+  UPDATE_CONSIGNMENT_PRODUCT_STATUS,
+} from "../api/Mutations/updateproduct"; // Adjust path as needed
 import "./payment.css";
 
 // User information
@@ -43,6 +47,10 @@ const CheckoutForm = () => {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
+  const [updateConsignmentProductStatus] = useMutation(
+    UPDATE_CONSIGNMENT_PRODUCT_STATUS
+  );
   // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
@@ -279,6 +287,29 @@ const CheckoutForm = () => {
             },
           });
         }
+
+        const updateStatusesPromises = cartItems.cartItems.map(async (item) => {
+          if (item.product.length > 0) {
+            // Sản phẩm thông thường
+            return await updateProductStatus({
+              variables: {
+                where: { id: item.product[0].id },
+                data: { status: "Không có sẵn" },
+              },
+            });
+          } else if (item.consignmentProduct.length > 0) {
+            // Sản phẩm ký gửi
+            return await updateConsignmentProductStatus({
+              variables: {
+                where: { id: item.consignmentProduct[0].id },
+                data: { status: "Không có sẵn" },
+              },
+            });
+          }
+        });
+
+        // Thực hiện tất cả các cập nhật trạng thái
+        await Promise.all(updateStatusesPromises);
 
         // Delete items from the cart
 
