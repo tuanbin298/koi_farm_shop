@@ -227,31 +227,38 @@ const KoiFishOrdersPage = () => {
       )}
 
       {/* Feedback Section */}
-      <div className="mt-4 text-center">
-        <h3>Đánh giá của bạn</h3>
-        <Form.Group>
-          <div className="d-flex justify-content-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FaStar
-                key={star}
-                className="star"
-                color={star <= rating ? "#FFD700" : "#E0E0E0"}
-                onClick={() => handleRatingChange(star)}
-                style={{ cursor: "pointer", fontSize: "24px", margin: "2px" }}
-              />
-            ))}
-          </div>
-        </Form.Group>
-        <Form.Group controlId="feedback">
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Nhập phản hồi của bạn"
-            name="comment"
-            value={feedback.comment}
-            onChange={handleFeedbackChange}
-            style={{ resize: "none" }}
-          />
+      <Card className="mt-4">
+        <Card.Body className="text-center">
+          <h3 className="mb-4">Đánh giá của bạn</h3>
+
+          <Form.Group className="mb-4">
+            <div className="d-flex justify-content-center">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <FaStar
+                  key={star}
+                  className={`star ${star <= rating ? "star-selected" : ""}`}
+                  onClick={() => handleRatingChange(star)}
+                />
+              ))}
+            </div>
+          </Form.Group>
+
+          <Form.Group controlId="feedback" className="mb-3">
+            <Form.Control
+              as="textarea"
+              rows={3}
+              maxLength={200} // Max character limit
+              placeholder="Nhập phản hồi của bạn"
+              name="comment"
+              value={feedback.comment}
+              onChange={handleFeedbackChange}
+              style={{ resize: "none", borderRadius: "0.25rem" }}
+            />
+            <div className="text-muted text-end mt-1">
+              {feedback.comment.length} / 200 characters
+            </div>
+          </Form.Group>
+
           <Button
             variant="primary"
             onClick={handleSubmitFeedback}
