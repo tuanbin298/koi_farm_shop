@@ -74,6 +74,7 @@ const Order = list({
           value: "Hoàn tất thanh toán",
         },
         { label: "Huỷ đơn hàng", value: "Huỷ đơn hàng" },
+        { label: "Hoàn thành đơn hàng", value: "Hoàn thành đơn hàng" },
       ],
       ui: {
         itemView: {

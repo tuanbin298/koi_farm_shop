@@ -23,6 +23,10 @@ import { FaArrowLeft } from "react-icons/fa";
 import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
 import { CONSIGNMENT_SALES_EMAIL } from "../api/Mutations/emailNotify";
 import { GET_REQUEST } from "../api/Queries/request";
+import {
+  UPDATE_PRODUCT_STATUS,
+  UPDATE_CONSIGNMENT_PRODUCT_STATUS,
+} from "../api/Mutations/updateproduct"; // Adjust path as needed
 import "./payment.css";
 
 // User information
@@ -45,6 +49,10 @@ const CheckoutForm = () => {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
+  const [updateConsignmentProductStatus] = useMutation(
+    UPDATE_CONSIGNMENT_PRODUCT_STATUS
+  );
   {/*Get user email to notify the payment of consigned fish for sales they put for */}
   const userEmail = localStorage.getItem("email");
   console.log(userEmail)
@@ -221,15 +229,17 @@ const CheckoutForm = () => {
         // Pair each cartItemId with its consignmentRaisingId
         const cartConsignmentPairs = cartItems.cartItems.map((cartItem) => {
           const isConsigned = checkConsigned(cartItem);
-          const consignmentId = isConsigned ? consignmentRaisingIds.shift() : null;
+          const consignmentId = isConsigned
+            ? consignmentRaisingIds.shift()
+            : null;
           return {
             cartItemId: cartItem.id,
             consignmentRaisingId: consignmentId,
           };
         });
-    
+
         console.log(cartConsignmentPairs);
-        
+
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
           // Check if there is a matching consignment entry for this cart item
@@ -313,6 +323,7 @@ const CheckoutForm = () => {
           });
         }
 
+       
         {/* Send email notifications */}
         
         const consignmentSales = cartItems.cartItems.filter((item) => item.product.length <= 0)
@@ -349,13 +360,11 @@ const CheckoutForm = () => {
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
-        localStorage.removeItem("depositsArray")
+        localStorage.removeItem("depositsArray");
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
       }
-      
-      
     }
   };
 
@@ -395,23 +404,26 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(
+    GET_CART_ITEMS,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+    }
+  );
 
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
-    variables: { where: { user: { id: { equals: userId } } } },
-  });
-
-  
   // Fetch consignment care data
-  const { data: dataFishCare, refetch: refetchFishCare } = useQuery(GET_FISH_CARE, {
-    variables: { where: { user: { id: { equals: userId } } } },
-  });
-
-  
-  
+  const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
+    GET_FISH_CARE,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+    }
+  );
   useEffect(() => {
-    refetchFishCare
-  },[refetchFishCare])
-  useEffect(() => {refetchCartItems(), [refetchCartItems]})
+    refetchFishCare;
+  }, [refetchFishCare]);
+  useEffect(() => {
+    refetchCartItems(), [refetchCartItems];
+  });
 
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
@@ -437,10 +449,9 @@ useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const paymentMethod = searchParams.get("paymentMethod");
 
-    // Adjust cartTotal if payment method is COD
-    if (paymentMethod === "cod") {
-      cartTotal /= 2;
-    }
+      if (paymentMethod === "cod") {
+        cartTotal /= 2;
+      }
 
     // Calculate total amount with consignment care price (if any)
     const totalWithCarePrice = cartTotal + parseInt(totalCarePrice || 0);

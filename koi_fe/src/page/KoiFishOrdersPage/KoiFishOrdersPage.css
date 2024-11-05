@@ -1,17 +1,43 @@
-.table {
-    font-size: 14px; /* Adjust the font size as needed */
-  }
-  
-  .table th,
-  .table td {
-    text-align: center; /* Center the text in the table cells */
-  }
-  
-  .table th {
-    font-weight: bold; /* Keep headers bold for clarity */
-  }
-  
-  .star {
-    cursor: pointer;
-  }
-  
+.order table {
+  font-size: 14px; /* Adjust the font size as needed */
+}
+
+.order table th,
+.order table td {
+  text-align: center; /* Center the text in the table cells */
+}
+
+.order table th {
+  font-weight: bold; /* Keep headers bold for clarity */
+}
+
+.star {
+  cursor: pointer;
+  font-size: 32px;
+  margin: 0 5px;
+  color: #e0e0e0;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.star:hover {
+  color: #ffd700; /* Highlight on hover */
+  transform: scale(1.2); /* Slightly increase size on hover */
+}
+
+.star-selected {
+  color: #ffd700; /* Selected star color */
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.submit-button:hover {
+  background: linear-gradient(90deg, #0056b3, #003f7f);
+  transform: scale(1.05); /* Slightly larger on hover */
+}
