@@ -7,7 +7,7 @@ import {
   CardElement,
 } from "@stripe/react-stripe-js";
 import Button from "@mui/material/Button";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation,useApolloClient  } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
@@ -21,6 +21,8 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { FaArrowLeft } from "react-icons/fa";
 import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
+import { CONSIGNMENT_SALES_EMAIL } from "../api/Mutations/emailNotify";
+import { GET_REQUEST } from "../api/Queries/request";
 import "./payment.css";
 
 // User information
@@ -43,6 +45,15 @@ const CheckoutForm = () => {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
+  {/*Get user email to notify the payment of consigned fish for sales they put for */}
+  const userEmail = localStorage.getItem("email");
+  console.log(userEmail)
+
+  {/* get email notification mutation */}
+  const client = useApolloClient();
+  const [consignmentSaleNotification] = useMutation(CONSIGNMENT_SALES_EMAIL);
+
+  {/*Get email of person consigning the fish for sales */}
   // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
@@ -89,6 +100,30 @@ const CheckoutForm = () => {
       },
     },
   });
+  const getRequestMethod = async (consignmentID) => {
+    try {
+      const { data } = await client.query({
+        query: GET_REQUEST,
+        variables: {
+          where: {
+            consignment: {
+              id: {
+                equals: consignmentID,
+              },
+            },
+          },
+        },
+        fetchPolicy: "network-only", // Ensures a fresh fetch each time
+      });
+
+      const recipientEmail = data?.requests?.[0]?.user?.email;
+      return recipientEmail;
+    } catch (error) {
+      console.error("Error fetching recipient email:", error);
+      return null;
+    }
+  };
+  
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
@@ -180,6 +215,7 @@ const CheckoutForm = () => {
             consignmentDataResponse
           );
         }
+        
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
         console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
@@ -277,6 +313,26 @@ const CheckoutForm = () => {
           });
         }
 
+        {/* Send email notifications */}
+        
+        const consignmentSales = cartItems.cartItems.filter((item) => item.product.length <= 0)
+        console.log(consignmentSales);
+        for (let i = 0; i < consignmentSales.length; i++) {
+          const consignmentSalesID = consignmentSales[i].consignmentProduct[0].id;
+
+          // Fetch consignment-related email using `GET_REQUEST_EMAIL`
+          const recipientEmail = await getRequestMethod(consignmentSalesID)
+          // Send email notification if email is retrieved
+          console.log(recipientEmail)
+          if (recipientEmail) {
+            await consignmentSaleNotification({
+              variables: {
+                to: recipientEmail,
+                consignmentId: consignmentSalesID,
+              },
+            });
+          }
+        }
         // Delete items from the cart
 
         for (let i = 0; i < cartItems.cartItems.length; i++) {
@@ -287,6 +343,7 @@ const CheckoutForm = () => {
             },
           });
         }
+        
         toast.success("Đã tạo đơn hàng!");
         navigate("/someSuccessPage", { state: { from: "/payment" } });
         localStorage.removeItem("selectedProducts");
@@ -297,6 +354,7 @@ const CheckoutForm = () => {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
       }
+      
       
     }
   };
@@ -347,6 +405,9 @@ function Payment() {
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(GET_FISH_CARE, {
     variables: { where: { user: { id: { equals: userId } } } },
   });
+
+  
+  
   useEffect(() => {
     refetchFishCare
   },[refetchFishCare])
@@ -362,27 +423,31 @@ function Payment() {
 console.log(totalCarePrice)
 useEffect(() => {
   if (dataCart) {
-      let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
-          if (cartItem.product.length > 0) {
-              return sum + cartItem.product[0].price;
-          } else if (cartItem.consignmentProduct.length > 0) {
-              return sum + cartItem.consignmentProduct[0].price;
-          }
-          return sum;
-      }, 0);
-
-      const searchParams = new URLSearchParams(window.location.search);
-      const paymentMethod = searchParams.get("paymentMethod");
-
-      if (paymentMethod === "cod") {
-          cartTotal /= 2;
+    // Calculate the cart total based on items' prices
+    let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
+      if (cartItem.product.length > 0) {
+        return sum + cartItem.product[0].price;
+      } else if (cartItem.consignmentProduct.length > 0) {
+        return sum + cartItem.consignmentProduct[0].price;
       }
+      return sum;
+    }, 0);
 
-      // Include consignment care price
-      const totalWithCarePrice = cartTotal + parseInt(totalCarePrice);
-      setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
+    // Retrieve payment method from URL, if applicable
+    const searchParams = new URLSearchParams(window.location.search);
+    const paymentMethod = searchParams.get("paymentMethod");
+
+    // Adjust cartTotal if payment method is COD
+    if (paymentMethod === "cod") {
+      cartTotal /= 2;
+    }
+
+    // Calculate total amount with consignment care price (if any)
+    const totalWithCarePrice = cartTotal + parseInt(totalCarePrice || 0);
+    setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
   }
-}, [dataCart, totalCarePrice, depositsArray]);
+}, [dataCart, totalCarePrice]);
+
   useEffect(() => {
     if (location.state && location.state.depositsArray) {
       setDepositsArray(location.state.depositsArray);
