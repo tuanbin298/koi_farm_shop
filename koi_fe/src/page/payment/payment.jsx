@@ -323,7 +323,52 @@ const CheckoutForm = () => {
           });
         }
 
-       
+        // const updateStatusesPromises = cartItems.cartItems.map(async (item) => {
+        //   if (item.product.length > 0) {
+        //     // Sản phẩm thông thường
+        //     return await updateProductStatus({
+        //       variables: {
+        //         where: { id: item.product[0].id },
+        //         data: { status: "Không có sẵn" },
+        //       },
+        //     });
+        //   } else if (item.consignmentProduct.length > 0) {
+        //     // Sản phẩm ký gửi
+        //     return await updateConsignmentProductStatus({
+        //       variables: {
+        //         where: { id: item.consignmentProduct[0].id },
+        //         data: { status: "Không có sẵn" },
+        //       },
+        //     });
+        //   }
+        // });
+
+        // Thực hiện tất cả các cập nhật trạng thái
+        // await Promise.all(updateStatusesPromises);
+
+        // const updateStatusesPromises = cartItems.cartItems.map(async (item) => {
+        //   if (item.product.length > 0) {
+        //     // Sản phẩm thông thường
+        //     return await updateProductStatus({
+        //       variables: {
+        //         where: { id: item.product[0].id },
+        //         data: { status: "Không có sẵn" },
+        //       },
+        //     });
+        //   } else if (item.consignmentProduct.length > 0) {
+        //     // Sản phẩm ký gửi
+        //     return await updateConsignmentProductStatus({
+        //       variables: {
+        //         where: { id: item.consignmentProduct[0].id },
+        //         data: { status: "Không có sẵn" },
+        //       },
+        //     });
+        //   }
+        // });
+
+        // Thực hiện tất cả các cập nhật trạng thái
+        // await Promise.all(updateStatusesPromises);
+
         {/* Send email notifications */}
         
         const consignmentSales = cartItems.cartItems.filter((item) => item.product.length <= 0)
