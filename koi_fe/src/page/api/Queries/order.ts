@@ -9,6 +9,7 @@ query Orders($where: OrderWhereInput!) {
     status
     createAt
     items {
+       status
       product {
         name
         price
@@ -24,6 +25,7 @@ query Orders($where: OrderWhereInput!) {
         consignmentDate
         returnDate
         consignmentPrice
+        status
       }
     }
   }

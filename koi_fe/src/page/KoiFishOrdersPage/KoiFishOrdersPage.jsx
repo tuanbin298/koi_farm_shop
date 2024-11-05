@@ -185,12 +185,11 @@ const KoiFishOrdersPage = () => {
                           </td>
                         </>
                       ) : null}
-                      <td>{item.status || '-'}</td>
+                      <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
                     </tr>
                   ))}
               </tbody>
             </Table>
-
             {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
             {expandedOrder.items.some(item => item.consignmentSale) && (
               <>
@@ -210,7 +209,7 @@ const KoiFishOrdersPage = () => {
                         <tr key={idx}>
                           <td>{item.consignmentSale.name || '-'}</td>
                           <td>{item.consignmentSale.price ? formatMoney(item.consignmentSale.price) : '-'}</td>
-                          <td>{item.consignmentSale.status || '-'}</td>
+                          <td>{item.status || '-'}</td>
                         </tr>
                       ))}
                   </tbody>
