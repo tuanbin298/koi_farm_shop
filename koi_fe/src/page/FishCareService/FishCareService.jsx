@@ -10,6 +10,7 @@ import { Link } from "react-router-dom"
 import { UPDATE_CART_ITEM } from '../api/Mutations/cart';
 import { useQuery, useMutation } from "@apollo/client";
 import toast, { Toaster } from "react-hot-toast";
+
 const FishCareService = () => {
     const location = useLocation();  // Lấy danh sách sản phẩm được chọn từ CartPage
     const navigate = useNavigate();  // Chuyển hướng sang trang thanh toán
@@ -91,7 +92,6 @@ const FishCareService = () => {
         setTotalDisplayCarePrice(total)
         setTotalCarePrice(parseInt(storedTotalCarePrice) + parseInt(total));
     };
-
     // Cập nhật ngày bắt đầu/kết thúc cho giá ký gửi nuôi
     const handleDateChange = (productId, field, value) => {
         // Convert selected date to full ISO 8601 date-time string
@@ -106,20 +106,32 @@ const FishCareService = () => {
         calculateTotalPrice();
     }, [dates]);
 
-    // Điều hướng sang trang thanh toán
+    // Check if dates are valid to enable the checkbox
+    const areDatesValid = () => {
+        return selectedProducts.every((product) => {
+            const { startDate, endDate } = dates[product.id] || {};
+            if (!startDate || !endDate) return false;
+            const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+            return days >= 7 && days <= 180;
+        });
+    };
+
+    // Update agreeToPolicy checkbox based on date validity
+    useEffect(() => {
+        if (!areDatesValid()) {
+            setAgreeToPolicy(false);  // Disable the policy agreement if dates are invalid
+        }
+    }, [dates]);
+
     const handleProceedToCheckout = async () => {
         if (agreeToPolicy) {
-            for(let i = 0; i < selectedProducts.length; i++){
+            for (let i = 0; i < selectedProducts.length; i++) {
                 await updateCartItem({
                     variables: {
-                        where:{
-                            id: selectedProducts[i].id
-                        },
-                        data:{
-                            isStored: true
-                        }
+                        where: { id: selectedProducts[i].id },
+                        data: { isStored: true }
                     }
-                })
+                });
             }
             setTimeout(() => {
                 selectedProducts.forEach((product) => {
@@ -130,8 +142,7 @@ const FishCareService = () => {
                 localStorage.setItem("totalCarePrice", totalCarePrice);
                 localStorage.setItem("depositsArray", JSON.stringify(depositsArray));
                 navigate('/checkout', {
-                    state:
-                    {
+                    state: {
                         totalCarePrice: totalCarePrice,
                         selectedProducts: selectedProducts,
                         dates: dates,
@@ -169,7 +180,7 @@ const FishCareService = () => {
                                 <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>Tên Cá</TableCell>
                                 <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>Ngày Bắt Đầu</TableCell>
                                 <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>Ngày Kết Thúc</TableCell>
-                                <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>Giá Tiền Ký Gửi (VND)</TableCell> {/* Cập nhật đây */}
+                                <TableCell style={{ fontWeight: 'bold', textAlign: 'center' }}>Giá Tiền Ký Gửi (VND)</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -191,9 +202,7 @@ const FishCareService = () => {
                                         <TextField
                                             type="date"
                                             value={dates[product.id]?.endDate || ''}
-                                            onChange={(e) =>
-                                                handleDateChange(product.id, 'endDate', e.target.value)
-                                            }
+                                            onChange={(e) => handleDateChange(product.id, 'endDate', e.target.value)}
                                             InputLabelProps={{ shrink: true }}
                                             error={
                                                 dates[product.id]?.endDate &&
@@ -213,15 +222,12 @@ const FishCareService = () => {
                                         {(() => {
                                             const { startDate, endDate } = dates[product.id] || {};
                                             let totalDeposit = 0;
-
                                             if (startDate && endDate) {
-                                                const days = Math.ceil(
-                                                    (new Date(endDate) - new Date(startDate)) /
-                                                    (1000 * 60 * 60 * 24)
-                                                );
-                                                totalDeposit = days * 50000;
+                                                const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+                                                if (days >= 7 && days <= 180) {
+                                                    totalDeposit = days * 50000;
+                                                }
                                             }
-
                                             return formatMoney(totalDeposit);
                                         })()}
                                     </TableCell>
@@ -231,14 +237,12 @@ const FishCareService = () => {
                     </Table>
                 </TableContainer>
 
-
                 {/* Tổng tiền ký gửi */}
                 <Box display="flex" justifyContent="flex-end" marginTop={2}>
                     <Typography variant="h6" gutterBottom>
                         Tổng tiền ký gửi: {formatMoney(totalDisplayCarePrice)}
                     </Typography>
                 </Box>
-
                 {/* Chính sách ký gửi */}
                 <Box marginTop={4}>
                     <Typography variant="h4" gutterBottom>
@@ -265,13 +269,13 @@ const FishCareService = () => {
                         <strong>Quyền lợi:</strong> Khách hàng có thể thăm cá bất kỳ lúc nào trong giờ hành chính, và sẽ nhận báo cáo tình trạng sức khỏe của cá định kỳ.<br />
                         <strong>Trách nhiệm:</strong> Khách hàng cần thanh toán đúng hạn các khoản phí ký gửi và dịch vụ bổ sung (nếu có).
                     </Typography>
-
                     {/* Checkbox Đồng Ý Chính Sách */}
                     <Grid container alignItems="center" marginTop={2}>
                         <Grid item>
                             <Checkbox
                                 checked={agreeToPolicy}
                                 onChange={(e) => setAgreeToPolicy(e.target.checked)}
+                                disabled={!areDatesValid()} // Disable checkbox if dates are invalid
                             />
                         </Grid>
                         <Grid item>
@@ -281,7 +285,6 @@ const FishCareService = () => {
                         </Grid>
                     </Grid>
                 </Box>
-
                 {/* Nút Tiếp Tục Thanh Toán */}
                 {agreeToPolicy && (
                     <Box display="flex" justifyContent="flex-end" marginTop={2}>
