@@ -21,7 +21,6 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import { formatMoney } from "../../utils/formatMoney";
-import { GET_ALL_FISH_CARE } from "../api/Queries/fishcare";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -36,7 +35,6 @@ const CartPage = () => {
   const [dates, setDates] = useState({});
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [depositsArray, setDepositsArray] = useState([]);
-
   const {
     loading,
     error,
@@ -46,20 +44,9 @@ const CartPage = () => {
     variables: { where: { user: { id: { equals: userId } } } },
   });
 
-  const { data: consignedFish, refetch: refetchConsigns } = useQuery(
-    GET_ALL_FISH_CARE,
-    {
-      variables: { where: { user: { id: { equals: userId } } } },
-    }
-  );
-
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
-
-  useEffect(() => {
-    refetchConsigns();
-  }, [refetchConsigns]);
 
   useEffect(() => {
     const storedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
@@ -68,7 +55,9 @@ const CartPage = () => {
     const storedDates = JSON.parse(localStorage.getItem("dates"));
     if (storedDates) setDates(storedDates);
 
-    setTotalCarePrice(localStorage.getItem("totalCarePrice") || 0);
+    const storedTotalCarePrice = localStorage.getItem("totalCarePrice");
+    setTotalCarePrice(storedTotalCarePrice);
+
     const storedDepositsArray = JSON.parse(
       localStorage.getItem("depositsArray")
     );
@@ -91,14 +80,15 @@ const CartPage = () => {
   );
   const totalPrice = farmTotal + consignmentTotal;
 
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFarmItems = farmKoiItems.slice(startIndex, endIndex) || [];
+  const paginatedConsignmentItems =
+    consignmentKoiItems.slice(startIndex, endIndex) || [];
+
   const handleToCheckOut = () => {
     navigate("/checkout", {
-      state: {
-        totalCarePrice: totalCarePrice,
-        selectedProducts: selectedProducts,
-        dates: dates,
-        depositsArray: depositsArray,
-      },
+      state: { totalCarePrice, selectedProducts, dates, depositsArray },
     });
   };
 
@@ -123,73 +113,21 @@ const CartPage = () => {
     setPage(value);
   };
 
-  const renderItemsTable = (items, type) => {
-    const startIndex = (page - 1) * itemsPerPage;
-    const paginatedItems = items.slice(startIndex, startIndex + itemsPerPage);
-
+  const handleProceedToFishCareService = () => {
+    const selectedProducts =
+      data?.cartItems?.filter((item) => depositFields[item.id]) || [];
     return (
-      <TableContainer component={Paper} style={{ marginBottom: "20px" }}>
-        <Table aria-label={`${type} table`}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Sản phẩm</TableCell>
-              <TableCell>Tên</TableCell>
-              {type === "Farm Koi" && (
-                <TableCell align="center">Ký gửi nuôi</TableCell>
-              )}
-              <TableCell align="center">Thành tiền (VND)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedItems.map((cartItem) => (
-              <TableRow key={cartItem.id}>
-                <TableCell>
-                  <Image
-                    width={200}
-                    src={
-                      type === "Farm Koi"
-                        ? cartItem.product[0]?.image?.publicUrl || ""
-                        : cartItem.consignmentProduct[0]?.photo?.image
-                            ?.publicUrl || ""
-                    }
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  {type === "Farm Koi"
-                    ? cartItem.product[0]?.name
-                    : cartItem.consignmentProduct[0]?.name}
-                </TableCell>
-                {type === "Farm Koi" && (
-                  <TableCell align="center">
-                    <Checkbox
-                      checked={depositFields[cartItem.id] || false}
-                      onChange={() => handleDepositToggle(cartItem.id)}
-                    />
-                    <p>Ký gửi nuôi</p>
-                  </TableCell>
-                )}
-                <TableCell align="center">
-                  {formatMoney(
-                    type === "Farm Koi"
-                      ? cartItem.product[0]?.price
-                      : cartItem.consignmentProduct[0]?.price
-                  )}
-                  <Button
-                    variant="contained"
-                    color="error"
-                    style={{ marginLeft: "15%" }}
-                    onClick={() => handleDelete(cartItem.id)}
-                    disabled={loading || isDeleting}
-                  >
-                    Xóa
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Link to="/fishcareservice" state={{ selectedProducts }}>
+        <Button variant="contained" color="primary">
+          Tiếp tục Ký gửi
+        </Button>
+      </Link>
     );
+  };
+
+  const handleCheckedConsign = (cartItem) => {
+    const selectedProductIds = selectedProducts.map((product) => product.id);
+    return selectedProductIds.includes(cartItem.id);
   };
 
   return (
@@ -209,7 +147,6 @@ const CartPage = () => {
         <section>
           <h2>Giỏ hàng</h2>
 
-          {/* Display loading below the title */}
           {loading ? (
             <Box
               display="flex"
@@ -222,28 +159,131 @@ const CartPage = () => {
                 Đang tải giỏ hàng...
               </Typography>
             </Box>
+          ) : error ? (
+            <Typography variant="h6" align="center" color="error">
+              Lỗi khi tải giỏ hàng!
+            </Typography>
           ) : farmKoiItems.length === 0 && consignmentKoiItems.length === 0 ? (
             <Typography variant="h6" align="center" color="textSecondary">
               Giỏ hàng của bạn hiện đang trống.
             </Typography>
           ) : (
             <>
-              {/* Conditionally render Farm Koi and Consignment Koi sections */}
+              {/* Conditionally display each section if items are present */}
               {farmKoiItems.length > 0 && (
                 <>
-                  <Typography variant="h6">Cá Koi Trang trại</Typography>
-                  {renderItemsTable(farmKoiItems, "Farm Koi")}
+                  <Typography variant="h6" gutterBottom>
+                    Cá Koi Trang trại
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="farm cart table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Sản phẩm</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell align="center">Ký gửi nuôi</TableCell>
+                          <TableCell align="center">Thành tiền (VND)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {paginatedFarmItems.map((cartItem) => (
+                          <TableRow key={cartItem.id}>
+                            <TableCell>
+                              <Image
+                                width={200}
+                                src={
+                                  cartItem.product[0]?.image?.publicUrl || ""
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              {cartItem.product[0]?.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Checkbox
+                                checked={
+                                  handleCheckedConsign(cartItem) ||
+                                  depositFields[cartItem.id] ||
+                                  false
+                                }
+                                disabled={handleCheckedConsign(cartItem)}
+                                onChange={() =>
+                                  handleDepositToggle(cartItem.id)
+                                }
+                              />
+                              <p>Ký gửi nuôi</p>
+                            </TableCell>
+                            <TableCell align="center">
+                              {formatMoney(cartItem.product[0]?.price)}
+                              <Button
+                                variant="contained"
+                                color="error"
+                                style={{ marginLeft: "15%" }}
+                                onClick={() => handleDelete(cartItem.id)}
+                                disabled={loading || isDeleting}
+                              >
+                                Xóa
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </>
               )}
 
               {consignmentKoiItems.length > 0 && (
                 <>
-                  <Typography variant="h6">Cá Koi Ký gửi</Typography>
-                  {renderItemsTable(consignmentKoiItems, "Consignment Koi")}
+                  <Typography variant="h6" gutterBottom>
+                    Cá Koi Ký gửi
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="consignment cart table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Sản phẩm</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell align="center">Thành tiền (VND)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {paginatedConsignmentItems.map((cartItem) => (
+                          <TableRow key={cartItem.id}>
+                            <TableCell>
+                              <Image
+                                width={200}
+                                src={
+                                  cartItem.consignmentProduct[0]?.photo?.image
+                                    ?.publicUrl || ""
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              {cartItem.consignmentProduct[0]?.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {formatMoney(
+                                cartItem.consignmentProduct[0]?.price
+                              )}
+                              <Button
+                                variant="contained"
+                                color="error"
+                                style={{ marginLeft: "15%" }}
+                                onClick={() => handleDelete(cartItem.id)}
+                                disabled={loading || isDeleting}
+                              >
+                                Xóa
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
                 </>
               )}
 
-              {/* Pagination */}
               <Box display="flex" justifyContent="center" marginTop={2}>
                 <Pagination
                   count={Math.ceil(
@@ -256,7 +296,6 @@ const CartPage = () => {
                 />
               </Box>
 
-              {/* Total Price Display */}
               <Box
                 display="flex"
                 flexDirection="column"
@@ -271,16 +310,24 @@ const CartPage = () => {
                 </Typography>
               </Box>
 
-              {/* Checkout Button */}
-              <Box display="flex" justifyContent="flex-end" marginTop={2}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleToCheckOut}
-                >
-                  Tiến hành thanh toán <FaShoppingCart />
-                </Button>
-              </Box>
+              {(paginatedFarmItems.length > 0 ||
+                paginatedConsignmentItems.length > 0) && (
+                <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                  {Object.values(depositFields).some(
+                    (isSelected) => isSelected
+                  ) ? (
+                    handleProceedToFishCareService()
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
+                  )}
+                </Box>
+              )}
             </>
           )}
         </section>
