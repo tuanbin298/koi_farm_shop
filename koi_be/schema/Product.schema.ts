@@ -18,7 +18,7 @@ const Product = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: permissions.canManageProduct,
+      update: allowAll,
       delete: allowAll,
     },
   },
