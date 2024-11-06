@@ -84,6 +84,30 @@ const User = list({
       },
     }),
   },
+
+  hooks: {
+    async beforeOperation({ operation, item, context }) {
+      if (operation === "delete") {
+        const cartItems = await context.query.CartItem.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(cartItems);
+
+        if (cartItems.length > 0) {
+          for (const cartItem of cartItems) {
+            await context.query.CartItem.deleteOne({
+              where: { id: cartItem.id },
+            });
+          }
+        }
+      }
+    },
+  },
 });
 
 export default User;
