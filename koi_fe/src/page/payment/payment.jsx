@@ -449,12 +449,11 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(
-    GET_CART_ITEMS,
-    {
-      variables: { where: { user: { id: { equals: userId } } } },
-    }
-  );
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
+  });
+  
 
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
@@ -464,11 +463,11 @@ function Payment() {
     }
   );
   useEffect(() => {
-    refetchFishCare;
+    refetchFishCare();
   }, [refetchFishCare]);
   useEffect(() => {
-    refetchCartItems(), [refetchCartItems];
-  });
+    refetchCartItems();
+  }, [userId, refetchCartItems]);
 
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
