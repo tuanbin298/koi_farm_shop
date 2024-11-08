@@ -120,17 +120,35 @@ const Product = list({
   },
 
   hooks: {
-    beforeOperation: {
-      create: async ({ resolvedData }) => {
-        // Generate a slug based on product name
+    async beforeOperation({ operation, resolvedData, item, context }) {
+      // Generate a slug based on product name when create product
+      if (operation === "create") {
         resolvedData.slug = buildSlug(resolvedData.name);
-      },
-      update: async ({ resolvedData }) => {
+      }
+
+      // Generate a slug base on new of product name when update product
+      if (operation === "update") {
         if (resolvedData?.name) {
-          // Generate a slug base on new of product name
           resolvedData.slug = buildSlug(resolvedData.name);
         }
-      },
+      }
+
+      // Delete, throw new error if orderItem contain this product
+      if (operation === "delete") {
+        const orderItems = await context.query.OrderItem.findMany({
+          where: {
+            product: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id product { id name }",
+        });
+        console.log(orderItems);
+
+        if (orderItems.length > 0) {
+          throw new Error("Không thể xoá sản phẩm có trong đơn hàng");
+        }
+      }
     },
   },
 });
