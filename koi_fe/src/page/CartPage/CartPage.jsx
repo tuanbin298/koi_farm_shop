@@ -42,11 +42,14 @@ const CartPage = () => {
     refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
   });
 
   useEffect(() => {
-    refetchItems();
-  }, [refetchItems]);
+    if (userId) {
+      refetchItems(); // Fetch new user's cart items on user change
+    }
+  }, [userId, refetchItems]);
 
   useEffect(() => {
     const storedProducts = JSON.parse(localStorage.getItem("selectedProducts"));

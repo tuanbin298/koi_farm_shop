@@ -107,6 +107,7 @@ const CheckoutForm = () => {
         },
       },
     },
+    fetchPolicy: "network-only",
   });
   const getRequestMethod = async (consignmentID) => {
     try {
@@ -401,7 +402,7 @@ const CheckoutForm = () => {
         }
         
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage", { state: { from: "/payment" } });
+        navigate("/someSuccessPage");
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
@@ -466,7 +467,11 @@ function Payment() {
     refetchFishCare();
   }, [refetchFishCare]);
   useEffect(() => {
-    refetchCartItems();
+    if (userId) {
+      refetchCartItems({
+        variables: { where: { user: { id: { equals: userId } } } },
+      });
+    }
   }, [userId, refetchCartItems]);
 
   const [totalAmount, setTotalAmount] = useState(null);
