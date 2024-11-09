@@ -78,6 +78,29 @@ const ConsigmentRaising = list({
       label: "Mô tả",
     }),
   },
+
+  hooks: {
+    async beforeOperation({ item, context, operation }) {
+      // Delete, throw new error if orderItem contain this consignment raising
+      if (operation === "delete") {
+        const orderItems = await context.query.orderItem.findMany({
+          where: {
+            consignmentRaising: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id consignmentRaising { id name }",
+        });
+        console.log(orderItems);
+
+        if (orderItems.length > 0) {
+          throw new Error(
+            "Không thể xoá sản phẩm ký gửi nuôi có trong đơn hàng"
+          );
+        }
+      }
+    },
+  },
 });
 
 export default ConsigmentRaising;

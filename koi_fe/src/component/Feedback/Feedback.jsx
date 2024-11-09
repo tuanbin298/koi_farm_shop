@@ -71,7 +71,7 @@ const FeedbackSlider = () => {
               </div>
               <Card.Title>
                 <AccountCircleOutlinedIcon />
-                Người dùng
+                {feedback.user.name}
               </Card.Title>
               <Card.Text>"{feedback.comment}"</Card.Text>
               <Card.Footer className="text-muted">
