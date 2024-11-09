@@ -113,6 +113,7 @@ const CheckoutForm = () => {
         },
       },
     },
+    fetchPolicy: "network-only",
   });
   const getRequestMethod = async (consignmentID) => {
     try {
@@ -389,7 +390,7 @@ const CheckoutForm = () => {
         }
 
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage", { state: { from: "/payment" } });
+        navigate("/someSuccessPage");
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
@@ -437,12 +438,11 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(
-    GET_CART_ITEMS,
-    {
-      variables: { where: { user: { id: { equals: userId } } } },
-    }
-  );
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
+  });
+  
 
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
@@ -452,11 +452,15 @@ function Payment() {
     }
   );
   useEffect(() => {
-    refetchFishCare;
+    refetchFishCare();
   }, [refetchFishCare]);
   useEffect(() => {
-    refetchCartItems(), [refetchCartItems];
-  });
+    if (userId) {
+      refetchCartItems({
+        variables: { where: { user: { id: { equals: userId } } } },
+      });
+    }
+  }, [userId, refetchCartItems]);
 
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
