@@ -8,9 +8,10 @@ import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import "./CardProduct.css";
-
+import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 export default function CardProduct() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
+  const userId = localStorage.getItem("id"); 
   const {
     data: productData,
     loading: productLoading,
@@ -18,13 +19,25 @@ export default function CardProduct() {
   } = useQuery(GET_PRODUCT, {
     variables: { take: 6 }, // Fetch 6 products
   });
-
+  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId,
+  });
   // Loading and error states
   if (productLoading) return <p>Loading ...</p>;
   if (productError) return <p>Error loading products.</p>;
 
   const handleAddToCart = async (productId) => {
-    const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
+   
     const sessionToken = localStorage.getItem("sessionToken");
     console.log(productId);
     if (!userId) {
@@ -49,6 +62,8 @@ export default function CardProduct() {
           },
         },
       });
+
+      await refetchCartItems();
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {

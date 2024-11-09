@@ -94,6 +94,7 @@ const Order = list({
 
   hooks: {
     async afterOperation({ operation, resolvedData, item, context }) {
+      // Create new status when create Order
       if (operation === "create") {
         await context.query.Status.createOne({
           data: {
@@ -104,6 +105,7 @@ const Order = list({
         });
       }
 
+      // Create new status when update status of Order
       if (
         operation === "update" &&
         resolvedData.status &&
@@ -116,6 +118,48 @@ const Order = list({
             changedBy: { connect: { id: context.session.itemId } },
           },
         });
+      }
+    },
+
+    async beforeOperation({ operation, item, context }) {
+      // Delete orderItem when delete Order
+      if (operation === "delete") {
+        const orderItems = await context.query.OrderItem.findMany({
+          where: {
+            order: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(orderItems);
+
+        if (orderItems.length > 0) {
+          for (const orderItem of orderItems) {
+            await context.query.OrderItem.deleteOne({
+              where: { id: orderItem.id },
+            });
+          }
+        }
+
+        // Delete status when delete Order
+        const statuses = await context.query.Status.findMany({
+          where: {
+            order: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id status",
+        });
+        console.log(statuses);
+
+        if (statuses.length > 0) {
+          for (const status of statuses) {
+            await context.query.Status.deleteOne({
+              where: { id: status.id },
+            });
+          }
+        }
       }
     },
   },

@@ -18,8 +18,10 @@ import {
 import { gql, useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
+import { useApolloClient } from "@apollo/client";
 
 export default function Header() {
+  const client = useApolloClient();
   const [anchorEl, setAnchorEl] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
@@ -118,81 +120,82 @@ export default function Header() {
     localStorage.removeItem("depositsArray")
     setLoggedIn(false);
     setAnchorEl(null);
+    client.clearStore();
     navigate("/login");
   };
 
   // Mapping URL paths to Vietnamese labels
-  const breadcrumbMap = {
-    "": "Trang chủ", // Empty for homepage
-    koiList: "Danh sách Cá Koi",
-    sales: "Ký Gửi Bán",
-    care: "Ký Gửi Nuôi",
-    cart: "Giỏ hàng",
-    profile: "Thông tin cá nhân",
-    login: "Đăng nhập",
-    register: "Đăng ký",
-    about: "Giới thiệu",
-    news: "Tin tức",
-    ProductDetail: "Chi tiết",
-    introduce: "Giới thiệu",
-    consignmentTracking: "Theo dõi đơn ký gửi bán",
-    ConsignmentDetail: "Chi tiết",
-    payment: "Thanh Toán",
-    someSuccessPage: "Xác nhận thanh toán"
-  };
+  // const breadcrumbMap = {
+  //   "": "Trang chủ", // Empty for homepage
+  //   koiList: "Danh sách Cá Koi",
+  //   sales: "Ký Gửi Bán",
+  //   care: "Ký Gửi Nuôi",
+  //   cart: "Giỏ hàng",
+  //   profile: "Thông tin cá nhân",
+  //   login: "Đăng nhập",
+  //   register: "Đăng ký",
+  //   about: "Giới thiệu",
+  //   news: "Tin tức",
+  //   ProductDetail: "Chi tiết",
+  //   introduce: "Giới thiệu",
+  //   consignmentTracking: "Theo dõi đơn ký gửi bán",
+  //   ConsignmentDetail: "Chi tiết",
+  //   payment: "Thanh Toán",
+  //   someSuccessPage: "Xác nhận thanh toán"
+  // };
 
   // Function to generate breadcrumbs based on current URL
-  const generateBreadcrumbs = () => {
-    const pathnames = location.pathname.split("/").filter((x) => x);
+  // const generateBreadcrumbs = () => {
+  //   const pathnames = location.pathname.split("/").filter((x) => x);
 
-    return (
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        style={{
-          color: "white",
-        }}
-      >
-        <Link
-          to="/"
-          style={{
-            textDecoration: "none",
-            color: "white",
-          }}
-        >
-          {breadcrumbMap[""]}
-        </Link>
-        {pathnames.map((value, index) => {
-          const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-          const isLast = index === pathnames.length - 1;
-          const translatedLabel = breadcrumbMap[value] || value;
+  //   return (
+  //     <Breadcrumbs
+  //       aria-label="breadcrumb"
+  //       style={{
+  //         color: "white",
+  //       }}
+  //     >
+  //       <Link
+  //         to="/"
+  //         style={{
+  //           textDecoration: "none",
+  //           color: "white",
+  //         }}
+  //       >
+  //         {breadcrumbMap[""]}
+  //       </Link>
+  //       {pathnames.map((value, index) => {
+  //         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
+  //         const isLast = index === pathnames.length - 1;
+  //         const translatedLabel = breadcrumbMap[value] || value;
 
-          return isLast ? (
-            <Typography
-              key={to}
-              color="text.primary"
-              style={{
-                textDecoration: "none",
-                color: "white",
-              }}
-            >
-              {translatedLabel}
-            </Typography>
-          ) : (
-            <Link
-              key={to}
-              to={to}
-              style={{
-                textDecoration: "none",
-                color: "white",
-              }}
-            >
-              {translatedLabel}
-            </Link>
-          );
-        })}
-      </Breadcrumbs>
-    );
-  };
+  //         return isLast ? (
+  //           <Typography
+  //             key={to}
+  //             color="text.primary"
+  //             style={{
+  //               textDecoration: "none",
+  //               color: "white",
+  //             }}
+  //           >
+  //             {translatedLabel}
+  //           </Typography>
+  //         ) : (
+  //           <Link
+  //             key={to}
+  //             to={to}
+  //             style={{
+  //               textDecoration: "none",
+  //               color: "white",
+  //             }}
+  //           >
+  //             {translatedLabel}
+  //           </Link>
+  //         );
+  //       })}
+  //     </Breadcrumbs>
+  //   );
+  // };
 
   return (
     <div>
@@ -348,7 +351,7 @@ export default function Header() {
             </button>
           </div>
         </div>
-        <div className="header_bottom">{generateBreadcrumbs()}</div>
+        <div className="header_bottom"></div>
       </header>
     </div>
   );

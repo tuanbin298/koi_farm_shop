@@ -5,11 +5,23 @@ import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const userId = localStorage.getItem("id"); // Retrieve the logged-in user's ID
-
+  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId,
+  });
   if (!consignments || consignments.length === 0) {
     return <p>Không có sản phẩm nào phù hợp.</p>;
   }
@@ -30,6 +42,7 @@ export default function CardListConsignment({ consignments }) {
           },
         },
       });
+      await refetchCartItems();
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {

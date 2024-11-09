@@ -7,7 +7,7 @@ import {
   CardElement,
 } from "@stripe/react-stripe-js";
 import Button from "@mui/material/Button";
-import { useQuery, useMutation,useApolloClient  } from "@apollo/client";
+import { useQuery, useMutation, useApolloClient } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
@@ -53,15 +53,21 @@ const CheckoutForm = () => {
   const [updateConsignmentProductStatus] = useMutation(
     UPDATE_CONSIGNMENT_PRODUCT_STATUS
   );
-  {/*Get user email to notify the payment of consigned fish for sales they put for */}
+  {
+    /*Get user email to notify the payment of consigned fish for sales they put for */
+  }
   const userEmail = localStorage.getItem("email");
-  console.log(userEmail)
+  console.log(userEmail);
 
-  {/* get email notification mutation */}
+  {
+    /* get email notification mutation */
+  }
   const client = useApolloClient();
   const [consignmentSaleNotification] = useMutation(CONSIGNMENT_SALES_EMAIL);
 
-  {/*Get email of person consigning the fish for sales */}
+  {
+    /*Get email of person consigning the fish for sales */
+  }
   // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
@@ -75,11 +81,11 @@ const CheckoutForm = () => {
   const orderAddress =
     location.state.orderData.address +
     "," +
-    location.state.orderData.city +
+    location.state.orderData.ward +
     "," +
     location.state.orderData.district +
     "," +
-    location.state.orderData.ward;
+    location.state.orderData.city;
 
   selectedProducts.forEach((product) => {
     const startDate = dates[product.id]?.startDate;
@@ -107,6 +113,7 @@ const CheckoutForm = () => {
         },
       },
     },
+    fetchPolicy: "network-only",
   });
   const getRequestMethod = async (consignmentID) => {
     try {
@@ -131,7 +138,7 @@ const CheckoutForm = () => {
       return null;
     }
   };
-  
+
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
@@ -223,7 +230,7 @@ const CheckoutForm = () => {
             consignmentDataResponse
           );
         }
-        
+
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
         console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
@@ -346,40 +353,22 @@ const CheckoutForm = () => {
         // Thực hiện tất cả các cập nhật trạng thái
         await Promise.all(updateStatusesPromises);
 
-        // const updateStatusesPromises = cartItems.cartItems.map(async (item) => {
-        //   if (item.product.length > 0) {
-        //     // Sản phẩm thông thường
-        //     return await updateProductStatus({
-        //       variables: {
-        //         where: { id: item.product[0].id },
-        //         data: { status: "Không có sẵn" },
-        //       },
-        //     });
-        //   } else if (item.consignmentProduct.length > 0) {
-        //     // Sản phẩm ký gửi
-        //     return await updateConsignmentProductStatus({
-        //       variables: {
-        //         where: { id: item.consignmentProduct[0].id },
-        //         data: { status: "Không có sẵn" },
-        //       },
-        //     });
-        //   }
-        // });
+        {
+          /* Send email notifications */
+        }
 
-        // Thực hiện tất cả các cập nhật trạng thái
-        // await Promise.all(updateStatusesPromises);
-
-        {/* Send email notifications */}
-        
-        const consignmentSales = cartItems.cartItems.filter((item) => item.product.length <= 0)
+        const consignmentSales = cartItems.cartItems.filter(
+          (item) => item.product.length <= 0
+        );
         console.log(consignmentSales);
         for (let i = 0; i < consignmentSales.length; i++) {
-          const consignmentSalesID = consignmentSales[i].consignmentProduct[0].id;
+          const consignmentSalesID =
+            consignmentSales[i].consignmentProduct[0].id;
 
           // Fetch consignment-related email using `GET_REQUEST_EMAIL`
-          const recipientEmail = await getRequestMethod(consignmentSalesID)
+          const recipientEmail = await getRequestMethod(consignmentSalesID);
           // Send email notification if email is retrieved
-          console.log(recipientEmail)
+          console.log(recipientEmail);
           if (recipientEmail) {
             await consignmentSaleNotification({
               variables: {
@@ -399,9 +388,9 @@ const CheckoutForm = () => {
             },
           });
         }
-        
+
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage", { state: { from: "/payment" } });
+        navigate("/someSuccessPage");
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
@@ -449,12 +438,11 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(
-    GET_CART_ITEMS,
-    {
-      variables: { where: { user: { id: { equals: userId } } } },
-    }
-  );
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
+  });
+  
 
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
@@ -464,11 +452,15 @@ function Payment() {
     }
   );
   useEffect(() => {
-    refetchFishCare;
+    refetchFishCare();
   }, [refetchFishCare]);
   useEffect(() => {
-    refetchCartItems(), [refetchCartItems];
-  });
+    if (userId) {
+      refetchCartItems({
+        variables: { where: { user: { id: { equals: userId } } } },
+      });
+    }
+  }, [userId, refetchCartItems]);
 
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
@@ -476,33 +468,33 @@ function Payment() {
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   useEffect(() => {
     setTotalCarePrice(location.state.totalCarePrice);
-}, [location.state]);
-console.log(totalCarePrice)
-useEffect(() => {
-  if (dataCart) {
-    // Calculate the cart total based on items' prices
-    let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
-      if (cartItem.product.length > 0) {
-        return sum + cartItem.product[0].price;
-      } else if (cartItem.consignmentProduct.length > 0) {
-        return sum + cartItem.consignmentProduct[0].price;
-      }
-      return sum;
-    }, 0);
+  }, [location.state]);
+  console.log(totalCarePrice);
+  useEffect(() => {
+    if (dataCart) {
+      // Calculate the cart total based on items' prices
+      let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
+        if (cartItem.product.length > 0) {
+          return sum + cartItem.product[0].price;
+        } else if (cartItem.consignmentProduct.length > 0) {
+          return sum + cartItem.consignmentProduct[0].price;
+        }
+        return sum;
+      }, 0);
 
-    // Retrieve payment method from URL, if applicable
-    const searchParams = new URLSearchParams(window.location.search);
-    const paymentMethod = searchParams.get("paymentMethod");
+      // Retrieve payment method from URL, if applicable
+      const searchParams = new URLSearchParams(window.location.search);
+      const paymentMethod = searchParams.get("paymentMethod");
 
       if (paymentMethod === "cod") {
         cartTotal /= 2;
       }
 
-    // Calculate total amount with consignment care price (if any)
-    const totalWithCarePrice = cartTotal + parseInt(totalCarePrice || 0);
-    setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
-  }
-}, [dataCart, totalCarePrice]);
+      // Calculate total amount with consignment care price (if any)
+      const totalWithCarePrice = cartTotal + parseInt(totalCarePrice || 0);
+      setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
+    }
+  }, [dataCart, totalCarePrice]);
 
   useEffect(() => {
     if (location.state && location.state.depositsArray) {
@@ -585,7 +577,7 @@ useEffect(() => {
               </tbody>
             </table>
             <h5 className="mt-3">
-              <strong>Tổng cộng:</strong> {formatMoney(options.amount)}
+              <strong>Tổng cộng:</strong> {formatMoney(totalAmount)}
             </h5>
           </section>
         </article>

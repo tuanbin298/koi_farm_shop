@@ -66,18 +66,15 @@ const RegisterPage = () => {
     }
 
     if (!formData.address.trim()) {
-      errors.address = "Địa chỉ không được bỏ trống"; // Address validation
-    }
-    {
-      /* phần sđt này Đăng sẽ sửa sau */
+      errors.address = "Địa chỉ không được bỏ trống";
     }
 
-    // const phonePattern = /^[0-9]{10,11}$/;
-    // if (!formData.phone.trim()) {
-    //   errors.phone = "Số điện thoại không được bỏ trống";
-    // } else if (!phonePattern.test(formData.phone)) {
-    //   errors.phone = "Số điện thoại phải là 10-11 chữ số";
-    // }
+    const phonePattern = /(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/;
+    if (!formData.phone.trim()) {
+      errors.phone = "Số điện thoại không được bỏ trống";
+    } else if (!phonePattern.test(formData.phone)) {
+      errors.phone = "Số điện thoại không hợp lệ";
+    }
 
     if (!formData.password.trim()) {
       errors.password = "Mật khẩu không được bỏ trống";

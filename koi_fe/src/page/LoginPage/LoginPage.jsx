@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MUTATION_LOGIN } from "../api/Mutations/user";
 import { useMutation } from "@apollo/client";
-
 const Login = () => {
   const navigate = useNavigate();
-
   const [input, setInput] = useState({
     email: "",
     password: "",
