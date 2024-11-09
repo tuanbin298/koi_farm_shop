@@ -84,6 +84,50 @@ const User = list({
       },
     }),
   },
+
+  hooks: {
+    async beforeOperation({ operation, item, context }) {
+      // Delete cartItem when delete User
+      if (operation === "delete") {
+        const cartItems = await context.query.CartItem.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(cartItems);
+
+        if (cartItems.length > 0) {
+          for (const cartItem of cartItems) {
+            await context.query.CartItem.deleteOne({
+              where: { id: cartItem.id },
+            });
+          }
+        }
+
+        // Delete Feedback when delete User
+        const feedbacks = await context.query.Feedback.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id user { id name } comment",
+        });
+        console.log(feedbacks);
+
+        if (feedbacks.length > 0) {
+          for (const feedback of feedbacks) {
+            await context.query.Feedback.deleteOne({
+              where: { id: feedback.id },
+            });
+          }
+        }
+      }
+    },
+  },
 });
 
 export default User;

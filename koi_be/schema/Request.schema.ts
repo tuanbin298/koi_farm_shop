@@ -112,8 +112,9 @@ const Request = list({
               id: { equals: item.id },
             },
           },
-          query: "id",
+          query: "id name",
         });
+        console.log(consignments);
 
         if (consignments.length > 0) {
           const consignmentId = consignments[0].id;
@@ -129,7 +130,7 @@ const Request = list({
               id: { equals: item.id },
             },
           },
-          query: "id",
+          query: "id status",
         });
         console.log(statuses);
 

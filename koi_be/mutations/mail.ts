@@ -16,17 +16,42 @@ let transporter = nodemailer.createTransport({
 function makeConsignmentSaleEmail(text: string) {
   return `
       <div className="email" style="
-        border: 1px solid black;
+        border: 1px solid #ddd;
         padding: 20px;
-        font-family: sans-serif;
-        line-height: 2;
-        font-size: 20px;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        font-size: 18px;
+        color: #333;
+        background-color: #f9f9f9;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
       ">
-        <h2>Hệ thống Cá Koi Viet xin thông báo</h2>
-        <p>${text} của bạn đã được thanh toán thành công</p>
-        <p>Cá Koi Việt😘</p>
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="
+            display: inline-block;
+            color: #007bff;
+            font-size: 24px;
+            font-weight: bold;
+            vertical-align: middle;
+            margin: 0;
+          ">Hệ thống Cá Koi Viet xin thông báo</h2>
+        </div>
+        
+        <p style="
+          font-size: 18px;
+          color: #555;
+          text-align: center;
+        ">${text} của bạn đã được thanh toán thành công</p>
+        
+        <p style="
+          text-align: center;
+          font-size: 24px;
+          color: #555;
+        ">Cá Koi Việt</p>
       </div>
-    `;
+  `;
 }
 
 type Arguments = {
@@ -54,7 +79,7 @@ export async function createSuccessConsignmentSaleEmail(
   });
   console.log({ info });
 
-  return "Gửi thành công";
+  return "Ký gửi cá thành công";
 }
 
 type ArgumentsLogin = {
@@ -65,16 +90,45 @@ type ArgumentsLogin = {
 function makeRegisterEmail(text: string) {
   return `
     <div className="email" style="
-      border: 1px solid black;
+      border: 1px solid #ddd;
       padding: 20px;
-      font-family: sans-serif;
-      line-height: 2;
-      font-size: 20px;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      font-size: 18px;
+      color: #333;
+      background-color: #f9f9f9;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
     ">
-      <h2>Hệ thống Cá Koi Viet xin thông báo</h2>
-      <p>Xin chào, ${text}</p>
-      <p>Bạn đã đăng ký tài khoản thành công</p>
-      <p>Cá Koi Việt😘</p>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="
+          display: inline-block;
+          color: #007bff;
+          font-size: 24px;
+          font-weight: bold;
+          vertical-align: middle;
+          margin: 0;
+        ">Hệ thống Cá Koi Viet xin thông báo</h2>
+      </div>
+      
+      <p style="
+        font-size: 18px;
+        color: #555;
+        text-align: center;
+      ">Xin chào, ${text}</p>
+      
+      <p style="
+        font-size: 18px;
+        color: #555;
+        text-align: center;
+      ">Bạn đã đăng ký tài khoản thành công</p>
+      
+      <p style="
+        text-align: center;
+        font-size: 24px;
+      ">Cá Koi Việt</p>
     </div>
 `;
 }
