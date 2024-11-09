@@ -30,7 +30,7 @@ import {
 import "./payment.css";
 
 // User information
-const userId = localStorage.getItem("id");
+const [userId, setUserId] = useState(localStorage.getItem("id"));
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
 
@@ -442,8 +442,6 @@ function Payment() {
     variables: { where: { user: { id: { equals: userId } } } },
     fetchPolicy: "network-only",
   });
-  
-
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
     GET_FISH_CARE,

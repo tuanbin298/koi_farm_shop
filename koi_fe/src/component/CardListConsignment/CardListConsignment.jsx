@@ -6,6 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
+import { useQuery } from "@apollo/client";
 export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const userId = localStorage.getItem("id"); // Retrieve the logged-in user's ID
