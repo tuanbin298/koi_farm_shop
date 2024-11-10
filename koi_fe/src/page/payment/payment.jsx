@@ -30,11 +30,12 @@ import {
 import "./payment.css";
 
 // User information
-const [userId, setUserId] = useState(localStorage.getItem("id"));
+
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
 
 const CheckoutForm = () => {
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -438,6 +439,7 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
     fetchPolicy: "network-only",
