@@ -13,34 +13,39 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import "./ProductDetail.css";
-import { Link, useMatch } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAllProducts, useProductBySlug } from "../api/Queries/product";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
+import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 
 export default function ProductDetail() {
-  // const [createCart] = useMutation(CREATE_CART);
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  // const { id } = useParams(); // Get product ID from the route
-  const match = useMatch("/ProductDetail/:id"); 
-  const id = match ? match.params.id : null;
-
   const { slug } = useParams();
-  console.log(slug);
-  // const { loading, error, product } = useProduct(id); // Fetch single product
-
   const { loading, error, product } = useProductBySlug(slug);
   const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
   const userId = localStorage.getItem("id");
-  const [cartId, setCartId] = useState(localStorage.getItem("cartId")); // Store cart ID in state and localStorage
-  
+
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId, // Skip if no user is logged in
+  });
+
   // State to track the starting index of the currently displayed products
   const [startIndex, setStartIndex] = useState(0);
 
   const productsPerPage = 3; // Number of products to display at a time
-  const maxIndex = products ? products.length - productsPerPage : 0; // Maximum index we can start displaying
 
   if (loading || allLoading) return <p>Loading...</p>;
   if (error || allError)
@@ -66,13 +71,17 @@ export default function ProductDetail() {
     }
   };
 
-  const handleAddToCart = async () => {
-    console.log(product.id);
-    console.log(userId);
-    console.log(cartId);
-    console.log(localStorage.getItem("sessionToken"))
+  const handleAddToCart = async (productId) => {
     if (!userId) {
-      alert("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(
+      (item) => item.product[0]?.id === productId
+    );
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -81,7 +90,6 @@ export default function ProductDetail() {
       await createCartItem({
         variables: {
           data: {
-            // price: product.price,
             quantity: 1,
             product: {
               connect: { id: product.id }, // Connect product by ID
@@ -94,6 +102,9 @@ export default function ProductDetail() {
           },
         },
       });
+
+      await refetchCartItems();
+
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {
@@ -119,195 +130,195 @@ export default function ProductDetail() {
 
   return (
     <>
-    <div className="web-container">
-      <Box style={{ paddingTop: "1%", padding: "1%" }}>
-        <Flex gap="large" justify="space-around">
-          <div>
-            {product.image?.publicUrl ? (
-              <Image
-                width={300}
-                src={product.image.publicUrl}
-                alt={product.name}
-              />
-            ) : null}
-            {console.log(product.slug)}
-          </div>
+      <div className="web-container">
+        <Box style={{ paddingTop: "1%", padding: "1%" }}>
+          <Flex gap="large" justify="space-around">
+            <div>
+              {product.image?.publicUrl ? (
+                <Image
+                  width={300}
+                  src={product.image.publicUrl}
+                  alt={product.name}
+                />
+              ) : null}
+              {console.log(product.slug)}
+            </div>
 
-          <div style={{ width: "100%" }}>
-            <Typography
-              variant="h3"
-              gutterBottom
-              style={{ fontWeight: "bold" }}
-            >
-              {product.name} {product.size}{" "}
-              {new Date().getFullYear() - product.birth} tuổi
-            </Typography>
-
-            <Typography
-              variant="body2"
-              gutterBottom
-              style={{
-                fontFamily: "'Times New Roman', Times, serif",
-                fontSize: "15px",
-                fontWeight: "bold",
-                color: "#982B1C",
-                boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
-                border: "0.5px solid gray",
-                textAlign: "center",
-                padding: "1%",
-                width: "40%",
-                marginBottom: "4%",
-              }}
-            >
-              GIÁ BÁN: {formatMoney(product.price)}
-            </Typography>
-
-            <Typography
-              variant="body2"
-              gutterBottom
-              style={{ border: "2px dashed gray", padding: "15px" }}
-            >
-              {product.description}
-            </Typography>
-
-            <Stack spacing={0.5} className="productInfo">
-              <div>
-                Giới tính: {product.sex === "male" ? "Koi Đực" : "Koi Cái"}
-              </div>
-              <div>Năm sinh: {product.birth}</div>
-              <div>Kích thước: {product.size}</div>
-              <div>Chủng loại: {product.generic}</div>
-              <div>Nguồn gốc: {product.origin}</div>
-            </Stack>
-
-            <Stack spacing={2} direction="row" className="productBtnGroup">
-              <Button
-                variant="outlined"
-                color="primary"
-                style={{ color: "#982B1C" }}
-                onClick={handleAddToCart}
+            <div style={{ width: "100%" }}>
+              <Typography
+                variant="h3"
+                gutterBottom
+                style={{ fontWeight: "bold" }}
               >
-                Thêm vào giỏ hàng
-              </Button>
-            </Stack>
-          </div>
-        </Flex>
-      </Box>
+                {product.name} {product.size}{" "}
+                {new Date().getFullYear() - product.birth} tuổi
+              </Typography>
 
-      <Box
-        display="flex"
-        flexDirection="column"
-        gap={3}
-        justifyContent="center"
-        alignItems="center"
-        style={{
-          backgroundColor: "#ebe8e8",
-          paddingBottom: "3%",
-          paddingTop: "3%",
-          boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
-        }}
-      >
-        <div>
-          <Typography
-            variant="h4"
-            style={{
-              fontFamily: "'Brygada 1918'",
-              border: "1px solid black",
-              padding: "15px",
-              backgroundColor: "#F9F9FF",
-            }}
-          >
-            Các sản phẩm khác
-          </Typography>
-        </div>
-        <div
+              <Typography
+                variant="body2"
+                gutterBottom
+                style={{
+                  fontFamily: "'Times New Roman', Times, serif",
+                  fontSize: "15px",
+                  fontWeight: "bold",
+                  color: "#982B1C",
+                  boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
+                  border: "0.5px solid gray",
+                  textAlign: "center",
+                  padding: "1%",
+                  width: "40%",
+                  marginBottom: "4%",
+                }}
+              >
+                GIÁ BÁN: {formatMoney(product.price)}
+              </Typography>
+
+              <Typography
+                variant="body2"
+                gutterBottom
+                style={{ border: "2px dashed gray", padding: "15px" }}
+              >
+                {product.description}
+              </Typography>
+
+              <Stack spacing={0.5} className="productInfo">
+                <div>
+                  Giới tính: {product.sex === "male" ? "Koi Đực" : "Koi Cái"}
+                </div>
+                <div>Năm sinh: {product.birth}</div>
+                <div>Kích thước: {product.size}</div>
+                <div>Chủng loại: {product.generic}</div>
+                <div>Nguồn gốc: {product.origin}</div>
+              </Stack>
+
+              <Stack spacing={2} direction="row" className="productBtnGroup">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  style={{ color: "#982B1C" }}
+                  onClick={() => handleAddToCart(product.id)}
+                >
+                  Thêm vào giỏ hàng
+                </Button>
+              </Stack>
+            </div>
+          </Flex>
+        </Box>
+
+        <Box
+          display="flex"
+          flexDirection="column"
+          gap={3}
+          justifyContent="center"
+          alignItems="center"
           style={{
-            display: "flex",
-            gap: "100px",
-            justifyContent: "center",
-            alignItems: "center",
+            backgroundColor: "#ebe8e8",
+            paddingBottom: "3%",
+            paddingTop: "3%",
+            boxShadow: "10px 10px 18px -8px rgba(0,0,0,0.75)",
           }}
         >
+          <div>
+            <Typography
+              variant="h4"
+              style={{
+                fontFamily: "'Brygada 1918'",
+                border: "1px solid black",
+                padding: "15px",
+                backgroundColor: "#F9F9FF",
+              }}
+            >
+              Các sản phẩm khác
+            </Typography>
+          </div>
           <div
-            className="slideBtn"
             style={{
-              marginLeft: "3%",
-              backgroundColor: "white",
-              borderRadius: "50%",
+              display: "flex",
+              gap: "100px",
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <IconButton
-              color="primary"
-              onClick={handlePrev}
-              disabled={startIndex === 0}
+            <div
+              className="slideBtn"
+              style={{
+                marginLeft: "3%",
+                backgroundColor: "white",
+                borderRadius: "50%",
+              }}
             >
-              <ArrowBackIcon />
-            </IconButton>
-          </div>
+              <IconButton
+                color="primary"
+                onClick={handlePrev}
+                disabled={startIndex === 0}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </div>
 
-          {displayedProducts?.map((product) => (
-            <Link to={`/ProductDetail/${product.slug}`} key={product.id}>
-              <Card sx={{ maxWidth: 250 }}>
-                {product.image?.publicUrl ? (
-                  <CardMedia
-                    component="img"
-                    alt={product.name}
-                    image={product.image.publicUrl}
-                    style={{
-                      aspectRatio: "1/3",
-                      height: "250px",
-                      width: "100%",
-                    }}
-                  />
-                ) : null}
-                <CardContent>
-                  <Typography
-                    gutterBottom
-                    variant="h5"
-                    component="div"
-                    textAlign="center"
-                    style={{
-                      fontFamily:
-                        "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                      fontWeight: "450",
-                    }}
-                  >
-                    {product.name}
-                  </Typography>
-                  <Typography
-                    textAlign="center"
-                    style={{
-                      fontFamily:
-                        "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                      fontWeight: "450",
-                    }}
-                  >
-                    {formatMoney(product.price)}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+            {displayedProducts?.map((product) => (
+              <Link to={`/ProductDetail/${product.slug}`} key={product.id}>
+                <Card sx={{ maxWidth: 250 }}>
+                  {product.image?.publicUrl ? (
+                    <CardMedia
+                      component="img"
+                      alt={product.name}
+                      image={product.image.publicUrl}
+                      style={{
+                        aspectRatio: "1/3",
+                        height: "250px",
+                        width: "100%",
+                      }}
+                    />
+                  ) : null}
+                  <CardContent>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="div"
+                      textAlign="center"
+                      style={{
+                        fontFamily:
+                          "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        fontWeight: "450",
+                      }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      textAlign="center"
+                      style={{
+                        fontFamily:
+                          "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        fontWeight: "450",
+                      }}
+                    >
+                      {formatMoney(product.price)}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
 
-          <div
-            className="slideBtn"
-            style={{
-              marginRight: "3%",
-              backgroundColor: "white",
-              borderRadius: "50%",
-            }}
-          >
-            <IconButton
-              color="primary"
-              onClick={handleNext}
-              disabled={startIndex + productsPerPage >= products.length}
+            <div
+              className="slideBtn"
+              style={{
+                marginRight: "3%",
+                backgroundColor: "white",
+                borderRadius: "50%",
+              }}
             >
-              <ArrowForwardIcon />
-            </IconButton>
+              <IconButton
+                color="primary"
+                onClick={handleNext}
+                disabled={startIndex + productsPerPage >= products.length}
+              >
+                <ArrowForwardIcon />
+              </IconButton>
+            </div>
           </div>
-        </div>
-      </Box>
-      <Toaster position="top-center" reverseOrder={false} />
+        </Box>
+        <Toaster position="top-center" reverseOrder={false} />
       </div>
     </>
   );

@@ -11,7 +11,7 @@ export default function CardListProduct({ products }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const userId = localStorage.getItem("id");
 
-  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: {
@@ -31,7 +31,15 @@ export default function CardListProduct({ products }) {
 
   const handleAddToCart = async (productId) => {
     if (!userId) {
-      toast.error("Thêm vào giỏ hàng không thành công");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.product[0]?.id === productId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -80,17 +88,27 @@ export default function CardListProduct({ products }) {
         <div className="row">
           {products.map((product) => (
             <div key={product.id} className="col-md-4 mb-4">
-              <div className="card h-100 shadow-sm card-product" style={{ maxWidth: "350px", margin: "0 auto" }}>
+              <div
+                className="card h-100 shadow-sm card-product"
+                style={{ maxWidth: "350px", margin: "0 auto" }}
+              >
                 <Link to={`/ProductDetail/${product.slug}`}>
                   <img
                     src={product.image?.publicUrl}
                     alt={product.name}
                     className="card-img-top img-fluid"
-                    style={{ height: "360px", width: "100%", objectFit: "fill" }}
+                    style={{
+                      height: "360px",
+                      width: "100%",
+                      objectFit: "fill",
+                    }}
                   />
                 </Link>
 
-                <div className="card-body text-start" style={{ padding: "25px" }}>
+                <div
+                  className="card-body text-start"
+                  style={{ padding: "25px" }}
+                >
                   <h4 className="card-title">{product.name}</h4>
                   <p className="mb-1 text-danger">
                     <strong>Giá: </strong>
