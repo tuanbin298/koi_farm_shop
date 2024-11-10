@@ -85,6 +85,8 @@ const KoiFishOrdersPage = () => {
 
   const orders = data.orders;
 
+  const hasCompletedOrder = orders.some(order => order.status === "Hoàn thành đơn hàng");
+
   return (
     <div className="order container mt-4">
       <h2>ĐƠN HÀNG CỦA BẠN</h2>
@@ -231,48 +233,49 @@ const KoiFishOrdersPage = () => {
 
 
       {/* Feedback Section */}
-      <Card className="mt-4">
-        <Card.Body className="text-center">
-          <h3 className="mb-4">Đánh giá của bạn</h3>
+      {hasCompletedOrder && (
+        <Card className="mt-4">
+          <Card.Body className="text-center">
+            <h3 className="mb-4">Đánh giá của bạn</h3>
+            <Form.Group className="mb-4">
+              <div className="d-flex justify-content-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={`star ${star <= rating ? "star-selected" : ""}`}
+                    onClick={() => handleRatingChange(star)}
+                  />
+                ))}
+              </div>
+            </Form.Group>
 
-          <Form.Group className="mb-4">
-            <div className="d-flex justify-content-center">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <FaStar
-                  key={star}
-                  className={`star ${star <= rating ? "star-selected" : ""}`}
-                  onClick={() => handleRatingChange(star)}
-                />
-              ))}
-            </div>
-          </Form.Group>
+            <Form.Group controlId="feedback" className="mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                maxLength={200}
+                placeholder="Nhập phản hồi của bạn"
+                name="comment"
+                value={feedback.comment}
+                onChange={handleFeedbackChange}
+                style={{ resize: "none", borderRadius: "0.25rem" }}
+              />
+              <div className="text-muted text-end mt-1">
+                {feedback.comment.length} / 200 characters
+              </div>
+            </Form.Group>
 
-          <Form.Group controlId="feedback" className="mb-3">
-            <Form.Control
-              as="textarea"
-              rows={3}
-              maxLength={200} // Max character limit
-              placeholder="Nhập phản hồi của bạn"
-              name="comment"
-              value={feedback.comment}
-              onChange={handleFeedbackChange}
-              style={{ resize: "none", borderRadius: "0.25rem" }}
-            />
-            <div className="text-muted text-end mt-1">
-              {feedback.comment.length} / 200 characters
-            </div>
-          </Form.Group>
-
-          <Button
-            variant="primary"
-            onClick={handleSubmitFeedback}
-            className="mt-2 w-100 submit-button"
-          >
-            <FaPaperPlane style={{ marginRight: "8px" }} />
-            Gửi
-          </Button>
-        </Card.Body>
-      </Card>
+            <Button
+              variant="primary"
+              onClick={handleSubmitFeedback}
+              className="mt-2 w-100 submit-button"
+            >
+              <FaPaperPlane style={{ marginRight: "8px" }} />
+              Gửi
+            </Button>
+          </Card.Body>
+        </Card>
+      )}
     </div>
   );
 };
