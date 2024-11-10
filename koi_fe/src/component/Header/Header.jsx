@@ -4,7 +4,7 @@ import logo from "../../assets/Logo/Logo.jpg";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import { Menu, MenuItem, IconButton } from "@mui/material";
 import { useQuery } from "@apollo/client";
