@@ -370,7 +370,7 @@ const CheckoutForm = () => {
         }
 
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage");
+        navigate("/someSuccessPage", { state: { from: "/payment" } });
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
