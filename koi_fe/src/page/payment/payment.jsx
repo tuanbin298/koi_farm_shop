@@ -43,7 +43,6 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const location = useLocation();
@@ -51,6 +50,7 @@ const CheckoutForm = () => {
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
   const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const [updateConsignmentProductStatus] = useMutation(
     UPDATE_CONSIGNMENT_PRODUCT_STATUS
   );
@@ -289,26 +289,6 @@ const CheckoutForm = () => {
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
-        // for (let i = 0; i < cartItemIds.length; i++) {
-        //   const cartItemId = cartItemIds[i];
-        //   console.log(cartItemId)
-        //   console.log(cartConsignmentPairs)
-        //   const consignment = cartConsignmentPairs.find(
-        //     (pair) => pair.cartItemId === cartItemId
-        //   );
-        //   console.log(consignment)
-        //   if (consignment && consignment.consignmentRaisingId) {
-        //     await updateOrderItem({
-        //       variables: {
-        //         where: { id: orderItemIds[i] },
-        //         data: {
-        //           consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
-        //         },
-        //       },
-        //     });
-        //     console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
-        //   }
-        // }
 
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
