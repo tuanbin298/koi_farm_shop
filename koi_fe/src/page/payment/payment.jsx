@@ -50,7 +50,6 @@ const CheckoutForm = () => {
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
   const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
-  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const [updateConsignmentProductStatus] = useMutation(
     UPDATE_CONSIGNMENT_PRODUCT_STATUS
   );
