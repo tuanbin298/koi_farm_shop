@@ -27,17 +27,23 @@ export default function Checkout() {
   const userId = localStorage.getItem("id");
 
   // Fetch cart items from GraphQL API
-  const { data: cartItems, loading: loadingCart } = useQuery(GET_CART_ITEMS, {
-    variables: {
-      where: { user: { id: { equals: userId } } },
-    },
+  const { data: cartItems = { cartItems: [] }, loading: loadingCart = false } = useQuery(GET_CART_ITEMS, {
+    skip: !userId,
+    variables: userId
+      ? {
+          where: { user: { id: { equals: userId } } },
+        }
+      : {},
   });
 
-  // Display a loading state if data is still being fetched
-  if (loadingCart) {
-    return <p>Loading cart items...</p>;
-  }
+ 
+if (!userId) {
+  return <p>Please log in to view your cart items.</p>;
+}
 
+if (loadingCart) {
+  return <p>Loading cart items...</p>;
+}
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const [totalCarePrice, setTotalCarePrice] = useState(0);

@@ -30,12 +30,12 @@ import {
 import "./payment.css";
 
 // User information
-// const [userId, setUserId] = useState(localStorage.getItem("id"));
-const userId = localStorage.getItem("id");
+
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
 
 const CheckoutForm = () => {
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -50,7 +50,6 @@ const CheckoutForm = () => {
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
   const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
-  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const [updateConsignmentProductStatus] = useMutation(
     UPDATE_CONSIGNMENT_PRODUCT_STATUS
   );
@@ -371,7 +370,7 @@ const CheckoutForm = () => {
         }
 
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage");
+        navigate("/someSuccessPage", { state: { from: "/payment" } });
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
@@ -419,13 +418,11 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(
-    GET_CART_ITEMS,
-    {
-      variables: { where: { user: { id: { equals: userId } } } },
-      fetchPolicy: "network-only",
-    }
-  );
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
+  });
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
     GET_FISH_CARE,
