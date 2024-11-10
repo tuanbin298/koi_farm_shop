@@ -30,6 +30,8 @@ import {
 import "./payment.css";
 
 // User information
+// const [userId, setUserId] = useState(localStorage.getItem("id"));
+const userId = localStorage.getItem("id");
 const userName = localStorage.getItem("name");
 const userEmail = localStorage.getItem("email");
 
