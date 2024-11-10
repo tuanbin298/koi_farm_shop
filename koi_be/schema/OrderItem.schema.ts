@@ -59,6 +59,7 @@ const OrderItem = list({
       options: [
         { label: "Đang chăm sóc", value: "Có sẵn" },
         { label: "Đang giao hàng", value: "Đang giao hàng" },
+        { label: "Đang xử lý", value: "Đang xử lý" },
         { label: "Giao hàng thành công", value: "Giao hàng thành công" },
       ],
     }),

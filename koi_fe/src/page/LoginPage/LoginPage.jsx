@@ -85,8 +85,6 @@ const Login = () => {
             },
           },
         });
-
-        toast.success("Đăng nhập thành công!");
         navigate("/", { state: { fromLogin: true } });
       } else if (authData?.message) {
         setErrorMsg(authData.message);
