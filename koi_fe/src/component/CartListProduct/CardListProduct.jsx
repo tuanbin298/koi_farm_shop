@@ -100,7 +100,7 @@ export default function CardListProduct({ products }) {
                     style={{
                       height: "360px",
                       width: "100%",
-                      objectFit: "fill",
+                      objectFit: "contain",
                     }}
                   />
                 </Link>
