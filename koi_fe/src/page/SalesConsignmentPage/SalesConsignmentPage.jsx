@@ -111,45 +111,44 @@ const SalesConsignmentPage = () => {
 
   const priceTable = {
     size: {
-      small: 500000, // từ 20-35 cm
-      medium: 1000000, // từ 35-60 cm
-      large: 2000000, // từ 60 cm trở lên
+      small: 500000, // Kích thước từ 20-35 cm
+      medium: 1000000, // Kích thước từ 35-60 cm
+      large: 2000000, // Kích thước từ 60-70 cm trở lên
     },
     generic: {
-      Japan: 3, // Price multiplier for Japanese Koi
-      F1: 2, // Price multiplier for F1 Koi
-      Mini: 1, // Price multiplier for Mini Koi
+      Japan: 3, // Hệ số giá cho Koi thuần chủng Nhật Bản
+      F1: 2, // Hệ số giá cho Koi F1 (giống con lai từ Koi Nhật Bản)
     },
     ageFactor: (age) => {
-      if (age < 2) return 0.8; // cá dưới 2 tuổi giá giảm 20%
-      if (age >= 2 && age <= 5) return 1; // cá từ 2-5 tuổi giá bình thường
-      return 0.9; // cá trên 5 tuổi giá giảm 10%
+      if (age < 2) return 0.8; // Cá dưới 2 tuổi, giảm giá 20%
+      if (age >= 2 && age <= 5) return 1; // Cá từ 2-5 tuổi, giá bình thường
+      return 0.9; // Cá trên 5 tuổi, giảm giá 10%
     },
   };
 
   const genericMapping = {
     "Cá Koi Nhật thuần chủng": "Japan",
     "Cá Koi F1": "F1",
-    "Cá Koi Mini": "Mini",
   };
 
   const calculatePrice = (formData) => {
+    // Xác định kích thước
     const sizeCategory =
       formData.size < 35 ? "small" : formData.size < 60 ? "medium" : "large";
 
-    // Sử dụng giá trị ánh xạ cho generic
+    // Xác định loại giống (generic)
     const genericKey = genericMapping[formData.generic] || "Local";
     const genericMultiplier = priceTable.generic[genericKey] || 1;
 
+    // Xác định tuổi và hệ số tuổi
     const birthYear = parseInt(formData.birth, 10);
     const age = new Date().getFullYear() - birthYear;
     const ageMultiplier = priceTable.ageFactor(age);
 
-    // Tính giá dựa trên kích thước, chủng loại và tuổi
+    // Tính giá cơ bản dựa trên kích thước
     const basePrice = priceTable.size[sizeCategory];
 
-    // Tính giá dao động:
-    // Giá trị tối thiểu là 90% của giá hiện tại và tối đa là 110%
+    // Tính giá dao động với các hệ số bổ sung
     const minPrice = basePrice * genericMultiplier * ageMultiplier * 0.9;
     const maxPrice = basePrice * genericMultiplier * ageMultiplier * 1.1;
 
@@ -279,54 +278,41 @@ const SalesConsignmentPage = () => {
         <h5>Điều Kiện Ký Gửi Cá Koi</h5>
         <ul>
           <li>
-            Chỉ nhận cá Koi khỏe mạnh, không bệnh tật, có giấy chứng nhận chất
-            lượng.
+            Kích thước cá từ 20 - 70 cm, không nhận các loại Koi baby hoặc Koi
+            giống.
           </li>
           <li>
-            Kích thước cá từ 35-90 cm, không nhận các loại Koi baby, Koi mini,
-            hoặc Koi giống.
-          </li>
-          <li>
-            Ưu tiên các dòng Koi thuần chủng từ Nhật Bản, có nguồn gốc từ các
-            Koi Farm lớn.
+            Ưu tiên các dòng Koi thuần chủng từ Nhật Bản, có chất lượng cao và
+            tình trạng sức khỏe tốt.
           </li>
         </ul>
 
         <h5>Trách Nhiệm Của Khách Hàng Ký Gửi</h5>
         <ul>
           <li>
-            Quý khách chịu trách nhiệm về chất lượng Koi, giấy chứng nhận, tuổi,
-            và sức khỏe của Koi trước khi ký gửi.
+            Quý khách chịu trách nhiệm về chất lượng Koi, tuổi, và sức khỏe của
+            Koi trước khi ký gửi.
           </li>
           <li>
             Đảm bảo thông tin cung cấp chính xác về cá Koi, bao gồm: tên, tuổi,
-            giới tính, nguồn gốc, chủng loại, chế độ ăn uống, và lịch sử bệnh lý
-            (nếu có).
+            giới tính, chủng loại, kích thước, hình ảnh, chế độ ăn uống, và lịch
+            sử bệnh lý (nếu có).
           </li>
         </ul>
 
         <h5>Quy Trình Ký Gửi Cá Koi</h5>
         <ol>
+          <li>Cung cấp hình ảnh về cá Koi.</li>
           <li>
-            Cung cấp hình ảnh, video chi tiết về cá Koi và các giấy tờ chứng
-            nhận liên quan.
+            Thỏa thuận ký gửi với các điều kiện và giá trị ký gửi phù hợp.
           </li>
           <li>
-            Thỏa thuận hợp đồng ký gửi với các điều kiện và giá trị ký gửi phù
-            hợp.
+            Bảo đảm cá Koi luôn trong tình trạng khỏe mạnh sau khi ký gửi.
           </li>
           <li>
-            Ký kết hợp đồng chính thức và bảo đảm cá Koi luôn trong tình trạng
-            khỏe mạnh sau khi ký gửi.
-          </li>
-          <li>
-            Hỗ trợ khách hàng tìm người mua phù hợp, đón tiếp khách tới xem và
-            quyết định mua cá Koi.
-          </li>
-          <li>
-            Hợp đồng ký gửi kết thúc khi cá bán thành công. Khách hàng chịu
-            trách nhiệm về chất lượng cá Koi với người mua, bao gồm bảo hành và
-            cam kết đi kèm.
+            Giao dịch kết thúc khi cá bán thành công. Khách hàng chịu trách
+            nhiệm về chất lượng cá Koi với người mua, bao gồm bảo hành và cam
+            kết đi kèm.
           </li>
         </ol>
 
@@ -334,10 +320,6 @@ const SalesConsignmentPage = () => {
           <>
             <h5>Cam Kết Của CaKoiViet</h5>
             <ul>
-              <li>
-                Chúng tôi cam kết cung cấp đầy đủ và trung thực thông tin về
-                tình trạng Koi của quý khách.
-              </li>
               <li>
                 Hỗ trợ quý khách trong việc định giá lại giá trị của cá Koi dựa
                 trên thị trường và nhu cầu hiện tại.
@@ -350,8 +332,14 @@ const SalesConsignmentPage = () => {
 
             <h5>Chi Phí Ký Gửi</h5>
             <p>
-              Chi phí ký gửi được điều chỉnh hợp lý, dựa trên giá trị và tình
-              trạng của cá Koi.
+              Chi phí ký gửi được tính là 10% trên giá trị cá Koi đã được định
+              giá từ trang trại. Ví dụ: nếu cá Koi của quý khách được định giá
+              là 10,000,000 VND, chi phí ký gửi sẽ là 1,000,000 VND.
+            </p>
+            <p>
+              Giá trị định giá của cá Koi sẽ được xác định bởi các chuyên gia
+              của trang trại dựa trên kích thước, chủng loại, và tình trạng sức
+              khỏe của cá.
             </p>
           </>
         )}

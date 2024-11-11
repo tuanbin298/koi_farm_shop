@@ -93,6 +93,8 @@ const KoiFishOrdersPage = () => {
 
   const orders = data.orders;
 
+  const hasCompletedOrder = orders.some(order => order.status === "Hoàn thành đơn hàng");
+
   return (
     <div className="order container mt-4">
       <h2>ĐƠN HÀNG CỦA BẠN</h2>
@@ -110,7 +112,7 @@ const KoiFishOrdersPage = () => {
           {orders.length === 0 ? (
             <tr>
               <td colSpan="5" className="text-center">
-                Không có đơn ký gửi nào.
+                Không có đơn hàng nào.
               </td>
             </tr>
           ) : (
@@ -154,74 +156,60 @@ const KoiFishOrdersPage = () => {
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             {/* Bảng Chi tiết đơn hàng */}
-            <h5>Cá Koi Trang Trại</h5>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Tên cá</th>
-                  <th>Giá (VNĐ)</th>
-                  {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
-                  {expandedOrder.items.some(
-                    (item) => item.consignmentRaising
-                  ) && (
-                    <>
-                      <th>Ngày bắt đầu ký gửi nuôi</th>
-                      <th>Ngày kết thúc ký gửi nuôi</th>
-                      <th>Giá ký gửi nuôi(VNĐ)</th>
-                    </>
-                  )}
-                  <th>Ghi chú</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Lọc ra các item không có consignmentSale */}
-                {expandedOrder.items
-                  .filter((item) => !item.consignmentSale)
-                  .map((item, idx) => (
-                    <tr key={idx}>
-                      <td>{item.product?.name || "-"}</td>
-                      <td>
-                        {item.product?.price
-                          ? formatMoney(item.product.price)
-                          : "-"}
-                      </td>
-                      {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
-                      {expandedOrder.items.some(
-                        (item) => item.consignmentRaising
-                      ) ? (
+            {expandedOrder.items.some(item => item.consignmentRaising) && (
+              <>
+                <h5>Cá Koi Trang Trại</h5>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Tên cá</th>
+                      <th>Giá (VNĐ)</th>
+                      {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
+                      {expandedOrder.items.some(item => item.consignmentRaising) && (
                         <>
-                          <td>
-                            {item.consignmentRaising?.consignmentDate
-                              ? new Date(
-                                  item.consignmentRaising.consignmentDate
-                                ).toLocaleDateString()
-                              : "-"}
-                          </td>
-                          <td>
-                            {item.consignmentRaising?.returnDate
-                              ? new Date(
-                                  item.consignmentRaising.returnDate
-                                ).toLocaleDateString()
-                              : "-"}
-                          </td>
-                          <td>
-                            {item.consignmentRaising?.consignmentPrice
-                              ? formatMoney(
-                                  item.consignmentRaising.consignmentPrice
-                                )
-                              : "-"}
-                          </td>
+                          <th>Ngày bắt đầu ký gửi nuôi</th>
+                          <th>Ngày kết thúc ký gửi nuôi</th>
+                          <th>Giá ký gửi nuôi (VNĐ)</th>
                         </>
-                      ) : null}
-                      <td>
-                        {item.consignmentRaising
-                          ? item.consignmentRaising.status
-                          : item.status || "-"}
-                      </td>
+                      )}
+                      <th>Ghi chú</th>
                     </tr>
-                  ))}
-              </tbody>
-            </Table>
+                  </thead>
+                  <tbody>
+                    {/* Lọc ra các item không có consignmentSale */}
+                    {expandedOrder.items
+                      .filter(item => !item.consignmentSale)
+                      .map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.product?.name || '-'}</td>
+                          <td>{item.product?.price ? formatMoney(item.product.price) : '-'}</td>
+                          {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
+                          {expandedOrder.items.some(item => item.consignmentRaising) ? (
+                            <>
+                              <td>
+                                {item.consignmentRaising?.consignmentDate
+                                  ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
+                                  : '-'}
+                              </td>
+                              <td>
+                                {item.consignmentRaising?.returnDate
+                                  ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
+                                  : '-'}
+                              </td>
+                              <td>
+                                {item.consignmentRaising?.consignmentPrice
+                                  ? formatMoney(item.consignmentRaising.consignmentPrice)
+                                  : '-'}
+                              </td>
+                            </>
+                          ) : null}
+                          <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
             {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
             {expandedOrder.items.some((item) => item.consignmentSale) && (
               <>
@@ -229,7 +217,7 @@ const KoiFishOrdersPage = () => {
                 <Table striped bordered hover>
                   <thead>
                     <tr>
-                      <th>Tên cá ký gửi bán</th>
+                      <th>Tên cá </th>
                       <th>Giá (VNĐ)</th>
                       <th>Ghi chú</th>
                     </tr>
@@ -261,49 +249,51 @@ const KoiFishOrdersPage = () => {
         </Modal>
       )}
 
+
       {/* Feedback Section */}
-      <Card className="mt-4">
-        <Card.Body className="text-center">
-          <h3 className="mb-4">Đánh giá của bạn</h3>
+      {hasCompletedOrder && (
+        <Card className="mt-4">
+          <Card.Body className="text-center">
+            <h3 className="mb-4">Đánh giá của bạn</h3>
+            <Form.Group className="mb-4">
+              <div className="d-flex justify-content-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={`star ${star <= rating ? "star-selected" : ""}`}
+                    onClick={() => handleRatingChange(star)}
+                  />
+                ))}
+              </div>
+            </Form.Group>
 
-          <Form.Group className="mb-4">
-            <div className="d-flex justify-content-center">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <FaStar
-                  key={star}
-                  className={`star ${star <= rating ? "star-selected" : ""}`}
-                  onClick={() => handleRatingChange(star)}
-                />
-              ))}
-            </div>
-          </Form.Group>
+            <Form.Group controlId="feedback" className="mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                maxLength={200}
+                placeholder="Nhập phản hồi của bạn"
+                name="comment"
+                value={feedback.comment}
+                onChange={handleFeedbackChange}
+                style={{ resize: "none", borderRadius: "0.25rem" }}
+              />
+              <div className="text-muted text-end mt-1">
+                {feedback.comment.length} / 200 characters
+              </div>
+            </Form.Group>
 
-          <Form.Group controlId="feedback" className="mb-3">
-            <Form.Control
-              as="textarea"
-              rows={3}
-              maxLength={200} // Max character limit
-              placeholder="Nhập phản hồi của bạn"
-              name="comment"
-              value={feedback.comment}
-              onChange={handleFeedbackChange}
-              style={{ resize: "none", borderRadius: "0.25rem" }}
-            />
-            <div className="text-muted text-end mt-1">
-              {feedback.comment.length} / 200 characters
-            </div>
-          </Form.Group>
-
-          <Button
-            variant="primary"
-            onClick={handleSubmitFeedback}
-            className="mt-2 w-100 submit-button"
-          >
-            <FaPaperPlane style={{ marginRight: "8px" }} />
-            Gửi
-          </Button>
-        </Card.Body>
-      </Card>
+            <Button
+              variant="primary"
+              onClick={handleSubmitFeedback}
+              className="mt-2 w-100 submit-button"
+            >
+              <FaPaperPlane style={{ marginRight: "8px" }} />
+              Gửi
+            </Button>
+          </Card.Body>
+        </Card>
+      )}
     </div>
   );
 };

@@ -1,0 +1,13 @@
+.layout-background {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #f4f4f4; /* Set background color */
+}
+
+.layout-content {
+  max-width: 1264.67px; /* Restrict content to 1264.67px width */
+  width: 100%;
+  padding: 0 20px; /* Add padding to avoid edge clipping on smaller screens */
+  box-sizing: border-box;
+}

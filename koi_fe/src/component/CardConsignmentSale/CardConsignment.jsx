@@ -114,7 +114,7 @@ export default function CardConsignmentSale() {
                       style={{
                         height: "360px",
                         width: "100%",
-                        objectFit: "fill",
+                        objectFit: "contain",
                       }}
                     />
                   </Link>

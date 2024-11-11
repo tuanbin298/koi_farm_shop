@@ -51,7 +51,6 @@ export default function SingleForm({
             </option>
             <option value="Cá Koi Nhật thuần chủng">Nhập khẩu Nhật bản</option>
             <option value="F1">Cá Koi F1</option>
-            <option value="Mini">Cá Koi Mini</option>
           </select>
           {errors.generic && (
             <div className="invalid-feedback">{errors.generic}</div>
