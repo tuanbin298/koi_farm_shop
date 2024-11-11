@@ -90,8 +90,10 @@ const FishCareService = () => {
             }
         });
         setTotalDisplayCarePrice(total)
-        setTotalCarePrice(parseInt(storedTotalCarePrice) + parseInt(total));
+        setTotalCarePrice(total);
     };
+
+    console.log(totalCarePrice);
     // Cập nhật ngày bắt đầu/kết thúc cho giá ký gửi nuôi
     const handleDateChange = (productId, field, value) => {
         // Convert selected date to full ISO 8601 date-time string

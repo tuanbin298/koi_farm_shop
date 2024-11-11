@@ -205,11 +205,11 @@ const CartPage = () => {
                             <TableCell align="center">
                               <Checkbox
                                 checked={
-                                  handleCheckedConsign(cartItem) ||
+                                  cartItem.isStored ||
                                   depositFields[cartItem.id] ||
                                   false
                                 }
-                                disabled={handleCheckedConsign(cartItem)}
+                                disabled={cartItem.isStored}
                                 onChange={() =>
                                   handleDepositToggle(cartItem.id)
                                 }
