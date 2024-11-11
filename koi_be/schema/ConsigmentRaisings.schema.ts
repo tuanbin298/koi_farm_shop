@@ -83,13 +83,13 @@ const ConsigmentRaising = list({
     async beforeOperation({ item, context, operation }) {
       // Delete, throw new error if orderItem contain this consignment raising
       if (operation === "delete") {
-        const orderItems = await context.query.orderItem.findMany({
+        const orderItems = await context.query.OrderItem.findMany({
           where: {
             consignmentRaising: {
               id: { equals: item.id },
             },
           },
-          query: "id consignmentRaising { id name }",
+          query: "id consignmentRaising { id product { id name } }",
         });
         console.log(orderItems);
 
