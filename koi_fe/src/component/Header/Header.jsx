@@ -3,19 +3,11 @@ import "./Header.css";
 import logo from "../../assets/Logo/Logo.jpg";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
-import {
-  Menu,
-  MenuItem,
-  IconButton,
-  Breadcrumbs,
-  Typography,
-} from "@mui/material";
-import { gql, useQuery } from "@apollo/client";
+import { Menu, MenuItem, IconButton } from "@mui/material";
+import { useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 import { useApolloClient } from "@apollo/client";
@@ -29,7 +21,6 @@ export default function Header() {
   const [kiguiDropdownOpen, setKiguiDropdownOpen] = useState(false); // Ký gửi dropdown control
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
-  const location = useLocation(); // To get the current path
 
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
@@ -124,79 +115,6 @@ export default function Header() {
     navigate("/login");
   };
 
-  // Mapping URL paths to Vietnamese labels
-  // const breadcrumbMap = {
-  //   "": "Trang chủ", // Empty for homepage
-  //   koiList: "Danh sách Cá Koi",
-  //   sales: "Ký Gửi Bán",
-  //   care: "Ký Gửi Nuôi",
-  //   cart: "Giỏ hàng",
-  //   profile: "Thông tin cá nhân",
-  //   login: "Đăng nhập",
-  //   register: "Đăng ký",
-  //   about: "Giới thiệu",
-  //   news: "Tin tức",
-  //   ProductDetail: "Chi tiết",
-  //   introduce: "Giới thiệu",
-  //   consignmentTracking: "Theo dõi đơn ký gửi bán",
-  //   ConsignmentDetail: "Chi tiết",
-  //   payment: "Thanh Toán",
-  //   someSuccessPage: "Xác nhận thanh toán"
-  // };
-
-  // Function to generate breadcrumbs based on current URL
-  // const generateBreadcrumbs = () => {
-  //   const pathnames = location.pathname.split("/").filter((x) => x);
-
-  //   return (
-  //     <Breadcrumbs
-  //       aria-label="breadcrumb"
-  //       style={{
-  //         color: "white",
-  //       }}
-  //     >
-  //       <Link
-  //         to="/"
-  //         style={{
-  //           textDecoration: "none",
-  //           color: "white",
-  //         }}
-  //       >
-  //         {breadcrumbMap[""]}
-  //       </Link>
-  //       {pathnames.map((value, index) => {
-  //         const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-  //         const isLast = index === pathnames.length - 1;
-  //         const translatedLabel = breadcrumbMap[value] || value;
-
-  //         return isLast ? (
-  //           <Typography
-  //             key={to}
-  //             color="text.primary"
-  //             style={{
-  //               textDecoration: "none",
-  //               color: "white",
-  //             }}
-  //           >
-  //             {translatedLabel}
-  //           </Typography>
-  //         ) : (
-  //           <Link
-  //             key={to}
-  //             to={to}
-  //             style={{
-  //               textDecoration: "none",
-  //               color: "white",
-  //             }}
-  //           >
-  //             {translatedLabel}
-  //           </Link>
-  //         );
-  //       })}
-  //     </Breadcrumbs>
-  //   );
-  // };
-
   return (
     <div>
       <header className="header">
@@ -252,7 +170,7 @@ export default function Header() {
                   onClose={handleMenuClose}
                 >
                   <MenuItem onClick={() => navigate("/profile")}>
-                    Profile
+                    Thông tin cá nhân
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
                 </Menu>
@@ -344,12 +262,7 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* <div className="header_mid-search">
-            <input type="text" placeholder="Tìm kiếm..." />
-            <button>
-              <SearchRoundedIcon />
-            </button>
-          </div> */}
+          <div className="header_mid-search"></div>
         </div>
         <div className="header_bottom"></div>
       </header>

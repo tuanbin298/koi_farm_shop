@@ -11,6 +11,7 @@ export const CREATE_ORDER = gql`
       price
       status
       address
+      transaction
       items {
         id
       }

@@ -29,12 +29,8 @@ import {
 } from "../api/Mutations/updateproduct"; // Adjust path as needed
 import "./payment.css";
 
-// User information
-const userId = localStorage.getItem("id");
-const userName = localStorage.getItem("name");
-const userEmail = localStorage.getItem("email");
-
 const CheckoutForm = () => {
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -42,7 +38,6 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const location = useLocation();
@@ -57,7 +52,8 @@ const CheckoutForm = () => {
     /*Get user email to notify the payment of consigned fish for sales they put for */
   }
   const userEmail = localStorage.getItem("email");
-  console.log(userEmail);
+  const userName = localStorage.getItem("name");
+  const userPhone = localStorage.getItem("phone");
 
   {
     /* get email notification mutation */
@@ -68,7 +64,6 @@ const CheckoutForm = () => {
   {
     /*Get email of person consigning the fish for sales */
   }
-  // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
@@ -152,6 +147,7 @@ const CheckoutForm = () => {
       billing_details: {
         name: userName,
         email: userEmail,
+        phone: userPhone,
       },
     });
 
@@ -181,6 +177,7 @@ const CheckoutForm = () => {
               user: { connect: { id: userId } },
               price: totalPrice,
               address: orderAddress,
+              transaction: paymentMethod.id,
               paymentMethod: location.state.paymentMethod,
             },
           },
@@ -288,26 +285,6 @@ const CheckoutForm = () => {
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
-        // for (let i = 0; i < cartItemIds.length; i++) {
-        //   const cartItemId = cartItemIds[i];
-        //   console.log(cartItemId)
-        //   console.log(cartConsignmentPairs)
-        //   const consignment = cartConsignmentPairs.find(
-        //     (pair) => pair.cartItemId === cartItemId
-        //   );
-        //   console.log(consignment)
-        //   if (consignment && consignment.consignmentRaisingId) {
-        //     await updateOrderItem({
-        //       variables: {
-        //         where: { id: orderItemIds[i] },
-        //         data: {
-        //           consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
-        //         },
-        //       },
-        //     });
-        //     console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
-        //   }
-        // }
 
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
@@ -390,7 +367,7 @@ const CheckoutForm = () => {
         }
 
         toast.success("Đã tạo đơn hàng!");
-        navigate("/someSuccessPage");
+        navigate("/someSuccessPage", { state: { from: "/payment" } });
         localStorage.removeItem("selectedProducts");
         localStorage.removeItem("dates");
         localStorage.removeItem("totalCarePrice");
@@ -438,12 +415,14 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
-    variables: { where: { user: { id: { equals: userId } } } },
-    fetchPolicy: "network-only",
-  });
-  
-
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(
+    GET_CART_ITEMS,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+      fetchPolicy: "network-only",
+    }
+  );
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
     GET_FISH_CARE,
