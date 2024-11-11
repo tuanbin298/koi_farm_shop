@@ -56,6 +56,7 @@ const OrderItem = list({
     }),
     status: select({
       label: "Trạng thái",
+      defaultValue: "Đang xử lý",
       options: [
         { label: "Đang chăm sóc", value: "Có sẵn" },
         { label: "Đang giao hàng", value: "Đang giao hàng" },
