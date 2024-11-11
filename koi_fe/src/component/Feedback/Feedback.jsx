@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Card, Button } from "react-bootstrap";
-import { FaChevronLeft, FaChevronRight, FaStar } from "react-icons/fa";
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaStar,
+  FaQuoteLeft,
+} from "react-icons/fa";
 import "./Feedback.css";
 import { GET_FEEDBACK } from "../../page/api/Queries/feedback";
 import { useQuery } from "@apollo/client";
@@ -14,10 +19,19 @@ const FeedbackSlider = () => {
     error: feedbackError,
   } = useQuery(GET_FEEDBACK);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const feedbackPerPage = 3; // Number of feedback items displayed per page
-  const totalFeedbacks = data?.feedbacks.length || 0;
+  const feedbackPerPage = 1; // Show only one feedback at a time
+  const autoSlideInterval = 5000; // Auto-slide every 5 seconds
+  const totalFeedbacks = data?.feedbacks?.length || 0;
 
-  // Navigation logic with boundary checks
+  // Auto-slide effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext();
+    }, autoSlideInterval);
+
+    return () => clearInterval(interval); // Clear interval on unmount
+  }, [currentIndex, totalFeedbacks]);
+
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => Math.max(0, prevIndex - feedbackPerPage));
   };
@@ -31,7 +45,6 @@ const FeedbackSlider = () => {
   if (feedbackLoading) return <p>Đang tải đánh giá...</p>;
   if (feedbackError) return <p>Lỗi tải đánh giá</p>;
 
-  // Check if there are no feedbacks in the database
   if (totalFeedbacks === 0) {
     return (
       <Container className="feedback-slider my-5">
@@ -47,62 +60,49 @@ const FeedbackSlider = () => {
     );
   }
 
-  // Slice data to show current feedbacks based on the currentIndex
-  const currentFeedbacks = data.feedbacks.slice(
-    currentIndex,
-    currentIndex + feedbackPerPage
-  );
-
-  // Calculate how many placeholders are needed to display a full row of 3 feedback cards
-  const placeholdersNeeded = feedbackPerPage - currentFeedbacks.length;
+  // Ensure we have a valid feedback item
+  const currentFeedback = data.feedbacks?.[currentIndex] || {};
 
   return (
     <Container className="feedback-slider my-5">
-      <h2 className="text-center mb-4">Đánh Giá Dịch Vụ</h2>
+      <h2 className="text-center mb-4">Khách Hàng Nói Về Chúng Tôi</h2>
 
-      <div className="feedback-section">
-        {currentFeedbacks.map((feedback, index) => (
-          <Card key={index} className="feedback-card">
-            <Card.Body>
-              <div className="d-flex justify-content-center mb-2">
-                {[...Array(feedback.rating)].map((_, idx) => (
-                  <FaStar key={idx} color="#ffc107" />
-                ))}
+      <Card className="feedback-card">
+        <Card.Body>
+          <Card.Title className="feedback-title">
+            <div className="feedback-user-info">
+              <AccountCircleOutlinedIcon />
+              <div className="feedback-user-text">
+                Khách Hàng {currentFeedback.user?.name || "Ẩn danh"}
               </div>
-              <Card.Title>
-                <AccountCircleOutlinedIcon />
-                {feedback.user.name}
-              </Card.Title>
-              <Card.Text>"{feedback.comment}"</Card.Text>
-              <Card.Footer className="text-muted">
-                {formatDate(feedback.createdAt.split("T")[0])} |{" "}
-                {formatTime(feedback.createdAt)}
-              </Card.Footer>
-            </Card.Body>
-          </Card>
-        ))}
+            </div>
+          </Card.Title>
+          <div className="d-flex justify-content-center mb-2">
+            {/* Ensure feedback rating exists before mapping */}
+            {[...Array(currentFeedback.rating || 0)].map((_, idx) => (
+              <FaStar key={idx} color="#ffc107" />
+            ))}
+          </div>
+          <Card.Text className="feedback-comment">
+            <FaQuoteLeft className="quote-icon" />
+            {currentFeedback.comment || "Không có nhận xét nào."}
+          </Card.Text>
 
-        {/* Add placeholder cards if there are fewer than 3 feedbacks on the current page */}
-        {Array.from({ length: placeholdersNeeded }).map((_, idx) => (
-          <Card
-            key={`placeholder-${idx}`}
-            className="feedback-card empty-feedback"
-          >
-            <Card.Body>
-              <Card.Text className="text-center">
-                Không có đánh giá nào.
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        ))}
-      </div>
+          <Card.Footer className="text-muted">
+            {currentFeedback.createdAt
+              ? `${formatDate(
+                  currentFeedback.createdAt.split("T")[0]
+                )} | ${formatTime(currentFeedback.createdAt)}`
+              : "Thời gian không xác định"}
+          </Card.Footer>
+        </Card.Body>
+      </Card>
 
-      {/* Disable buttons when at the beginning or end of the data */}
       <Button
         variant="light"
         onClick={handlePrev}
         className="feedback-nav-btn left"
-        disabled={currentIndex === 0} // Disable if at the first page
+        disabled={currentIndex === 0}
       >
         <FaChevronLeft />
       </Button>
@@ -111,7 +111,7 @@ const FeedbackSlider = () => {
         variant="light"
         onClick={handleNext}
         className="feedback-nav-btn right"
-        disabled={currentIndex + feedbackPerPage >= totalFeedbacks} // Disable if at the last page
+        disabled={currentIndex + feedbackPerPage >= totalFeedbacks}
       >
         <FaChevronRight />
       </Button>

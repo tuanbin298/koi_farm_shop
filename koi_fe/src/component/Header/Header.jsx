@@ -117,7 +117,7 @@ export default function Header() {
     localStorage.removeItem("phone");
     localStorage.removeItem("cartId");
     localStorage.removeItem("totalCarePrice");
-    localStorage.removeItem("depositsArray")
+    localStorage.removeItem("depositsArray");
     setLoggedIn(false);
     setAnchorEl(null);
     client.clearStore();
@@ -344,12 +344,12 @@ export default function Header() {
             </Link>
           </nav>
 
-          <div className="header_mid-search">
+          {/* <div className="header_mid-search">
             <input type="text" placeholder="Tìm kiếm..." />
             <button>
               <SearchRoundedIcon />
             </button>
-          </div>
+          </div> */}
         </div>
         <div className="header_bottom"></div>
       </header>

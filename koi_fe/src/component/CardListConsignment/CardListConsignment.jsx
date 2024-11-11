@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 export default function CardListConsignment({ consignments }) {
