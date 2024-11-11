@@ -156,7 +156,7 @@ const KoiFishOrdersPage = () => {
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             {/* Bảng Chi tiết đơn hàng */}
-            {expandedOrder.items.some(item => item.consignmentRaising) && (
+            {expandedOrder.items.some(item => !item.consignmentSale) && (
               <>
                 <h5>Cá Koi Trang Trại</h5>
                 <Table striped bordered hover>
@@ -248,7 +248,6 @@ const KoiFishOrdersPage = () => {
           </Modal.Footer>
         </Modal>
       )}
-
 
       {/* Feedback Section */}
       {hasCompletedOrder && (
