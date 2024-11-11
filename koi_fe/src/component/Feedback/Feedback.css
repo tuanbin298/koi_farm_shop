@@ -1,80 +1,159 @@
 .feedback-slider {
-  max-width: 1000px;
+  max-width: 800px;
   margin: auto;
+  text-align: center;
   position: relative;
-  padding: 20px;
-  background-color: #f9f9f9; /* Light background for contrast */
-  border-radius: 10px; /* Rounded corners */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-.feedback-section {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* Center elements for smaller screens */
-  gap: 20px;
 }
 
 .feedback-card {
-  flex: 1 1 calc(33.33% - 20px);
-  max-width: calc(33.33% - 20px);
-  min-width: 280px; /* Minimum width for mobile responsiveness */
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: none;
   padding: 20px;
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
-.feedback-card:hover {
-  transform: translateY(-10px); /* Hover effect for cards */
+.feedback-title {
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #333;
+  margin-top: 15px;
 }
 
-.feedback-card .fa-star {
-  font-size: 1em; /* Larger star icons */
-  color: #ffc107; /* Highlighted color */
+.feedback-comment {
+  font-style: italic;
+  color: #555;
+  margin: 20px 0;
+  position: relative;
+  padding-left: 20px;
 }
 
-.feedback-card .text-muted {
-  font-size: 0.9em;
+.quote-icon {
+  font-size: 1.2em;
+  color: #ffc107;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.feedback-user-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #333;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-top: 20px;
+}
+
+.feedback-user-info svg {
+  font-size: 1.5em;
 }
 
 .feedback-nav-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #007bff; /* Primary color */
-  color: white;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.feedback-nav-btn.left {
-  left: -25px;
-}
-
-.feedback-nav-btn.right {
-  right: -25px;
+  background-color: #eee;
+  border: none;
+  color: #333;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .feedback-nav-btn:hover {
-  background-color: #0056b3; /* Darker shade on hover */
-  transform: scale(1.1);
+  background-color: #ddd;
 }
 
-.empty-feedback {
-  opacity: 0.5;
-  background-color: #f1f1f1;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.feedback-nav-btn.left {
+  left: 10px;
+}
+
+.feedback-nav-btn.right {
+  right: 10px;
+}
+
+.feedback-card {
+  border: none;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transition cho hiệu ứng lướt */
+}
+
+/* Hiệu ứng lướt qua */
+.slide-in-right {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: slideInRight 0.3s forwards;
+}
+
+.slide-out-left {
+  transform: translateX(0);
+  opacity: 1;
+  animation: slideOutLeft 0.3s forwards;
+}
+
+.slide-in-left {
+  transform: translateX(-100%);
+  opacity: 0;
+  animation: slideInLeft 0.3s forwards;
+}
+
+.slide-out-right {
+  transform: translateX(0);
+  opacity: 1;
+  animation: slideOutRight 0.3s forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }

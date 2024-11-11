@@ -52,17 +52,17 @@ const CartPage = () => {
   }, [userId, refetchItems]);
 
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
+    const storedProducts = JSON.parse(localStorage.getItem(`selectedProducts_${userId}`));
     if (storedProducts) setSelectedProducts(storedProducts);
 
-    const storedDates = JSON.parse(localStorage.getItem("dates"));
+    const storedDates = JSON.parse(localStorage.getItem(`dates_${userId}`));
     if (storedDates) setDates(storedDates);
 
-    const storedTotalCarePrice = localStorage.getItem("totalCarePrice");
+    const storedTotalCarePrice = localStorage.getItem(`totalCarePrice_${userId}`);
     setTotalCarePrice(storedTotalCarePrice);
 
     const storedDepositsArray = JSON.parse(
-      localStorage.getItem("depositsArray")
+      localStorage.getItem(`depositsArray_${userId}`)
     );
     if (storedDepositsArray) setDepositsArray(storedDepositsArray);
   }, []);
@@ -205,11 +205,11 @@ const CartPage = () => {
                             <TableCell align="center">
                               <Checkbox
                                 checked={
-                                  handleCheckedConsign(cartItem) ||
+                                  cartItem.isStored ||
                                   depositFields[cartItem.id] ||
                                   false
                                 }
-                                disabled={handleCheckedConsign(cartItem)}
+                                disabled={cartItem.isStored}
                                 onChange={() =>
                                   handleDepositToggle(cartItem.id)
                                 }
@@ -223,7 +223,7 @@ const CartPage = () => {
                                 color="error"
                                 style={{ marginLeft: "15%" }}
                                 onClick={() => handleDelete(cartItem.id)}
-                                disabled={loading || isDeleting}
+                                // disabled={loading || isDeleting}
                               >
                                 Xóa
                               </Button>
@@ -274,7 +274,7 @@ const CartPage = () => {
                                 color="error"
                                 style={{ marginLeft: "15%" }}
                                 onClick={() => handleDelete(cartItem.id)}
-                                disabled={loading || isDeleting}
+                                // disabled={loading || isDeleting}
                               >
                                 Xóa
                               </Button>

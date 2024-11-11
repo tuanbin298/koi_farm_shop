@@ -225,9 +225,10 @@ a {
   margin: 10px;
 }
 .web-container {
-  width: 80%; /* Chiếm 80% chiều rộng màn hình */
-  margin: 30px auto; /* Căn giữa nội dung */
+  width: 100%; /* Chiếm 80% chiều rộng màn hình */
+  /* margin: 30px auto;  */
+  /* Căn giữa nội dung */
   border-radius: 10px;
   padding: 20px;
-  background-color: #fff;
+  /* background-color: #fff; */
 }

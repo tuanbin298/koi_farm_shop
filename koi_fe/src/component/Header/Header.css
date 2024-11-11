@@ -9,12 +9,14 @@ body {
 
 /* Header container */
 .header {
-  width: 100%;
+  max-width: 1264.67px; /* Set maximum width instead of fixed width */
+  width: 100%; /* Full width for responsiveness */
   background-color: #982b1c;
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 auto; /* Center the header */
 }
 
 /* Header top */
@@ -24,7 +26,7 @@ body {
   justify-content: space-between;
   padding: 10px 20px;
   align-items: center;
-  background-color: #982b1c; /* Ensures uniform background for the top bar */
+  background-color: #982b1c;
 }
 
 .header_top-location,
@@ -65,14 +67,17 @@ body {
 }
 
 /* Header middle - logo and navigation */
+/* Header middle - logo and navigation */
 .header_mid {
   width: 100%;
+  max-width: 1264.67px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px;
   background-color: #ffffff;
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .header_mid-logo {
@@ -107,10 +112,13 @@ body {
 /* Navigation styling */
 .header_mid-nav {
   display: flex;
-  justify-content: center; /* Centers the links horizontally */
-  align-items: center; /* Centers the items vertically */
-  gap: 30px; /* Adjusts spacing between nav links */
-  margin: 0; /* Reset margin to avoid unintended spacing */
+  justify-content: space-evenly; /* Distributes items evenly */
+  align-items: center;
+  width: 100%; /* Make it span the full width */
+  max-width: 1200px; /* Optional: limit max width for larger screens */
+  margin: 0 auto; /* Centers nav within the header */
+  padding: 0 20px; /* Adds padding on both sides */
+  box-sizing: border-box;
 }
 
 .header_mid-nav a {
