@@ -132,8 +132,8 @@ const User = list({
             user: {
               id: { equals: item.id },
             },
-            query: "id",
           },
+          query: "id",
         });
 
         const orders = await context.query.Request.findMany({
@@ -141,8 +141,8 @@ const User = list({
             user: {
               id: { equals: item.id },
             },
-            query: "id",
           },
+          query: "id",
         });
 
         if (requests.length > 0 || orders.length > 0) {
