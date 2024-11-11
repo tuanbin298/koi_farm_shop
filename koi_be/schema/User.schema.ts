@@ -132,11 +132,20 @@ const User = list({
             user: {
               id: { equals: item.id },
             },
-            query: "id user",
+            query: "id",
           },
         });
 
-        if (requests.length > 0) {
+        const orders = await context.query.Request.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+            query: "id",
+          },
+        });
+
+        if (requests.length > 0 || orders.length > 0) {
           throw new Error("Không thể xoá người dùng đã có giao dịch");
         }
       }
