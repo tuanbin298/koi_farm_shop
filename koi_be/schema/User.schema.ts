@@ -125,6 +125,20 @@ const User = list({
             });
           }
         }
+
+        // Can't delete user if they have request or order
+        const requests = await context.query.Request.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+            query: "id user",
+          },
+        });
+
+        if (requests.length > 0) {
+          throw new Error("Không thể xoá người dùng đã có giao dịch");
+        }
       }
     },
   },
