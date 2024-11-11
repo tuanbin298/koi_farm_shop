@@ -18,20 +18,36 @@ import { useConsignmentBySlug } from "../api/Queries/consignment";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useAllProducts, useProductBySlug } from "../api/Queries/product";
+import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 
 export default function ConsignmentDetail() {
+  const userId = localStorage.getItem("id");
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const match = useMatch("/ConsignmentDetail/:id");
   const id = match ? match.params.id : null;
+
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId,
+  });
 
   const { slug } = useParams();
   console.log(slug);
 
   const { loading, error, product } = useConsignmentBySlug(slug);
   const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
-  const userId = localStorage.getItem("id");
+
   const [cartId, setCartId] = useState(localStorage.getItem("cartId"));
 
   // State to track the starting index of the currently displayed products
@@ -64,13 +80,17 @@ export default function ConsignmentDetail() {
     ? products.slice(startIndex, startIndex + productsPerPage)
     : [];
 
-  const handleAddToCart = async () => {
-    console.log(product.id);
-    console.log(userId);
-    console.log(cartId);
-    console.log(localStorage.getItem("sessionToken"));
+  const handleAddToCart = async (consignmentId) => {
     if (!userId) {
-      alert("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.consignmentProduct[0]?.id === consignmentId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -88,6 +108,8 @@ export default function ConsignmentDetail() {
           },
         },
       });
+
+      await refetchCartItems();
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {
@@ -113,7 +135,7 @@ export default function ConsignmentDetail() {
 
   return (
     <>
-    <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <div className="web-container">
         <Box style={{ paddingTop: "1%", padding: "1%" }}>
           <Flex gap="large" justify="space-around">
@@ -166,7 +188,9 @@ export default function ConsignmentDetail() {
               </Typography>
 
               <Stack spacing={0.5} className="productInfo">
-                <div>Giới tính: {product.sex === "male" ? "Koi Đực" : "Koi Cái"}</div>
+                <div>
+                  Giới tính: {product.sex === "male" ? "Koi Đực" : "Koi Cái"}
+                </div>
                 <div>Năm sinh: {product.birth}</div>
                 <div>Kích thước: {product.size}</div>
                 <div>Chủng loại: {product.generic}</div>
@@ -178,7 +202,7 @@ export default function ConsignmentDetail() {
                   variant="outlined"
                   color="primary"
                   style={{ color: "#982B1C" }}
-                  onClick={handleAddToCart}
+                  onClick={() => handleAddToCart(product.id)}
                 >
                   Thêm vào giỏ hàng
                 </Button>
@@ -293,7 +317,10 @@ export default function ConsignmentDetail() {
               <IconButton
                 color="primary"
                 onClick={handleNext}
-                disabled={!hasProducts || startIndex + productsPerPage >= products.length}
+                disabled={
+                  !hasProducts ||
+                  startIndex + productsPerPage >= products.length
+                }
               >
                 <ArrowForwardIcon />
               </IconButton>

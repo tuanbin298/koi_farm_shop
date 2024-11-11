@@ -7,9 +7,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
+
 export default function CardConsignmentSale() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  const userId = localStorage.getItem("id")
+  const userId = localStorage.getItem("id");
   const {
     data: consignmentData,
     loading: consignmentLoading,
@@ -17,7 +18,8 @@ export default function CardConsignmentSale() {
   } = useQuery(GET_CONSIGNMENT_SALES, {
     variables: { take: 6 },
   });
-  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: {
@@ -31,17 +33,21 @@ export default function CardConsignmentSale() {
     skip: !userId,
   });
 
-
-
   // Loading and error states
   if (consignmentLoading) return <p>Loading ...</p>;
   if (consignmentError) return <p>Error loading consignments.</p>;
 
   const handleAddToCart = async (consignmentId) => {
-    const sessionToken = localStorage.getItem("sessionToken");
-
     if (!userId) {
-      alert("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.consignmentProduct[0]?.id === consignmentId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -63,7 +69,6 @@ export default function CardConsignmentSale() {
       });
 
       await refetchCartItems();
-
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {

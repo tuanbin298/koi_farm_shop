@@ -1,8 +1,16 @@
-import React, { useState } from 'react';
-import { GET_ORDERS } from '../api/Queries/order';
-import { gql, useQuery, useMutation } from '@apollo/client';
-import { Table, Collapse, Button, Spinner, Alert, Modal, Form, Card } from 'react-bootstrap';
-import { formatMoney } from '../../utils/formatMoney';
+import React, { useState } from "react";
+import { GET_ORDERS } from "../api/Queries/order";
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  Table,
+  Button,
+  Spinner,
+  Alert,
+  Modal,
+  Form,
+  Card,
+} from "react-bootstrap";
+import { formatMoney } from "../../utils/formatMoney";
 import "./KoiFishOrdersPage.css";
 import { FaStar, FaPaperPlane } from "react-icons/fa";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
@@ -109,9 +117,15 @@ const KoiFishOrdersPage = () => {
             orders.map((order, index) => {
               const totalPrice = order.items.reduce((sum, item) => {
                 const fishPrice = item.product?.price || 0;
-                const consignmentRaisingPrice = item.consignmentRaising?.consignmentPrice || 0;
+                const consignmentRaisingPrice =
+                  item.consignmentRaising?.consignmentPrice || 0;
                 const consignmentSalePrice = item.consignmentSale?.price || 0;
-                return sum + fishPrice + consignmentRaisingPrice + consignmentSalePrice;
+                return (
+                  sum +
+                  fishPrice +
+                  consignmentRaisingPrice +
+                  consignmentSalePrice
+                );
               }, 0);
 
               return (
@@ -138,7 +152,7 @@ const KoiFishOrdersPage = () => {
           <Modal.Header closeButton>
             <Modal.Title>Chi tiết đơn hàng</Modal.Title>
           </Modal.Header>
-          <Modal.Body style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             {/* Bảng Chi tiết đơn hàng */}
             <h5>Cá Koi Trang Trại</h5>
             <Table striped bordered hover>
@@ -147,7 +161,9 @@ const KoiFishOrdersPage = () => {
                   <th>Tên cá</th>
                   <th>Giá (VNĐ)</th>
                   {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
-                  {expandedOrder.items.some(item => item.consignmentRaising) && (
+                  {expandedOrder.items.some(
+                    (item) => item.consignmentRaising
+                  ) && (
                     <>
                       <th>Ngày bắt đầu ký gửi nuôi</th>
                       <th>Ngày kết thúc ký gửi nuôi</th>
@@ -160,38 +176,54 @@ const KoiFishOrdersPage = () => {
               <tbody>
                 {/* Lọc ra các item không có consignmentSale */}
                 {expandedOrder.items
-                  .filter(item => !item.consignmentSale)
+                  .filter((item) => !item.consignmentSale)
                   .map((item, idx) => (
                     <tr key={idx}>
-                      <td>{item.product?.name || '-'}</td>
-                      <td>{item.product?.price ? formatMoney(item.product.price) : '-'}</td>
+                      <td>{item.product?.name || "-"}</td>
+                      <td>
+                        {item.product?.price
+                          ? formatMoney(item.product.price)
+                          : "-"}
+                      </td>
                       {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
-                      {expandedOrder.items.some(item => item.consignmentRaising) ? (
+                      {expandedOrder.items.some(
+                        (item) => item.consignmentRaising
+                      ) ? (
                         <>
                           <td>
                             {item.consignmentRaising?.consignmentDate
-                              ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
-                              : '-'}
+                              ? new Date(
+                                  item.consignmentRaising.consignmentDate
+                                ).toLocaleDateString()
+                              : "-"}
                           </td>
                           <td>
                             {item.consignmentRaising?.returnDate
-                              ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
-                              : '-'}
+                              ? new Date(
+                                  item.consignmentRaising.returnDate
+                                ).toLocaleDateString()
+                              : "-"}
                           </td>
                           <td>
                             {item.consignmentRaising?.consignmentPrice
-                              ? formatMoney(item.consignmentRaising.consignmentPrice)
-                              : '-'}
+                              ? formatMoney(
+                                  item.consignmentRaising.consignmentPrice
+                                )
+                              : "-"}
                           </td>
                         </>
                       ) : null}
-                      <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
+                      <td>
+                        {item.consignmentRaising
+                          ? item.consignmentRaising.status
+                          : item.status || "-"}
+                      </td>
                     </tr>
                   ))}
               </tbody>
             </Table>
             {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
-            {expandedOrder.items.some(item => item.consignmentSale) && (
+            {expandedOrder.items.some((item) => item.consignmentSale) && (
               <>
                 <h5>Cá Koi Ký Gửi Bán</h5>
                 <Table striped bordered hover>
@@ -204,12 +236,16 @@ const KoiFishOrdersPage = () => {
                   </thead>
                   <tbody>
                     {expandedOrder.items
-                      .filter(item => item.consignmentSale)
+                      .filter((item) => item.consignmentSale)
                       .map((item, idx) => (
                         <tr key={idx}>
-                          <td>{item.consignmentSale.name || '-'}</td>
-                          <td>{item.consignmentSale.price ? formatMoney(item.consignmentSale.price) : '-'}</td>
-                          <td>{item.status || '-'}</td>
+                          <td>{item.consignmentSale.name || "-"}</td>
+                          <td>
+                            {item.consignmentSale.price
+                              ? formatMoney(item.consignmentSale.price)
+                              : "-"}
+                          </td>
+                          <td>{item.status || "-"}</td>
                         </tr>
                       ))}
                   </tbody>

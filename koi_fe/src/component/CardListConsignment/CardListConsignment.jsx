@@ -7,10 +7,11 @@ import { useMutation } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 import { useQuery } from "@apollo/client";
+
 export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const userId = localStorage.getItem("id"); // Retrieve the logged-in user's ID
-  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: {
@@ -29,7 +30,15 @@ export default function CardListConsignment({ consignments }) {
 
   const handleAddToCart = async (consignmentId) => {
     if (!userId) {
-      toast.error("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.consignmentProduct[0]?.id === consignmentId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -43,6 +52,7 @@ export default function CardListConsignment({ consignments }) {
           },
         },
       });
+
       await refetchCartItems();
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
