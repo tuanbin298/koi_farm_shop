@@ -6,7 +6,6 @@ import toast, { Toaster } from "react-hot-toast";
 import { useMutation, useQuery } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
-import { useQuery } from "@apollo/client";
 
 export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
@@ -97,7 +96,7 @@ export default function CardListConsignment({ consignments }) {
                       style={{
                         height: "360px",
                         width: "100%",
-                        objectFit: "fill",
+                        objectFit: "contain",
                       }}
                     />
                   </Link>
