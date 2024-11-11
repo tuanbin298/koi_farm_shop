@@ -18,6 +18,7 @@ import {
   Typography,
   ListItemAvatar,
   Grid,
+  Pagination
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -60,7 +61,9 @@ export default function Checkout() {
   // Define paginatedItems with fallback in case cartItems is not loaded
   const paginatedItems =
     cartItems?.cartItems?.slice(startIndex, endIndex) || [];
-
+    const handlePageChange = (event, value) => {
+      setPage(value);
+    };
   // Fetch initial province data and handle passed location state
   useEffect(() => {
     axios.get("https://provinces.open-api.vn/api/?depth=1").then((response) => {
@@ -348,6 +351,16 @@ export default function Checkout() {
                     <Divider />
                   </div>
                 ))}
+                <Box display="flex" justifyContent="center" marginTop={2}>
+                <Pagination
+                  count={Math.ceil(
+                    (cartItems?.cartItems?.length || 0) / itemsPerPage
+                  )}
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                />
+              </Box>
                 {cartItems?.cartItems?.length === 0 && (
                   <Typography variant="body2">Giỏ hàng trống</Typography>
                 )}

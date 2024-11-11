@@ -189,7 +189,7 @@ const CartPage = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {paginatedFarmItems.map((cartItem) => (
+                        {farmKoiItems.map((cartItem) => (
                           <TableRow key={cartItem.id}>
                             <TableCell>
                               <Image
@@ -288,7 +288,7 @@ const CartPage = () => {
               )}
 
               <Box display="flex" justifyContent="center" marginTop={2}>
-                <Pagination
+                {/* <Pagination
                   count={Math.ceil(
                     (farmKoiItems.length + consignmentKoiItems.length) /
                       itemsPerPage
@@ -296,7 +296,7 @@ const CartPage = () => {
                   page={page}
                   onChange={handlePageChange}
                   color="primary"
-                />
+                /> */}
               </Box>
 
               <Box
@@ -313,7 +313,7 @@ const CartPage = () => {
                 </Typography>
               </Box>
 
-              {(paginatedFarmItems.length > 0 ||
+              {/* {(consignmentKoiItems.length > 0 ||
                 paginatedConsignmentItems.length > 0) && (
                 <Box display="flex" justifyContent="flex-end" marginTop={2}>
                   {Object.values(depositFields).some(
@@ -329,8 +329,24 @@ const CartPage = () => {
                       Tiến hành thanh toán <FaShoppingCart />
                     </Button>
                   )}
+                  <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
                 </Box>
-              )}
+              )} */}
+              <Box display="flex" justifyContent="flex-end" marginTop={2}>
+              <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
+              </Box>
             </>
           )}
         </section>
