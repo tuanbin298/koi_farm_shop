@@ -27,23 +27,16 @@ export default function Checkout() {
   const userId = localStorage.getItem("id");
 
   // Fetch cart items from GraphQL API
-  const { data: cartItems = { cartItems: [] }, loading: loadingCart = false } = useQuery(GET_CART_ITEMS, {
-    skip: !userId,
-    variables: userId
-      ? {
-          where: { user: { id: { equals: userId } } },
-        }
-      : {},
-  });
+  const { data: cartItems = { cartItems: [] }, loading: loadingCart = false } =
+    useQuery(GET_CART_ITEMS, {
+      skip: !userId,
+      variables: userId
+        ? {
+            where: { user: { id: { equals: userId } } },
+          }
+        : {},
+    });
 
- 
-if (!userId) {
-  return <p>Please log in to view your cart items.</p>;
-}
-
-if (loadingCart) {
-  return <p>Loading cart items...</p>;
-}
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const [totalCarePrice, setTotalCarePrice] = useState(0);
@@ -98,7 +91,6 @@ if (loadingCart) {
   });
 
   // (Rest of your code remains the same)
-
   const handleProvinceChange = (selectedOption) => {
     setSelectedProvince(selectedOption);
     setSelectedDistrict(null); // Reset district and ward selections
@@ -206,6 +198,10 @@ if (loadingCart) {
       },
     });
   };
+
+  if (loadingCart) {
+    return <p>Loading cart items...</p>;
+  }
 
   return (
     <>

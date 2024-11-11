@@ -9,9 +9,10 @@ import toast, { Toaster } from "react-hot-toast";
 import { useMutation } from "@apollo/client";
 import "./CardProduct.css";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
+
 export default function CardProduct() {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
-  const userId = localStorage.getItem("id"); 
+  const userId = localStorage.getItem("id");
   const {
     data: productData,
     loading: productLoading,
@@ -19,7 +20,8 @@ export default function CardProduct() {
   } = useQuery(GET_PRODUCT, {
     variables: { take: 6 }, // Fetch 6 products
   });
-  const { refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
     variables: {
       where: {
         user: {
@@ -32,16 +34,23 @@ export default function CardProduct() {
     fetchPolicy: "network-only",
     skip: !userId,
   });
+
   // Loading and error states
   if (productLoading) return <p>Loading ...</p>;
   if (productError) return <p>Error loading products.</p>;
 
   const handleAddToCart = async (productId) => {
-   
-    const sessionToken = localStorage.getItem("sessionToken");
     console.log(productId);
     if (!userId) {
-      alert("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.product[0]?.id === productId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 

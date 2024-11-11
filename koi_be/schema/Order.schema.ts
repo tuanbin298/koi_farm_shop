@@ -56,6 +56,13 @@ const Order = list({
         isRequired: true,
       },
     }),
+    transaction: text({
+      label: "Id giao dịch",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     paymentMethod: select({
       label: "Phương thức thanh toán",
       options: [

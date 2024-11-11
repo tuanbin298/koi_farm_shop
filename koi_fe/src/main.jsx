@@ -14,7 +14,7 @@ import { setContext } from "@apollo/client/link/context";
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 const httpLink = createUploadLink({
-  uri: "http://localhost:3000/api/graphql",
+  uri: "https://cms-koi-farm-production.up.railway.app/api/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {

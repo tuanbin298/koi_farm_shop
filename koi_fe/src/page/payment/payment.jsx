@@ -29,11 +29,6 @@ import {
 } from "../api/Mutations/updateproduct"; // Adjust path as needed
 import "./payment.css";
 
-// User information
-
-const userName = localStorage.getItem("name");
-const userEmail = localStorage.getItem("email");
-
 const CheckoutForm = () => {
   const [userId, setUserId] = useState(localStorage.getItem("id"));
   const stripe = useStripe();
@@ -57,7 +52,8 @@ const CheckoutForm = () => {
     /*Get user email to notify the payment of consigned fish for sales they put for */
   }
   const userEmail = localStorage.getItem("email");
-  console.log(userEmail);
+  const userName = localStorage.getItem("name");
+  const userPhone = localStorage.getItem("phone");
 
   {
     /* get email notification mutation */
@@ -68,7 +64,6 @@ const CheckoutForm = () => {
   {
     /*Get email of person consigning the fish for sales */
   }
-  // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
   let consignmentRaisingIds = [];
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
@@ -152,6 +147,7 @@ const CheckoutForm = () => {
       billing_details: {
         name: userName,
         email: userEmail,
+        phone: userPhone,
       },
     });
 
@@ -181,6 +177,7 @@ const CheckoutForm = () => {
               user: { connect: { id: userId } },
               price: totalPrice,
               address: orderAddress,
+              transaction: paymentMethod.id,
               paymentMethod: location.state.paymentMethod,
             },
           },
@@ -419,10 +416,13 @@ const CheckoutForm = () => {
 
 function Payment() {
   const [userId, setUserId] = useState(localStorage.getItem("id"));
-  const { data: dataCart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
-    variables: { where: { user: { id: { equals: userId } } } },
-    fetchPolicy: "network-only",
-  });
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(
+    GET_CART_ITEMS,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+      fetchPolicy: "network-only",
+    }
+  );
   // Fetch consignment care data
   const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
     GET_FISH_CARE,
