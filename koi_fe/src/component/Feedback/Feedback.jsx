@@ -19,27 +19,34 @@ const FeedbackSlider = () => {
     error: feedbackError,
   } = useQuery(GET_FEEDBACK);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const feedbackPerPage = 1; // Show only one feedback at a time
-  const autoSlideInterval = 5000; // Auto-slide every 5 seconds
+  const [animationClass, setAnimationClass] = useState(""); // Trạng thái hiệu ứng
+  const feedbackPerPage = 1;
+  const autoSlideInterval = 5000;
   const totalFeedbacks = data?.feedbacks?.length || 0;
 
-  // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
     }, autoSlideInterval);
-
-    return () => clearInterval(interval); // Clear interval on unmount
+    return () => clearInterval(interval);
   }, [currentIndex, totalFeedbacks]);
 
   const handlePrev = () => {
-    setCurrentIndex((prevIndex) => Math.max(0, prevIndex - feedbackPerPage));
+    setAnimationClass("slide-out-right"); // Hiệu ứng khi chuyển về trái
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === 0 ? totalFeedbacks - 1 : prevIndex - 1
+      );
+      setAnimationClass("slide-in-left"); // Hiệu ứng khi chuyển vào từ trái
+    }, 300);
   };
 
   const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      Math.min(prevIndex + feedbackPerPage, totalFeedbacks - feedbackPerPage)
-    );
+    setAnimationClass("slide-out-left"); // Hiệu ứng khi chuyển về phải
+    setTimeout(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % totalFeedbacks);
+      setAnimationClass("slide-in-right"); // Hiệu ứng khi chuyển vào từ phải
+    }, 300);
   };
 
   if (feedbackLoading) return <p>Đang tải đánh giá...</p>;
@@ -60,14 +67,12 @@ const FeedbackSlider = () => {
     );
   }
 
-  // Ensure we have a valid feedback item
   const currentFeedback = data.feedbacks?.[currentIndex] || {};
 
   return (
     <Container className="feedback-slider my-5">
       <h2 className="text-center mb-4">Khách Hàng Nói Về Chúng Tôi</h2>
-
-      <Card className="feedback-card">
+      <Card className={`feedback-card ${animationClass}`}>
         <Card.Body>
           <Card.Title className="feedback-title">
             <div className="feedback-user-info">
@@ -78,7 +83,6 @@ const FeedbackSlider = () => {
             </div>
           </Card.Title>
           <div className="d-flex justify-content-center mb-2">
-            {/* Ensure feedback rating exists before mapping */}
             {[...Array(currentFeedback.rating || 0)].map((_, idx) => (
               <FaStar key={idx} color="#ffc107" />
             ))}
@@ -87,7 +91,6 @@ const FeedbackSlider = () => {
             <FaQuoteLeft className="quote-icon" />
             {currentFeedback.comment || "Không có nhận xét nào."}
           </Card.Text>
-
           <Card.Footer className="text-muted">
             {currentFeedback.createdAt
               ? `${formatDate(
@@ -97,21 +100,17 @@ const FeedbackSlider = () => {
           </Card.Footer>
         </Card.Body>
       </Card>
-
       <Button
         variant="light"
         onClick={handlePrev}
         className="feedback-nav-btn left"
-        disabled={currentIndex === 0}
       >
         <FaChevronLeft />
       </Button>
-
       <Button
         variant="light"
         onClick={handleNext}
         className="feedback-nav-btn right"
-        disabled={currentIndex + feedbackPerPage >= totalFeedbacks}
       >
         <FaChevronRight />
       </Button>
