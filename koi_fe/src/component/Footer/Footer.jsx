@@ -20,7 +20,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Footer about us */}
+          {/* Footer About Us */}
           <div className="footer_about-us">
             <h3>Về chúng tôi</h3>
             <ul>
@@ -32,7 +32,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Footer support */}
+          {/* Footer Support */}
           <div className="footer_support">
             <h3>Hỗ trợ</h3>
             <ul>
@@ -46,7 +46,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Footer contact */}
+          {/* Footer Contact */}
           <div className="footer_contact">
             <h3>Liên hệ</h3>
             <ul>
@@ -66,11 +66,11 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+        </div>
 
-          {/* Footer bottom */}
-          <div className="footer_bottom">
-            <p>© Ca Koi Viet. All rights reserved.</p>
-          </div>
+        {/* Footer Bottom */}
+        <div className="footer_bottom">
+          <p>© Ca Koi Viet. All rights reserved.</p>
         </div>
       </footer>
     </div>
