@@ -175,7 +175,7 @@ const CheckoutForm = () => {
           variables: {
             data: {
               user: { connect: { id: userId } },
-              price: totalPrice,
+              price: parseInt(totalPrice) + parseInt(totalCarePrice),
               address: orderAddress,
               transaction: paymentMethod.id,
               paymentMethod: location.state.paymentMethod,
@@ -368,10 +368,10 @@ const CheckoutForm = () => {
 
         toast.success("Đã tạo đơn hàng!");
         navigate("/someSuccessPage", { state: { from: "/payment" } });
-        localStorage.removeItem("selectedProducts");
-        localStorage.removeItem("dates");
-        localStorage.removeItem("totalCarePrice");
-        localStorage.removeItem("depositsArray");
+        localStorage.removeItem(`selectedProducts_${userId}`);
+        localStorage.removeItem(`dates_${userId}`);
+        localStorage.removeItem(`totalCarePrice_${userId}`);
+        localStorage.removeItem(`depositsArray_${userId}`);
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");

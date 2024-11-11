@@ -90,7 +90,7 @@ const FishCareService = () => {
             }
         });
         setTotalDisplayCarePrice(total)
-        setTotalCarePrice(total);
+        setTotalCarePrice(parseInt(storedTotalCarePrice) + parseInt(total));
     };
 
     console.log(totalCarePrice);
@@ -139,10 +139,10 @@ const FishCareService = () => {
                 selectedProducts.forEach((product) => {
                     localStorage.setItem(`${product.id}`, product.id);
                 });
-                localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
-                localStorage.setItem("dates", JSON.stringify(dates));
-                localStorage.setItem("totalCarePrice", totalCarePrice);
-                localStorage.setItem("depositsArray", JSON.stringify(depositsArray));
+                localStorage.setItem(`totalCarePrice_${userId}`, totalCarePrice);
+                localStorage.setItem(`depositsArray_${userId}`, JSON.stringify(depositsArray));
+                localStorage.setItem(`selectedProducts_${userId}`, JSON.stringify(selectedProducts));
+                localStorage.setItem(`dates_${userId}`, JSON.stringify(dates));
                 navigate('/checkout', {
                     state: {
                         totalCarePrice: totalCarePrice,
