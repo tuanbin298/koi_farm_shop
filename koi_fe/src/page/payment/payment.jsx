@@ -84,7 +84,6 @@ const CheckoutForm = () => {
 
   selectedProducts.forEach((product) => {
     const startDate = dates[product.id]?.startDate;
-    console.log(`Start date for product ${product.id}:`, startDate);
   });
   const checkConsigned = (cartItem) => {
     // Extract IDs from selectedProducts
@@ -153,7 +152,6 @@ const CheckoutForm = () => {
 
     handlePaymentMethodResult(result);
 
-    console.log("[PaymentMethod]", result);
   };
   let totalPrice = 0;
 
@@ -187,15 +185,14 @@ const CheckoutForm = () => {
 
         //Fish consignment
         const consignmentData = selectedProducts.map((product) => {
-          console.log(product.product[0].id);
           const { startDate, endDate } = dates[product.id] || {};
           const pricePerDay = 50000;
           const days =
             startDate && endDate
               ? Math.ceil(
-                  (new Date(endDate) - new Date(startDate)) /
-                    (1000 * 60 * 60 * 24)
-                )
+                (new Date(endDate) - new Date(startDate)) /
+                (1000 * 60 * 60 * 24)
+              )
               : 0;
 
           return {
@@ -220,7 +217,6 @@ const CheckoutForm = () => {
             consignmentDataResponse.createConsigmentRaisings.map(
               (item) => item.id
             );
-          console.log("Consignment Raising IDs:", consignmentRaisingIds);
         } else {
           console.error(
             "Unexpected response structure:",
@@ -229,7 +225,6 @@ const CheckoutForm = () => {
         }
 
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
-        console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
         const cartConsignmentPairs = cartItems.cartItems.map((cartItem) => {
           const isConsigned = checkConsigned(cartItem);
@@ -242,24 +237,21 @@ const CheckoutForm = () => {
           };
         });
 
-        console.log(cartConsignmentPairs);
-
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
           // Check if there is a matching consignment entry for this cart item
           const matchingPair = cartConsignmentPairs.find(
             (pair) => pair.cartItemId === item.id
           );
-          console.log(matchingPair);
 
           return {
             ...(item.product.length > 0
               ? { product: { connect: { id: item.product[0].id } } }
               : {
-                  consignmentSale: {
-                    connect: { id: item.consignmentProduct[0].id },
-                  },
-                }),
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
             order: { connect: { id: orderId } },
             price:
               item.product.length > 0
@@ -268,10 +260,10 @@ const CheckoutForm = () => {
             isStored: checkConsigned(item),
             ...(matchingPair && matchingPair.consignmentRaisingId
               ? {
-                  consignmentRaising: {
-                    connect: { id: matchingPair.consignmentRaisingId },
-                  },
-                }
+                consignmentRaising: {
+                  connect: { id: matchingPair.consignmentRaisingId },
+                },
+              }
               : {}),
           };
         });
@@ -279,7 +271,6 @@ const CheckoutForm = () => {
         const { data: createOrderItemsData } = await createOrderItems({
           variables: { data: orderItems },
         });
-        console.log(consignmentRaisingIds);
 
         // Link order items to the order
         const orderItemIds = createOrderItemsData.createOrderItems.map(
@@ -288,7 +279,6 @@ const CheckoutForm = () => {
 
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
-          console.log(orderItemIds[i]);
           await updateOrder({
             variables: {
               where: {
@@ -337,7 +327,6 @@ const CheckoutForm = () => {
         const consignmentSales = cartItems.cartItems.filter(
           (item) => item.product.length <= 0
         );
-        console.log(consignmentSales);
         for (let i = 0; i < consignmentSales.length; i++) {
           const consignmentSalesID =
             consignmentSales[i].consignmentProduct[0].id;
@@ -345,7 +334,6 @@ const CheckoutForm = () => {
           // Fetch consignment-related email using `GET_REQUEST_EMAIL`
           const recipientEmail = await getRequestMethod(consignmentSalesID);
           // Send email notification if email is retrieved
-          console.log(recipientEmail);
           if (recipientEmail) {
             await consignmentSaleNotification({
               variables: {
@@ -448,7 +436,6 @@ function Payment() {
   useEffect(() => {
     setTotalCarePrice(location.state.totalCarePrice);
   }, [location.state]);
-  console.log(totalCarePrice);
   useEffect(() => {
     if (dataCart) {
       // Calculate the cart total based on items' prices
@@ -480,7 +467,6 @@ function Payment() {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-  console.log(parseInt(totalAmount) + parseInt(totalCarePrice));
 
   const stripePromise = loadStripe(
     "pk_test_51PZy5CRwV3ieMSE0yi4gEMKnnM1gg4TArSRYf1WAjEmBvMz3MOWXZQOPqSxBbIortJdLmhZnDnmFnO1Njqfa7YUV00F4HhRF80"
@@ -491,7 +477,6 @@ function Payment() {
     amount: totalAmount,
     currency: "USD",
   };
-  console.log(options.amount);
 
   return (
     <section className="container mt-5">
@@ -542,7 +527,6 @@ function Payment() {
                   const depositAmount = depositEntry
                     ? depositEntry.totalDeposit
                     : 0;
-                  console.log(depositEntry);
                   return (
                     <tr key={item.id}>
                       <td>{product.name}</td>

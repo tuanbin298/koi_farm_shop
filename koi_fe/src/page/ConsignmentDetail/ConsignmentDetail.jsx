@@ -43,7 +43,6 @@ export default function ConsignmentDetail() {
   });
 
   const { slug } = useParams();
-  console.log(slug);
 
   const { loading, error, product } = useConsignmentBySlug(slug);
   const { loading: allLoading, error: allError, products } = useAllProducts(); // Fetch all products for "Các sản phẩm khác"
@@ -125,7 +124,6 @@ export default function ConsignmentDetail() {
     } catch (error) {
       if (error.message.includes("Access denied")) {
         alert(error);
-        console.log(error);
       } else {
         console.error("Error adding item to cart:", error);
         alert("Failed to add item to cart. Please try again.");
@@ -147,7 +145,6 @@ export default function ConsignmentDetail() {
                   alt={product.name}
                 />
               ) : null}
-              {console.log(product.slug)}
             </div>
 
             <div style={{ width: "100%" }}>
