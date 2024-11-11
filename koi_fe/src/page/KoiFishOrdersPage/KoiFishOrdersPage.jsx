@@ -104,7 +104,7 @@ const KoiFishOrdersPage = () => {
           {orders.length === 0 ? (
             <tr>
               <td colSpan="5" className="text-center">
-                Không có đơn ký gửi nào.
+                Không có đơn hàng nào.
               </td>
             </tr>
           ) : (
