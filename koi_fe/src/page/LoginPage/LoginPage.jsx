@@ -133,9 +133,6 @@ const Login = () => {
             Đăng nhập
           </button>
         </form>
-        <a href="/forgot-password" className="forgot-password">
-          Quên mật khẩu?
-        </a>
         <div className="text-center mt-3">
           <p className="register-redirect">
             Bạn chưa có tài khoản đăng ký{" "}
