@@ -154,7 +154,7 @@ const CheckoutForm = () => {
 
   };
   let totalPrice = 0;
-
+  
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
       //   toast.error("Lỗi tạo đơn hàng!");
@@ -403,6 +403,7 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
+  const navigate = useNavigate();
   const [userId, setUserId] = useState(localStorage.getItem("id"));
   const { data: dataCart, refetch: refetchCartItems } = useQuery(
     GET_CART_ITEMS,
@@ -428,14 +429,22 @@ function Payment() {
       });
     }
   }, [userId, refetchCartItems]);
-
+  {/*Get data from state via navigate */}
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [dates, setDates] = useState({});
+
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   useEffect(() => {
-    setTotalCarePrice(location.state.totalCarePrice);
-  }, [location.state]);
+    if (location.state && location.state.selectedProducts) {
+      setSelectedProducts(location.state.selectedProducts);
+      setDates(location.state.dates);
+      setTotalCarePrice(location.state.totalCarePrice);
+      setDepositsArray(location.state.depositsArray);
+    }
+  }, [location.state])
   useEffect(() => {
     if (dataCart) {
       // Calculate the cart total based on items' prices
@@ -467,7 +476,16 @@ function Payment() {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-
+  const handleToCheckout = () => {
+    navigate("/checkout", {
+      state:{
+        totalCarePrice,
+        selectedProducts,
+        dates,
+        depositsArray,
+      },
+    })
+  }
   const stripePromise = loadStripe(
     "pk_test_51PZy5CRwV3ieMSE0yi4gEMKnnM1gg4TArSRYf1WAjEmBvMz3MOWXZQOPqSxBbIortJdLmhZnDnmFnO1Njqfa7YUV00F4HhRF80"
   );
@@ -480,8 +498,8 @@ function Payment() {
 
   return (
     <section className="container mt-5">
-      <Link to="/checkout">
-        <section className="back-button-section">
+  
+        <section className="back-button-section" onClick={handleToCheckout} role="button" tabIndex={0}>
           <div className="icon-container">
             <FaArrowLeft className="icon" />
           </div>
@@ -489,7 +507,6 @@ function Payment() {
             Quay lại trang điền thông tin
           </span>
         </section>
-      </Link>
       <section className="row">
         {/* Order Summary Section */}
         <article className="col-md-6">
