@@ -87,8 +87,31 @@ const User = list({
 
   hooks: {
     async beforeOperation({ operation, item, context }) {
-      // Delete cartItem when delete User
       if (operation === "delete") {
+        // Can't delete user if they have request or order
+        const requests = await context.query.Request.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+
+        const orders = await context.query.Order.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+
+        if (requests.length > 0 || orders.length > 0) {
+          throw new Error("Không thể xoá người dùng đã có giao dịch");
+        }
+
+        // Delete cartItem when delete User
         const cartItems = await context.query.CartItem.findMany({
           where: {
             user: {
