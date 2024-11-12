@@ -153,7 +153,7 @@ const FishCareService = () => {
                 });
             }, 2000);
         } else {
-            alert('Bạn cần đồng ý với chính sách ký gửi trước khi tiếp tục.');
+            toast.error('Bạn cần đồng ý với chính sách ký gửi trước khi tiếp tục.');
         }
     };
 

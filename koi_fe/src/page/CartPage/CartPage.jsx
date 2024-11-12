@@ -251,7 +251,7 @@ const CartPage = () => {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {paginatedConsignmentItems.map((cartItem) => (
+                        {consignmentKoiItems.map((cartItem) => (
                           <TableRow key={cartItem.id}>
                             <TableCell>
                               <Image
