@@ -125,6 +125,24 @@ const Order = list({
             changedBy: { connect: { id: context.session.itemId } },
           },
         });
+
+        if (resolvedData.status === "Hoàn thành đơn hàng") {
+          const orderItems = await context.query.OrderItem.findMany({
+            where: {
+              order: {
+                id: { equals: item.id },
+              },
+            },
+            query: "id status",
+          });
+
+          for (const orderItem of orderItems) {
+            await context.query.OrderItem.updateOne({
+              where: { id: orderItem.id },
+              data: { status: "Hoàn thành" },
+            });
+          }
+        }
       }
     },
 

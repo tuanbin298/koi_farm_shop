@@ -338,15 +338,21 @@ const CartPage = () => {
                     </Button>
                 </Box>
               )} */}
-              <Box display="flex" justifyContent="flex-end" marginTop={2}>
-              <Button
+               <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                  {Object.values(depositFields).some(
+                    (isSelected) => isSelected
+                  ) ? (
+                    handleProceedToFishCareService()
+                  ) : (
+                    <Button
                       variant="contained"
                       color="success"
                       onClick={handleToCheckOut}
                     >
                       Tiến hành thanh toán <FaShoppingCart />
                     </Button>
-              </Box>
+                  )}
+                </Box>
             </>
           )}
         </section>

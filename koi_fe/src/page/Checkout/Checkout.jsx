@@ -146,7 +146,6 @@ export default function Checkout() {
 
   const checkoutOptions = [
     { label: "Thanh toán hết", value: "all" },
-    { label: "Thanh toán khi nhận hàng (đặt cọc 50%)", value: "cod" },
   ];
 
   const handleInputChange = (e) => {
