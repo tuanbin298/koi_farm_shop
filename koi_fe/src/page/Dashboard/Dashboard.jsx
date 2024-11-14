@@ -81,12 +81,6 @@ const Dashboard = () => {
                                 <ListItemText primary="Tổng quan" />
                             </ListItemButton>
                         </ListItem>
-                        <ListItem disablePadding>
-                            <ListItemButton onClick={() => setSelectedSection("analysis")}>
-                                <ListItemIcon><AssessmentIcon /></ListItemIcon>
-                                <ListItemText primary="Phân Tích" />
-                            </ListItemButton>
-                        </ListItem>
                         <Typography sx={{ marginLeft: "5%", fontSize: "25px", color: "red" }}>Chung</Typography>
 
                         {/* Đơn hàng Dropdown */}
