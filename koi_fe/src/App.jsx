@@ -20,6 +20,7 @@ import ConsignmentDetail from "./page/ConsignmentDetail/ConsignmentDetail";
 import Payment from "./page/payment/payment";
 import FishCareServide from "./page/FishCareService/FishCareService";
 import Layout from "./component/Layout/Layout";
+import Dashboard from "./page/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -53,6 +54,9 @@ function App() {
             <Route path="/consignmentList" element={<KoiConsignment />} />
             <Route path="/payment" element={<Payment />} />
             <Route path="/fishcareservice" element={<FishCareServide />} />
+            <Route path="/dashboard" element={<Dashboard/>}/>
+
+
           </Routes>
         </Layout>
       </BrowserRouter>
