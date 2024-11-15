@@ -7,11 +7,14 @@ export const MUTATION_LOGIN = gql`
       ... on UserAuthenticationWithPasswordSuccess {
         sessionToken
         item {
+          id
           name
           email
           phone
           address
-          id
+          role {
+            name
+          }
         }
       }
       ... on UserAuthenticationWithPasswordFailure {

@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MUTATION_LOGIN } from "../api/Mutations/user";
-import { useMutation, useQuery, useApolloClient } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
-import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
-  const client = useApolloClient(); // Access the Apollo Client
 
   const [input, setInput] = useState({
     email: "",
@@ -24,23 +22,6 @@ const Login = () => {
       [name]: value,
     });
     setErrors({ ...errors, [name]: "" });
-  };
-
-  const validate = () => {
-    let errors = {};
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!input.email.trim()) {
-      errors.email = "Email không được bỏ trống";
-    } else if (!emailPattern.test(input.email)) {
-      errors.email = "Email không hợp lệ";
-    }
-
-    if (!input.password.trim()) {
-      errors.password = "Mật khẩu không được bỏ trống";
-    } else if (input.password.length < 6) {
-      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
-    }
-    return errors;
   };
 
   const [login] = useMutation(MUTATION_LOGIN, {
@@ -85,7 +66,12 @@ const Login = () => {
             },
           },
         });
-        navigate("/", { state: { fromLogin: true } });
+
+        if (item.role.name === "Admin" || item.role.name === "Nhân viên") {
+          navigate("/Dashboard", { state: { fromLogin: true } });
+        } else {
+          navigate("/", { state: { fromLogin: true } });
+        }
       } else if (authData?.message) {
         setErrorMsg(authData.message);
       }
