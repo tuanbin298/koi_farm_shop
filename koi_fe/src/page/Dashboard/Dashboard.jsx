@@ -22,6 +22,7 @@ import OrderList from "./OrderList";
 import AdminProductList from "./AdminProductList";
 import ConsignmentSaleList from "./ConsignmentSaleList";
 import ConsignmentCareList from "./ConsignmentCareList";
+import CreateProductForm from "./Forms/CreateProductForm";
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -49,8 +50,8 @@ const Dashboard = () => {
         return <OrderList />;
       case "products":
         return <AdminProductList />;
-      case "productDetail1":
-        return <DashboardOverview />;
+      case "addProduct":
+        return <CreateProductForm />;
       case "users":
         return <DashboardOverview />;
       case "userDetail1":
@@ -213,23 +214,6 @@ const Dashboard = () => {
                 </ListItem>
               </List>
             </Collapse>
-
-            {/* Đơn ký chăm sóc Dropdown */}
-            {/* <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => toggleDropdown("consignmentCares")}
-              >
-                <ListItemIcon>
-                  <AutoStoriesIcon />
-                </ListItemIcon>
-                <ListItemText primary="Đơn ký gửi" />
-                {openDropdowns.consignmentCares ? (
-                  <ExpandLess />
-                ) : (
-                  <ExpandMore />
-                )}
-              </ListItemButton>
-            </ListItem> */}
           </List>
         </Box>
       </Drawer>
