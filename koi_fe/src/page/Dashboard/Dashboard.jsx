@@ -19,6 +19,7 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import DashboardOverview from './DashboardOverview';
 import OrderList from './OrderList';
 import AdminProductList from './AdminProductList';
+import CreateProductForm from './Forms/CreateProductForm';
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -44,8 +45,8 @@ const Dashboard = () => {
                 return <OrderList />;
             case "products":
                 return <AdminProductList />;
-            case "productDetail1":
-                return <DashboardOverview />;
+            case "addProduct":
+                return <CreateProductForm/>;
             case "users":
                 return <DashboardOverview />;
             case "userDetail1":
@@ -114,7 +115,7 @@ const Dashboard = () => {
                                     </ListItemButton>
                                 </ListItem>
                                 <ListItem disablePadding>
-                                    <ListItemButton onClick={() => setSelectedSection("productDetail1")}>
+                                    <ListItemButton onClick={() => setSelectedSection("addProduct")}>
                                         <ListItemText primary="Thêm sản phẩm" />
                                     </ListItemButton>
                                 </ListItem>
