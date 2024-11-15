@@ -11,6 +11,7 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
 import { GET_ALL_FISH_CARE_ADMIN } from "../api/Queries/fishcare";
 import { formatMoney } from "../../utils/formatMoney";
+import { formatDate, formatTime } from "../../utils/formatDateTime";
 
 export default function ConsignmentCareList() {
   const { data, error, loading } = useQuery(GET_ALL_FISH_CARE_ADMIN);
@@ -82,7 +83,7 @@ export default function ConsignmentCareList() {
                   color="primary"
                 />
               </TableCell>
-              <TableCell>Ngày ký gửi</TableCell>
+              <TableCell>Ngày | Giờ ký gửi</TableCell>
               <TableCell>Người ký gửi nuôi</TableCell>
               <TableCell>Cá ký gửi nuôi</TableCell>
               <TableCell>Giá tiền</TableCell>
@@ -111,7 +112,10 @@ export default function ConsignmentCareList() {
                     color="primary"
                   />
                 </TableCell>
-                <TableCell>{consignment.consignmentDate}</TableCell>
+                <TableCell>
+                  {formatDate(consignment.consignmentDate.split("T")[0])}{" "}
+                  {" | "} {formatTime(consignment.consignmentDate)}
+                </TableCell>
                 <TableCell>{consignment.user?.name || "Không rõ"}</TableCell>
                 <TableCell>{consignment.product?.name || "Không rõ"}</TableCell>
                 <TableCell>
@@ -122,7 +126,8 @@ export default function ConsignmentCareList() {
                 <TableCell>{consignment.status || "Chưa cập nhật"}</TableCell>
                 <TableCell>{consignment.description || "Không có"}</TableCell>
                 <TableCell>
-                  {consignment.returnDate || "Chưa cập nhật"}
+                  {formatDate(consignment.returnDate.split("T")[0])} {" | "}{" "}
+                  {formatTime(consignment.returnDate)}
                 </TableCell>
               </TableRow>
             ))}
@@ -207,12 +212,16 @@ export default function ConsignmentCareList() {
                   Thông Tin Ký Gửi
                 </Typography>
                 <Typography>
-                  <strong>Ngày Ký Gửi:</strong>{" "}
-                  {selectedConsignment.consignmentDate || "Chưa cập nhật"}
+                  <strong>Ngày | Giờ Ký Gửi:</strong>{" "}
+                  {formatDate(
+                    selectedConsignment.consignmentDate.split("T")[0]
+                  )}{" "}
+                  {" | "} {formatTime(selectedConsignment.consignmentDate)}
                 </Typography>
                 <Typography>
-                  <strong>Ngày Kết Thúc:</strong>{" "}
-                  {selectedConsignment.returnDate || "Chưa cập nhật"}
+                  <strong>Ngày | Giờ Kết Thúc:</strong>{" "}
+                  {formatDate(selectedConsignment.returnDate.split("T")[0])}{" "}
+                  {" | "} {formatTime(selectedConsignment.returnDate)}
                 </Typography>
                 <Typography>
                   <strong>Giá Tiền:</strong>{" "}

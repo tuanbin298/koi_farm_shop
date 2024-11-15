@@ -11,6 +11,7 @@ import Paper from "@mui/material/Paper";
 import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { formatMoney } from "../../utils/formatMoney";
+import { formatDate, formatTime } from "../../utils/formatDateTime";
 
 export default function ConsignmentList() {
   const {
@@ -119,7 +120,7 @@ export default function ConsignmentList() {
                   color="primary"
                 />
               </TableCell>
-              <TableCell>Ngày ký gửi</TableCell>
+              <TableCell>Ngày | Giờ ký gửi</TableCell>
               <TableCell>Tên cá ký gửi</TableCell>
               <TableCell>Người gửi</TableCell>
               <TableCell>Nhân viên xử lý</TableCell>
@@ -148,7 +149,8 @@ export default function ConsignmentList() {
                   />
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {consignment.request?.createAt}
+                  {formatDate(consignment.request?.createAt.split("T")[0])}{" "}
+                  {" | "} {formatTime(consignment.request?.createAt)}
                 </TableCell>
                 <TableCell>{consignment.name}</TableCell>
                 <TableCell>
@@ -212,8 +214,11 @@ export default function ConsignmentList() {
 
               {/* Thông tin chi tiết */}
               <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Ngày ký gửi:</strong>{" "}
-                {selectedConsignment.request?.createAt}
+                <strong>Ngày | Giờ ký gửi:</strong>{" "}
+                {formatDate(
+                  selectedConsignment.request?.createAt.split("T")[0]
+                )}{" "}
+                {" | "} {formatTime(selectedConsignment.request?.createAt)}
               </Typography>
               <Typography variant="body1" sx={{ mb: 1 }}>
                 <strong>Tên cá ký gửi:</strong> {selectedConsignment.name}
@@ -262,9 +267,13 @@ export default function ConsignmentList() {
               </Typography>
               <Typography variant="body1" sx={{ mb: 1 }}>
                 <strong>Giá xác định từ hệ thống:</strong>{" "}
-                {selectedConsignment.estimatedPrice
-                  ? `${selectedConsignment.estimatedPrice}`
-                  : "Chưa cập nhật"}
+                {formatMoney(
+                  selectedConsignment.estimatedPrice.split(" - ")[0]
+                )}{" "}
+                -{" "}
+                {formatMoney(
+                  selectedConsignment.estimatedPrice.split(" - ")[1]
+                )}
               </Typography>
               <Typography variant="body1" sx={{ mb: 1 }}>
                 <strong>Trạng thái đơn hàng:</strong>{" "}
@@ -293,7 +302,11 @@ export default function ConsignmentList() {
                       (history) => (
                         <Box key={history.id} sx={{ mb: 1 }}>
                           <Typography variant="body1" sx={{ mb: 0.5 }}>
-                            <strong>Thời gian:</strong> {history.changeTime}
+                            <strong>Thời gian:</strong>
+                            {formatDate(history.changeTime.split("T")[0])}
+                            {" | "}
+                            {formatTime(history.changeTime)}
+                            {/* {history.changeTime} */}
                           </Typography>
                           <Typography variant="body1" sx={{ mb: 0.5 }}>
                             <strong>Người thay đổi:</strong>{" "}

@@ -65,6 +65,9 @@ export const GET_ALL_FISH_CARE_ADMIN = gql`
       status
       user {
         name
+        email
+        address
+        phone
       }
     }
   }
