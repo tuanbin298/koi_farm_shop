@@ -31,3 +31,39 @@ query Orders($where: OrderWhereInput!) {
   }
 }
 `
+
+export const GET_ALL_ORDERS = gql`
+query Orders {
+  orders {
+    price
+    address
+    id
+    status
+    createAt
+    items {
+       status
+      product {
+        name
+        price
+      }
+      consignmentSale {
+        name
+        price
+      }
+      consignmentRaising {
+        product {
+          name
+        }
+        consignmentDate
+        returnDate
+        consignmentPrice
+        status
+      }
+    }
+      user {
+      name
+    }
+    paymentMethod
+  }
+}
+`

@@ -21,6 +21,30 @@ export const GET_ALL_PRODUCTS = gql`
   }
 `;
 
+export const GET_ALL_PRODUCTS_ADMIN = gql`
+query GetAllProducts {
+    products {
+      id
+      name
+      birth
+      sex
+      size
+      price
+      description
+      origin
+      generic
+      slug
+      image {
+        publicUrl
+      }
+      status
+      category {
+        name
+      }
+    }
+  }
+`
+
 // Query để lấy sản phẩm theo loại
 export const GET_PRODUCT_BY_CATEGORY = gql`
   query GetProducts($categoryId: CategoryWhereInput) {
