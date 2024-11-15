@@ -21,6 +21,8 @@ import Payment from "./page/payment/payment";
 import FishCareServide from "./page/FishCareService/FishCareService";
 import Layout from "./component/Layout/Layout";
 import Dashboard from "./page/Dashboard/Dashboard";
+import UserList from "./page/Dashboard/UserList";
+import AddUser from "./page/Dashboard/AddUser";
 
 function App() {
   return (
@@ -55,8 +57,8 @@ function App() {
             <Route path="/payment" element={<Payment />} />
             <Route path="/fishcareservice" element={<FishCareServide />} />
             <Route path="/dashboard" element={<Dashboard/>}/>
-
-
+            <Route path ="/userlist" element={< UserList/>}/>
+            <Route path ="/adduser" element={< AddUser/>}/>
           </Routes>
         </Layout>
       </BrowserRouter>

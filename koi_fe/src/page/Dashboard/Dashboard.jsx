@@ -19,6 +19,9 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import DashboardOverview from './DashboardOverview';
 import OrderList from './OrderList';
 import AdminProductList from './AdminProductList';
+import UserList from "./UserList";
+import AddUser from "./AddUser";
+
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -47,9 +50,9 @@ const Dashboard = () => {
             case "productDetail1":
                 return <DashboardOverview />;
             case "users":
-                return <DashboardOverview />;
+                return <UserList />;
             case "userDetail1":
-                return <DashboardOverview />;
+                return <AddUser />;
             default:
                 return <DashboardOverview />;
         }
