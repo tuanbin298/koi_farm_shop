@@ -11,14 +11,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import HomeIcon from '@mui/icons-material/Home';
-import AssessmentIcon from '@mui/icons-material/Assessment';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import PersonIcon from '@mui/icons-material/Person';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import DashboardOverview from './DashboardOverview';
-
+import OrderList from './OrderList';
+import AdminProductList from './AdminProductList';
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -40,14 +40,10 @@ const Dashboard = () => {
         switch (selectedSection) {
             case "overview":
                 return <DashboardOverview />;
-            case "analysis":
-                return <DashboardOverview />;
             case "orders":
-                return <DashboardOverview />;
-            case "orderDetail1":
-                return <DashboardOverview />;
+                return <OrderList />;
             case "products":
-                return <DashboardOverview />;
+                return <AdminProductList />;
             case "productDetail1":
                 return <DashboardOverview />;
             case "users":
