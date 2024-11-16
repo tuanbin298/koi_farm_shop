@@ -8,12 +8,25 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Checkbox,
+  Button,
+  Modal,
+  TextField,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+} from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { formatMoney } from "../../utils/formatMoney";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
+import CloseIcon from "@mui/icons-material/Close";
+import UpdateIcon from "@mui/icons-material/Update";
 
-export default function ConsignmentList() {
+export default function ConsignmentSaleList() {
   const {
     data: getConsignments,
     error,
@@ -25,6 +38,11 @@ export default function ConsignmentList() {
   const [openModal, setOpenModal] = useState(false);
 
   const consignments = getConsignments?.consignmentSales || [];
+
+  const [editableData, setEditableData] = useState({
+    consignmentPrice: "",
+    status: "",
+  });
 
   const handleCheckboxChange = (consignmentId) => {
     setSelectedConsignments((prevSelected) => {
@@ -55,6 +73,12 @@ export default function ConsignmentList() {
     );
   }, [selectedConsignments, consignments]);
 
+  const handleInputChange = (field, value) => {
+    setEditableData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
   const handleDelete = () => {
     console.log("Deleting consignments with IDs:", selectedConsignments);
     const updatedConsignments = consignments.filter(
@@ -67,7 +91,18 @@ export default function ConsignmentList() {
 
   const handleRowClick = (consignment) => {
     setSelectedConsignment(consignment);
+    setEditableData({
+      consignmentPrice: consignment.price || "",
+      status: consignment.request?.status || "",
+    });
     setOpenModal(true);
+  };
+  const handleUpdate = () => {
+    console.log("Dữ liệu đã chỉnh sửa:", editableData);
+
+    // Thêm API hoặc logic cập nhật
+
+    handleCloseModal();
   };
 
   const handleCloseModal = () => {
@@ -182,147 +217,253 @@ export default function ConsignmentList() {
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
-            p: 4,
             borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          <Typography
-            id="modal-title"
-            variant="h5"
-            component="h2"
-            sx={{ mb: 2, fontWeight: "bold" }}
+          {/* Nút Đóng */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderBottom: "1px solid #ddd",
+            }}
           >
-            Chi tiết Cá Koi
-          </Typography>
-          {selectedConsignment && (
-            <Box>
-              {/* Hình ảnh */}
-              {selectedConsignment.photo?.image?.publicUrl && (
-                <Box
-                  component="img"
-                  src={selectedConsignment.photo.image.publicUrl}
-                  alt={selectedConsignment.name}
-                  sx={{
-                    width: "100%",
-                    maxHeight: 250, // Giới hạn chiều cao
-                    objectFit: "contain", // Đảm bảo ảnh không bị biến dạng
-                    borderRadius: 2,
-                    mb: 2,
-                  }}
-                />
-              )}
+            <Button
+              variant="text"
+              onClick={handleCloseModal}
+              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
 
-              {/* Thông tin chi tiết */}
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Ngày | Giờ ký gửi:</strong>{" "}
-                {formatDate(
-                  selectedConsignment.request?.createAt.split("T")[0]
-                )}{" "}
-                {" | "} {formatTime(selectedConsignment.request?.createAt)}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Tên cá ký gửi:</strong> {selectedConsignment.name}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Năm sinh:</strong>{" "}
-                {selectedConsignment.birth || "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Giới tính:</strong>{" "}
-                {selectedConsignment.sex || "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Kích thước:</strong>{" "}
-                {selectedConsignment.size || "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Lịch sử bệnh:</strong>{" "}
-                {selectedConsignment.medical || "Không có"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Loại:</strong>{" "}
-                {selectedConsignment.category || "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Giá từ trang trại:</strong>{" "}
-                {selectedConsignment.price
-                  ? `${formatMoney(selectedConsignment.price)}`
-                  : "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Mô tả:</strong>{" "}
-                {selectedConsignment.description || "Không có"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Người gửi:</strong>{" "}
-                {selectedConsignment.request?.user?.name || "Không rõ"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Nhân viên xử lý:</strong>{" "}
-                {selectedConsignment.request?.staff?.name || "Chưa xử lý"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Trạng thái:</strong>{" "}
-                {selectedConsignment.request?.status || "Chưa cập nhật"}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Giá xác định từ hệ thống:</strong>{" "}
-                {formatMoney(
-                  selectedConsignment.estimatedPrice.split(" - ")[0]
-                )}{" "}
-                -{" "}
-                {formatMoney(
-                  selectedConsignment.estimatedPrice.split(" - ")[1]
-                )}
-              </Typography>
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Trạng thái đơn hàng:</strong>{" "}
-                {selectedConsignment.status || "Chưa cập nhật"}
-              </Typography>
-
-              {/* Lịch sử trạng thái */}
-              {selectedConsignment.request?.statusHistory?.length > 0 && (
-                <>
-                  <Typography
-                    variant="h6"
-                    sx={{ mt: 2, mb: 1, fontWeight: "bold" }}
-                  >
-                    Lịch sử trạng thái:
+          {/* Nội dung cuộn */}
+          <Box
+            sx={{
+              p: 2,
+              overflowY: "auto",
+              maxHeight: "70vh", // Chiều cao tối đa
+            }}
+          >
+            {selectedConsignment && (
+              <>
+                <Typography
+                  id="modal-title"
+                  variant="h5"
+                  component="h2"
+                  sx={{ mb: 2, fontWeight: "bold" }}
+                >
+                  Chi Tiết Yêu Cầu Ký Gửi Bán
+                </Typography>
+                <Box sx={{ mb: 2 }}>
+                  {/* Hình ảnh */}
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Cá
                   </Typography>
-                  <Box
-                    sx={{
-                      maxHeight: 200,
-                      overflowY: "auto",
-                      border: "1px solid #ddd",
-                      borderRadius: 1,
-                      p: 1,
-                    }}
-                  >
-                    {selectedConsignment.request.statusHistory.map(
-                      (history) => (
-                        <Box key={history.id} sx={{ mb: 1 }}>
-                          <Typography variant="body1" sx={{ mb: 0.5 }}>
-                            <strong>Thời gian:</strong>
-                            {formatDate(history.changeTime.split("T")[0])}
-                            {" | "}
-                            {formatTime(history.changeTime)}
-                            {/* {history.changeTime} */}
-                          </Typography>
-                          <Typography variant="body1" sx={{ mb: 0.5 }}>
-                            <strong>Người thay đổi:</strong>{" "}
-                            {history.changedBy?.name || "Không rõ"}
-                          </Typography>
-                          <Typography variant="body1" sx={{ mb: 0.5 }}>
-                            <strong>Trạng thái:</strong> {history.status}
-                          </Typography>
-                        </Box>
-                      )
+                  {selectedConsignment.photo?.image?.publicUrl && (
+                    <Box
+                      component="img"
+                      src={selectedConsignment.photo.image.publicUrl}
+                      alt={selectedConsignment.name}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 200,
+                        objectFit: "contain",
+                        borderRadius: 2,
+                        mb: 2,
+                      }}
+                    />
+                  )}
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Tên cá ký gửi:</strong> {selectedConsignment.name}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Năm sinh:</strong>{" "}
+                    {selectedConsignment.birth || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Giới tính:</strong>{" "}
+                    {selectedConsignment.sex || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Kích thước:</strong>{" "}
+                    {selectedConsignment.size || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Lịch sử bệnh:</strong>{" "}
+                    {selectedConsignment.medical || "Không có"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Loại:</strong>{" "}
+                    {selectedConsignment.category || "Chưa cập nhật"}
+                  </Typography>
+
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Mô tả:</strong>{" "}
+                    {selectedConsignment.description || "Không có"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Trạng thái:</strong>{" "}
+                    {selectedConsignment.status || "Chưa cập nhật"}
+                  </Typography>
+                </Box>
+                {/* Thông tin Ký gửi */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Ký Gửi
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Người gửi:</strong>{" "}
+                    {selectedConsignment.request?.user?.name || "Không rõ"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Ngày | Giờ ký gửi:</strong>{" "}
+                    {formatDate(
+                      selectedConsignment.request?.createAt.split("T")[0]
+                    )}{" "}
+                    {" | "} {formatTime(selectedConsignment.request?.createAt)}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Nhân viên xử lý:</strong>{" "}
+                    {selectedConsignment.request?.staff?.name || "Chưa xử lý"}
+                  </Typography>
+
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Giá xác định từ hệ thống:</strong>{" "}
+                    {formatMoney(
+                      selectedConsignment.estimatedPrice.split(" - ")[0]
+                    )}{" "}
+                    -{" "}
+                    {formatMoney(
+                      selectedConsignment.estimatedPrice.split(" - ")[1]
                     )}
-                  </Box>
-                </>
-              )}
+                  </Typography>
+                  <TextField
+                    label="Giá tiền"
+                    value={editableData.consignmentPrice || ""}
+                    sx={{
+                      mb: 3,
+                      "& .MuiInputBase-root": {
+                        height: "40px",
+                      },
+                    }}
+                    onChange={(e) =>
+                      handleInputChange("consignmentPrice", e.target.value)
+                    }
+                  />
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel id="status-label" shrink>
+                      Trạng thái đơn hàng
+                    </InputLabel>
+                    <Select
+                      labelId="status-label"
+                      label="Trạng thái đơn hàng"
+                      value={editableData.status || ""}
+                      onChange={(e) =>
+                        handleInputChange("status", e.target.value)
+                      }
+                    >
+                      <MenuItem value="Chờ phê duyệt">Chờ phê duyệt</MenuItem>
+                      <MenuItem value="Hủy phê duyệt">Hủy phê duyệt</MenuItem>
+                      <MenuItem value="Xác nhận phê duyệt">
+                        Xác nhận phê duyệt
+                      </MenuItem>
+                      <MenuItem value="Xác nhận giao dịch">
+                        Xác nhận giao dịch
+                      </MenuItem>
+                      <MenuItem value="Huỷ giao dịch">Huỷ giao dịch</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                {/* Lịch sử trạng thái */}
+                <Box sx={{ mb: 2 }}>
+                  {selectedConsignment.request?.statusHistory?.length > 0 && (
+                    <>
+                      <Typography
+                        variant="h6"
+                        sx={{ mt: 2, mb: 1, fontWeight: "bold" }}
+                      >
+                        Lịch sử trạng thái:
+                      </Typography>
+                      <TableContainer
+                        component={Paper}
+                        sx={{
+                          maxHeight: 200, // Scrollable if content exceeds height
+                          overflowY: "auto",
+                          border: "1px solid #ddd",
+                          borderRadius: 1,
+                        }}
+                      >
+                        <Table
+                          stickyHeader
+                          size="small"
+                          aria-label="status history table"
+                        >
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>
+                                <strong>Thời gian</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>Người thay đổi</strong>
+                              </TableCell>
+                              <TableCell>
+                                <strong>Trạng thái</strong>
+                              </TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {selectedConsignment.request.statusHistory.map(
+                              (history) => (
+                                <TableRow key={history.id}>
+                                  <TableCell>
+                                    {formatDate(
+                                      history.changeTime.split("T")[0]
+                                    )}{" "}
+                                    {" | "}
+                                    {formatTime(history.changeTime)}
+                                  </TableCell>
+                                  <TableCell>
+                                    {history.changedBy?.name || "Không rõ"}
+                                  </TableCell>
+                                  <TableCell>{history.status}</TableCell>
+                                </TableRow>
+                              )
+                            )}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </>
+                  )}
+                </Box>
+              </>
+            )}
+            {/* Nút Cập Nhật */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                p: 2,
+                borderTop: "1px solid #ddd",
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ textTransform: "none", fontWeight: "bold" }}
+                onClick={() => console.log("Cập nhật thông tin")}
+              >
+                <UpdateIcon />
+                Cập Nhật
+              </Button>
             </Box>
-          )}
+          </Box>
         </Box>
       </Modal>
     </>
