@@ -277,6 +277,7 @@ type Product {
   generic: String
   slug: String
   image: CloudinaryImage_File
+  photo: Gallery
   category: Category
   status: String
 }
@@ -349,6 +350,7 @@ input ProductWhereInput {
   origin: StringFilter
   generic: StringFilter
   slug: StringFilter
+  photo: GalleryWhereInput
   category: CategoryWhereInput
   status: StringNullableFilter
 }
@@ -404,12 +406,19 @@ input ProductUpdateInput {
   generic: String
   slug: String
   image: Upload
+  photo: GalleryRelateToOneForUpdateInput
   category: CategoryRelateToOneForUpdateInput
   status: String
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input GalleryRelateToOneForUpdateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
+  disconnect: Boolean
+}
 
 input CategoryRelateToOneForUpdateInput {
   create: CategoryCreateInput
@@ -433,8 +442,14 @@ input ProductCreateInput {
   generic: String
   slug: String
   image: Upload
+  photo: GalleryRelateToOneForCreateInput
   category: CategoryRelateToOneForCreateInput
   status: String
+}
+
+input GalleryRelateToOneForCreateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
 }
 
 input CategoryRelateToOneForCreateInput {
@@ -1082,12 +1097,6 @@ input ConsignmentSaleUpdateInput {
   status: String
 }
 
-input GalleryRelateToOneForUpdateInput {
-  create: GalleryCreateInput
-  connect: GalleryWhereUniqueInput
-  disconnect: Boolean
-}
-
 input RequestRelateToOneForUpdateInput {
   create: RequestCreateInput
   connect: RequestWhereUniqueInput
@@ -1114,11 +1123,6 @@ input ConsignmentSaleCreateInput {
   slug: String
   request: RequestRelateToOneForCreateInput
   status: String
-}
-
-input GalleryRelateToOneForCreateInput {
-  create: GalleryCreateInput
-  connect: GalleryWhereUniqueInput
 }
 
 input RequestRelateToOneForCreateInput {
@@ -1192,6 +1196,8 @@ type Gallery {
   id: ID!
   title: String
   image: CloudinaryImage_File
+  ownProduct(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
+  ownProductCount(where: ProductWhereInput! = {}): Int
   product: ConsignmentSale
 }
 
@@ -1205,6 +1211,7 @@ input GalleryWhereInput {
   NOT: [GalleryWhereInput!]
   id: IDFilter
   title: StringFilter
+  ownProduct: ProductManyRelationFilter
   product: ConsignmentSaleWhereInput
 }
 
@@ -1216,6 +1223,7 @@ input GalleryOrderByInput {
 input GalleryUpdateInput {
   title: String
   image: Upload
+  ownProduct: ProductRelateToManyForUpdateInput
   product: ConsignmentSaleRelateToOneForUpdateInput
 }
 
@@ -1227,6 +1235,7 @@ input GalleryUpdateArgs {
 input GalleryCreateInput {
   title: String
   image: Upload
+  ownProduct: ProductRelateToManyForCreateInput
   product: ConsignmentSaleRelateToOneForCreateInput
 }
 

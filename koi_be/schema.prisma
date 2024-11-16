@@ -60,6 +60,8 @@ model Product {
   generic                        String              @default("")
   slug                           String              @unique @default("")
   image                          Json?
+  photo                          Gallery?            @relation("Product_photo", fields: [photoId], references: [id])
+  photoId                        String?             @map("photo")
   category                       Category?           @relation("Product_category", fields: [categoryId], references: [id])
   categoryId                     String?             @map("category")
   status                         String?
@@ -67,6 +69,7 @@ model Product {
   from_CartItem_product          CartItem[]          @relation("CartItem_product")
   from_ConsigmentRaising_product ConsigmentRaising[] @relation("ConsigmentRaising_product")
 
+  @@index([photoId])
   @@index([categoryId])
 }
 
@@ -202,10 +205,11 @@ model Request {
 }
 
 model Gallery {
-  id      String           @id @default(cuid())
-  title   String           @default("Hình ảnh")
-  image   Json?
-  product ConsignmentSale? @relation("ConsignmentSale_photo")
+  id         String           @id @default(cuid())
+  title      String           @default("Hình ảnh")
+  image      Json?
+  ownProduct Product[]        @relation("Product_photo")
+  product    ConsignmentSale? @relation("ConsignmentSale_photo")
 }
 
 model Status {
