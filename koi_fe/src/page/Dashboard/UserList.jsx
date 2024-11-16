@@ -1,6 +1,6 @@
 import React from 'react';
-import { useQuery, gql } from '@apollo/client'; // Import useQuery và gql từ Apollo Client
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { useQuery, gql } from '@apollo/client';
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
 
 export const GET_PROFILE_ADMIN = gql`
   query Users {
@@ -18,21 +18,32 @@ export const GET_PROFILE_ADMIN = gql`
 
 const UserList = () => {
     const { loading, error, data } = useQuery(GET_PROFILE_ADMIN);
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error: {error.message}</p>;
 
     return (
-        <div style={{ padding: '20px' }}>
-            <h2>Danh sách người dùng</h2>
+        <Box
+            sx={{
+                marginLeft: "20%",
+                marginRight: "5%",
+                marginTop: "5%",
+                padding: 3,
+                backgroundColor: "#f9f9f9",
+                borderRadius: "8px",
+            }}
+        >
+            <Typography variant="h4" sx={{ mb: 3 }}>Danh sách người dùng</Typography>
+
             <TableContainer component={Paper}>
-                <Table>
+                <Table sx={{ minWidth: 650 }}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Tên Khách Hàng</TableCell>
-                            <TableCell>Email</TableCell>
-                            <TableCell>Số điện thoại</TableCell>
-                            <TableCell>Địa chỉ</TableCell>
-                            <TableCell>Vai trò</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Tên Khách Hàng</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Số điện thoại</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Địa chỉ</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>Vai trò</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -48,7 +59,7 @@ const UserList = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+        </Box>
     );
 };
 

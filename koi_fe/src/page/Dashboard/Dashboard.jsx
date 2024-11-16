@@ -80,7 +80,7 @@ const Dashboard = () => {
       case "article":
         return <ArticleList />;
       case "addArticle":
-        return <CreateArticleForm/>;
+        return <CreateArticleForm />;
       case "feedback":
         return <FeedbackList />;
       default:
