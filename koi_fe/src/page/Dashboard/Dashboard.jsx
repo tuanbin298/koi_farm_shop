@@ -14,6 +14,9 @@ import HomeIcon from "@mui/icons-material/Home";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import CategoryIcon from "@mui/icons-material/Category";
+import ArticleIcon from "@mui/icons-material/Article";
 import PersonIcon from "@mui/icons-material/Person";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -23,8 +26,15 @@ import AdminProductList from "./AdminProductList";
 import ConsignmentSaleList from "./ConsignmentSaleList";
 import ConsignmentCareList from "./ConsignmentCareList";
 import CreateProductForm from "./Forms/CreateProductForm";
-import Header from '../../component/Header/Header';
-import Footer from '../../component/Footer/Footer';
+import Header from "../../component/Header/Header";
+import Footer from "../../component/Footer/Footer";
+import UserList from "./UserList";
+import AddUser from "./AddUser";
+import CategoryList from "./CategoryList";
+import CreateCategoryForm from "./Forms/CreateCategoryForm";
+import FeedbackList from "./FeedbackList";
+import ArticleList from "./ArticleList";
+import CreateArticleForm from "./Forms/CreateArticleForm";
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -35,6 +45,7 @@ const Dashboard = () => {
     users: false,
     consignmentSales: false,
     consignmentCares: false,
+    category: false,
   });
 
   const toggleDropdown = (section) => {
@@ -55,13 +66,23 @@ const Dashboard = () => {
       case "addProduct":
         return <CreateProductForm />;
       case "users":
-        return <DashboardOverview />;
+        return <UserList />;
       case "userDetail1":
-        return <DashboardOverview />;
+        return <AddUser />;
       case "consignmentSales":
         return <ConsignmentSaleList />;
       case "consignmentCares":
         return <ConsignmentCareList />;
+      case "category":
+        return <CategoryList />;
+      case "addCategory":
+        return <CreateCategoryForm />;
+      case "article":
+        return <ArticleList />;
+      case "addArticle":
+        return <CreateArticleForm />;
+      case "feedback":
+        return <FeedbackList />;
       default:
         return <DashboardOverview />;
     }
@@ -216,17 +237,97 @@ const Dashboard = () => {
                 </ListItem>
               </List>
             </Collapse>
+
+            {/* Phân loại Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("category")}>
+                <ListItemIcon>
+                  <CategoryIcon />
+                </ListItemIcon>
+                <ListItemText primary="Phân loại" />
+                {openDropdowns.category ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.category} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("category")}
+                  >
+                    <ListItemText primary="Danh sách phân loại" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("addCategory")}
+                  >
+                    <ListItemText primary="Thêm phân loại" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Tin Tức Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("news")}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Tin Tức" />
+                {openDropdowns.news ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.news} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("article")}
+                  >
+                    <ListItemText primary="Danh sách tin tức" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("addArticle")}
+                  >
+                    <ListItemText primary="Thêm tin tức" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Đánh giá Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("feedback")}>
+                <ListItemIcon>
+                  <FeedbackIcon />
+                </ListItemIcon>
+                <ListItemText primary="Đánh giá" />
+                {openDropdowns.feedback ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.feedback} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("feedback")}
+                  >
+                    <ListItemText primary="Danh sách đánh giá" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
           </List>
         </Box>
       </Drawer>
-      <Box sx={{
-        marginLeft: "15%"
-      }}>
+      <Box
+        sx={{
+          marginLeft: "15%",
+        }}
+      >
         <Header />
       </Box>
-      <Box sx={{ padding: 3 }}>
-        {renderContent()}
-      </Box>
+      <Box sx={{ padding: 3 }}>{renderContent()}</Box>
     </>
   );
 };
