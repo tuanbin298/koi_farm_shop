@@ -79,7 +79,9 @@ const AddUser = () => {
             </Col>
             <Col md={6}>
               <Form.Group controlId="formPhone">
-                <Form.Label style={{ fontWeight: "bold" }}>Số điện thoại:</Form.Label>
+                <Form.Label style={{ fontWeight: "bold" }}>
+                  Số điện thoại:
+                </Form.Label>
                 <Form.Control
                   type="text"
                   name="phone"
