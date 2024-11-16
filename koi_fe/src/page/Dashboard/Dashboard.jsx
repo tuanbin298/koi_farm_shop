@@ -23,11 +23,13 @@ import AdminProductList from "./AdminProductList";
 import ConsignmentSaleList from "./ConsignmentSaleList";
 import ConsignmentCareList from "./ConsignmentCareList";
 import CreateProductForm from "./Forms/CreateProductForm";
-import Header from '../../component/Header/Header';
-import Footer from '../../component/Footer/Footer';
+import Header from "../../component/Header/Header";
+import Footer from "../../component/Footer/Footer";
 import UserList from "./UserList";
 import AddUser from "./AddUser";
-
+import CategoryList from "./CategoryList";
+import CreateCategoryForm from "./Forms/CreateCategoryForm";
+import FeedbackList from "./FeedbackList";
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -38,6 +40,7 @@ const Dashboard = () => {
     users: false,
     consignmentSales: false,
     consignmentCares: false,
+    category: false,
   });
 
   const toggleDropdown = (section) => {
@@ -65,6 +68,12 @@ const Dashboard = () => {
         return <ConsignmentSaleList />;
       case "consignmentCares":
         return <ConsignmentCareList />;
+      case "category":
+        return <CategoryList />;
+      case "addCategory":
+        return <CreateCategoryForm />;
+      case "feedback":
+        return <FeedbackList />;
       default:
         return <DashboardOverview />;
     }
@@ -219,17 +228,68 @@ const Dashboard = () => {
                 </ListItem>
               </List>
             </Collapse>
+
+            {/* Phân loại Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("category")}>
+                <ListItemIcon>
+                  <ShoppingCartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Phân loại" />
+                {openDropdowns.category ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.category} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("category")}
+                  >
+                    <ListItemText primary="Danh sách phân loại" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("addCategory")}
+                  >
+                    <ListItemText primary="Thêm phân loại" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Đánh giá Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("feedback")}>
+                <ListItemIcon>
+                  <ShoppingCartIcon />
+                </ListItemIcon>
+                <ListItemText primary="Đánh giá" />
+                {openDropdowns.feedback ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.feedback} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("feedback")}
+                  >
+                    <ListItemText primary="Danh sách đánh giá" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
           </List>
         </Box>
       </Drawer>
-      <Box sx={{
-        marginLeft: "15%"
-      }}>
+      <Box
+        sx={{
+          marginLeft: "15%",
+        }}
+      >
         <Header />
       </Box>
-      <Box sx={{ padding: 3 }}>
-        {renderContent()}
-      </Box>
+      <Box sx={{ padding: 3 }}>{renderContent()}</Box>
     </>
   );
 };
