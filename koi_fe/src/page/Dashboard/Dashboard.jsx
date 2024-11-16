@@ -23,6 +23,8 @@ import AdminProductList from "./AdminProductList";
 import ConsignmentSaleList from "./ConsignmentSaleList";
 import ConsignmentCareList from "./ConsignmentCareList";
 import CreateProductForm from "./Forms/CreateProductForm";
+import Header from '../../component/Header/Header';
+import Footer from '../../component/Footer/Footer';
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -141,7 +143,7 @@ const Dashboard = () => {
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemButton
-                    onClick={() => setSelectedSection("productDetail1")}
+                    onClick={() => setSelectedSection("addProduct")}
                   >
                     <ListItemText primary="Thêm sản phẩm" />
                   </ListItemButton>
@@ -217,8 +219,14 @@ const Dashboard = () => {
           </List>
         </Box>
       </Drawer>
-
-      {renderContent()}
+      <Box sx={{
+        marginLeft: "15%"
+      }}>
+        <Header />
+      </Box>
+      <Box sx={{ padding: 3 }}>
+        {renderContent()}
+      </Box>
     </>
   );
 };

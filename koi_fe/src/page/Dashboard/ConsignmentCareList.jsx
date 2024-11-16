@@ -8,19 +8,40 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import ListAltIcon from "@mui/icons-material/ListAlt";
-import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import UpdateIcon from "@mui/icons-material/Update";
+import {
+  Box,
+  Typography,
+  Checkbox,
+  Button,
+  Modal,
+  TextField,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+} from "@mui/material";
 import { GET_ALL_FISH_CARE_ADMIN } from "../api/Queries/fishcare";
 import { formatMoney } from "../../utils/formatMoney";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 
 export default function ConsignmentCareList() {
-  const { data, error, loading } = useQuery(GET_ALL_FISH_CARE_ADMIN);
+  const {
+    data: getConsignments,
+    error,
+    loading,
+  } = useQuery(GET_ALL_FISH_CARE_ADMIN);
   const [selectedConsignments, setSelectedConsignments] = useState([]);
   const [selectedConsignment, setSelectedConsignment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [selectAll, setSelectAll] = useState(false);
+  const consignments = getConsignments?.consigmentRaisings || [];
 
-  const consignments = data?.consigmentRaisings || [];
-  console.log(data);
+  const [editableData, setEditableData] = useState({
+    consignmentPrice: "",
+    status: "",
+  });
 
   const handleCheckboxChange = (consignmentId) => {
     setSelectedConsignments((prevSelected) =>
@@ -40,7 +61,35 @@ export default function ConsignmentCareList() {
 
   const handleRowClick = (consignment) => {
     setSelectedConsignment(consignment);
+    setEditableData({
+      status: consignment.status || "", // Đồng bộ trạng thái hiện tại
+      consignmentPrice: consignment.consignmentPrice || "",
+    });
     setOpenModal(true);
+  };
+
+  const handleInputChange = (field, value) => {
+    setEditableData((prevData) => ({
+      ...prevData,
+      [field]: value,
+    }));
+  };
+  const handleDelete = () => {
+    console.log("Deleting consignments with IDs:", selectedConsignments);
+    const updatedConsignments = consignments.filter(
+      (consignment) => !selectedConsignments.includes(consignment.id)
+    );
+    getConsignments.consignmentSales = updatedConsignments;
+    setSelectedConsignments([]);
+    setSelectAll(false);
+  };
+
+  const handleUpdate = () => {
+    console.log("Dữ liệu đã chỉnh sửa:", editableData);
+
+    // Thêm API hoặc logic cập nhật
+
+    handleCloseModal();
   };
 
   const handleCloseModal = () => {
@@ -58,6 +107,8 @@ export default function ConsignmentCareList() {
           display: "flex",
           justifyContent: "space-between",
           mb: 2,
+          marginLeft: "15%",
+          marginTop: "5%",
         }}
       >
         <Typography variant="h4">
@@ -69,7 +120,14 @@ export default function ConsignmentCareList() {
           </Button>
         )}
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          marginLeft: "15%",
+          marginTop: "2%",
+          width: "85%",
+        }}
+      >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -136,7 +194,6 @@ export default function ConsignmentCareList() {
         </Table>
       </TableContainer>
 
-      {/* Modal */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -153,111 +210,177 @@ export default function ConsignmentCareList() {
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
-            p: 4,
             borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          {selectedConsignment && (
-            <>
-              <Typography
-                id="modal-title"
-                variant="h5"
-                component="h2"
-                sx={{ mb: 2, fontWeight: "bold" }}
-              >
-                Chi Tiết Yêu Cầu Ký Gửi Nuôi
-              </Typography>
+          {/* Nút Đóng */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <Button
+              variant="text"
+              onClick={handleCloseModal}
+              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
 
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Thông Tin Cá
+          {/* Nội dung cuộn */}
+          <Box
+            sx={{
+              p: 2,
+              overflowY: "auto",
+              maxHeight: "70vh", // Chiều cao tối đa
+            }}
+          >
+            {selectedConsignment && (
+              <>
+                <Typography
+                  id="modal-title"
+                  variant="h5"
+                  component="h2"
+                  sx={{ mb: 2, fontWeight: "bold" }}
+                >
+                  Chi Tiết Yêu Cầu Ký Gửi Nuôi
                 </Typography>
-                {selectedConsignment.product?.photo?.image?.publicUrl && (
-                  <Box
-                    component="img"
-                    src={selectedConsignment.product.photo.image.publicUrl}
-                    alt={selectedConsignment.product.name}
-                    sx={{
-                      width: "100%",
-                      maxHeight: 200,
-                      objectFit: "contain",
-                      borderRadius: 2,
-                      mb: 2,
-                    }}
-                  />
-                )}
-                <Typography>
-                  <strong>Tên:</strong>{" "}
-                  {selectedConsignment.product?.name || "Không rõ"}
-                </Typography>
-                <Typography>
-                  <strong>Loại:</strong>{" "}
-                  {selectedConsignment.product?.category?.name ||
-                    "Chưa cập nhật"}
-                </Typography>
-                <Typography>
-                  <strong>Kích thước:</strong>{" "}
-                  {selectedConsignment.product?.size || "Chưa cập nhật"}
-                </Typography>
-                <Typography>
-                  <strong>Giới tính:</strong>{" "}
-                  {selectedConsignment.product?.sex || "Chưa cập nhật"}
-                </Typography>
-                <Typography>
-                  <strong>Mô tả:</strong>{" "}
-                  {selectedConsignment.product?.description || "Không có"}
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Thông Tin Ký Gửi
-                </Typography>
-                <Typography>
-                  <strong>Ngày | Giờ Ký Gửi:</strong>{" "}
-                  {formatDate(
-                    selectedConsignment.consignmentDate.split("T")[0]
-                  )}{" "}
-                  {" | "} {formatTime(selectedConsignment.consignmentDate)}
-                </Typography>
-                <Typography>
-                  <strong>Ngày | Giờ Kết Thúc:</strong>{" "}
-                  {formatDate(selectedConsignment.returnDate.split("T")[0])}{" "}
-                  {" | "} {formatTime(selectedConsignment.returnDate)}
-                </Typography>
-                <Typography>
-                  <strong>Giá Tiền:</strong>{" "}
-                  {selectedConsignment.consignmentPrice
-                    ? `${formatMoney(selectedConsignment.consignmentPrice)}`
-                    : "Chưa cập nhật"}
-                </Typography>
-                <Typography>
-                  <strong>Trạng Thái:</strong>{" "}
-                  {selectedConsignment.status || "Chưa cập nhật"}
-                </Typography>
-              </Box>
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Thông Tin Người Yêu Cầu
-                </Typography>
-                <Typography>
-                  <strong>Họ Tên:</strong>{" "}
-                  {selectedConsignment.user?.name || "Không rõ"}
-                </Typography>
-                <Typography>
-                  <strong>Email:</strong>{" "}
-                  {selectedConsignment.user?.email || "Không có"}
-                </Typography>
-                <Typography>
-                  <strong>Địa chỉ:</strong>{" "}
-                  {selectedConsignment.user?.address || "Không có"}
-                </Typography>
-                <Typography>
-                  <strong>Số Điện Thoại:</strong>{" "}
-                  {selectedConsignment.user?.phone || "Không có"}
-                </Typography>
-              </Box>
-            </>
-          )}
+
+                {/* Thông Tin Cá */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Cá
+                  </Typography>
+
+                  {/* Hiển thị Hình ảnh nếu có */}
+                  {selectedConsignment.product?.image?.publicUrl && (
+                    <Box
+                      component="img"
+                      src={selectedConsignment.product.image.publicUrl}
+                      alt={selectedConsignment.product.name}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 200,
+                        objectFit: "contain",
+                        borderRadius: 2,
+                        mb: 2,
+                      }}
+                    />
+                  )}
+
+                  <Typography>
+                    <strong>Tên:</strong>{" "}
+                    {selectedConsignment.product?.name || "Không rõ"}
+                  </Typography>
+                  <Typography>
+                    <strong>Loại:</strong>{" "}
+                    {selectedConsignment.product?.category?.name ||
+                      "Chưa cập nhật"}
+                  </Typography>
+                  <Typography>
+                    <strong>Kích thước:</strong>{" "}
+                    {selectedConsignment.product?.size || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography>
+                    <strong>Giới tính:</strong>{" "}
+                    {selectedConsignment.product?.sex || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography>
+                    <strong>Mô tả:</strong>{" "}
+                    {selectedConsignment.product?.description || "Không có"}
+                  </Typography>
+                </Box>
+
+                {/* Thông Tin Ký Gửi */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Ký Gửi
+                  </Typography>
+                  <Typography>
+                    <strong>Ngày Ký Gửi:</strong>{" "}
+                    {selectedConsignment.consignmentDate || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography>
+                    <strong>Ngày Kết Thúc:</strong>{" "}
+                    {selectedConsignment.returnDate || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography sx={{ mb: 2 }}>
+                    <strong>Giá tiền:</strong>{" "}
+                    {selectedConsignment.consignmentPrice || "Chưa cập nhật"}
+                  </Typography>
+
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel id="status-label" shrink>
+                      Trạng thái
+                    </InputLabel>
+                    <Select
+                      labelId="status-label"
+                      label="Trạng thái"
+                      value={editableData.status || ""}
+                      onChange={(e) =>
+                        handleInputChange("status", e.target.value)
+                      } // Ghi lại trạng thái đã chỉnh sửa
+                    >
+                      <MenuItem value="Đang xử lý">Đang xử lý</MenuItem>
+                      <MenuItem value="Đang chăm sóc">Đang chăm sóc</MenuItem>
+                      <MenuItem value="Đang giao hàng">Đang giao hàng</MenuItem>
+                      <MenuItem value="Đã hoàn thành">Đã hoàn thành</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+
+                {/* Thông Tin Người Yêu Cầu */}
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Người Yêu Cầu
+                  </Typography>
+                  <Typography>
+                    <strong>Họ Tên:</strong>{" "}
+                    {selectedConsignment.user?.name || "Không rõ"}
+                  </Typography>
+                  <Typography>
+                    <strong>Email:</strong>{" "}
+                    {selectedConsignment.user?.email || "Không có"}
+                  </Typography>
+                  <Typography>
+                    <strong>Địa chỉ:</strong>{" "}
+                    {selectedConsignment.user?.address || "Không có"}
+                  </Typography>
+                  <Typography>
+                    <strong>Số Điện Thoại:</strong>{" "}
+                    {selectedConsignment.user?.phone || "Không có"}
+                  </Typography>
+                </Box>
+              </>
+            )}
+          </Box>
+
+          {/* Nút Cập Nhật */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderTop: "1px solid #ddd",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ textTransform: "none", fontWeight: "bold" }}
+              onClick={() => console.log("Cập nhật thông tin")}
+            >
+              <UpdateIcon />
+              Cập Nhật
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </>
