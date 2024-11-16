@@ -16,6 +16,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import CategoryIcon from "@mui/icons-material/Category";
+import ArticleIcon from "@mui/icons-material/Article";
 import PersonIcon from "@mui/icons-material/Person";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -32,6 +33,8 @@ import AddUser from "./AddUser";
 import CategoryList from "./CategoryList";
 import CreateCategoryForm from "./Forms/CreateCategoryForm";
 import FeedbackList from "./FeedbackList";
+import ArticleList from "./ArticleList";
+import CreateArticleForm from "./Forms/CreateArticleForm";
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -74,6 +77,10 @@ const Dashboard = () => {
         return <CategoryList />;
       case "addCategory":
         return <CreateCategoryForm />;
+      case "article":
+        return <ArticleList />;
+      case "addArticle":
+        return <CreateArticleForm/>;
       case "feedback":
         return <FeedbackList />;
       default:
@@ -255,6 +262,35 @@ const Dashboard = () => {
                     onClick={() => setSelectedSection("addCategory")}
                   >
                     <ListItemText primary="Thêm phân loại" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </Collapse>
+
+            {/* Tin Tức Dropdown */}
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => toggleDropdown("news")}>
+                <ListItemIcon>
+                  <ArticleIcon />
+                </ListItemIcon>
+                <ListItemText primary="Tin Tức" />
+                {openDropdowns.news ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+            </ListItem>
+            <Collapse in={openDropdowns.news} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding sx={{ pl: 4 }}>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("article")}
+                  >
+                    <ListItemText primary="Danh sách tin tức" />
+                  </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => setSelectedSection("addArticle")}
+                  >
+                    <ListItemText primary="Thêm tin tức" />
                   </ListItemButton>
                 </ListItem>
               </List>
