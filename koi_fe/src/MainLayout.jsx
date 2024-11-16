@@ -30,6 +30,7 @@ function MainLayout() {
   return (
     <>
       {!isDashboardRoute && <Header />}
+      <Layout>
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
@@ -52,6 +53,7 @@ function MainLayout() {
         <Route path="/fishcareservice" element={<FishCareService />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
+      </Layout>
       {!isDashboardRoute && <Footer />}
     </>
   );

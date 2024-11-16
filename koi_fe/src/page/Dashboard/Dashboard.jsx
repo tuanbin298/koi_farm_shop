@@ -143,7 +143,7 @@ const Dashboard = () => {
                 </ListItem>
                 <ListItem disablePadding>
                   <ListItemButton
-                    onClick={() => setSelectedSection("productDetail1")}
+                    onClick={() => setSelectedSection("addProduct")}
                   >
                     <ListItemText primary="Thêm sản phẩm" />
                   </ListItemButton>
@@ -219,14 +219,14 @@ const Dashboard = () => {
           </List>
         </Box>
       </Drawer>
-
-      <Box  sx={{ flexGrow: 1, marginLeft: "15%" }}>
-                <Header />
-                <Box sx={{ padding: 3 }}>
-                    {renderContent()}
-                </Box>
-                <Footer/>
-            </Box>
+      <Box sx={{
+        marginLeft: "15%"
+      }}>
+        <Header />
+      </Box>
+      <Box sx={{ padding: 3 }}>
+        {renderContent()}
+      </Box>
     </>
   );
 };
