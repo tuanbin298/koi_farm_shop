@@ -61,6 +61,52 @@ export const GET_ALL_CONSIGNMENT_SALES = gql`
   }
 `;
 
+export const GET_ALL_CONSIGNMENT_SALES_ADMIN = gql`
+  query ConsignmentSales {
+    consignmentSales {
+      id
+      name
+      generic
+      description
+      medical
+      category
+      birth
+      price
+      sex
+      size
+      status
+      slug
+      photo {
+        id
+        image {
+          publicUrl
+        }
+      }
+      request {
+        user {
+          id
+          name
+        }
+        staff {
+          name
+        }
+        createAt
+        status
+        description
+        statusHistory {
+          changeTime
+          changedBy {
+            name
+          }
+          status
+          id
+        }
+      }
+      estimatedPrice
+    }
+  }
+`;
+
 export const GET_CONSIGNMENT_SALES_BY_SLUG = gql`
   query ConsignmentSales($where: ConsignmentSaleWhereInput!) {
     consignmentSales(where: $where) {
