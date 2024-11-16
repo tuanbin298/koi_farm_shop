@@ -173,7 +173,7 @@ const CheckoutForm = () => {
           variables: {
             data: {
               user: { connect: { id: userId } },
-              price: parseInt(totalPrice) + parseInt(totalCarePrice),
+              price: parseInt(totalPrice) + (totalCarePrice ? parseInt(totalCarePrice) : 0),
               address: orderAddress,
               transaction: paymentMethod.id,
               paymentMethod: location.state.paymentMethod,
