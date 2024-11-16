@@ -22,7 +22,7 @@ export const GET_ALL_PRODUCTS = gql`
 `;
 
 export const GET_ALL_PRODUCTS_ADMIN = gql`
-query GetAllProducts {
+  query GetAllProducts {
     products {
       id
       name
@@ -34,8 +34,10 @@ query GetAllProducts {
       origin
       generic
       slug
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
       status
       category {
@@ -43,7 +45,7 @@ query GetAllProducts {
       }
     }
   }
-`
+`;
 
 // Query để lấy sản phẩm theo loại
 export const GET_PRODUCT_BY_CATEGORY = gql`

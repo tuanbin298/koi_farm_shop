@@ -49,8 +49,10 @@ export const GET_ALL_FISH_CARE_ADMIN = gql`
         }
         description
         generic
-        image {
-          publicUrl
+        photo {
+          image {
+            publicUrl
+          }
         }
         origin
         price

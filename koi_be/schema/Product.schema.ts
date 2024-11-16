@@ -98,6 +98,10 @@ const Product = list({
       label: "Hình ảnh",
       cloudinary,
     }),
+    photo: relationship({
+      label: "Hình ảnh",
+      ref: "Gallery.ownProduct",
+    }),
     category: relationship({
       label: "Loại",
       ref: "Category",
