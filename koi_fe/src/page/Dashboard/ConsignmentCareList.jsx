@@ -107,6 +107,8 @@ export default function ConsignmentCareList() {
           display: "flex",
           justifyContent: "space-between",
           mb: 2,
+          marginLeft: "15%",
+          marginTop: "5%",
         }}
       >
         <Typography variant="h4">
@@ -118,7 +120,14 @@ export default function ConsignmentCareList() {
           </Button>
         )}
       </Box>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          marginLeft: "15%",
+          marginTop: "2%",
+          width: "85%",
+        }}
+      >
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
