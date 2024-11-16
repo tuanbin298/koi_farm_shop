@@ -20,6 +20,8 @@ import DashboardOverview from './DashboardOverview';
 import OrderList from './OrderList';
 import AdminProductList from './AdminProductList';
 import CreateProductForm from './Forms/CreateProductForm';
+import Header from '../../component/Header/Header';
+import Footer from '../../component/Footer/Footer';
 const drawerWidth = 240;
 
 const Dashboard = () => {
@@ -58,6 +60,7 @@ const Dashboard = () => {
 
     return (
         <>
+        
             <Drawer
                 variant="permanent"
                 sx={{
@@ -147,8 +150,13 @@ const Dashboard = () => {
                     </List>
                 </Box>
             </Drawer>
-
-            {renderContent()}
+            <Box  sx={{ flexGrow: 1, marginLeft: "15%" }}>
+                <Header />
+                <Box sx={{ padding: 3 }}>
+                    {renderContent()}
+                </Box>
+                <Footer/>
+            </Box>
         </>
     );
 };
