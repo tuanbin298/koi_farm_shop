@@ -18,7 +18,7 @@ import {
   Typography,
   ListItemAvatar,
   Grid,
-  Pagination
+  Pagination,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -61,9 +61,9 @@ export default function Checkout() {
   // Define paginatedItems with fallback in case cartItems is not loaded
   const paginatedItems =
     cartItems?.cartItems?.slice(startIndex, endIndex) || [];
-    const handlePageChange = (event, value) => {
-      setPage(value);
-    };
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   // Fetch initial province data and handle passed location state
   useEffect(() => {
     axios.get("https://provinces.open-api.vn/api/?depth=1").then((response) => {
@@ -144,9 +144,7 @@ export default function Checkout() {
     setOrderData({ ...orderData, ward: selectedOption.label });
   };
 
-  const checkoutOptions = [
-    { label: "Thanh toán hết", value: "all" },
-  ];
+  const checkoutOptions = [{ label: "Thanh toán hết", value: "all" }];
 
   const handleInputChange = (e) => {
     setOrderData({
@@ -329,7 +327,7 @@ export default function Checkout() {
                         <Image
                           width={75}
                           src={
-                            item.product[0]?.image?.publicUrl ||
+                            item.product[0]?.photo.image?.publicUrl ||
                             item.consignmentProduct[0]?.photo?.image
                               ?.publicUrl ||
                             ""
@@ -351,15 +349,15 @@ export default function Checkout() {
                   </div>
                 ))}
                 <Box display="flex" justifyContent="center" marginTop={2}>
-                <Pagination
-                  count={Math.ceil(
-                    (cartItems?.cartItems?.length || 0) / itemsPerPage
-                  )}
-                  page={page}
-                  onChange={handlePageChange}
-                  color="primary"
-                />
-              </Box>
+                  <Pagination
+                    count={Math.ceil(
+                      (cartItems?.cartItems?.length || 0) / itemsPerPage
+                    )}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
                 {cartItems?.cartItems?.length === 0 && (
                   <Typography variant="body2">Giỏ hàng trống</Typography>
                 )}

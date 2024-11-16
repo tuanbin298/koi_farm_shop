@@ -52,13 +52,17 @@ const CartPage = () => {
   }, [userId, refetchItems]);
 
   useEffect(() => {
-    const storedProducts = JSON.parse(localStorage.getItem(`selectedProducts_${userId}`));
+    const storedProducts = JSON.parse(
+      localStorage.getItem(`selectedProducts_${userId}`)
+    );
     if (storedProducts) setSelectedProducts(storedProducts);
 
     const storedDates = JSON.parse(localStorage.getItem(`dates_${userId}`));
     if (storedDates) setDates(storedDates);
 
-    const storedTotalCarePrice = localStorage.getItem(`totalCarePrice_${userId}`);
+    const storedTotalCarePrice = localStorage.getItem(
+      `totalCarePrice_${userId}`
+    );
     setTotalCarePrice(storedTotalCarePrice);
 
     const storedDepositsArray = JSON.parse(
@@ -195,7 +199,8 @@ const CartPage = () => {
                               <Image
                                 width={200}
                                 src={
-                                  cartItem.product[0]?.image?.publicUrl || ""
+                                  cartItem.product[0]?.photo.image?.publicUrl ||
+                                  ""
                                 }
                               />
                             </TableCell>
@@ -338,21 +343,21 @@ const CartPage = () => {
                     </Button>
                 </Box>
               )} */}
-               <Box display="flex" justifyContent="flex-end" marginTop={2}>
-                  {Object.values(depositFields).some(
-                    (isSelected) => isSelected
-                  ) ? (
-                    handleProceedToFishCareService()
-                  ) : (
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={handleToCheckOut}
-                    >
-                      Tiến hành thanh toán <FaShoppingCart />
-                    </Button>
-                  )}
-                </Box>
+              <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                {Object.values(depositFields).some(
+                  (isSelected) => isSelected
+                ) ? (
+                  handleProceedToFishCareService()
+                ) : (
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleToCheckOut}
+                  >
+                    Tiến hành thanh toán <FaShoppingCart />
+                  </Button>
+                )}
+              </Box>
             </>
           )}
         </section>

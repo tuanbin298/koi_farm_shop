@@ -132,8 +132,8 @@ export default function AdminProductList() {
                   {formatMoney(product.price)}
                 </TableCell>
                 <TableCell>{product.generic}</TableCell>
-                <TableCell>{product.category.name}</TableCell>
-                <TableCell>{product.status}</TableCell>
+                <TableCell>{product?.category?.name}</TableCell>
+                <TableCell>{product?.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>

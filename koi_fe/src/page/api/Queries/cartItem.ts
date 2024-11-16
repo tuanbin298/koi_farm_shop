@@ -6,8 +6,10 @@ export const GET_CART_ITEMS = gql`
       id
       quantity
       product {
-        image {
-          publicUrl
+        photo {
+          image {
+            publicUrl
+          }
         }
         name
         price
@@ -23,7 +25,7 @@ export const GET_CART_ITEMS = gql`
         }
         id
       }
-        isStored
+      isStored
     }
   }
 `;
