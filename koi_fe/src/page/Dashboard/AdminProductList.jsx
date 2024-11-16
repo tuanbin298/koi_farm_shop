@@ -19,6 +19,7 @@ export default function AdminProductList() {
     error,
     loading,
   } = useQuery(GET_ALL_PRODUCTS_ADMIN);
+  console.log(getProducts);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const products = getProducts?.products || [];
@@ -121,7 +122,10 @@ export default function AdminProductList() {
                   />
                 </TableCell>
                 <TableCell>
-                  <Image width={100} src={product.image?.publicUrl || ""} />{" "}
+                  <Image
+                    width={100}
+                    src={product.photo?.image?.publicUrl || ""}
+                  />{" "}
                   {product.name}
                 </TableCell>
                 <TableCell component="th" scope="row">

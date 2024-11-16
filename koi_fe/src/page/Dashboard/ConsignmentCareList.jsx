@@ -20,6 +20,7 @@ export default function ConsignmentCareList() {
   const [openModal, setOpenModal] = useState(false);
 
   const consignments = data?.consigmentRaisings || [];
+  console.log(data);
 
   const handleCheckboxChange = (consignmentId) => {
     setSelectedConsignments((prevSelected) =>
@@ -171,10 +172,10 @@ export default function ConsignmentCareList() {
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                   Thông Tin Cá
                 </Typography>
-                {selectedConsignment.product?.image?.publicUrl && (
+                {selectedConsignment.product?.photo?.image?.publicUrl && (
                   <Box
                     component="img"
-                    src={selectedConsignment.product.image.publicUrl}
+                    src={selectedConsignment.product.photo.image.publicUrl}
                     alt={selectedConsignment.product.name}
                     sx={{
                       width: "100%",
