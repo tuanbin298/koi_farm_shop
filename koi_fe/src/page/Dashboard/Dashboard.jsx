@@ -14,6 +14,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import CategoryIcon from "@mui/icons-material/Category";
 import PersonIcon from "@mui/icons-material/Person";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -233,7 +235,7 @@ const Dashboard = () => {
             <ListItem disablePadding>
               <ListItemButton onClick={() => toggleDropdown("category")}>
                 <ListItemIcon>
-                  <ShoppingCartIcon />
+                  <CategoryIcon />
                 </ListItemIcon>
                 <ListItemText primary="Phân loại" />
                 {openDropdowns.category ? <ExpandLess /> : <ExpandMore />}
@@ -262,7 +264,7 @@ const Dashboard = () => {
             <ListItem disablePadding>
               <ListItemButton onClick={() => toggleDropdown("feedback")}>
                 <ListItemIcon>
-                  <ShoppingCartIcon />
+                  <FeedbackIcon />
                 </ListItemIcon>
                 <ListItemText primary="Đánh giá" />
                 {openDropdowns.feedback ? <ExpandLess /> : <ExpandMore />}
