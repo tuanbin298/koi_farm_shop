@@ -231,7 +231,7 @@ export const roles = [
     canManageOrder: false,
     canManageFeedback: true,
     canManageCart: false,
-    canManageConsigment: false,
+    canManageConsignment: false,
     canManageRequest: true,
     user: {
       connect: [
@@ -253,7 +253,7 @@ export const roles = [
     canManageOrder: true,
     canManageFeedback: true,
     canManageCart: true,
-    canManageConsigment: true,
+    canManageConsignment: true,
     canManageRequest: true,
   },
   {
@@ -265,7 +265,7 @@ export const roles = [
     canManageOrder: false,
     canManageFeedback: false,
     canManageCart: false,
-    canManageConsigment: false,
+    canManageConsignment: false,
     canManageRequest: false,
   },
 ];
