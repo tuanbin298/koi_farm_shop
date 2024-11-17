@@ -1,7 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { text, relationship, integer, select } from "@keystone-6/core/fields";
-import { cloudinaryImage } from "@keystone-6/cloudinary";
 import { permissions } from "../auth/access";
 import "dotenv/config";
 import buildSlug from "../utils/buildSlug";

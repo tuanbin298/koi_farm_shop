@@ -447,12 +447,8 @@ type Article {
   id: ID!
   name: String
   content: String
-  link: Article_link_Document
+  links: String
   image: CloudinaryImage_File
-}
-
-type Article_link_Document {
-  document(hydrateRelationships: Boolean! = false): JSON!
 }
 
 type CloudinaryImage_File {
@@ -514,18 +510,20 @@ input ArticleWhereInput {
   id: IDFilter
   name: StringFilter
   content: StringFilter
+  links: StringFilter
 }
 
 input ArticleOrderByInput {
   id: OrderDirection
   name: OrderDirection
   content: OrderDirection
+  links: OrderDirection
 }
 
 input ArticleUpdateInput {
   name: String
   content: String
-  link: JSON
+  links: String
   image: Upload
 }
 
@@ -540,7 +538,7 @@ input ArticleUpdateArgs {
 input ArticleCreateInput {
   name: String
   content: String
-  link: JSON
+  links: String
   image: Upload
 }
 
