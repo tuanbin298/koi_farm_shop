@@ -12,8 +12,7 @@ import {
   Typography,
   Button,
   Pagination,
-  Tabs,
-  Tab,
+  CircularProgress,
 } from "@mui/material";
 import { FaArrowLeft, FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,7 +21,6 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { DELETE_CART_ITEM } from "../api/Mutations/deletecartItem";
 import { formatMoney } from "../../utils/formatMoney";
-import { GET_FISH_CARE, GET_ALL_FISH_CARE } from "../api/Queries/fishcare";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -30,7 +28,6 @@ const CartPage = () => {
   const userId = localStorage.getItem("id");
   const [depositFields, setDepositFields] = useState({});
   const [page, setPage] = useState(1);
-  const [tab, setTab] = useState(0); // Current tab
   const [isDeleting, setIsDeleting] = useState(false);
   const itemsPerPage = 3;
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -45,118 +42,59 @@ const CartPage = () => {
     refetch: refetchItems,
   } = useQuery(GET_CART_ITEMS, {
     variables: { where: { user: { id: { equals: userId } } } },
+    fetchPolicy: "network-only",
   });
-  console.log(data);
-  const { data: consignedFish, refetch: refetchConsigns } = useQuery(
-    GET_ALL_FISH_CARE,
-    {
-      variables: {
-        where: {
-          user: {
-            id: {
-              equals: userId,
-            },
-          },
-        },
-      },
-    }
-  );
-  console.log(consignedFish);
-  const consignedIds = consignedFish?.consigmentRaisings
-    ? consignedFish.consigmentRaisings.map((item) => item.product.id)
-    : [];
 
-  const consignedFishIds = consignedFish?.consigmentRaisings
-    ? consignedFish.consigmentRaisings.map((item) => item.id)
-    : [];
-
-  console.log(consignedIds);
-  console.log(consignedFishIds);
   useEffect(() => {
-    refetchItems();
-  }, [refetchItems]);
-  useEffect(() => {
-    refetchConsigns();
-  }, [refetchConsigns]);
-  useEffect(() => {
-    // Retrieve and parse selectedProducts from localStorage
-    const storedProducts = JSON.parse(localStorage.getItem("selectedProducts"));
-    if (storedProducts) {
-      setSelectedProducts(storedProducts);
+    if (userId) {
+      refetchItems(); // Fetch new user's cart items on user change
     }
+  }, [userId, refetchItems]);
 
-    const storedDates = JSON.parse(localStorage.getItem("dates"));
-    if (storedDates) {
-      setDates(storedDates);
-    }
+  useEffect(() => {
+    const storedProducts = JSON.parse(localStorage.getItem(`selectedProducts_${userId}`));
+    if (storedProducts) setSelectedProducts(storedProducts);
 
-    const storedTotalCarePrice = localStorage.getItem("totalCarePrice")
+    const storedDates = JSON.parse(localStorage.getItem(`dates_${userId}`));
+    if (storedDates) setDates(storedDates);
+
+    const storedTotalCarePrice = localStorage.getItem(`totalCarePrice_${userId}`);
     setTotalCarePrice(storedTotalCarePrice);
 
-    const storedDepositsArray = JSON.parse(localStorage.getItem("depositsArray"));
-    if (storedDepositsArray) {
-      setDepositsArray(storedDepositsArray);
-    }
+    const storedDepositsArray = JSON.parse(
+      localStorage.getItem(`depositsArray_${userId}`)
+    );
+    if (storedDepositsArray) setDepositsArray(storedDepositsArray);
   }, []);
-  console.log(selectedProducts);
-  console.log(dates);
-  console.log(totalCarePrice);
-  console.log(depositsArray);
 
-  // Separate cart items into "Farm Koi" and "Consignment Koi"
   const farmKoiItems =
     data?.cartItems?.filter((item) => item.product?.length > 0) || [];
   const consignmentKoiItems =
     data?.cartItems?.filter((item) => item.consignmentProduct?.length > 0) ||
     [];
 
-  // Map through cart items and consignment raisings to find consigned products
+  const farmTotal = farmKoiItems.reduce(
+    (sum, item) => sum + (item.product[0]?.price || 0),
+    0
+  );
+  const consignmentTotal = consignmentKoiItems.reduce(
+    (sum, item) => sum + (item.consignmentProduct[0]?.price || 0),
+    0
+  );
+  const totalPrice = farmTotal + consignmentTotal;
 
-  // Determine current items based on the selected tab
-  const currentItems = tab === 0 ? farmKoiItems : consignmentKoiItems;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedFarmItems = farmKoiItems.slice(startIndex, endIndex) || [];
+  const paginatedConsignmentItems =
+    consignmentKoiItems.slice(startIndex, endIndex) || [];
 
-  // Calculate total price for the current tab's items
-  const totalPrice = currentItems.reduce((sum, cartItem) => {
-    const price =
-      cartItem.product.length > 0
-        ? cartItem.product[0].price
-        : cartItem.consignmentProduct[0].price;
-    return sum + price;
-  }, 0);
-
-  const consignedCartItemIds = [];
-  if (data?.cartItems && consignedFish?.consigmentRaisings) {
-    data.cartItems.forEach((cartItem) => {
-      const productId = cartItem.product?.[0]?.id; // Check if product exists and has an id
-      const isConsigned = consignedFish.consigmentRaisings.some(
-        (consignedItem) => consignedItem.product?.id === productId // Check if consigned item has product id
-      );
-
-      if (isConsigned && productId) {
-        consignedCartItemIds.push(cartItem.id);
-      }
-    });
-  }
-  // Check if a specific cart item is consigned based on its unique cart item ID
-  const handleCheckedConsign = (cartItem) => {
-    // Extract IDs from selectedProducts
-    const selectedProductIds = selectedProducts.map(product => product.id);
-
-    // Check if cartItem.id is in selectedProductIds
-    return selectedProductIds.includes(cartItem.id);
-  };
-  {/* handle to checkout with consigned products */ }
   const handleToCheckOut = () => {
     navigate("/checkout", {
-      state: {
-        totalCarePrice: totalCarePrice,
-        selectedProducts: selectedProducts,
-        dates: dates,
-        depositsArray: depositsArray
-      }
-    })
-  }
-  // Handle delete cart item
+      state: { totalCarePrice, selectedProducts, dates, depositsArray },
+    });
+  };
+
   const handleDelete = async (cartItemId) => {
     try {
       setIsDeleting(true);
@@ -170,31 +108,14 @@ const CartPage = () => {
     }
   };
 
-  // Toggle deposit selection
   const handleDepositToggle = (productId) => {
     setDepositFields((prev) => ({ ...prev, [productId]: !prev[productId] }));
   };
 
-  // Handle pagination page change
   const handlePageChange = (event, value) => {
     setPage(value);
   };
 
-  // Pagination logic
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = currentItems.slice(startIndex, endIndex) || [];
-
-  if (loading) return <p>Đang tải giỏ hàng...</p>;
-  if (error) return <p>Lỗi khi tải giỏ hàng!</p>;
-
-  // Handle tab change
-  const handleTabChange = (event, newTab) => {
-    setTab(newTab);
-    setPage(1); // Reset to first page on tab change
-  };
-
-  // Handle proceed to fish care service
   const handleProceedToFishCareService = () => {
     const selectedProducts =
       data?.cartItems?.filter((item) => depositFields[item.id]) || [];
@@ -205,6 +126,11 @@ const CartPage = () => {
         </Button>
       </Link>
     );
+  };
+
+  const handleCheckedConsign = (cartItem) => {
+    const selectedProductIds = selectedProducts.map((product) => product.id);
+    return selectedProductIds.includes(cartItem.id);
   };
 
   return (
@@ -224,111 +150,211 @@ const CartPage = () => {
         <section>
           <h2>Giỏ hàng</h2>
 
-          {/* Tabs for Farm Koi and Consignment Koi */}
-          <Tabs value={tab} onChange={handleTabChange} centered>
-            <Tab label="Cá Koi Trang trại" />
-            <Tab label="Cá Koi Ký gửi" />
-          </Tabs>
+          {loading ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              mt={2}
+            >
+              <CircularProgress color="primary" />
+              <Typography variant="h6" style={{ marginLeft: 10 }}>
+                Đang tải giỏ hàng...
+              </Typography>
+            </Box>
+          ) : error ? (
+            <Typography variant="h6" align="center" color="error">
+              Lỗi khi tải giỏ hàng!
+            </Typography>
+          ) : farmKoiItems.length === 0 && consignmentKoiItems.length === 0 ? (
+            <Typography variant="h6" align="center" color="textSecondary">
+              Giỏ hàng của bạn hiện đang trống.
+            </Typography>
+          ) : (
+            <>
+              {/* Conditionally display each section if items are present */}
+              {farmKoiItems.length > 0 && (
+                <>
+                  <Typography variant="h6" gutterBottom>
+                    Cá Koi Trang trại
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="farm cart table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Sản phẩm</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell align="center">Ký gửi nuôi</TableCell>
+                          <TableCell align="center">Thành tiền (VND)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {farmKoiItems.map((cartItem) => (
+                          <TableRow key={cartItem.id}>
+                            <TableCell>
+                              <Image
+                                width={200}
+                                src={
+                                  cartItem.product[0]?.image?.publicUrl || ""
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              {cartItem.product[0]?.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              <Checkbox
+                                checked={
+                                  cartItem.isStored ||
+                                  depositFields[cartItem.id] ||
+                                  false
+                                }
+                                disabled={cartItem.isStored}
+                                onChange={() =>
+                                  handleDepositToggle(cartItem.id)
+                                }
+                              />
+                              <p>Ký gửi nuôi</p>
+                            </TableCell>
+                            <TableCell align="center">
+                              {formatMoney(cartItem.product[0]?.price)}
+                              <Button
+                                variant="contained"
+                                color="error"
+                                style={{ marginLeft: "15%" }}
+                                onClick={() => handleDelete(cartItem.id)}
+                                // disabled={loading || isDeleting}
+                              >
+                                Xóa
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </>
+              )}
 
-          <TableContainer component={Paper}>
-            <Table aria-label="cart table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Sản phẩm</TableCell>
-                  <TableCell></TableCell>
-                  {tab === 0 && (
-                    <TableCell align="center">Ký gửi nuôi</TableCell>
+              {consignmentKoiItems.length > 0 && (
+                <>
+                  <Typography variant="h6" gutterBottom>
+                    Cá Koi Ký gửi
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table aria-label="consignment cart table">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Sản phẩm</TableCell>
+                          <TableCell></TableCell>
+                          <TableCell align="center">Thành tiền (VND)</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {consignmentKoiItems.map((cartItem) => (
+                          <TableRow key={cartItem.id}>
+                            <TableCell>
+                              <Image
+                                width={200}
+                                src={
+                                  cartItem.consignmentProduct[0]?.photo?.image
+                                    ?.publicUrl || ""
+                                }
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              {cartItem.consignmentProduct[0]?.name}
+                            </TableCell>
+                            <TableCell align="center">
+                              {formatMoney(
+                                cartItem.consignmentProduct[0]?.price
+                              )}
+                              <Button
+                                variant="contained"
+                                color="error"
+                                style={{ marginLeft: "15%" }}
+                                onClick={() => handleDelete(cartItem.id)}
+                                // disabled={loading || isDeleting}
+                              >
+                                Xóa
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </>
+              )}
+
+              <Box display="flex" justifyContent="center" marginTop={2}>
+                {/* <Pagination
+                  count={Math.ceil(
+                    (farmKoiItems.length + consignmentKoiItems.length) /
+                      itemsPerPage
                   )}
-                  <TableCell align="center">Thành tiền (VND)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedItems.map((cartItem) => (
-                  <TableRow key={cartItem.id}>
-                    <TableCell>
-                      <Image
-                        width={200}
-                        src={
-                          cartItem.product.length > 0
-                            ? cartItem.product[0].image?.publicUrl || ""
-                            : cartItem.consignmentProduct[0]?.photo?.image
-                              ?.publicUrl || ""
-                        }
-                      />
-                    </TableCell>
-                    <TableCell align="center">
-                      {cartItem.product.length > 0
-                        ? cartItem.product[0]?.name
-                        : cartItem.consignmentProduct[0]?.name}
-                    </TableCell>
-                    {tab === 0 && (
-                      <TableCell align="center">
-                        <Checkbox
-                          checked={handleCheckedConsign(cartItem) || depositFields[cartItem.id] || false}
-                          disabled={handleCheckedConsign(cartItem)}
-                          onChange={() => handleDepositToggle(cartItem.id)}
-                        />
-                        <p>Ký gửi nuôi</p>
-                      </TableCell>
-                    )}
-                    <TableCell align="center">
-                      {formatMoney(
-                        cartItem.product.length > 0
-                          ? cartItem.product[0]?.price
-                          : cartItem.consignmentProduct[0]?.price
-                      )}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        style={{ marginLeft: "15%" }}
-                        onClick={() => handleDelete(cartItem.id)}
-                        disabled={loading || isDeleting}
-                      >
-                        Xóa
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                /> */}
+              </Box>
 
-          {/* Pagination Controls */}
-          <Box display="flex" justifyContent="center" marginTop={2}>
-            <Pagination
-              count={Math.ceil(currentItems.length / itemsPerPage)}
-              page={page}
-              onChange={handlePageChange}
-              color="primary"
-            />
-          </Box>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="flex-end"
+                padding={2}
+              >
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Tổng tiền
+                </Typography>
+                <Typography variant="h5" color="textSecondary">
+                  {formatMoney(totalPrice)}
+                </Typography>
+              </Box>
 
-          {/* Total Price Display */}
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="flex-end"
-            padding={2}
-          >
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Tổng tiền
-            </Typography>
-            <Typography variant="h5" color="textSecondary">
-              {formatMoney(totalPrice)}
-            </Typography>
-          </Box>
-
-          {/* Proceed to Checkout or Fish Care Service */}
-          <Box display="flex" justifyContent="flex-end" marginTop={2}>
-            {tab === 0 &&
-              Object.values(depositFields).some((isSelected) => isSelected) ? (
-              handleProceedToFishCareService()
-            ) : (
-              <Button variant="contained" color="success" onClick={handleToCheckOut}>
-                Tiến hành thanh toán <FaShoppingCart />
-              </Button>
-            )}
-          </Box>
+              {/* {(consignmentKoiItems.length > 0 ||
+                paginatedConsignmentItems.length > 0) && (
+                <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                  {Object.values(depositFields).some(
+                    (isSelected) => isSelected
+                  ) ? (
+                    handleProceedToFishCareService()
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
+                  )}
+                  <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
+                </Box>
+              )} */}
+               <Box display="flex" justifyContent="flex-end" marginTop={2}>
+                  {Object.values(depositFields).some(
+                    (isSelected) => isSelected
+                  ) ? (
+                    handleProceedToFishCareService()
+                  ) : (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleToCheckOut}
+                    >
+                      Tiến hành thanh toán <FaShoppingCart />
+                    </Button>
+                  )}
+                </Box>
+            </>
+          )}
         </section>
       </main>
     </div>

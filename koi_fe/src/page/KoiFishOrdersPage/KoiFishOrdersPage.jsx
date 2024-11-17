@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
-import { GET_ORDERS } from '../api/Queries/order';
-import { gql, useQuery } from '@apollo/client';
-import { Table, Collapse, Button, Spinner, Alert, Modal, Form } from 'react-bootstrap';
-import { formatMoney } from '../../utils/formatMoney';
+import React, { useState } from "react";
+import { GET_ORDERS } from "../api/Queries/order";
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  Table,
+  Button,
+  Spinner,
+  Alert,
+  Modal,
+  Form,
+  Card,
+} from "react-bootstrap";
+import { formatMoney } from "../../utils/formatMoney";
 import "./KoiFishOrdersPage.css";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaPaperPlane } from "react-icons/fa";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
 import toast from "react-hot-toast";
-import { useMutation } from "@apollo/client";
 
 const KoiFishOrdersPage = () => {
   const userId = localStorage.getItem("id");
@@ -18,10 +25,9 @@ const KoiFishOrdersPage = () => {
           id: {
             equals: userId,
           },
-        }
-
+        },
       },
-    }, // Adjust filters as needed
+    },
   });
 
   const [expandedOrder, setExpandedOrder] = useState(null);
@@ -80,8 +86,6 @@ const KoiFishOrdersPage = () => {
     } catch (err) {
       toast.error(`Lỗi khi đánh giá: ${err.message}`);
     }
-
-    console.log("Customer feedback:", feedback);
   };
 
   if (loading) return <Spinner animation="border" variant="primary" />;
@@ -89,41 +93,58 @@ const KoiFishOrdersPage = () => {
 
   const orders = data.orders;
 
+  const hasCompletedOrder = orders.some(order => order.status === "Hoàn thành đơn hàng");
+
   return (
-    <div className="container mt-4">
+    <div className="order container mt-4">
       <h2>ĐƠN HÀNG CỦA BẠN</h2>
       <Table striped bordered hover>
         <thead>
           <tr>
             <th>Mã đơn</th>
             <th>Ngày mua</th>
-            <th>Giá (VNĐ)</th>
-            <th>Trạng thái đơn hàng</th>
+            <th>Tổng tiền đơn hàng(VNĐ)</th>
+            <th>Trạng thái</th>
             <th>Chi tiết đơn</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => {
-            const totalPrice = order.items.reduce((sum, item) => {
-              const fishPrice = item.product.price || 0;
-              const consignmentPrice = item.consignmentRaising?.consignmentPrice || 0;
-              return sum + fishPrice + consignmentPrice;
-            }, 0);
+          {orders.length === 0 ? (
+            <tr>
+              <td colSpan="5" className="text-center">
+                Không có đơn hàng nào.
+              </td>
+            </tr>
+          ) : (
+            orders.map((order, index) => {
+              const totalPrice = order.items.reduce((sum, item) => {
+                const fishPrice = item.product?.price || 0;
+                const consignmentRaisingPrice =
+                  item.consignmentRaising?.consignmentPrice || 0;
+                const consignmentSalePrice = item.consignmentSale?.price || 0;
+                return (
+                  sum +
+                  fishPrice +
+                  consignmentRaisingPrice +
+                  consignmentSalePrice
+                );
+              }, 0);
 
-            return (
-              <tr key={index}>
-                <td>{order.id}</td>
-                <td>{new Date(order.createAt).toLocaleDateString()}</td>
-                <td>{formatMoney(totalPrice)}</td>
-                <td>{order.status}</td>
-                <td>
-                  <Button variant="link" onClick={() => toggleDetails(order)}>
-                    Xem chi tiết
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
+              return (
+                <tr key={index}>
+                  <td>{order.id}</td>
+                  <td>{new Date(order.createAt).toLocaleDateString()}</td>
+                  <td>{formatMoney(totalPrice)}</td>
+                  <td>{order.status}</td>
+                  <td>
+                    <Button variant="link" onClick={() => toggleDetails(order)}>
+                      Xem chi tiết
+                    </Button>
+                  </td>
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </Table>
 
@@ -133,43 +154,92 @@ const KoiFishOrdersPage = () => {
           <Modal.Header closeButton>
             <Modal.Title>Chi tiết đơn hàng</Modal.Title>
           </Modal.Header>
-          <Modal.Body style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Tên cá</th>
-                  <th>Giá cá (VNĐ)</th>
-                  <th>Ngày bắt đầu ký gửi</th>
-                  <th>Ngày kết thúc ký gửi</th>
-                  <th>Giá ký gửi (VNĐ)</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expandedOrder.items.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{item.product.name || '-'}</td>
-                    <td>{item.product.price ? formatMoney(item.product.price) : '-'}</td>
-                    <td>
-                      {item.consignmentRaising?.consignmentDate
-                        ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
-                        : '-'}
-                    </td>
-                    <td>
-                      {item.consignmentRaising?.returnDate
-                        ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
-                        : '-'}
-                    </td>
-                    <td>
-                      {item.consignmentRaising?.consignmentPrice
-                        ? formatMoney(item.consignmentRaising.consignmentPrice)
-                        : '-'}
-                    </td>
-                    <td>{item.consignmentRaising?.status || '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+          <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
+            {/* Bảng Chi tiết đơn hàng */}
+            {expandedOrder.items.some(item => !item.consignmentSale) && (
+              <>
+                <h5>Cá Koi Trang Trại</h5>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Tên cá</th>
+                      <th>Giá (VNĐ)</th>
+                      {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
+                      {expandedOrder.items.some(item => item.consignmentRaising) && (
+                        <>
+                          <th>Ngày bắt đầu ký gửi nuôi</th>
+                          <th>Ngày kết thúc ký gửi nuôi</th>
+                          <th>Giá ký gửi nuôi (VNĐ)</th>
+                        </>
+                      )}
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Lọc ra các item không có consignmentSale */}
+                    {expandedOrder.items
+                      .filter(item => !item.consignmentSale)
+                      .map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.product?.name || '-'}</td>
+                          <td>{item.product?.price ? formatMoney(item.product.price) : '-'}</td>
+                          {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
+                          {expandedOrder.items.some(item => item.consignmentRaising) ? (
+                            <>
+                              <td>
+                                {item.consignmentRaising?.consignmentDate
+                                  ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
+                                  : '-'}
+                              </td>
+                              <td>
+                                {item.consignmentRaising?.returnDate
+                                  ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
+                                  : '-'}
+                              </td>
+                              <td>
+                                {item.consignmentRaising?.consignmentPrice
+                                  ? formatMoney(item.consignmentRaising.consignmentPrice)
+                                  : '-'}
+                              </td>
+                            </>
+                          ) : null}
+                          <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
+            {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
+            {expandedOrder.items.some((item) => item.consignmentSale) && (
+              <>
+                <h5>Cá Koi Ký Gửi Bán</h5>
+                <Table striped bordered hover>
+                  <thead>
+                    <tr>
+                      <th>Tên cá </th>
+                      <th>Giá (VNĐ)</th>
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {expandedOrder.items
+                      .filter((item) => item.consignmentSale)
+                      .map((item, idx) => (
+                        <tr key={idx}>
+                          <td>{item.consignmentSale.name || "-"}</td>
+                          <td>
+                            {item.consignmentSale.price
+                              ? formatMoney(item.consignmentSale.price)
+                              : "-"}
+                          </td>
+                          <td>{item.status || "-"}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </Table>
+              </>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={closeModal}>
@@ -179,41 +249,50 @@ const KoiFishOrdersPage = () => {
         </Modal>
       )}
 
-      {/* Feedback Section Outside of Modal */}
-      <div className="mt-4 text-center">
-        <h3>Đánh giá của bạn</h3>
-        <Form.Group>
-          <div className="d-flex justify-content-center">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <FaStar
-                key={star}
-                className="star"
-                color={star <= rating ? "#FFD700" : "#E0E0E0"}
-                onClick={() => handleRatingChange(star)}
-                style={{ cursor: "pointer", fontSize: "24px", margin: "2px" }}
+      {/* Feedback Section */}
+      {hasCompletedOrder && (
+        <Card className="mt-4">
+          <Card.Body className="text-center">
+            <h3 className="mb-4">Đánh giá của bạn</h3>
+            <Form.Group className="mb-4">
+              <div className="d-flex justify-content-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={`star ${star <= rating ? "star-selected" : ""}`}
+                    onClick={() => handleRatingChange(star)}
+                  />
+                ))}
+              </div>
+            </Form.Group>
+
+            <Form.Group controlId="feedback" className="mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                maxLength={200}
+                placeholder="Nhập phản hồi của bạn"
+                name="comment"
+                value={feedback.comment}
+                onChange={handleFeedbackChange}
+                style={{ resize: "none", borderRadius: "0.25rem" }}
               />
-            ))}
-          </div>
-        </Form.Group>
-        <Form.Group controlId="feedback">
-          <Form.Control
-            as="textarea"
-            rows={3}
-            placeholder="Nhập phản hồi của bạn"
-            name="comment"
-            value={feedback.comment}
-            onChange={handleFeedbackChange}
-            style={{ resize: "none" }}
-          />
-          <Button
-            variant="primary"
-            onClick={handleSubmitFeedback}
-            className="mt-2"
-          >
-            Gửi
-          </Button>
-        </Form.Group>
-      </div>
+              <div className="text-muted text-end mt-1">
+                {feedback.comment.length} / 200 characters
+              </div>
+            </Form.Group>
+
+            <Button
+              variant="primary"
+              onClick={handleSubmitFeedback}
+              className="mt-2 w-100 submit-button"
+            >
+              <FaPaperPlane style={{ marginRight: "8px" }} />
+              Gửi
+            </Button>
+          </Card.Body>
+        </Card>
+      )}
     </div>
   );
 };

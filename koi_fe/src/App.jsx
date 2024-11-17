@@ -18,43 +18,18 @@ import ConsignmentTrackingPage from "./page/ConsignmentTrackingPage/ConsignmentT
 import KoiConsignment from "./page/KoiConsignment/KoiConsignment";
 import ConsignmentDetail from "./page/ConsignmentDetail/ConsignmentDetail";
 import Payment from "./page/payment/payment";
-import FishCareServide from "./page/FishCareService/FishCareService";
+import FishCareService from "./page/FishCareService/FishCareService";
+import Layout from "./component/Layout/Layout";
+import Dashboard from "./page/Dashboard/Dashboard";
+import MainLayout from "./MainLayout";
 
 function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="register" element={<RegisterPage />} />
-          <Route path="/care" element={<CareConsignmentPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/sales" element={<SalesConsignmentPage />} />
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/koiList" element={<KoiListPage />} />
-          <Route path="/koiList/:categoryId" element={<KoiListPage />} />
-          <Route path="/news" element={<NewsArticle />} />
-          <Route path="/profile" element={<ProfileUser />} />
-          <Route path="/introduce" element={<IntroducePage />} />
-          <Route path="/ProductDetail/:slug" element={<ProductDetail />} />
-          <Route
-            path="/ConsignmentDetail/:slug"
-            element={<ConsignmentDetail />}
-          />
-          <Route path="/someSuccessPage" element={<SuccessPage />} />
-          <Route
-            path="/consignmentTracking"
-            element={<ConsignmentTrackingPage />}
-          />
-          <Route path="/consignmentList" element={<KoiConsignment />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/fishcareservice" element={<FishCareServide />} />
-        </Routes>
-      </BrowserRouter>
-      <Footer />
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/*" element={<MainLayout />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

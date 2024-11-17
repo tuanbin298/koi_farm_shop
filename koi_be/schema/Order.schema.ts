@@ -56,6 +56,13 @@ const Order = list({
         isRequired: true,
       },
     }),
+    transaction: text({
+      label: "Id giao dịch",
+      ui: {
+        createView: { fieldMode: "hidden" },
+        itemView: { fieldMode: "read" },
+      },
+    }),
     paymentMethod: select({
       label: "Phương thức thanh toán",
       options: [
@@ -74,6 +81,7 @@ const Order = list({
           value: "Hoàn tất thanh toán",
         },
         { label: "Huỷ đơn hàng", value: "Huỷ đơn hàng" },
+        { label: "Hoàn thành đơn hàng", value: "Hoàn thành đơn hàng" },
       ],
       ui: {
         itemView: {
@@ -93,6 +101,7 @@ const Order = list({
 
   hooks: {
     async afterOperation({ operation, resolvedData, item, context }) {
+      // Create new status when create Order
       if (operation === "create") {
         await context.query.Status.createOne({
           data: {
@@ -103,6 +112,7 @@ const Order = list({
         });
       }
 
+      // Create new status when update status of Order
       if (
         operation === "update" &&
         resolvedData.status &&
@@ -115,6 +125,66 @@ const Order = list({
             changedBy: { connect: { id: context.session.itemId } },
           },
         });
+
+        if (resolvedData.status === "Hoàn thành đơn hàng") {
+          const orderItems = await context.query.OrderItem.findMany({
+            where: {
+              order: {
+                id: { equals: item.id },
+              },
+            },
+            query: "id status",
+          });
+
+          for (const orderItem of orderItems) {
+            await context.query.OrderItem.updateOne({
+              where: { id: orderItem.id },
+              data: { status: "Hoàn thành" },
+            });
+          }
+        }
+      }
+    },
+
+    async beforeOperation({ operation, item, context }) {
+      // Delete orderItem when delete Order
+      if (operation === "delete") {
+        const orderItems = await context.query.OrderItem.findMany({
+          where: {
+            order: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(orderItems);
+
+        if (orderItems.length > 0) {
+          for (const orderItem of orderItems) {
+            await context.query.OrderItem.deleteOne({
+              where: { id: orderItem.id },
+            });
+          }
+        }
+
+        // Delete status when delete Order
+        const statuses = await context.query.Status.findMany({
+          where: {
+            order: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id status",
+        });
+        console.log(statuses);
+
+        if (statuses.length > 0) {
+          for (const status of statuses) {
+            await context.query.Status.deleteOne({
+              where: { id: status.id },
+            });
+          }
+        }
       }
     },
   },

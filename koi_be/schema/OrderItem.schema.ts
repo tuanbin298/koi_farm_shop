@@ -1,6 +1,11 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
-import { checkbox, integer, relationship } from "@keystone-6/core/fields";
+import {
+  checkbox,
+  integer,
+  relationship,
+  select,
+} from "@keystone-6/core/fields";
 import { permissions } from "../auth/access";
 
 const OrderItem = list({
@@ -48,6 +53,16 @@ const OrderItem = list({
       validation: {
         isRequired: true,
       },
+    }),
+    status: select({
+      label: "Trạng thái",
+      defaultValue: "Đang xử lý",
+      options: [
+        { label: "Đang chăm sóc", value: "Có sẵn" },
+        { label: "Đang giao hàng", value: "Đang giao hàng" },
+        { label: "Đang xử lý", value: "Đang xử lý" },
+        { label: "Hoàn thành", value: "Hoàn thành" },
+      ],
     }),
     isStored: checkbox({
       label: "Ký gửi nuôi",

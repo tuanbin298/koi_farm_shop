@@ -3,20 +3,41 @@ import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 
 export default function CardListConsignment({ consignments }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
   const userId = localStorage.getItem("id"); // Retrieve the logged-in user's ID
-
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId,
+  });
   if (!consignments || consignments.length === 0) {
     return <p>Không có sản phẩm nào phù hợp.</p>;
   }
 
   const handleAddToCart = async (consignmentId) => {
     if (!userId) {
-      toast.error("User ID not found. Please log in.");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.consignmentProduct[0]?.id === consignmentId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -30,6 +51,8 @@ export default function CardListConsignment({ consignments }) {
           },
         },
       });
+
+      await refetchCartItems();
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {
@@ -73,7 +96,7 @@ export default function CardListConsignment({ consignments }) {
                       style={{
                         height: "360px",
                         width: "100%",
-                        objectFit: "fill",
+                        objectFit: "contain",
                       }}
                     />
                   </Link>

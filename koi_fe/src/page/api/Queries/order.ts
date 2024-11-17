@@ -9,12 +9,14 @@ query Orders($where: OrderWhereInput!) {
     status
     createAt
     items {
+       status
       product {
         name
         price
       }
       consignmentSale {
         name
+        price
       }
       consignmentRaising {
         product {
@@ -26,6 +28,42 @@ query Orders($where: OrderWhereInput!) {
         status
       }
     }
+  }
+}
+`
+
+export const GET_ALL_ORDERS = gql`
+query Orders {
+  orders {
+    price
+    address
+    id
+    status
+    createAt
+    items {
+       status
+      product {
+        name
+        price
+      }
+      consignmentSale {
+        name
+        price
+      }
+      consignmentRaising {
+        product {
+          name
+        }
+        consignmentDate
+        returnDate
+        consignmentPrice
+        status
+      }
+    }
+      user {
+      name
+    }
+    paymentMethod
   }
 }
 `

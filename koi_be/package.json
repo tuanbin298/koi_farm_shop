@@ -1,23 +1,27 @@
 {
-  "name": "keystone-app",
-  "version": "1.0.3",
-  "private": true,
-  "scripts": {
-    "dev-debug": "cross-env NODE_OPTIONS=--inspect DISABLE_LOGGING=true keystone dev",
-    "dev": "keystone dev",
-    "start": "keystone start",
-    "build": "keystone build",
-    "seed": "tsx ./seed-data/index.ts"
-  },
-  "dependencies": {
-    "@graphql-tools/schema": "^10.0.6",
-    "@keystone-6/auth": "^8.0.0",
-    "@keystone-6/cloudinary": "^8.0.0",
-    "@keystone-6/core": "^6.0.0",
-    "@keystone-6/fields-document": "^9.0.0",
-    "cross-env": "^7.0.3",
-    "dotenv": "^16.4.5",
-    "tsx": "^4.15.1",
-    "typescript": "^5.4.5"
+    "name": "keystone-app",
+    "version": "1.0.3",
+    "private": true,
+    "scripts": {
+      "dev-debug": "cross-env NODE_OPTIONS=--inspect DISABLE_LOGGING=true keystone dev",
+      "dev": "keystone dev",
+      "start": "keystone start",
+      "build": "keystone build",
+      "seed": "tsx ./seed-data/index.ts"
+    },
+    "dependencies": {
+      "@graphql-tools/schema": "^10.0.6",
+      "@keystone-6/auth": "^8.0.0",
+      "@keystone-6/cloudinary": "^8.0.0",
+      "@keystone-6/core": "^6.0.0",
+      "@keystone-6/fields-document": "^9.0.0",
+      "cross-env": "^7.0.3",
+      "dotenv": "^16.4.5",
+      "nodemailer": "^6.9.16",
+      "tsx": "^4.15.1",
+      "typescript": "^5.4.5"
+    },
+    "devDependencies": {
+      "@types/nodemailer": "^6.4.16"
+    }
   }
-}

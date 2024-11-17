@@ -57,7 +57,13 @@ input StringFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: NestedStringFilter
+}
+
+enum QueryMode {
+  default
+  insensitive
 }
 
 input NestedStringFilter {
@@ -151,7 +157,7 @@ type Role {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -176,7 +182,7 @@ input RoleWhereInput {
   canManageOrder: BooleanFilter
   canManageFeedback: BooleanFilter
   canManageCart: BooleanFilter
-  canManageConsigment: BooleanFilter
+  canManageConsignment: BooleanFilter
   canManageRequest: BooleanFilter
   canManageStatus: BooleanFilter
   canManageGallery: BooleanFilter
@@ -204,7 +210,7 @@ input RoleOrderByInput {
   canManageOrder: OrderDirection
   canManageFeedback: OrderDirection
   canManageCart: OrderDirection
-  canManageConsigment: OrderDirection
+  canManageConsignment: OrderDirection
   canManageRequest: OrderDirection
   canManageStatus: OrderDirection
   canManageGallery: OrderDirection
@@ -219,7 +225,7 @@ input RoleUpdateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -247,7 +253,7 @@ input RoleCreateInput {
   canManageOrder: Boolean
   canManageFeedback: Boolean
   canManageCart: Boolean
-  canManageConsigment: Boolean
+  canManageConsignment: Boolean
   canManageRequest: Boolean
   canManageStatus: Boolean
   canManageGallery: Boolean
@@ -271,6 +277,7 @@ type Product {
   generic: String
   slug: String
   image: CloudinaryImage_File
+  photo: Gallery
   category: Category
   status: String
 }
@@ -343,6 +350,7 @@ input ProductWhereInput {
   origin: StringFilter
   generic: StringFilter
   slug: StringFilter
+  photo: GalleryWhereInput
   category: CategoryWhereInput
   status: StringNullableFilter
 }
@@ -369,6 +377,7 @@ input StringNullableFilter {
   contains: String
   startsWith: String
   endsWith: String
+  mode: QueryMode
   not: StringNullableFilter
 }
 
@@ -397,12 +406,19 @@ input ProductUpdateInput {
   generic: String
   slug: String
   image: Upload
+  photo: GalleryRelateToOneForUpdateInput
   category: CategoryRelateToOneForUpdateInput
   status: String
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
+
+input GalleryRelateToOneForUpdateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
+  disconnect: Boolean
+}
 
 input CategoryRelateToOneForUpdateInput {
   create: CategoryCreateInput
@@ -426,8 +442,14 @@ input ProductCreateInput {
   generic: String
   slug: String
   image: Upload
+  photo: GalleryRelateToOneForCreateInput
   category: CategoryRelateToOneForCreateInput
   status: String
+}
+
+input GalleryRelateToOneForCreateInput {
+  create: GalleryCreateInput
+  connect: GalleryWhereUniqueInput
 }
 
 input CategoryRelateToOneForCreateInput {
@@ -617,6 +639,7 @@ type Order {
   price: Int
   createAt: DateTime
   address: String
+  transaction: String
   paymentMethod: String
   status: String
   statusHistory(where: StatusWhereInput! = {}, orderBy: [StatusOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StatusWhereUniqueInput): [Status!]
@@ -637,6 +660,7 @@ input OrderWhereInput {
   price: IntNullableFilter
   createAt: DateTimeNullableFilter
   address: StringFilter
+  transaction: StringFilter
   paymentMethod: StringNullableFilter
   status: StringNullableFilter
   statusHistory: StatusManyRelationFilter
@@ -659,6 +683,7 @@ input OrderOrderByInput {
   price: OrderDirection
   createAt: OrderDirection
   address: OrderDirection
+  transaction: OrderDirection
   paymentMethod: OrderDirection
   status: OrderDirection
 }
@@ -669,6 +694,7 @@ input OrderUpdateInput {
   price: Int
   createAt: DateTime
   address: String
+  transaction: String
   paymentMethod: String
   status: String
   statusHistory: StatusRelateToManyForUpdateInput
@@ -699,6 +725,7 @@ input OrderCreateInput {
   price: Int
   createAt: DateTime
   address: String
+  transaction: String
   paymentMethod: String
   status: String
   statusHistory: StatusRelateToManyForCreateInput
@@ -721,6 +748,7 @@ type OrderItem {
   consignmentSale: ConsignmentSale
   consignmentRaising: ConsigmentRaising
   price: Int
+  status: String
   isStored: Boolean
 }
 
@@ -738,12 +766,14 @@ input OrderItemWhereInput {
   consignmentSale: ConsignmentSaleWhereInput
   consignmentRaising: ConsigmentRaisingWhereInput
   price: IntFilter
+  status: StringNullableFilter
   isStored: BooleanFilter
 }
 
 input OrderItemOrderByInput {
   id: OrderDirection
   price: OrderDirection
+  status: OrderDirection
   isStored: OrderDirection
 }
 
@@ -753,6 +783,7 @@ input OrderItemUpdateInput {
   consignmentSale: ConsignmentSaleRelateToOneForUpdateInput
   consignmentRaising: ConsigmentRaisingRelateToOneForUpdateInput
   price: Int
+  status: String
   isStored: Boolean
 }
 
@@ -791,6 +822,7 @@ input OrderItemCreateInput {
   consignmentSale: ConsignmentSaleRelateToOneForCreateInput
   consignmentRaising: ConsigmentRaisingRelateToOneForCreateInput
   price: Int
+  status: String
   isStored: Boolean
 }
 
@@ -1065,12 +1097,6 @@ input ConsignmentSaleUpdateInput {
   status: String
 }
 
-input GalleryRelateToOneForUpdateInput {
-  create: GalleryCreateInput
-  connect: GalleryWhereUniqueInput
-  disconnect: Boolean
-}
-
 input RequestRelateToOneForUpdateInput {
   create: RequestCreateInput
   connect: RequestWhereUniqueInput
@@ -1097,11 +1123,6 @@ input ConsignmentSaleCreateInput {
   slug: String
   request: RequestRelateToOneForCreateInput
   status: String
-}
-
-input GalleryRelateToOneForCreateInput {
-  create: GalleryCreateInput
-  connect: GalleryWhereUniqueInput
 }
 
 input RequestRelateToOneForCreateInput {
@@ -1175,6 +1196,8 @@ type Gallery {
   id: ID!
   title: String
   image: CloudinaryImage_File
+  ownProduct(where: ProductWhereInput! = {}, orderBy: [ProductOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ProductWhereUniqueInput): [Product!]
+  ownProductCount(where: ProductWhereInput! = {}): Int
   product: ConsignmentSale
 }
 
@@ -1188,6 +1211,7 @@ input GalleryWhereInput {
   NOT: [GalleryWhereInput!]
   id: IDFilter
   title: StringFilter
+  ownProduct: ProductManyRelationFilter
   product: ConsignmentSaleWhereInput
 }
 
@@ -1199,6 +1223,7 @@ input GalleryOrderByInput {
 input GalleryUpdateInput {
   title: String
   image: Upload
+  ownProduct: ProductRelateToManyForUpdateInput
   product: ConsignmentSaleRelateToOneForUpdateInput
 }
 
@@ -1210,6 +1235,7 @@ input GalleryUpdateArgs {
 input GalleryCreateInput {
   title: String
   image: Upload
+  ownProduct: ProductRelateToManyForCreateInput
   product: ConsignmentSaleRelateToOneForCreateInput
 }
 
@@ -1359,6 +1385,8 @@ type Mutation {
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
   createInvoice(items: [OrderItemCreateInput!]!, user: String!, price: Int!, address: String!): Order
+  createSuccessConsignmentSaleEmail(to: String!, consignmentId: String!): String
+  createSuccessLoginEmail(to: String!, userId: String!): String
 }
 
 union UserAuthenticationWithPasswordResult = UserAuthenticationWithPasswordSuccess | UserAuthenticationWithPasswordFailure
@@ -1513,11 +1541,6 @@ enum KeystoneAdminUIFieldMetaItemViewFieldMode {
 enum KeystoneAdminUIFieldMetaItemViewFieldPosition {
   form
   sidebar
-}
-
-enum QueryMode {
-  default
-  insensitive
 }
 
 type KeystoneAdminUIFieldGroupMeta {

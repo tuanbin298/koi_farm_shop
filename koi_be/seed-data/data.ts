@@ -63,7 +63,6 @@ export const products = [
     origin: "Izumiya Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi vàng Yamabuki",
-    status: "Còn hàng",
   },
   {
     name: "Tancho Nuôi Ao Bùn",
@@ -76,7 +75,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Tancho",
-    status: "Còn hàng",
   },
   {
     name: "Shusui Nuôi Ao Bùn",
@@ -89,7 +87,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Shusui",
-    status: "Còn hàng",
   },
   {
     name: "Grinrin Asagi Nuôi Ao Bùn",
@@ -101,7 +98,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Asagi",
-    status: "Còn hàng",
   },
   {
     name: "Hi Utsuri Nuôi Ao Bùn",
@@ -114,7 +110,6 @@ export const products = [
     origin: "Marushin Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Cọp Hikari Utsuri",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Hariwake",
@@ -127,7 +122,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Hariwake",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Yamabuki Ogon F1",
@@ -140,7 +134,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi vàng Yamabuki",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Tancho F1",
@@ -153,7 +146,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi Tancho",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Shusui F1",
@@ -166,7 +158,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá koi Shusui",
-    status: "Còn hàng",
   },
   {
     name: "Shiro Utsuri Nuôi Ao Bùn",
@@ -179,7 +170,6 @@ export const products = [
     origin: "Omosako Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá koi Shiro Utsuri",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Magoi F1",
@@ -192,7 +182,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "F1",
     category: "Cá Koi Magoi ",
-    status: "Còn hàng",
   },
   {
     name: "Mud Pond Nuôi Ao Bùn",
@@ -205,7 +194,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Mud Pond",
-    status: "Còn hàng",
   },
   {
     name: "Cá Koi Yamabuki Ogon Nhật Size Mini",
@@ -218,7 +206,6 @@ export const products = [
     origin: "Dainichi Koi Farm",
     generic: "Mini",
     category: "Cá koi vàng Yamabuki",
-    status: "Còn hàng",
   },
   {
     name: "Cá koi Platinum",
@@ -231,7 +218,6 @@ export const products = [
     origin: "Marudo Koi Farm",
     generic: "Cá Koi Nhật thuần chủng",
     category: "Cá Koi Platinum",
-    status: "Còn hàng",
   },
 ];
 
@@ -247,7 +233,6 @@ export const roles = [
     canManageCart: false,
     canManageConsigment: false,
     canManageRequest: true,
-    canManageStatus: false,
     user: {
       connect: [
         {
@@ -258,6 +243,18 @@ export const roles = [
         },
       ],
     },
+  },
+  {
+    name: "Quản lý",
+    canManageUser: true,
+    canManageProduct: true,
+    canManageRole: true,
+    canManageArticle: true,
+    canManageOrder: true,
+    canManageFeedback: true,
+    canManageCart: true,
+    canManageConsigment: true,
+    canManageRequest: true,
   },
   {
     name: "Khách hàng",
@@ -278,14 +275,14 @@ export const users = [
     name: "staffA",
     email: "staffA@gmail.com",
     password: "123123",
-    phone: "123123",
+    phone: "0902570705",
     address: "HCM",
   },
   {
     name: "staffB",
     email: "staffB@gmail.com",
     password: "123123",
-    phone: "123123",
+    phone: "0902570704",
     address: "HCM",
   },
 ];

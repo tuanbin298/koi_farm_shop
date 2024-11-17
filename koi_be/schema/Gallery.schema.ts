@@ -40,8 +40,13 @@ const Gallery = list({
       label: "Hình ảnh",
       cloudinary,
     }),
+    ownProduct: relationship({
+      label: "Sản phẩm từ trang trại",
+      ref: "Product.photo",
+      many: true,
+    }),
     product: relationship({
-      label: "Sản phẩm",
+      label: "Sản phẩm ký gửi",
       ref: "ConsignmentSale.photo",
     }),
   },

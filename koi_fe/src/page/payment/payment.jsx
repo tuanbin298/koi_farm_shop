@@ -7,7 +7,7 @@ import {
   CardElement,
 } from "@stripe/react-stripe-js";
 import Button from "@mui/material/Button";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useApolloClient } from "@apollo/client";
 import { GET_CART_ITEMS } from "../api/Queries/cartItem";
 import { GET_FISH_CARE } from "../api/Queries/fishcare";
 import { CREATE_ORDER, UPDATE_ORDER } from ".././api/Mutations/order";
@@ -21,14 +21,16 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { FaArrowLeft } from "react-icons/fa";
 import { CREATE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
+import { CONSIGNMENT_SALES_EMAIL } from "../api/Mutations/emailNotify";
+import { GET_REQUEST } from "../api/Queries/request";
+import {
+  UPDATE_PRODUCT_STATUS,
+  UPDATE_CONSIGNMENT_PRODUCT_STATUS,
+} from "../api/Mutations/updateproduct"; // Adjust path as needed
 import "./payment.css";
 
-// User information
-const userId = localStorage.getItem("id");
-const userName = localStorage.getItem("name");
-const userEmail = localStorage.getItem("email");
-
 const CheckoutForm = () => {
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -36,14 +38,32 @@ const CheckoutForm = () => {
   const [createOrderItems] = useMutation(CREATE_ORDER_ITEMS);
   const [updateOrder] = useMutation(UPDATE_ORDER);
   const [deleteCartItem] = useMutation(DELETE_CART_ITEM);
-  const today = new Date().toISOString().split("T")[0]; // Ngày hiện tại
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [dates, setDates] = useState({});
   const location = useLocation();
   const [totalCarePrice, setTotalCarePrice] = useState(0);
   const [createConsignmentRaisings] = useMutation(CREATE_CONSIGNMENT_RAISING);
   const [depositsArray, setDepositsArray] = useState([]);
-  // const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM)
+  const [updateProductStatus] = useMutation(UPDATE_PRODUCT_STATUS);
+  const [updateConsignmentProductStatus] = useMutation(
+    UPDATE_CONSIGNMENT_PRODUCT_STATUS
+  );
+  {
+    /*Get user email to notify the payment of consigned fish for sales they put for */
+  }
+  const userEmail = localStorage.getItem("email");
+  const userName = localStorage.getItem("name");
+  const userPhone = localStorage.getItem("phone");
+
+  {
+    /* get email notification mutation */
+  }
+  const client = useApolloClient();
+  const [consignmentSaleNotification] = useMutation(CONSIGNMENT_SALES_EMAIL);
+
+  {
+    /*Get email of person consigning the fish for sales */
+  }
   let consignmentRaisingIds = [];
   useEffect(() => {
     if (location.state && location.state.selectedProducts) {
@@ -56,17 +76,15 @@ const CheckoutForm = () => {
   const orderAddress =
     location.state.orderData.address +
     "," +
-    location.state.orderData.city +
+    location.state.orderData.ward +
     "," +
     location.state.orderData.district +
     "," +
-    location.state.orderData.ward;
+    location.state.orderData.city;
 
   selectedProducts.forEach((product) => {
     const startDate = dates[product.id]?.startDate;
-    console.log(`Start date for product ${product.id}:`, startDate);
   });
-  console.log(totalCarePrice);
   const checkConsigned = (cartItem) => {
     // Extract IDs from selectedProducts
     const selectedProductIds = selectedProducts.map((product) => product.id);
@@ -89,7 +107,32 @@ const CheckoutForm = () => {
         },
       },
     },
+    fetchPolicy: "network-only",
   });
+  const getRequestMethod = async (consignmentID) => {
+    try {
+      const { data } = await client.query({
+        query: GET_REQUEST,
+        variables: {
+          where: {
+            consignment: {
+              id: {
+                equals: consignmentID,
+              },
+            },
+          },
+        },
+        fetchPolicy: "network-only", // Ensures a fresh fetch each time
+      });
+
+      const recipientEmail = data?.requests?.[0]?.user?.email;
+      return recipientEmail;
+    } catch (error) {
+      console.error("Error fetching recipient email:", error);
+      return null;
+    }
+  };
+
   useEffect(() => {
     refetchItems();
   }, [refetchItems]);
@@ -103,15 +146,15 @@ const CheckoutForm = () => {
       billing_details: {
         name: userName,
         email: userEmail,
+        phone: userPhone,
       },
     });
 
     handlePaymentMethodResult(result);
 
-    console.log("[PaymentMethod]", result);
   };
   let totalPrice = 0;
-
+  
   const handlePaymentMethodResult = async ({ paymentMethod, error }) => {
     if (error) {
       //   toast.error("Lỗi tạo đơn hàng!");
@@ -130,8 +173,9 @@ const CheckoutForm = () => {
           variables: {
             data: {
               user: { connect: { id: userId } },
-              price: totalPrice,
+              price: parseInt(totalPrice) + (totalCarePrice ? parseInt(totalCarePrice) : 0),
               address: orderAddress,
+              transaction: paymentMethod.id,
               paymentMethod: location.state.paymentMethod,
             },
           },
@@ -141,15 +185,14 @@ const CheckoutForm = () => {
 
         //Fish consignment
         const consignmentData = selectedProducts.map((product) => {
-          console.log(product.product[0].id);
           const { startDate, endDate } = dates[product.id] || {};
           const pricePerDay = 50000;
           const days =
             startDate && endDate
               ? Math.ceil(
-                  (new Date(endDate) - new Date(startDate)) /
-                    (1000 * 60 * 60 * 24)
-                )
+                (new Date(endDate) - new Date(startDate)) /
+                (1000 * 60 * 60 * 24)
+              )
               : 0;
 
           return {
@@ -174,43 +217,41 @@ const CheckoutForm = () => {
             consignmentDataResponse.createConsigmentRaisings.map(
               (item) => item.id
             );
-          console.log("Consignment Raising IDs:", consignmentRaisingIds);
         } else {
           console.error(
             "Unexpected response structure:",
             consignmentDataResponse
           );
         }
+
         const cartItemIds = cartItems.cartItems.map((item) => item.id);
-        console.log(cartItems.cartItems);
         // Pair each cartItemId with its consignmentRaisingId
         const cartConsignmentPairs = cartItems.cartItems.map((cartItem) => {
           const isConsigned = checkConsigned(cartItem);
-          const consignmentId = isConsigned ? consignmentRaisingIds.shift() : null;
+          const consignmentId = isConsigned
+            ? consignmentRaisingIds.shift()
+            : null;
           return {
             cartItemId: cartItem.id,
             consignmentRaisingId: consignmentId,
           };
         });
-    
-        console.log(cartConsignmentPairs);
-        
+
         // Create order items
         const orderItems = cartItems.cartItems.map((item) => {
           // Check if there is a matching consignment entry for this cart item
           const matchingPair = cartConsignmentPairs.find(
             (pair) => pair.cartItemId === item.id
           );
-          console.log(matchingPair);
 
           return {
             ...(item.product.length > 0
               ? { product: { connect: { id: item.product[0].id } } }
               : {
-                  consignmentSale: {
-                    connect: { id: item.consignmentProduct[0].id },
-                  },
-                }),
+                consignmentSale: {
+                  connect: { id: item.consignmentProduct[0].id },
+                },
+              }),
             order: { connect: { id: orderId } },
             price:
               item.product.length > 0
@@ -219,10 +260,10 @@ const CheckoutForm = () => {
             isStored: checkConsigned(item),
             ...(matchingPair && matchingPair.consignmentRaisingId
               ? {
-                  consignmentRaising: {
-                    connect: { id: matchingPair.consignmentRaisingId },
-                  },
-                }
+                consignmentRaising: {
+                  connect: { id: matchingPair.consignmentRaisingId },
+                },
+              }
               : {}),
           };
         });
@@ -230,36 +271,14 @@ const CheckoutForm = () => {
         const { data: createOrderItemsData } = await createOrderItems({
           variables: { data: orderItems },
         });
-        console.log(consignmentRaisingIds);
 
         // Link order items to the order
         const orderItemIds = createOrderItemsData.createOrderItems.map(
           (item) => item.id
         );
-        // for (let i = 0; i < cartItemIds.length; i++) {
-        //   const cartItemId = cartItemIds[i];
-        //   console.log(cartItemId)
-        //   console.log(cartConsignmentPairs)
-        //   const consignment = cartConsignmentPairs.find(
-        //     (pair) => pair.cartItemId === cartItemId
-        //   );
-        //   console.log(consignment)
-        //   if (consignment && consignment.consignmentRaisingId) {
-        //     await updateOrderItem({
-        //       variables: {
-        //         where: { id: orderItemIds[i] },
-        //         data: {
-        //           consignmentRaising: { connect: { id: consignment.consignmentRaisingId } },
-        //         },
-        //       },
-        //     });
-        //     console.log(`Updated order item ${orderItemIds[i]} with consignment ${consignment.consignmentRaisingId}`);
-        //   }
-        // }
 
         for (let i = 0; i < orderItemIds.length; i++) {
           // const orderItemId = orderItems[i].id;
-          console.log(orderItemIds[i]);
           await updateOrder({
             variables: {
               where: {
@@ -278,6 +297,52 @@ const CheckoutForm = () => {
           });
         }
 
+        const updateStatusesPromises = cartItems.cartItems.map(async (item) => {
+          if (item.product.length > 0) {
+            // Sản phẩm thông thường
+            return await updateProductStatus({
+              variables: {
+                where: { id: item.product[0].id },
+                data: { status: "Không có sẵn" },
+              },
+            });
+          } else if (item.consignmentProduct.length > 0) {
+            // Sản phẩm ký gửi
+            return await updateConsignmentProductStatus({
+              variables: {
+                where: { id: item.consignmentProduct[0].id },
+                data: { status: "Không có sẵn" },
+              },
+            });
+          }
+        });
+
+        // Thực hiện tất cả các cập nhật trạng thái
+        await Promise.all(updateStatusesPromises);
+
+        {
+          /* Send email notifications */
+        }
+
+        const consignmentSales = cartItems.cartItems.filter(
+          (item) => item.product.length <= 0
+        );
+        for (let i = 0; i < consignmentSales.length; i++) {
+          const consignmentSalesID =
+            consignmentSales[i].consignmentProduct[0].id;
+
+          // Fetch consignment-related email using `GET_REQUEST_EMAIL`
+          const recipientEmail = await getRequestMethod(consignmentSalesID);
+          // Send email notification if email is retrieved
+          if (recipientEmail) {
+            await consignmentSaleNotification({
+              variables: {
+                to: recipientEmail,
+                consignmentId: consignmentSalesID,
+              },
+            });
+          }
+        }
         // Delete items from the cart
 
         for (let i = 0; i < cartItems.cartItems.length; i++) {
@@ -288,8 +353,13 @@ const CheckoutForm = () => {
             },
           });
         }
+
         toast.success("Đã tạo đơn hàng!");
         navigate("/someSuccessPage", { state: { from: "/payment" } });
+        localStorage.removeItem(`selectedProducts_${userId}`);
+        localStorage.removeItem(`dates_${userId}`);
+        localStorage.removeItem(`totalCarePrice_${userId}`);
+        localStorage.removeItem(`depositsArray_${userId}`);
       } catch (error) {
         console.error("Error creating order:", error);
         toast.error("Lỗi tạo đơn hàng!");
@@ -333,21 +403,52 @@ const CheckoutForm = () => {
 };
 
 function Payment() {
-  const { data: dataCart } = useQuery(GET_CART_ITEMS, {
-    variables: { where: { user: { id: { equals: userId } } } },
-  });
-
+  const navigate = useNavigate();
+  const [userId, setUserId] = useState(localStorage.getItem("id"));
+  const { data: dataCart, refetch: refetchCartItems } = useQuery(
+    GET_CART_ITEMS,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+      fetchPolicy: "network-only",
+    }
+  );
   // Fetch consignment care data
-  const { data: dataFishCare } = useQuery(GET_FISH_CARE, {
-    variables: { where: { user: { id: { equals: userId } } } },
-  });
-
+  const { data: dataFishCare, refetch: refetchFishCare } = useQuery(
+    GET_FISH_CARE,
+    {
+      variables: { where: { user: { id: { equals: userId } } } },
+    }
+  );
+  useEffect(() => {
+    refetchFishCare();
+  }, [refetchFishCare]);
+  useEffect(() => {
+    if (userId) {
+      refetchCartItems({
+        variables: { where: { user: { id: { equals: userId } } } },
+      });
+    }
+  }, [userId, refetchCartItems]);
+  {/*Get data from state via navigate */}
   const [totalAmount, setTotalAmount] = useState(null);
   const [depositsArray, setDepositsArray] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [dates, setDates] = useState({});
+
   const location = useLocation();
+  const [totalCarePrice, setTotalCarePrice] = useState(0);
+  useEffect(() => {
+    if (location.state && location.state.selectedProducts) {
+      setSelectedProducts(location.state.selectedProducts);
+      setDates(location.state.dates);
+      setTotalCarePrice(location.state.totalCarePrice);
+      setDepositsArray(location.state.depositsArray);
+    }
+  }, [location.state])
   useEffect(() => {
     if (dataCart) {
-      let total = dataCart.cartItems.reduce((sum, cartItem) => {
+      // Calculate the cart total based on items' prices
+      let cartTotal = dataCart.cartItems.reduce((sum, cartItem) => {
         if (cartItem.product.length > 0) {
           return sum + cartItem.product[0].price;
         } else if (cartItem.consignmentProduct.length > 0) {
@@ -356,23 +457,35 @@ function Payment() {
         return sum;
       }, 0);
 
+      // Retrieve payment method from URL, if applicable
       const searchParams = new URLSearchParams(window.location.search);
       const paymentMethod = searchParams.get("paymentMethod");
 
       if (paymentMethod === "cod") {
-        total = total / 2;
+        cartTotal /= 2;
       }
 
-      setTotalAmount(total > 0 ? total : 0);
+      // Calculate total amount with consignment care price (if any)
+      const totalWithCarePrice = cartTotal + parseInt(totalCarePrice || 0);
+      setTotalAmount(totalWithCarePrice > 0 ? totalWithCarePrice : 0);
     }
-  }, [dataCart]);
+  }, [dataCart, totalCarePrice]);
+
   useEffect(() => {
     if (location.state && location.state.depositsArray) {
       setDepositsArray(location.state.depositsArray);
     }
   }, [location.state]);
-  console.log(totalAmount);
-
+  const handleToCheckout = () => {
+    navigate("/checkout", {
+      state:{
+        totalCarePrice,
+        selectedProducts,
+        dates,
+        depositsArray,
+      },
+    })
+  }
   const stripePromise = loadStripe(
     "pk_test_51PZy5CRwV3ieMSE0yi4gEMKnnM1gg4TArSRYf1WAjEmBvMz3MOWXZQOPqSxBbIortJdLmhZnDnmFnO1Njqfa7YUV00F4HhRF80"
   );
@@ -382,12 +495,11 @@ function Payment() {
     amount: totalAmount,
     currency: "USD",
   };
-  console.log(options);
 
   return (
     <section className="container mt-5">
-      <Link to="/checkout">
-        <section className="back-button-section">
+  
+        <section className="back-button-section" onClick={handleToCheckout} role="button" tabIndex={0}>
           <div className="icon-container">
             <FaArrowLeft className="icon" />
           </div>
@@ -395,7 +507,6 @@ function Payment() {
             Quay lại trang điền thông tin
           </span>
         </section>
-      </Link>
       <section className="row">
         {/* Order Summary Section */}
         <article className="col-md-6">
@@ -433,7 +544,6 @@ function Payment() {
                   const depositAmount = depositEntry
                     ? depositEntry.totalDeposit
                     : 0;
-                  console.log(depositEntry);
                   return (
                     <tr key={item.id}>
                       <td>{product.name}</td>

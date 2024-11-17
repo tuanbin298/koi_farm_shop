@@ -1,49 +1,159 @@
 .feedback-slider {
-  max-width: 1000px; /* Tối đa chiều rộng */
-  margin: auto; /* Giữa màn hình */
-  position: relative; /* Để các nút điều hướng có thể sử dụng position: absolute */
-}
-
-.feedback-section {
-  display: flex; /* Sử dụng flexbox để sắp xếp */
-  justify-content: space-between; /* Căn giữa các phần tử */
-  gap: 20px; /* Khoảng cách giữa các phần tử */
+  max-width: 800px;
+  margin: auto;
+  text-align: center;
+  position: relative;
 }
 
 .feedback-card {
-  width: calc(33.33% - 20px); /* Chiều rộng của mỗi thẻ feedback */
-  transition: transform 0.3s; /* Hiệu ứng chuyển động */
-  border: 1px solid #e0e0e0; /* Viền cho thẻ feedback */
-  border-radius: 5px; /* Bo góc cho thẻ */
+  border: none;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
-.feedback-nav-btn {
-  position: absolute; /* Sử dụng vị trí tuyệt đối */
-  top: 60%; /* Căn giữa theo chiều dọc */
-  transform: translateY(-50%); /* Đảm bảo nút nằm chính giữa */
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+.feedback-title {
+  font-weight: bold;
+  font-size: 1.5em;
+  color: #333;
+  margin-top: 15px;
+}
+
+.feedback-comment {
+  font-style: italic;
+  color: #555;
+  margin: 20px 0;
+  position: relative;
+  padding-left: 20px;
+}
+
+.quote-icon {
+  font-size: 1.2em;
+  color: #ffc107;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.feedback-user-info {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  z-index: 10; /* Đảm bảo nút nổi trên các phần tử khác */
+  gap: 10px;
+  color: #333;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-top: 20px;
 }
 
-.feedback-nav-btn.left {
-  left: -30px; /* Đẩy nút trái ra sát cạnh */
+.feedback-user-info svg {
+  font-size: 1.5em;
 }
 
-.feedback-nav-btn.right {
-  right: -30px; /* Đẩy nút phải ra sát cạnh */
+.feedback-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eee;
+  border: none;
+  color: #333;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .feedback-nav-btn:hover {
-  background-color: #f0f0f0;
-  transform: scale(1.1); /* Hiệu ứng hover */
+  background-color: #ddd;
+}
+
+.feedback-nav-btn.left {
+  left: 10px;
+}
+
+.feedback-nav-btn.right {
+  right: 10px;
+}
+
+.feedback-card {
+  border: none;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease, opacity 0.3s ease; /* Transition cho hiệu ứng lướt */
+}
+
+/* Hiệu ứng lướt qua */
+.slide-in-right {
+  transform: translateX(100%);
+  opacity: 0;
+  animation: slideInRight 0.3s forwards;
+}
+
+.slide-out-left {
+  transform: translateX(0);
+  opacity: 1;
+  animation: slideOutLeft 0.3s forwards;
+}
+
+.slide-in-left {
+  transform: translateX(-100%);
+  opacity: 0;
+  animation: slideInLeft 0.3s forwards;
+}
+
+.slide-out-right {
+  transform: translateX(0);
+  opacity: 1;
+  animation: slideOutRight 0.3s forwards;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
 }

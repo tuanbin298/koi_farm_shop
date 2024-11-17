@@ -156,7 +156,7 @@ const ProfileUser = () => {
       case "orders":
         return (
           <div>
-            <KoiFishOrdersPage/>
+            <KoiFishOrdersPage />
           </div>
         );
       case "tracking":

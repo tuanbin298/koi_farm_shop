@@ -3,20 +3,43 @@ import { Link } from "react-router-dom";
 import { formatMoney } from "../../utils/formatMoney";
 import { CREATE_CART_ITEM } from "../../page/api/Mutations/cart";
 import toast, { Toaster } from "react-hot-toast";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 
 export default function CardListProduct({ products }) {
   const [createCartItem] = useMutation(CREATE_CART_ITEM);
+  const userId = localStorage.getItem("id");
+
+  const { data: cart, refetch: refetchCartItems } = useQuery(GET_CART_ITEMS, {
+    variables: {
+      where: {
+        user: {
+          id: {
+            equals: userId,
+          },
+        },
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !userId, // Skip if no user is logged in
+  });
+
   if (!products || products.length === 0) {
     return <p>Không có sản phẩm nào phù hợp.</p>;
   }
+
   const handleAddToCart = async (productId) => {
-    const userId = localStorage.getItem("id"); // Assuming userId is stored in localStorage
-    const sessionToken = localStorage.getItem("sessionToken");
-    console.log(productId);
     if (!userId) {
-      toast.error("Thêm vào giỏ hàng không thành công");
+      toast.error("Bạn cần đăng nhập để có thể thêm sản phẩm");
+      return;
+    }
+
+    const productInCart = cart?.cartItems?.some(function (item) {
+      return item.product[0]?.id === productId;
+    });
+    if (productInCart) {
+      toast.error("Sản phẩm này đã có trong giỏ hàng!");
       return;
     }
 
@@ -27,7 +50,7 @@ export default function CardListProduct({ products }) {
           data: {
             quantity: 1,
             product: {
-              connect: { id: productId }, // Connect product by ID
+              connect: { id: productId },
             },
             user: {
               connect: {
@@ -37,6 +60,9 @@ export default function CardListProduct({ products }) {
           },
         },
       });
+
+      await refetchCartItems();
+
       toast.success("Đã thêm vào giỏ hàng!", {
         icon: "🛒",
         style: {
@@ -50,13 +76,8 @@ export default function CardListProduct({ products }) {
         },
       });
     } catch (error) {
-      if (error.message.includes("Access denied")) {
-        toast.error("Thêm vào giỏ hàng không thành công");
-        console.log(error);
-      } else {
-        toast.error("Thêm vào giỏ hàng không thành công");
-        alert("Failed to add item to cart. Please try again.");
-      }
+      toast.error("Thêm vào giỏ hàng không thành công");
+      console.log(error);
     }
   };
 
@@ -69,33 +90,27 @@ export default function CardListProduct({ products }) {
             <div key={product.id} className="col-md-4 mb-4">
               <div
                 className="card h-100 shadow-sm card-product"
-                style={{
-                  maxWidth: "350px", // Giới hạn kích thước tối đa của card
-                  margin: "0 auto", // Căn giữa thẻ card
-                }}
+                style={{ maxWidth: "350px", margin: "0 auto" }}
               >
-                {/* Link tới chi tiết sản phẩm */}
                 <Link to={`/ProductDetail/${product.slug}`}>
                   <img
                     src={product.image?.publicUrl}
                     alt={product.name}
                     className="card-img-top img-fluid"
                     style={{
-                      height: "360px", // Chiều cao cố định cho ảnh
-                      width: "100%", // Chiếm toàn bộ chiều rộng của khung chứa
-                      objectFit: "fill", // Bóp méo ảnh để lấp đầy khung
+                      height: "360px",
+                      width: "100%",
+                      objectFit: "contain",
                     }}
                   />
                 </Link>
 
                 <div
                   className="card-body text-start"
-                  style={{
-                    padding: "25px",
-                  }}
+                  style={{ padding: "25px" }}
                 >
                   <h4 className="card-title">{product.name}</h4>
-                  <p className="mb-1  text-danger">
+                  <p className="mb-1 text-danger">
                     <strong>Giá: </strong>
                     {formatMoney(product.price)}
                   </p>
@@ -104,18 +119,18 @@ export default function CardListProduct({ products }) {
                     {product.origin}
                   </p>
                   <p className="mb-1">
-                    <strong>Kích thước </strong>
+                    <strong>Kích thước: </strong>
                     {product.size}
                   </p>
                   <p className="mb-1">
-                    <strong>Giới tính </strong>
+                    <strong>Giới tính: </strong>
                     {product.sex}
                   </p>
                   <p className="mb-1">
                     <strong>Loại: </strong>
                     {product.generic}
                   </p>
-                  {/* Nút thêm vào giỏ hàng */}
+
                   <div className="text-center">
                     <button
                       className="btn btn-success mt-3"

@@ -21,11 +21,14 @@ export const CREATE_ORDER_ITEMS = gql`
 `;
 
 export const UPDATE_ORDER_ITEM = gql`
-mutation UpdateOrderItem($where: OrderItemWhereUniqueInput!, $data: OrderItemUpdateInput!) {
-  updateOrderItem(where: $where, data: $data) {
-    consignmentRaising {
-      id
+  mutation UpdateOrderItem(
+    $where: OrderItemWhereUniqueInput!
+    $data: OrderItemUpdateInput!
+  ) {
+    updateOrderItem(where: $where, data: $data) {
+      consignmentRaising {
+        id
+      }
     }
   }
-}
-`
+`;

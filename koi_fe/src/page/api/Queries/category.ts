@@ -6,6 +6,7 @@ export const GET_CATEGORY = gql`
     categories {
       id
       name
+      description
     }
   }
 `;

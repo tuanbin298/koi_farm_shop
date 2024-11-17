@@ -2,8 +2,8 @@ import { gql, useQuery } from "@apollo/client";
 
 // Query để lấy tất cả sản phẩm
 export const GET_CONSIGNMENT_SALES = gql`
-  query ConsignmentSales {
-    consignmentSales(where: { status: { equals: "Có sẵn" } }) {
+  query GetConsignmentSales($take: Int) {
+    consignmentSales(where: { status: { equals: "Có sẵn" } }, take: $take) {
       id
       name
       generic
@@ -57,6 +57,52 @@ export const GET_ALL_CONSIGNMENT_SALES = gql`
           id
         }
       }
+    }
+  }
+`;
+
+export const GET_ALL_CONSIGNMENT_SALES_ADMIN = gql`
+  query ConsignmentSales {
+    consignmentSales {
+      id
+      name
+      generic
+      description
+      medical
+      category
+      birth
+      price
+      sex
+      size
+      status
+      slug
+      photo {
+        id
+        image {
+          publicUrl
+        }
+      }
+      request {
+        user {
+          id
+          name
+        }
+        staff {
+          name
+        }
+        createAt
+        status
+        description
+        statusHistory {
+          changeTime
+          changedBy {
+            name
+          }
+          status
+          id
+        }
+      }
+      estimatedPrice
     }
   }
 `;

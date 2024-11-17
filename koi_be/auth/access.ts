@@ -14,7 +14,7 @@ export type Session = {
       canManageOrder: boolean;
       canManageFeedback: boolean;
       canManageCart: boolean;
-      canManageConsigment: boolean;
+      canManageConsignment: boolean;
       canManageRequest: boolean;
       canManageStatus: boolean;
       canManageGallery: boolean;
@@ -43,8 +43,8 @@ export const permissions = {
     session?.data.role?.canManageFeedback ?? false,
   canManageCart: ({ session }: AccessArgs) =>
     session?.data.role?.canManageCart ?? false,
-  canManageConsigment: ({ session }: AccessArgs) =>
-    session?.data.role?.canManageConsigment ?? false,
+  canManageConsignment: ({ session }: AccessArgs) =>
+    session?.data.role?.canManageConsignment ?? false,
   canManageRequest: ({ session }: AccessArgs) =>
     session?.data.role?.canManageRequest ?? false,
   canManageStatus: ({ session }: AccessArgs) =>

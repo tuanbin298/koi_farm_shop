@@ -11,9 +11,9 @@ const User = list({
       update: allowAll,
       delete: allowAll,
     },
-    filter: {
-      query: filters.canReadUser,
-    },
+    // filter: {
+    //   query: filters.canReadUser,
+    // },
   },
 
   ui: {
@@ -55,7 +55,7 @@ const User = list({
       validation: {
         isRequired: true,
         match: {
-          regex: /^\d{6}$/,
+          regex: /(03|05|07|08|09|01[2|6|8|9])([0-9]{8})\b/,
           explanation: "Invalid phone",
         },
       },
@@ -83,6 +83,73 @@ const User = list({
         itemView: { fieldMode: "read" },
       },
     }),
+  },
+
+  hooks: {
+    async beforeOperation({ operation, item, context }) {
+      if (operation === "delete") {
+        // Can't delete user if they have request or order
+        const requests = await context.query.Request.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+
+        const orders = await context.query.Order.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+
+        if (requests.length > 0 || orders.length > 0) {
+          throw new Error("Không thể xoá người dùng đã có giao dịch");
+        }
+
+        // Delete cartItem when delete User
+        const cartItems = await context.query.CartItem.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id",
+        });
+        console.log(cartItems);
+
+        if (cartItems.length > 0) {
+          for (const cartItem of cartItems) {
+            await context.query.CartItem.deleteOne({
+              where: { id: cartItem.id },
+            });
+          }
+        }
+
+        // Delete Feedback when delete User
+        const feedbacks = await context.query.Feedback.findMany({
+          where: {
+            user: {
+              id: { equals: item.id },
+            },
+          },
+          query: "id user { id name } comment",
+        });
+        console.log(feedbacks);
+
+        if (feedbacks.length > 0) {
+          for (const feedback of feedbacks) {
+            await context.query.Feedback.deleteOne({
+              where: { id: feedback.id },
+            });
+          }
+        }
+      }
+    },
   },
 });
 
