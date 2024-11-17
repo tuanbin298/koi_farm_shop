@@ -64,7 +64,7 @@ const Dashboard = () => {
       case "products":
         return <AdminProductList />;
       case "addProduct":
-        return <CreateProductForm />;
+        return <CreateProductForm setSelectedSection={setSelectedSection} />;
       case "users":
         return <UserList />;
       case "userDetail1":

@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button } from "@mui/material";
+import { Box, Typography, Checkbox, Button, Pagination} from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Image } from "antd";
 import { formatMoney } from "../../utils/formatMoney";
@@ -16,6 +16,7 @@ import { formatMoney } from "../../utils/formatMoney";
 export default function AdminProductList() {
   const {
     data: getProducts,
+    refetch: refetchProducts,
     error,
     loading,
   } = useQuery(GET_ALL_PRODUCTS_ADMIN);
@@ -23,6 +24,18 @@ export default function AdminProductList() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const products = getProducts?.products || [];
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Define paginatedItems with fallback in case cartItems is not loaded
+  const paginatedItems =
+    getProducts?.products?.slice(startIndex, endIndex) || [];
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
   const handleCheckboxChange = (orderId) => {
     setSelectedProducts((prevSelected) => {
       if (prevSelected.includes(orderId)) {
@@ -48,6 +61,11 @@ export default function AdminProductList() {
       selectedProducts.length === products.length && products.length > 0
     );
   }, [selectedProducts, products]);
+
+  useEffect(()=>{
+    refetchProducts(),
+    [refetchProducts]
+  })
 
   const handleDelete = () => {
     console.log("Deleting products with IDs:", selectedProducts);
@@ -109,7 +127,7 @@ export default function AdminProductList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
+            {paginatedItems.map((product) => (
               <TableRow
                 key={product.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -137,8 +155,22 @@ export default function AdminProductList() {
               </TableRow>
             ))}
           </TableBody>
+          
         </Table>
+        <Box display="flex" justifyContent="center" marginTop={2} sx={{
+          marginBottom:"2%"
+        }}>
+                  <Pagination
+                    count={Math.ceil(
+                      (getProducts?.products?.length || 0) / itemsPerPage
+                    )}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
       </TableContainer>
+      
     </>
   );
 }

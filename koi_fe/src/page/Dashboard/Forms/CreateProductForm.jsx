@@ -14,8 +14,8 @@ import {
 import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_PRODUCT } from "../../api/Mutations/product";
 import { GET_CATEGORY } from "../../api/Queries/category";
-
-export default function CreateProductForm() {
+import toast, { Toaster } from "react-hot-toast";
+export default function CreateProductForm({ setSelectedSection }) {
   const { data: categoryData, loading, error } = useQuery(GET_CATEGORY);
 
   const [createProduct] = useMutation(CREATE_PRODUCT);
@@ -33,7 +33,7 @@ export default function CreateProductForm() {
     price: "",
     image: "",
   });
-
+  const [errors, setErrors] = useState({});
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -43,10 +43,46 @@ export default function CreateProductForm() {
   const handleImageUpload = (e) => {
     setProductData({ ...productData, image: e.target.files[0] });
   };
+  const validateForm = () => {
+    const newErrors = {};
+    const priceRegex = /^\d+(\.\d{1,2})?$/; // Allows only positive numbers with up to two decimals
+    const currentYear = new Date().getFullYear(); //Get current year to check validation of birth year
+    // Check for empty fields
+    //validate name
+    if (!productData.name) newErrors.name = "Tên sản phẩm không được để trống";
+    //validate birth year
+    if (!productData.birth) newErrors.birth = "Năm sinh không được để trống";
+    if (parseInt(productData.birth) < 0) newErrors.birth = "Năm sinh không được âm";
+    if (parseInt(productData.birth) > currentYear) {
+      newErrors.birth = `Năm sinh không được lớn hơn năm hiện tại (${currentYear})`;
+    }
+    //validate sex
+    if (!productData.sex) newErrors.sex = "Giới tính không được để trống";
+    //validate product size
+    if (!productData.size) newErrors.size = "Kích thước không được để trống";
+    //validate price
+    if (!productData.price) newErrors.price = "Giá không được để trống";
+    else if (!priceRegex.test(productData.price) || parseFloat(productData.price) <= 0) {
+      newErrors.price = "Giá không được âm";
+    }
+    //validate origin
+    if (!productData.origin) newErrors.origin = "Nguồn cung không được để trống";
+    //validate generic
+    if (!productData.generic) newErrors.generic = "Chủng loại không được để trống";
+    //validate image
+    if (!productData.image) newErrors.image = "Chưa có hình ảnh";
+    //validate category
+    if (!productData.category) newErrors.category = "Loại không được để trống";
+    //validate status
+    if (!productData.status) newErrors.status = "Trạng thái không được để trống";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!validateForm()) return;
     try {
       await createProduct({
         variables: {
@@ -65,14 +101,16 @@ export default function CreateProductForm() {
       });
 
       alert("thêm sản phẩm thành công");
+      setSelectedSection("products");
     } catch (err) {
+      toast.error("Lỗi tạo sản phẩm!")
       console.error("Đã xảy ra lỗi khi tạo sản phẩm:", err);
     }
-
     // console.log(productData);
   };
 
   return (
+    <><Toaster position="top-center" reverseOrder={false} />
     <Box sx={{ display: "flex", marginLeft: "15%" }}>
       <Box
         component="main"
@@ -100,17 +138,22 @@ export default function CreateProductForm() {
                 name="name"
                 value={productData.name}
                 onChange={handleChange}
-                sx={{ mr: 2 }} // Margin right
+                sx={{ mr: 2 }}
+                error={!!errors.name}
+                helperText={errors.name}
               />
 
               {/* Năm Sinh */}
               <TextField
                 fullWidth
+                type="number"
                 label="Năm Sinh"
                 variant="outlined"
                 name="birth"
                 value={productData.birth}
                 onChange={handleChange}
+                error={!!errors.birth}
+                helperText={errors.birth}
               />
             </Box>
 
@@ -123,7 +166,7 @@ export default function CreateProductForm() {
               }}
             >
               {/* Giới Tính */}
-              <FormControl fullWidth sx={{ mr: 2 }}>
+              <FormControl fullWidth sx={{ mr: 2 }} error={!!errors.sex}>
                 <InputLabel>Giới Tính</InputLabel>
                 <Select
                   name="sex"
@@ -136,7 +179,7 @@ export default function CreateProductForm() {
               </FormControl>
 
               {/* Kích Thước */}
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!errors.size}>
                 <InputLabel>Kích Thước</InputLabel>
                 <Select
                   name="size"
@@ -163,6 +206,8 @@ export default function CreateProductForm() {
               value={productData.price}
               onChange={handleChange}
               sx={{ mb: 2 }}
+              error={!!errors.price}
+                helperText={errors.price}
             />
 
             {/* Mô Tả */}
@@ -176,6 +221,7 @@ export default function CreateProductForm() {
               multiline
               rows={4}
               sx={{ mb: 2 }}
+              
             />
 
             <Box
@@ -195,6 +241,8 @@ export default function CreateProductForm() {
                 value={productData.origin}
                 onChange={handleChange}
                 sx={{ mr: 2 }}
+                error={!!errors.origin}
+                helperText={errors.origin}
               />
 
               {/* Chủng Loại */}
@@ -205,6 +253,8 @@ export default function CreateProductForm() {
                 name="generic"
                 value={productData.generic}
                 onChange={handleChange}
+                error={!!errors.generic}
+                helperText={errors.generic}
               />
             </Box>
 
@@ -220,7 +270,7 @@ export default function CreateProductForm() {
             </Button>
 
             {/* Loại */}
-            <FormControl fullWidth sx={{ mb: 2 }}>
+            <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.category}>
               <InputLabel>Loại</InputLabel>
               <Select
                 name="category"
@@ -242,7 +292,7 @@ export default function CreateProductForm() {
             </FormControl>
 
             {/* Trạng Thái */}
-            <FormControl fullWidth sx={{ mb: 2 }}>
+            <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.status}>
               <InputLabel>Trạng Thái</InputLabel>
               <Select
                 name="status"
@@ -270,5 +320,6 @@ export default function CreateProductForm() {
         </Paper>
       </Box>
     </Box>
+    </>
   );
 }
