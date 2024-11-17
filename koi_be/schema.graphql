@@ -276,58 +276,9 @@ type Product {
   origin: String
   generic: String
   slug: String
-  image: CloudinaryImage_File
   photo: Gallery
   category: Category
   status: String
-}
-
-type CloudinaryImage_File {
-  id: ID
-  filename: String
-  originalFilename: String
-  mimetype: String
-  encoding: String
-  publicUrl: String
-  publicUrlTransformed(transformation: CloudinaryImageFormat): String
-}
-
-"""
-Mirrors the formatting options [Cloudinary provides](https://cloudinary.com/documentation/image_transformation_reference).
-All options are strings as they ultimately end up in a URL.
-"""
-input CloudinaryImageFormat {
-  """ Rewrites the filename to be this pretty string. Do not include `/` or `.`
-  """
-  prettyName: String
-  width: String
-  height: String
-  crop: String
-  aspect_ratio: String
-  gravity: String
-  zoom: String
-  x: String
-  y: String
-  format: String
-  fetch_format: String
-  quality: String
-  radius: String
-  angle: String
-  effect: String
-  opacity: String
-  border: String
-  background: String
-  overlay: String
-  underlay: String
-  default_image: String
-  delay: String
-  color: String
-  color_space: String
-  dpr: String
-  page: String
-  density: String
-  flags: String
-  transformation: String
 }
 
 input ProductWhereUniqueInput {
@@ -405,14 +356,10 @@ input ProductUpdateInput {
   origin: String
   generic: String
   slug: String
-  image: Upload
   photo: GalleryRelateToOneForUpdateInput
   category: CategoryRelateToOneForUpdateInput
   status: String
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input GalleryRelateToOneForUpdateInput {
   create: GalleryCreateInput
@@ -441,7 +388,6 @@ input ProductCreateInput {
   origin: String
   generic: String
   slug: String
-  image: Upload
   photo: GalleryRelateToOneForCreateInput
   category: CategoryRelateToOneForCreateInput
   status: String
@@ -509,6 +455,54 @@ type Article_link_Document {
   document(hydrateRelationships: Boolean! = false): JSON!
 }
 
+type CloudinaryImage_File {
+  id: ID
+  filename: String
+  originalFilename: String
+  mimetype: String
+  encoding: String
+  publicUrl: String
+  publicUrlTransformed(transformation: CloudinaryImageFormat): String
+}
+
+"""
+Mirrors the formatting options [Cloudinary provides](https://cloudinary.com/documentation/image_transformation_reference).
+All options are strings as they ultimately end up in a URL.
+"""
+input CloudinaryImageFormat {
+  """ Rewrites the filename to be this pretty string. Do not include `/` or `.`
+  """
+  prettyName: String
+  width: String
+  height: String
+  crop: String
+  aspect_ratio: String
+  gravity: String
+  zoom: String
+  x: String
+  y: String
+  format: String
+  fetch_format: String
+  quality: String
+  radius: String
+  angle: String
+  effect: String
+  opacity: String
+  border: String
+  background: String
+  overlay: String
+  underlay: String
+  default_image: String
+  delay: String
+  color: String
+  color_space: String
+  dpr: String
+  page: String
+  density: String
+  flags: String
+  transformation: String
+}
+
 input ArticleWhereUniqueInput {
   id: ID
 }
@@ -534,6 +528,9 @@ input ArticleUpdateInput {
   link: JSON
   image: Upload
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input ArticleUpdateArgs {
   where: ArticleWhereUniqueInput!

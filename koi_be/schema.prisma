@@ -59,7 +59,6 @@ model Product {
   origin                         String              @default("")
   generic                        String              @default("")
   slug                           String              @unique @default("")
-  image                          Json?
   photo                          Gallery?            @relation("Product_photo", fields: [photoId], references: [id])
   photoId                        String?             @map("photo")
   category                       Category?           @relation("Product_category", fields: [categoryId], references: [id])
