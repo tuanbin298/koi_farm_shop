@@ -6,13 +6,6 @@ import { permissions } from "../auth/access";
 import "dotenv/config";
 import buildSlug from "../utils/buildSlug";
 
-export const cloudinary = {
-  cloudName: process.env.CLOUDINARY_CLOUD_NAME ?? "",
-  apiKey: process.env.CLOUDINARY_API_KEY ?? "",
-  apiSecret: process.env.CLOUDINARY_API_SECRET ?? "",
-  folder: `/${process.env.CLOUDINARY_FOLDER ?? "koi_viet"}`,
-};
-
 const Product = list({
   access: {
     operation: {
@@ -93,10 +86,6 @@ const Product = list({
         createView: { fieldMode: "hidden" },
         itemView: { fieldMode: "hidden" },
       },
-    }),
-    image: cloudinaryImage({
-      label: "Hình ảnh",
-      cloudinary,
     }),
     photo: relationship({
       label: "Hình ảnh",

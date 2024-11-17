@@ -114,7 +114,7 @@ export default function CardProduct() {
                   {/* Link to product details */}
                   <Link to={`/ProductDetail/${product.slug}`}>
                     <img
-                      src={product.image?.publicUrl}
+                      src={product.photo.image?.publicUrl}
                       alt={product.name}
                       className="card-img-top img-fluid"
                       style={{

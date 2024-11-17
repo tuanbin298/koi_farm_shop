@@ -14,8 +14,10 @@ export const GET_ALL_PRODUCTS = gql`
       origin
       generic
       slug
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
     }
   }
@@ -60,8 +62,10 @@ export const GET_PRODUCT_BY_CATEGORY = gql`
       description
       origin
       generic
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
       category {
         description
@@ -88,8 +92,10 @@ export const GET_PRODUCT = gql`
         name
       }
       slug
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
       generic
       birth
@@ -108,8 +114,10 @@ export const GET_PRODUCT_DETAIL = gql`
       description
       origin
       generic
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
       price
       slug
@@ -128,8 +136,10 @@ export const GET_PRODUCT_DETAIL_BY_SLUG = gql`
       description
       origin
       generic
-      image {
-        publicUrl
+      photo {
+        image {
+          publicUrl
+        }
       }
       price
       slug

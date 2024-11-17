@@ -4,10 +4,12 @@ export const CREATE_PRODUCT = gql`
   mutation CreateProduct(
     $name: String!
     $birth: Int!
-    $size: Int!
+    $sex: String!
+    $size: String!
     $description: String!
     $generic: String!
-    $category: String!
+    $origin: String!
+    $category: CategoryRelateToOneForCreateInput!
     $status: String!
     $price: Int!
     $image: Upload!
@@ -20,6 +22,7 @@ export const CREATE_PRODUCT = gql`
         size: $size
         description: $description
         generic: $generic
+        origin: $origin
         category: $category
         status: $status
         price: $price
@@ -33,7 +36,11 @@ export const CREATE_PRODUCT = gql`
       size
       description
       generic
-      category
+      origin
+      category {
+        id
+        name
+      }
       status
       price
       photo {

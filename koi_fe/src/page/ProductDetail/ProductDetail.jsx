@@ -134,14 +134,13 @@ export default function ProductDetail() {
         <Box style={{ paddingTop: "1%", padding: "1%" }}>
           <Flex gap="large" justify="space-around">
             <div>
-              {product.image?.publicUrl ? (
+              {product.photo.image?.publicUrl ? (
                 <Image
                   width={300}
-                  src={product.image.publicUrl}
+                  src={product.photo.image.publicUrl}
                   alt={product.name}
                 />
               ) : null}
-              {console.log(product.slug)}
             </div>
 
             <div style={{ width: "100%" }}>
@@ -259,11 +258,11 @@ export default function ProductDetail() {
             {displayedProducts?.map((product) => (
               <Link to={`/ProductDetail/${product.slug}`} key={product.id}>
                 <Card sx={{ maxWidth: 250 }}>
-                  {product.image?.publicUrl ? (
+                  {product.photo.image?.publicUrl ? (
                     <CardMedia
                       component="img"
                       alt={product.name}
-                      image={product.image.publicUrl}
+                      image={product.photo.image.publicUrl}
                       style={{
                         aspectRatio: "1/3",
                         height: "250px",

@@ -260,10 +260,10 @@ export default function ConsignmentCareList() {
                   </Typography>
 
                   {/* Hiển thị Hình ảnh nếu có */}
-                  {selectedConsignment.product?.image?.publicUrl && (
+                  {selectedConsignment.product?.photo.image?.publicUrl && (
                     <Box
                       component="img"
-                      src={selectedConsignment.product.image.publicUrl}
+                      src={selectedConsignment.product.photo.image.publicUrl}
                       alt={selectedConsignment.product.name}
                       sx={{
                         width: "100%",
@@ -305,15 +305,19 @@ export default function ConsignmentCareList() {
                   </Typography>
                   <Typography>
                     <strong>Ngày Ký Gửi:</strong>{" "}
-                    {selectedConsignment.consignmentDate || "Chưa cập nhật"}
+                    {formatDate(
+                      selectedConsignment.consignmentDate.split("T")[0]
+                    )}{" "}
+                    {" | "} {formatTime(selectedConsignment.consignmentDate)}
                   </Typography>
                   <Typography>
                     <strong>Ngày Kết Thúc:</strong>{" "}
-                    {selectedConsignment.returnDate || "Chưa cập nhật"}
+                    {formatDate(selectedConsignment.returnDate.split("T")[0])}{" "}
+                    {" | "} {formatTime(selectedConsignment.returnDate)}
                   </Typography>
                   <Typography sx={{ mb: 2 }}>
                     <strong>Giá tiền:</strong>{" "}
-                    {selectedConsignment.consignmentPrice || "Chưa cập nhật"}
+                    {formatMoney(selectedConsignment.consignmentPrice)}
                   </Typography>
 
                   <FormControl fullWidth sx={{ mb: 2 }}>

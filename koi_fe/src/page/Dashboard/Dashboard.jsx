@@ -29,7 +29,7 @@ import CreateProductForm from "./Forms/CreateProductForm";
 import Header from "../../component/Header/Header";
 import Footer from "../../component/Footer/Footer";
 import UserList from "./UserList";
-import AddUser from "./AddUser";
+import AddUser from "./Forms/CreateUserForm";
 import CategoryList from "./CategoryList";
 import CreateCategoryForm from "./Forms/CreateCategoryForm";
 import FeedbackList from "./FeedbackList";
@@ -64,7 +64,7 @@ const Dashboard = () => {
       case "products":
         return <AdminProductList />;
       case "addProduct":
-        return <CreateProductForm />;
+        return <CreateProductForm setSelectedSection={setSelectedSection} />;
       case "users":
         return <UserList />;
       case "userDetail1":
@@ -280,9 +280,7 @@ const Dashboard = () => {
             <Collapse in={openDropdowns.news} timeout="auto" unmountOnExit>
               <List component="div" disablePadding sx={{ pl: 4 }}>
                 <ListItem disablePadding>
-                  <ListItemButton
-                    onClick={() => setSelectedSection("article")}
-                  >
+                  <ListItemButton onClick={() => setSelectedSection("article")}>
                     <ListItemText primary="Danh sách tin tức" />
                   </ListItemButton>
                 </ListItem>
