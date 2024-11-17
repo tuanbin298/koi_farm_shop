@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
-import { GET_ARTICLES } from '../../page/api/Queries/articles';
-import { useQuery } from '@apollo/client';
-import Pagination from '@mui/material/Pagination';
-import Spinner from 'react-bootstrap/Spinner';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import { styled } from '@mui/material/styles';
-
+import React, { useState } from "react";
+import { GET_ARTICLES } from "../../page/api/Queries/articles";
+import { useQuery } from "@apollo/client";
+import Pagination from "@mui/material/Pagination";
+import Spinner from "react-bootstrap/Spinner";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
 
 // Định nghĩa một styled component
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(2),
-  textAlign: 'center',
+  textAlign: "center",
   color: theme.palette.text.secondary,
-  transition: 'transform 0.3s, box-shadow 0.3s',
-  '&:hover': {
-    transform: 'scale(1.05)',
+  transition: "transform 0.3s, box-shadow 0.3s",
+  "&:hover": {
+    transform: "scale(1.05)",
     boxShadow: theme.shadows[5],
   },
 }));
@@ -28,6 +27,7 @@ export default function NewsArticle() {
   const articlesPerPage = 6;
 
   const { data: articlesData, loading, error } = useQuery(GET_ARTICLES);
+  console.log(articlesData);
 
   if (loading) {
     return (
@@ -44,7 +44,10 @@ export default function NewsArticle() {
   // Tính toán cho phân trang
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = articlesData.articles.slice(indexOfFirstArticle, indexOfLastArticle);
+  const currentArticles = articlesData.articles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
 
   const totalArticles = articlesData.articles.length;
   const totalPages = Math.ceil(totalArticles / articlesPerPage);
@@ -59,16 +62,16 @@ export default function NewsArticle() {
       <Grid container spacing={3}>
         {/* Cột bài viết tin tức */}
         {currentArticles.map((article) => {
-          const link = article.link?.document?.[0]?.children?.find((child) => child.href)?.href;
+          const link = article.links;
 
           return (
             <Grid item key={article.id} xs={12} sm={6} md={4}>
               <Item>
                 <a
-                  href={link ? link : '#'}  // Nếu không có link, mặc định về #
+                  href={link ? link : "#"} // Nếu không có link, mặc định về #
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ textDecoration: 'none', color: 'inherit' }} // Đảm bảo không có gạch dưới và màu chữ thừa hưởng
+                  style={{ textDecoration: "none", color: "inherit" }} // Đảm bảo không có gạch dưới và màu chữ thừa hưởng
                 >
                   <div className="article">
                     {article.image?.publicUrl && (
@@ -80,7 +83,9 @@ export default function NewsArticle() {
                     )}
                     <div className="article__info">
                       <h4 className="cardNews-title">{article.name}</h4>
-                      <p className="cardNews-content">{article.content.slice(0, 150)}...</p>
+                      <p className="cardNews-content">
+                        {article.content.slice(0, 150)}...
+                      </p>
                       <button className="readMoreButton">Đọc thêm</button>
                     </div>
                   </div>
@@ -92,18 +97,20 @@ export default function NewsArticle() {
       </Grid>
 
       {/* Phân trang */}
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        marginTop: '20px',
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          marginTop: "20px",
+        }}
+      >
         <Pagination
-          count={totalPages}       // Tổng số trang
-          page={currentPage}       // Trang hiện tại
+          count={totalPages} // Tổng số trang
+          page={currentPage} // Trang hiện tại
           onChange={handlePageChange} // Hàm xử lý khi thay đổi trang
-          color="primary"          // Màu sắc cho phân trang
+          color="primary" // Màu sắc cho phân trang
         />
       </div>
     </div>

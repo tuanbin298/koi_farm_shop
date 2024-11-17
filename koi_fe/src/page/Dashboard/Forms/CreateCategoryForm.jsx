@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Box, Typography, Paper, TextField, Button } from "@mui/material";
+import { useMutation } from "@apollo/client";
+import { MUTATION_CATEGORY } from "../../api/Mutations/category";
 
 export default function CreateCategoryForm() {
+  const [category] = useMutation(MUTATION_CATEGORY);
+
   const [categoryData, setCategoryData] = useState({
     name: "",
     description: "",
@@ -14,12 +18,23 @@ export default function CreateCategoryForm() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(categoryData);
 
-    // Perform the create category API call or mutation here
-    // Example: call a GraphQL mutation or send a POST request
+    try {
+      await category({
+        variables: {
+          data: {
+            name: categoryData.name,
+            description: categoryData.description,
+          },
+        },
+      });
+
+      alert("thêm loại thành công");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

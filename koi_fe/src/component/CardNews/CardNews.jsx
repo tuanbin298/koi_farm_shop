@@ -44,9 +44,7 @@ export default function CardNews() {
     <Grid container spacing={3}>
       {articlesData &&
         articlesData.articles.map((article) => {
-          const link = article.link?.document?.[0]?.children?.find(
-            (child) => child.href
-          )?.href;
+          const link = article.links;
 
           return (
             <Grid key={article.id} item xs={12} sm={6} md={4}>
