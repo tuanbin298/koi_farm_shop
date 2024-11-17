@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { Button, Form, Row, Col } from "react-bootstrap";
 import { Box, Typography } from "@mui/material";
+import { GET_ALL_ROLE } from "../../api/Queries/role";
+import { useMutation, useQuery } from "@apollo/client";
+import { REGISTER_MUTATION } from "../../api/Mutations/user";
 
 const AddUser = () => {
+  const { data: roleData, loading, error } = useQuery(GET_ALL_ROLE);
+  console.log(roleData);
+  const [registerData] = useMutation(REGISTER_MUTATION);
+
   const [userData, setUserData] = useState({
     name: "",
     email: "",
+    password: "",
     phone: "",
     address: "",
     role: "",
@@ -18,8 +26,32 @@ const AddUser = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    alert("User added successfully!");
-    setUserData({ name: "", email: "", phone: "", address: "", role: "" });
+    try {
+      await registerData({
+        variables: {
+          data: {
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+            address: userData.address,
+            password: userData.password,
+            role: { connect: { id: userData.role } },
+          },
+        },
+      });
+
+      alert("thêm người dùng thành công");
+    } catch (err) {
+      console.error("Error registering account:", err);
+    }
+    // setUserData({
+    //   name: "",
+    //   email: "",
+    //   password: "",
+    //   phone: "",
+    //   address: "",
+    //   role: "",
+    // });
   };
 
   return (
@@ -48,7 +80,7 @@ const AddUser = () => {
           }}
         >
           <Row className="mb-3">
-            <Col>
+            <Col md={6}>
               <Form.Group controlId="formName">
                 <Form.Label style={{ fontWeight: "bold" }}>Tên:</Form.Label>
                 <Form.Control
@@ -57,6 +89,22 @@ const AddUser = () => {
                   value={userData.name}
                   onChange={handleInputChange}
                   placeholder="Nhập tên người dùng"
+                  required
+                />
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group controlId="formPassword">
+                <Form.Label style={{ fontWeight: "bold" }}>
+                  Mật khẩu:
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="password"
+                  value={userData.password}
+                  onChange={handleInputChange}
+                  placeholder="Nhập mật khẩu"
                   required
                 />
               </Form.Group>
@@ -119,10 +167,17 @@ const AddUser = () => {
                   required
                 >
                   <option value="">Chọn vai trò</option>
-                  <option value="admin">Admin</option>
-                  <option value="manager">Quản Lý</option>
-                  <option value="employee">Nhân Viên</option>
-                  <option value="customer">Khách Hàng</option>
+                  {loading ? (
+                    <option>Đang tải...</option>
+                  ) : error ? (
+                    <option>Lỗi khi tải vai trò</option>
+                  ) : (
+                    roleData?.roles.map((role) => (
+                      <option key={role.id} value={role.id}>
+                        {role.name}
+                      </option>
+                    ))
+                  )}
                 </Form.Control>
               </Form.Group>
             </Col>
