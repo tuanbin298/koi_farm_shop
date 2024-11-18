@@ -8,6 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import UpdateIcon from "@mui/icons-material/Update";
 import {
   Box,
   Typography,
@@ -15,6 +16,7 @@ import {
   Button,
   Pagination,
   Modal,
+  TextField
 } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { Image } from "antd";
@@ -30,6 +32,7 @@ export default function AdminProductList() {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const products = getProducts?.products || [];
 
@@ -41,7 +44,7 @@ export default function AdminProductList() {
   const paginatedItems = products.slice(startIndex, endIndex) || [];
 
   const handlePageChange = (event, value) => setPage(value);
-
+  {/*When check one checkbox */}
   const handleCheckboxChange = (productId) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(productId)
@@ -50,6 +53,7 @@ export default function AdminProductList() {
     );
   };
 
+  {/*When check all checkbox */}
   const handleSelectAllChange = () => {
     if (selectAll) {
       setSelectedProducts([]);
@@ -60,6 +64,16 @@ export default function AdminProductList() {
     setSelectAll(!selectAll);
   };
 
+  {/*Toggle edit when clicking on "cập nhật" */}
+  const handleEditToggle = () => setIsEditing(!isEditing);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
   useEffect(() => {
     setSelectAll(
       selectedProducts.length === products.length && products.length > 0
@@ -136,8 +150,8 @@ export default function AdminProductList() {
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedProducts.includes(product.id)}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={(e) => {
-                      e.stopPropagation();
                       handleCheckboxChange(product.id);
                     }}
                     color="primary"
@@ -147,6 +161,7 @@ export default function AdminProductList() {
                   <Image
                     width={100}
                     src={product.photo?.image?.publicUrl || ""}
+                    preview={false}
                   />{" "}
                   {product.name}
                 </TableCell>
@@ -159,7 +174,9 @@ export default function AdminProductList() {
           </TableBody>
         </Table>
 
-        <Box display="flex" justifyContent="center" marginTop={2}>
+        <Box display="flex" justifyContent="center" marginTop={2} sx={{
+          marginBottom: "2%"
+        }}>
           <Pagination
             count={Math.ceil(products.length / itemsPerPage)}
             page={page}
@@ -183,15 +200,18 @@ export default function AdminProductList() {
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: 500,
+            maxHeight: "80vh",
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
             p: 4,
             borderRadius: 2,
+            overflowY: "auto"
           }}
         >
           {selectedProduct && (
             <>
+            
               <Typography
                 id="modal-title"
                 variant="h4"
@@ -200,7 +220,79 @@ export default function AdminProductList() {
               >
                 Chi Tiết Sản Phẩm
               </Typography>
-              <Box
+              {isEditing?(
+                <>
+                <Box
+                component="img"
+                src={selectedProduct.photo?.image?.publicUrl}
+                alt={selectedProduct.name}
+                sx={{
+                  width: "100%",
+                  maxHeight: 200,
+                  objectFit: "contain",
+                  mb: 2,
+                }}
+              />
+                <TextField
+                  label="Tên"
+                  name="name"
+                  value={selectedProduct.name}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Giá"
+                  name="price"
+                  value={selectedProduct.price}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Loại"
+                  name="category"
+                  value={selectedProduct.category?.name}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  label="Mô tả"
+                  name="description"
+                  value={selectedProduct.description}
+                  onChange={handleChange}
+                  fullWidth
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                label="Chủng loại"
+                name="generic"
+                value={selectedProduct.generic}
+                onChange={handleChange}
+                fullWidth
+                sx={{ mb: 2 }}
+                />
+                <TextField
+                label="Trạng thái"
+                name="status"
+                value={selectedProduct.status}
+                onChange={handleChange}
+                fullWidth
+                sx={{ mb: 2 }}
+                />
+                <TextField
+                label="Nguồn cung"
+                name="origin"
+                value={selectedProduct.origin}
+                onChange={handleChange}
+                fullWidth
+                sx={{ mb: 2 }}
+                />
+              </>
+              ):(
+                <>
+                <Box
                 component="img"
                 src={selectedProduct.photo?.image?.publicUrl}
                 alt={selectedProduct.name}
@@ -218,6 +310,22 @@ export default function AdminProductList() {
               <Typography><strong>Chủng loại:</strong> {selectedProduct.generic || "Không có"}</Typography>
               <Typography><strong>Trạng thái:</strong> {selectedProduct.status}</Typography>
               <Typography><strong>Nguồn cung:</strong> {selectedProduct.origin || "Không có"}</Typography>
+              </>
+              )}
+              
+              <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderTop: "1px solid #ddd",
+            }}
+          >
+              <Button variant="contained" onClick={handleEditToggle}>
+              <UpdateIcon />
+                {isEditing ? "Lưu" : "Cập Nhật"}
+              </Button>
+              </Box>
             </>
           )}
         </Box>

@@ -100,7 +100,7 @@ export default function CreateProductForm({ setSelectedSection }) {
         },
       });
 
-      alert("thêm sản phẩm thành công");
+      toast.success("thêm sản phẩm thành công");
       setSelectedSection("products");
     } catch (err) {
       toast.error("Lỗi tạo sản phẩm!")
