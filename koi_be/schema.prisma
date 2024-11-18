@@ -157,7 +157,6 @@ model ConsigmentRaising {
   consignmentDate                   DateTime    @default(now())
   returnDate                        DateTime?
   consignmentPrice                  Float
-  status                            String?
   description                       String      @default("")
   from_OrderItem_consignmentRaising OrderItem[] @relation("OrderItem_consignmentRaising")
 
