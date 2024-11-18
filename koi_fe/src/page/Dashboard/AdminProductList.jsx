@@ -25,7 +25,7 @@ import { Image } from "antd";
 import { formatMoney } from "../../utils/formatMoney";
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_PRODUCT } from "../api/Mutations/updateproduct";
-
+import { DELETE_PRODUCTS } from "../api/Queries/product";
 export default function AdminProductList() {
   const [updateProduct] = useMutation(UPDATE_PRODUCT);
   const {
@@ -44,7 +44,7 @@ export default function AdminProductList() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [originalProduct, setOriginalProduct] = useState(null);
-
+  const [deleteProducts] = useMutation(DELETE_PRODUCTS)
   const products = getProducts?.products || [];
   const categories = categoryData?.categories || [];
   // Pagination configuration
@@ -64,6 +64,33 @@ export default function AdminProductList() {
         ? prevSelected.filter((id) => id !== productId)
         : [...prevSelected, productId]
     );
+  };
+  
+  const handleDeleteSelectedProducts = async () => {
+    if (selectedProducts.length === 0) {
+      alert("No products selected for deletion!");
+      return;
+    }
+
+    try {
+      // Call delete mutation
+      await deleteProducts({
+        variables: {
+          where: selectedProducts.map((id) => ({ id })),
+        },
+      });
+
+      // Refetch products
+      await refetchProducts();
+
+      // Clear selected products
+      setSelectedProducts([]);
+
+      alert("Selected products deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting products:", error);
+      alert("An error occurred while deleting products.");
+    }
   };
 
   {
@@ -156,6 +183,7 @@ export default function AdminProductList() {
       }
     });
   };
+  console.log(selectedProducts)
   useEffect(() => {
     setSelectAll(
       selectedProducts.length === products.length && products.length > 0
@@ -194,9 +222,9 @@ export default function AdminProductList() {
           <Button
             variant="contained"
             color="error"
-            onClick={() => console.log("Delete selected products")}
+            onClick={handleDeleteSelectedProducts}
           >
-            Delete Selected
+            Xoá sản phẩm
           </Button>
         )}
       </Box>
