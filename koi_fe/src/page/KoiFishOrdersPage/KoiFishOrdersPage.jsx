@@ -172,7 +172,7 @@ const KoiFishOrdersPage = () => {
                           <th>Giá ký gửi nuôi (VNĐ)</th>
                         </>
                       )}
-                      <th>Ghi chú</th>
+                      <th>Trạng Thái</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -219,7 +219,7 @@ const KoiFishOrdersPage = () => {
                     <tr>
                       <th>Tên cá </th>
                       <th>Giá (VNĐ)</th>
-                      <th>Ghi chú</th>
+                      <th>Trạng Thái</th>
                     </tr>
                   </thead>
                   <tbody>

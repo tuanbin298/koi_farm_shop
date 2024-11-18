@@ -43,6 +43,7 @@ export const GET_ALL_PRODUCTS_ADMIN = gql`
       }
       status
       category {
+        id
         name
       }
     }
