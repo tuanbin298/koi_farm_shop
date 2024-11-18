@@ -81,14 +81,14 @@ export default function ArticleList() {
                     : "Không có nội dung"}
                 </TableCell>
                 <TableCell>
-                  {article.link?.document[0].children[1].href ? (
+                  {article.links ? (
                     <a
-                      href={article.link.document[0].children[1].href}
+                      href={article.links}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{ textDecoration: "none", color: "blue" }}
                     >
-                      {article.link.document[0].children[1].href}
+                      {article.links}
                     </a>
                   ) : (
                     "Không có đường dẫn"

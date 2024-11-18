@@ -1,7 +1,6 @@
 import { list } from "@keystone-6/core";
 import { allowAll } from "@keystone-6/core/access";
 import { text } from "@keystone-6/core/fields";
-import { document } from "@keystone-6/fields-document";
 import { cloudinaryImage } from "@keystone-6/cloudinary";
 import { permissions } from "../auth/access";
 import "dotenv/config";
@@ -45,9 +44,8 @@ const Article = list({
         isRequired: true,
       },
     }),
-    link: document({
+    links: text({
       label: "Đường dẫn bài blog",
-      links: true,
     }),
     image: cloudinaryImage({
       label: "Hình ảnh",

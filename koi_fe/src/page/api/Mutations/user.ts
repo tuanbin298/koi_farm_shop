@@ -38,6 +38,7 @@ export const REGISTER_MUTATION = gql`
       address
       role {
         id
+        name
       }
     }
   }
@@ -52,6 +53,25 @@ export const UPDATE_PROFILE = gql`
       address
       phone
       name
+    }
+  }
+`;
+
+// Mutation to create user in admin page
+export const MUTATION_USER_ADMIN = gql`
+  mutation Mutation($data: UserCreateInput!) {
+    createUser(data: $data) {
+      id
+      name
+      email
+      password {
+        isSet
+      }
+      phone
+      address
+      role {
+        id
+      }
     }
   }
 `;

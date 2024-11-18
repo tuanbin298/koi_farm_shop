@@ -8,3 +8,13 @@ export const GET_ROLE_BY_NAME = gql`
     }
   }
 `;
+
+// Get all role
+export const GET_ALL_ROLE = gql`
+  query Roles {
+    roles {
+      id
+      name
+    }
+  }
+`;

@@ -83,7 +83,7 @@ model Article {
   id      String @id @default(cuid())
   name    String @default("")
   content String @default("")
-  link    Json   @default("[{\"type\":\"paragraph\",\"children\":[{\"text\":\"\"}]}]")
+  links   String @default("")
   image   Json?
 }
 
