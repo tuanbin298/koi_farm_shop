@@ -154,6 +154,7 @@ export default function AdminProductList() {
                     onChange={(e) => {
                       handleCheckboxChange(product.id);
                     }}
+                    disabled={product.status === "Có sẵn"?false:true}
                     color="primary"
                   />
                 </TableCell>
