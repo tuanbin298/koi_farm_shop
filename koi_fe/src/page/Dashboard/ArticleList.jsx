@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+
 import {
   Box,
   Typography,
@@ -15,21 +15,29 @@ import {
   Button,
   TextField,
 } from "@mui/material";
-import { GET_ARTICLES } from "../api/Queries/articles";
 import UpdateIcon from "@mui/icons-material/Update";
+import toast, { Toaster } from "react-hot-toast";
+import { useMutation, useQuery } from "@apollo/client";
+
+import { GET_ALL_ARTICLES } from "../api/Queries/articles";
 import { UPDATE_ARTICLE } from "../api/Mutations/article";
 
 export default function ArticleList() {
-  const { data, loading, error } = useQuery(GET_ARTICLES, {
-    variables: { take: 10 },
-  });
+  // Query
+  const { data, loading, error, refetch } = useQuery(GET_ALL_ARTICLES);
+
+  const articles = data?.articles || [];
+
+  // Mutation
   const [updateArticle] = useMutation(UPDATE_ARTICLE);
 
-  const [selectedArticle, setSelectedArticle] = useState(null);
+  // State
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedArticle, setSelectedArticle] = useState(null);
   const [originalArticle, setOriginalArticle] = useState(null);
 
+  // Handle
   const handleRowClick = (article) => {
     setOpenModal(true);
     setSelectedArticle(article);
@@ -72,10 +80,17 @@ export default function ArticleList() {
             data: dataToUpdate,
           },
         });
-        alert("Bài viết đã được cập nhật thành công!");
+
+        await refetch();
+        toast.success("Bài viết đã được cập nhật thành công");
+        handleCloseModal();
       } catch (err) {
-        console.log(err);
+        oast.error("Lỗi cập nhật bài viết!");
+        console.error("Đã xảy ra lỗi khi cập nhật bài viết :", err);
       }
+    } else {
+      toast("Không có gì thay đổi");
+      handleCloseModal();
     }
   };
 
@@ -86,8 +101,6 @@ export default function ArticleList() {
       [name]: value,
     }));
   };
-
-  console.log(data);
 
   if (loading)
     return (
@@ -103,14 +116,13 @@ export default function ArticleList() {
         color="error"
         sx={{ textAlign: "center", marginTop: 4 }}
       >
-        Error loading articles: {error.message}
+        Lỗi tải bài viết: {error.message}
       </Typography>
     );
 
-  const articles = data?.articles || [];
-
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -222,6 +234,7 @@ export default function ArticleList() {
               </Typography>
               {isEditing ? (
                 <>
+                  {/* Image */}
                   <Box
                     component="img"
                     src={selectedArticle.image?.publicUrl}
@@ -233,6 +246,8 @@ export default function ArticleList() {
                       mb: 2,
                     }}
                   />
+
+                  {/* Name */}
                   <TextField
                     label="Tiêu đề"
                     name="name"
@@ -241,6 +256,8 @@ export default function ArticleList() {
                     fullWidth
                     sx={{ mb: 2 }}
                   />
+
+                  {/* Content */}
                   <TextField
                     label="Nội dung"
                     name="content"
@@ -249,6 +266,8 @@ export default function ArticleList() {
                     fullWidth
                     sx={{ mb: 2 }}
                   />
+
+                  {/* Links */}
                   <TextField
                     label="Đường dẫn"
                     name="links"

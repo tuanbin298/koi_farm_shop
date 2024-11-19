@@ -16,14 +16,16 @@ import {
   CircularProgress,
 } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
-import CloseIcon from "@mui/icons-material/Close";
 import UpdateIcon from "@mui/icons-material/Update";
+import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
+
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";
 
 export default function CategoryList() {
+  // Query
   const {
     data: getCategories,
     error,
@@ -31,26 +33,27 @@ export default function CategoryList() {
     refetch,
   } = useQuery(GET_CATEGORY);
 
+  const categories = getCategories?.categories || [];
+
+  // Mutation
   const [deleteCategories] = useMutation(DELETE_CATEGORY);
   const [updateCategory, { loading: updating }] = useMutation(UPDATE_CATEGORY);
 
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  // State
   const [selectAll, setSelectAll] = useState(false);
-
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [originalCategory, setOriginalCategory] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [originalCategory, setOriginalCategory] = useState(null);
 
-  const categories = getCategories?.categories || [];
-
-  // Update `selectAll` state based on the selection
   useEffect(() => {
     setSelectAll(
       selectedCategories.length === categories.length && categories.length > 0
     );
   }, [selectedCategories, categories]);
 
+  // Handle
   const handleCheckboxChange = (categoryId) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
@@ -111,24 +114,25 @@ export default function CategoryList() {
       dataToUpdate.description = selectedCategory.description;
     }
 
-    if (Object.keys(dataToUpdate).length === 0) {
-      alert("No changes to update.");
-      return;
-    }
+    if (Object.keys(dataToUpdate).length > 0) {
+      try {
+        await updateCategory({
+          variables: {
+            where: { id: categoryId },
+            data: dataToUpdate,
+          },
+        });
 
-    try {
-      await updateCategory({
-        variables: {
-          where: { id: categoryId },
-          data: dataToUpdate,
-        },
-      });
-      alert("Cập nhật thành công!");
-      setOpenModal(false);
-      refetch();
-    } catch (error) {
-      console.error("Error updating category:", error);
-      alert("Đã xảy ra lỗi khi cập nhật.");
+        await refetch();
+        toast.success("Cập nhật thành công");
+        handleCloseModal();
+      } catch (error) {
+        toast.error("Lỗi cập nhật!");
+        console.error("Đã xảy ra lỗi khi cập nhật:", err);
+      }
+    } else {
+      toast("Không có gì thay đổi");
+      handleCloseModal();
     }
   };
 
@@ -136,25 +140,42 @@ export default function CategoryList() {
     try {
       await deleteCategories({
         variables: {
-          where: selectedCategories.map((id) => ({ id })), // Convert to expected format
+          where: selectedCategories.map((id) => ({ id })),
         },
       });
 
-      alert("Xóa thành công!");
-      setSelectedCategories([]); // Reset selected categories
-      setSelectAll(false); // Reset selectAll state
-      refetch();
+      await refetch();
+      toast.success("Xóa thành công");
+      setSelectedCategories([]);
+      setSelectAll(false);
+      handleCloseModal();
     } catch (error) {
-      console.error("Error deleting categories:", error);
-      alert("Đã xảy ra lỗi khi xóa phân loại.");
+      toast.error("Đã xảy ra lỗi khi xóa phân loại!");
+      console.error("Đã xảy ra lỗi khi xóa phân loại:", error);
     }
   };
 
-  if (loading) return <CircularProgress />;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   if (error)
-    return <Typography>Error loading categories: {error.message}</Typography>;
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải: {error.message}
+      </Typography>
+    );
+
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -260,6 +281,7 @@ export default function CategoryList() {
               </Typography>
               {isEditing ? (
                 <>
+                  {/* Name */}
                   <TextField
                     label="Tên"
                     name="name"
@@ -268,6 +290,8 @@ export default function CategoryList() {
                     fullWidth
                     sx={{ mb: 2 }}
                   />
+
+                  {/* Category */}
                   <TextField
                     label="Mô tả"
                     name="description"

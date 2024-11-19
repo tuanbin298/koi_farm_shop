@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { GET_ALL_PRODUCTS_ADMIN } from "../api/Queries/product";
-import { useMutation, useQuery } from "@apollo/client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,16 +17,21 @@ import {
   Modal,
   TextField,
   Select,
+  CircularProgress,
 } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import toast, { Toaster } from "react-hot-toast";
 import { Image } from "antd";
+import { useMutation, useQuery } from "@apollo/client";
 import { formatMoney } from "../../utils/formatMoney";
+
+import { GET_ALL_PRODUCTS_ADMIN } from "../api/Queries/product";
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_PRODUCT } from "../api/Mutations/updateproduct";
 import { DELETE_PRODUCTS } from "../api/Queries/product";
 
 export default function AdminProductList() {
-  const [updateProduct] = useMutation(UPDATE_PRODUCT);
+  // Query
   const {
     data: getProducts,
     refetch: refetchProducts,
@@ -39,15 +42,21 @@ export default function AdminProductList() {
   const { data: categoryData, loading: loadingCategories } =
     useQuery(GET_CATEGORY);
 
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const products = getProducts?.products || [];
+  const categories = categoryData?.categories || [];
+
+  // Mutation
+  const [updateProduct] = useMutation(UPDATE_PRODUCT);
+  const [deleteProducts] = useMutation(DELETE_PRODUCTS);
+
+  // State
   const [selectAll, setSelectAll] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [originalProduct, setOriginalProduct] = useState(null);
-  const [deleteProducts] = useMutation(DELETE_PRODUCTS);
-  const products = getProducts?.products || [];
-  const categories = categoryData?.categories || [];
+
   // Pagination configuration
   const [page, setPage] = useState(1);
   const itemsPerPage = 5;
@@ -55,10 +64,9 @@ export default function AdminProductList() {
   const endIndex = startIndex + itemsPerPage;
   const paginatedItems = products.slice(startIndex, endIndex) || [];
 
+  // Handle
   const handlePageChange = (event, value) => setPage(value);
-  {
-    /*When check one checkbox */
-  }
+  // When check one checkbox
   const handleCheckboxChange = (productId) => {
     setSelectedProducts((prevSelected) =>
       prevSelected.includes(productId)
@@ -69,7 +77,7 @@ export default function AdminProductList() {
 
   const handleDeleteSelectedProducts = async () => {
     if (selectedProducts.length === 0) {
-      alert("No products selected for deletion!");
+      alert("Hãy chọn sản phẩm để xoá");
       return;
     }
 
@@ -81,22 +89,16 @@ export default function AdminProductList() {
         },
       });
 
-      // Refetch products
       await refetchProducts();
-
-      // Clear selected products
       setSelectedProducts([]);
-
-      alert("Selected products deleted successfully!");
+      toast.success("Xoá sản phẩm thành công");
     } catch (error) {
-      console.error("Error deleting products:", error);
-      alert("An error occurred while deleting products.");
+      toast.error("Lỗi xoá sản phẩm!");
+      console.error("Đã xảy ra lỗi khi xoá sản phẩm :", err);
     }
   };
 
-  {
-    /*When check all checkbox */
-  }
+  // When check all checkbox
   const handleSelectAllChange = () => {
     if (selectAll) {
       setSelectedProducts([]);
@@ -111,12 +113,11 @@ export default function AdminProductList() {
     if (!isEditing) {
       setOriginalProduct({ ...selectedProduct }); // Lưu giá trị ban đầu khi bắt đầu chỉnh sửa
     } else {
-      saveChanges(); // Gọi hàm thực hiện cập nhật khi nhấn "Lưu"
+      saveChanges();
     }
     setIsEditing(!isEditing);
   };
 
-  // Hàm cập nhật sản phẩm
   const saveChanges = async () => {
     const dataToUpdate = {};
     if (selectedProduct.name !== originalProduct.name) {
@@ -155,13 +156,17 @@ export default function AdminProductList() {
             data: dataToUpdate,
           },
         });
-        alert("Sản phẩm đã được cập nhật thành công!");
-        setOpenModal(false);
+
+        await refetchProducts();
+        toast.success("Cập nhật sản phẩm thành công");
+        handleCloseModal();
       } catch (error) {
-        console.error(error);
+        toast.error("Lỗi cập nhật sản phẩm!");
+        console.error("Đã xảy ra lỗi khi cập nhật sản phẩm :", err);
       }
     } else {
-      alert("Ko có gì thay đổi");
+      toast("Không có gì thay đổi");
+      handleCloseModal();
     }
   };
 
@@ -169,7 +174,7 @@ export default function AdminProductList() {
     const { name, value } = e.target;
     setSelectedProduct((prevProduct) => {
       if (name === "category") {
-        // Tìm đối tượng category đầy đủ dựa trên id
+        // Find category base on id
         const selectedCategory = categories.find((cat) => cat.id === value);
         return {
           ...prevProduct,
@@ -183,7 +188,7 @@ export default function AdminProductList() {
       }
     });
   };
-  console.log(selectedProducts);
+
   useEffect(() => {
     setSelectAll(
       selectedProducts.length === products.length && products.length > 0
@@ -201,11 +206,27 @@ export default function AdminProductList() {
     setSelectedProduct(null);
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error) return <Typography>Error loading products</Typography>;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải sản phẩm: {error.message}
+      </Typography>
+    );
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",

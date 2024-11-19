@@ -19,6 +19,7 @@ export const GET_ARTICLES = gql`
 export const GET_ALL_ARTICLES = gql`
   query Articles {
     articles {
+      id
       name
       content
       image {
