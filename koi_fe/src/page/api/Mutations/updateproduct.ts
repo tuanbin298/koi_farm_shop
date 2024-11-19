@@ -44,3 +44,26 @@ export const UPDATE_CONSIGNMENT_PRODUCT_STATUS = gql`
     }
   }
 `;
+
+export const UPDATE_CONSIGNMENT_PRODUCT_ADMIN = gql`
+  mutation UpdateConsignmentPriceAndRequestStatus(
+    $consignmentId: ID!
+    $newPrice: Int
+    $requestId: ID!
+    $newStatus: String
+  ) {
+    updateConsignmentSale(
+      where: { id: $consignmentId }
+      data: { price: $newPrice }
+    ) {
+      id
+      name
+      price
+    }
+    updateRequest(where: { id: $requestId }, data: { status: $newStatus }) {
+      id
+      description
+      status
+    }
+  }
+`;

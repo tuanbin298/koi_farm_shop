@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,18 +7,30 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button, Rating,
+import {
+  Box,
+  Typography,
+  Checkbox,
+  Button,
+  Rating,
   CircularProgress,
   Modal,
-  TextField
- } from "@mui/material";
+  TextField,
+} from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { GET_FEEDBACK } from "../api/Queries/feedback";
 import { formatTime } from "../../utils/formatDateTime";
 import UpdateIcon from "@mui/icons-material/Update";
+import { DELETE_FEEDBACK } from "../api/Mutations/feedback";
 
 export default function FeedbackList() {
-  const { data: getFeedbacks, error, loading } = useQuery(GET_FEEDBACK);
+  const {
+    data: getFeedbacks,
+    error,
+    loading,
+    refetch,
+  } = useQuery(GET_FEEDBACK);
+  const [deleteFeedbacks] = useMutation(DELETE_FEEDBACK);
 
   const [selectedFeedbacks, setSelectedFeedbacks] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -28,15 +40,14 @@ export default function FeedbackList() {
   const [isEditing, setIsEditing] = useState(false);
   const [originalFeedback, setOriginalFeedback] = useState(null);
 
-  
   // Feedbacks default to an empty array if data is not loaded yet
   const feedbacks = getFeedbacks?.feedbacks || [];
 
   const handleRowClick = (feedback) => {
     setOpenModal(true);
     setSelectedFeedback(feedback);
-    setOriginalFeedback({...feedback});
-  }
+    setOriginalFeedback({ ...feedback });
+  };
 
   const handleCloseModal = () => {
     setSelectedFeedback(null);
@@ -62,39 +73,56 @@ export default function FeedbackList() {
   // Handle individual checkbox toggle
   const handleCheckboxChange = (feedbackId) => {
     setSelectedFeedbacks((prevSelected) => {
-      if (prevSelected.includes(feedbackId)) {
-        return prevSelected.filter((id) => id !== feedbackId);
-      } else {
-        return [...prevSelected, feedbackId];
-      }
+      const newSelected = prevSelected.includes(feedbackId)
+        ? prevSelected.filter((id) => id !== feedbackId)
+        : [...prevSelected, feedbackId];
+
+      // Cập nhật trạng thái `selectAll` dựa trên danh sách mới
+      setSelectAll(newSelected.length === feedbacks.length);
+      return newSelected;
     });
   };
 
   // Handle select all toggle
   const handleSelectAllChange = () => {
     if (selectAll) {
-      setSelectedFeedbacks([]);
+      setSelectedFeedbacks([]); // Bỏ chọn tất cả
     } else {
       const allFeedbackIds = feedbacks.map((feedback) => feedback.id);
-      setSelectedFeedbacks(allFeedbackIds);
+      setSelectedFeedbacks(allFeedbackIds); // Chọn tất cả
     }
-    setSelectAll(!selectAll);
+    setSelectAll(!selectAll); // Đảo trạng thái `selectAll`
   };
 
   // Update selectAll state based on the selection
   useEffect(() => {
     setSelectAll(
-      selectedFeedbacks.length === feedbacks.length && feedbacks.length > 0
+      feedbacks.length > 0 && selectedFeedbacks.length === feedbacks.length
     );
   }, [selectedFeedbacks, feedbacks]);
 
   // Placeholder delete function
-  const handleDelete = () => {
-    console.log("Deleting feedbacks with IDs:", selectedFeedbacks);
+  // Inside the component:
 
-    // Reset selection after deletion
-    setSelectedFeedbacks([]);
-    setSelectAll(false);
+  const handleDelete = async () => {
+    try {
+      await deleteFeedbacks({
+        variables: {
+          where: selectedFeedbacks.map((id) => ({ id })), // Convert to expected format
+        },
+      });
+
+      console.log("Deleted feedbacks:", selectedFeedbacks);
+      alert("Xóa thành công!");
+
+      // Reset selection and refresh data
+      setSelectedFeedbacks([]);
+      setSelectAll(false);
+      refetch(); // Optional: Refetch the data to update UI
+    } catch (error) {
+      console.error("Failed to delete feedbacks:", error);
+      alert("Đã xảy ra lỗi khi xóa đánh giá.");
+    }
   };
 
   if (loading) return <Typography>Loading...</Typography>;
@@ -151,13 +179,16 @@ export default function FeedbackList() {
           </TableHead>
           <TableBody>
             {feedbacks.map((feedback) => (
-              <TableRow key={feedback.id}
-              onClick={()=>handleRowClick(feedback)}
+              <TableRow
+                key={feedback.id}
+                onClick={() => handleRowClick(feedback)}
               >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedFeedbacks.includes(feedback.id)}
-                    onChange={() => handleCheckboxChange(feedback.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleCheckboxChange(feedback.id)}
+                    color="primary"
                   />
                 </TableCell>
                 <TableCell>{feedback.user?.name || "Unknown User"}</TableCell>
@@ -244,17 +275,20 @@ export default function FeedbackList() {
                 </>
               ) : (
                 <>
-                 <Typography>
-                    <strong>Người đánh giá:</strong> {selectedFeedback.user?.name}
+                  <Typography>
+                    <strong>Người đánh giá:</strong>{" "}
+                    {selectedFeedback.user?.name}
                   </Typography>
                   <Typography>
                     <strong>Đánh giá:</strong> {selectedFeedback.comment}
                   </Typography>
                   <Typography>
-                    <strong>Thời gian:</strong> {formatTime(selectedFeedback.createdAt)}
+                    <strong>Thời gian:</strong>{" "}
+                    {formatTime(selectedFeedback.createdAt)}
                   </Typography>
                   <Typography>
-                    <strong>Số sao:</strong> <Rating value={selectedFeedback.rating} readOnly />
+                    <strong>Số sao:</strong>{" "}
+                    <Rating value={selectedFeedback.rating} readOnly />
                   </Typography>
                 </>
               )}

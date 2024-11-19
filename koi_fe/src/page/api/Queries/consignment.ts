@@ -83,6 +83,7 @@ export const GET_ALL_CONSIGNMENT_SALES_ADMIN = gql`
         }
       }
       request {
+        id
         user {
           id
           name
