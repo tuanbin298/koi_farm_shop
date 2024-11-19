@@ -11,3 +11,11 @@ export const CREATE_FEEDBACK = gql`
     }
   }
 `;
+
+export const DELETE_FEEDBACK = gql`
+  mutation DeleteFeedbacks($where: [FeedbackWhereUniqueInput!]!) {
+    deleteFeedbacks(where: $where) {
+      id
+    }
+  }
+`;
