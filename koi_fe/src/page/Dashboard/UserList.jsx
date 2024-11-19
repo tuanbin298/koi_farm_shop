@@ -13,42 +13,11 @@ import {
   Typography,
   Modal,
   TextField,
-  CircularProgress
+  CircularProgress,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
-
-
-export const GET_PROFILE_ADMIN = gql`
-  query Users {
-    users {
-      id
-      name
-      email
-      address
-      phone
-      role {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const UPDATE_USER = gql`
-  mutation UpdateUser($id: ID!, $data: UserUpdateInput!) {
-    updateUser(where: { id: $id }, data: $data) {
-      id
-      name
-      email
-      address
-      phone
-      role {
-        id
-        name
-      }
-    }
-  }
-`;
+import { GET_PROFILE_ADMIN } from "../api/Queries/user";
+import { UPDATE_USER } from "../api/Mutations/user";
 
 const UserList = () => {
   const { loading, error, data, refetch } = useQuery(GET_PROFILE_ADMIN);
@@ -91,10 +60,14 @@ const UserList = () => {
   const handleSaveChanges = async () => {
     const updates = {};
 
-    if (selectedUser.name !== originalUser.name) updates.name = selectedUser.name;
-    if (selectedUser.email !== originalUser.email) updates.email = selectedUser.email;
-    if (selectedUser.address !== originalUser.address) updates.address = selectedUser.address;
-    if (selectedUser.phone !== originalUser.phone) updates.phone = selectedUser.phone;
+    if (selectedUser.name !== originalUser.name)
+      updates.name = selectedUser.name;
+    if (selectedUser.email !== originalUser.email)
+      updates.email = selectedUser.email;
+    if (selectedUser.address !== originalUser.address)
+      updates.address = selectedUser.address;
+    if (selectedUser.phone !== originalUser.phone)
+      updates.phone = selectedUser.phone;
 
     if (Object.keys(updates).length === 0) {
       return;
@@ -246,8 +219,7 @@ const UserList = () => {
                 </>
               ) : (
                 <>
-
-                 <Typography>
+                  <Typography>
                     <strong>Tên:</strong> {selectedUser.name}
                   </Typography>
                   <Typography>

@@ -15,3 +15,19 @@ export const GET_PROFILE = gql`
     }
   }
 `;
+
+export const GET_PROFILE_ADMIN = gql`
+  query Users {
+    users {
+      id
+      name
+      email
+      address
+      phone
+      role {
+        id
+        name
+      }
+    }
+  }
+`;
