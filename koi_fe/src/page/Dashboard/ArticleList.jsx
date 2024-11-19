@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Typography,
@@ -17,11 +17,14 @@ import {
 } from "@mui/material";
 import { GET_ARTICLES } from "../api/Queries/articles";
 import UpdateIcon from "@mui/icons-material/Update";
+import { UPDATE_ARTICLE } from "../api/Mutations/article";
 
 export default function ArticleList() {
   const { data, loading, error } = useQuery(GET_ARTICLES, {
     variables: { take: 10 },
   });
+  const [updateArticle] = useMutation(UPDATE_ARTICLE);
+
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -39,11 +42,41 @@ export default function ArticleList() {
     setIsEditing(false);
   };
 
-  const handleEditToggle = () => {
+  const handleSaveChange = () => {
     if (!isEditing) {
       setOriginalArticle({ ...selectedArticle });
+    } else {
+      saveChanges();
     }
+
     setIsEditing(!isEditing);
+  };
+
+  const saveChanges = async () => {
+    const dataToUpdate = {};
+    if (selectedArticle.name !== originalArticle.name) {
+      dataToUpdate.name = selectedArticle.name;
+    }
+    if (selectedArticle.content !== originalArticle.content) {
+      dataToUpdate.content = selectedArticle.content;
+    }
+    if (selectedArticle.links !== originalArticle.links) {
+      dataToUpdate.links = selectedArticle.links;
+    }
+
+    if (Object.keys(dataToUpdate).length > 0) {
+      try {
+        await updateArticle({
+          variables: {
+            where: { id: selectedArticle.id },
+            data: dataToUpdate,
+          },
+        });
+        alert("Bài viết đã được cập nhật thành công!");
+      } catch (err) {
+        console.log(err);
+      }
+    }
   };
 
   const handleChange = (e) => {
@@ -110,7 +143,7 @@ export default function ArticleList() {
           <TableBody>
             {articles.map((article, index) => (
               <TableRow
-                key={index}
+                key={article.id}
                 onClick={() => handleRowClick(article)}
                 style={{ cursor: "pointer" }}
               >
@@ -258,7 +291,7 @@ export default function ArticleList() {
                   borderTop: "1px solid #ddd",
                 }}
               >
-                <Button variant="contained" onClick={handleEditToggle}>
+                <Button variant="contained" onClick={handleSaveChange}>
                   <UpdateIcon />
                   {isEditing ? "Lưu" : "Cập Nhật"}
                 </Button>
