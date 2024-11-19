@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,6 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import toast, { Toaster } from "react-hot-toast";
 import { Box, Typography, Checkbox, 
   Button,
   Modal,
@@ -17,13 +18,16 @@ import UpdateIcon from "@mui/icons-material/Update";
 
 // Query to fetch fish categories (replace with your actual GraphQL query)
 import { GET_CATEGORY } from "../api/Queries/category";
+import { DELETE_CATEGORY } from "../api/Mutations/category";
 
 export default function FishCategoryList() {
-  const { data: getCategories, error, loading } = useQuery(GET_CATEGORY);
+  const { data: getCategories, error, loading,
+    refetch: refetchCategories
+   } = useQuery(GET_CATEGORY);
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  
+  const [deleteCategory] = useMutation(DELETE_CATEGORY)
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openModal, setOpenModal] = useState(false);
@@ -64,7 +68,6 @@ useEffect(() => {
   };
 
   
-
   // Placeholder delete function
   const handleDelete = () => {
     console.log("Deleting categories with IDs:", selectedCategories);
@@ -100,8 +103,33 @@ useEffect(() => {
       [name]: value,
     }));
   };
+
+  const handleDeleteSelectedCategories = async () => {
+    try{
+      await deleteCategory({
+        variables:{
+          where: selectedCategories.map((id)=>(
+            {
+              id
+            }
+          ))
+        }
+      })
+
+      await refetchCategories();
+
+      setSelectedCategories([])
+
+      toast.success("Xoá phân loại thành công!");
+    }
+    catch(error){
+      console.error("Error", error)
+      toast.error("Lỗi xoá phân loại!")
+    }
+  }
   return (
     <>
+    <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -115,7 +143,7 @@ useEffect(() => {
           Danh sách phân loại cá <ListAltIcon />
         </Typography>
         {selectedCategories.length > 0 && (
-          <Button variant="contained" color="error" onClick={handleDelete}>
+          <Button variant="contained" color="error" onClick={handleDeleteSelectedCategories}>
             Xoá phân loại
           </Button>
         )}

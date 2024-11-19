@@ -8,3 +8,11 @@ export const MUTATION_CATEGORY = gql`
     }
   }
 `;
+
+export const DELETE_CATEGORY = gql`
+mutation Mutation($where: [CategoryWhereUniqueInput!]!) {
+  deleteCategories(where: $where) {
+    id
+  }
+}
+`
