@@ -93,7 +93,9 @@ const KoiFishOrdersPage = () => {
 
   const orders = data.orders;
 
-  const hasCompletedOrder = orders.some(order => order.status === "Hoàn thành đơn hàng");
+  const hasCompletedOrder = orders.some(
+    (order) => order.status === "Hoàn thành đơn hàng"
+  );
 
   return (
     <div className="order container mt-4">
@@ -156,7 +158,7 @@ const KoiFishOrdersPage = () => {
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             {/* Bảng Chi tiết đơn hàng */}
-            {expandedOrder.items.some(item => !item.consignmentSale) && (
+            {expandedOrder.items.some((item) => !item.consignmentSale) && (
               <>
                 <h5>Cá Koi Trang Trại</h5>
                 <Table striped bordered hover>
@@ -165,7 +167,9 @@ const KoiFishOrdersPage = () => {
                       <th>Tên cá</th>
                       <th>Giá (VNĐ)</th>
                       {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
-                      {expandedOrder.items.some(item => item.consignmentRaising) && (
+                      {expandedOrder.items.some(
+                        (item) => item.consignmentRaising
+                      ) && (
                         <>
                           <th>Ngày bắt đầu ký gửi nuôi</th>
                           <th>Ngày kết thúc ký gửi nuôi</th>
@@ -178,32 +182,44 @@ const KoiFishOrdersPage = () => {
                   <tbody>
                     {/* Lọc ra các item không có consignmentSale */}
                     {expandedOrder.items
-                      .filter(item => !item.consignmentSale)
+                      .filter((item) => !item.consignmentSale)
                       .map((item, idx) => (
                         <tr key={idx}>
-                          <td>{item.product?.name || '-'}</td>
-                          <td>{item.product?.price ? formatMoney(item.product.price) : '-'}</td>
+                          <td>{item.product?.name || "-"}</td>
+                          <td>
+                            {item.product?.price
+                              ? formatMoney(item.product.price)
+                              : "-"}
+                          </td>
                           {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
-                          {expandedOrder.items.some(item => item.consignmentRaising) ? (
+                          {expandedOrder.items.some(
+                            (item) => item.consignmentRaising
+                          ) ? (
                             <>
                               <td>
                                 {item.consignmentRaising?.consignmentDate
-                                  ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
-                                  : '-'}
+                                  ? new Date(
+                                      item.consignmentRaising.consignmentDate
+                                    ).toLocaleDateString()
+                                  : "-"}
                               </td>
                               <td>
                                 {item.consignmentRaising?.returnDate
-                                  ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
-                                  : '-'}
+                                  ? new Date(
+                                      item.consignmentRaising.returnDate
+                                    ).toLocaleDateString()
+                                  : "-"}
                               </td>
                               <td>
                                 {item.consignmentRaising?.consignmentPrice
-                                  ? formatMoney(item.consignmentRaising.consignmentPrice)
-                                  : '-'}
+                                  ? formatMoney(
+                                      item.consignmentRaising.consignmentPrice
+                                    )
+                                  : "-"}
                               </td>
                             </>
                           ) : null}
-                          <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
+                          <td>{item.status || "-"}</td>
                         </tr>
                       ))}
                   </tbody>
