@@ -21,3 +21,16 @@ export const MUTATION_ARTICLE = gql`
     }
   }
 `;
+
+export const UPDATE_ARTICLE = gql`
+  mutation Mutation(
+    $where: ArticleWhereUniqueInput!
+    $data: ArticleUpdateInput!
+  ) {
+    updateArticle(where: $where, data: $data) {
+      name
+      content
+      links
+    }
+  }
+`;

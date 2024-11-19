@@ -26,6 +26,7 @@ import { formatMoney } from "../../utils/formatMoney";
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_PRODUCT } from "../api/Mutations/updateproduct";
 import { DELETE_PRODUCTS } from "../api/Queries/product";
+
 export default function AdminProductList() {
   const [updateProduct] = useMutation(UPDATE_PRODUCT);
   const {
@@ -44,7 +45,7 @@ export default function AdminProductList() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [originalProduct, setOriginalProduct] = useState(null);
-  const [deleteProducts] = useMutation(DELETE_PRODUCTS)
+  const [deleteProducts] = useMutation(DELETE_PRODUCTS);
   const products = getProducts?.products || [];
   const categories = categoryData?.categories || [];
   // Pagination configuration
@@ -65,7 +66,7 @@ export default function AdminProductList() {
         : [...prevSelected, productId]
     );
   };
-  
+
   const handleDeleteSelectedProducts = async () => {
     if (selectedProducts.length === 0) {
       alert("No products selected for deletion!");
@@ -117,8 +118,6 @@ export default function AdminProductList() {
 
   // Hàm cập nhật sản phẩm
   const saveChanges = async () => {
-    setOpenModal(false);
-
     const dataToUpdate = {};
     if (selectedProduct.name !== originalProduct.name) {
       dataToUpdate.name = selectedProduct.name;
@@ -157,6 +156,7 @@ export default function AdminProductList() {
           },
         });
         alert("Sản phẩm đã được cập nhật thành công!");
+        setOpenModal(false);
       } catch (error) {
         console.error(error);
       }
@@ -183,7 +183,7 @@ export default function AdminProductList() {
       }
     });
   };
-  console.log(selectedProducts)
+  console.log(selectedProducts);
   useEffect(() => {
     setSelectAll(
       selectedProducts.length === products.length && products.length > 0
@@ -270,7 +270,7 @@ export default function AdminProductList() {
                     onChange={(e) => {
                       handleCheckboxChange(product.id);
                     }}
-                    disabled={product.status === "Có sẵn"?false:true}
+                    disabled={product.status === "Có sẵn" ? false : true}
                     color="primary"
                   />
                 </TableCell>

@@ -13,6 +13,7 @@ export const CREATE_CONSIGNMENT_RAISING = gql`
       consignmentDate
       returnDate
       consignmentPrice
+      status
       description
     }
   }
