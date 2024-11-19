@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Paper } from "@mui/material";
+import { MUTATION_ARTICLE } from "../../api/Mutations/article";
+import { useMutation } from "@apollo/client";
 
 const CreateArticleForm = ({ onSubmit }) => {
+  const [article] = useMutation(MUTATION_ARTICLE);
+
   const [formData, setFormData] = useState({
-    title: "",
+    name: "",
     content: "",
-    link: "",
+    links: "",
     image: "",
   });
 
@@ -15,22 +19,26 @@ const CreateArticleForm = ({ onSubmit }) => {
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageURL = URL.createObjectURL(file);
-      setFormData((prev) => ({
-        ...prev,
-        image: imageURL,
-      }));
-    }
+    setFormData({ ...formData, image: e.target.files[0] });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onSubmit) {
-      onSubmit(formData);
+    try {
+      await article({
+        variables: {
+          name: formData.name,
+          content: formData.content,
+          links: formData.links,
+          image: formData.image,
+        },
+      });
+    } catch (err) {
+      console.log(err);
     }
-    setFormData({ title: "", content: "", link: "", image: "" });
+    alert("Tạo tin tức thành công");
+
+    // setFormData({ name: "", content: "", links: "", image: "" });
   };
 
   return (
@@ -44,13 +52,13 @@ const CreateArticleForm = ({ onSubmit }) => {
         </Typography>
         <Paper elevation={3} sx={{ padding: 3 }}>
           <form onSubmit={handleSubmit}>
-            {/* Title */}
+            {/* Name */}
             <TextField
               fullWidth
               label="Tiêu đề"
               variant="outlined"
-              name="title"
-              value={formData.title}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               sx={{ mb: 2 }}
               required
@@ -70,13 +78,13 @@ const CreateArticleForm = ({ onSubmit }) => {
               required
             />
 
-            {/* Link */}
+            {/* Links */}
             <TextField
               fullWidth
               label="Đường dẫn"
               variant="outlined"
-              name="link"
-              value={formData.link}
+              name="links"
+              value={formData.links}
               onChange={handleChange}
               sx={{ mb: 2 }}
               required
