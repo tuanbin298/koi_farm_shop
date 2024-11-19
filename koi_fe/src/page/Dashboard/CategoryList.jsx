@@ -69,15 +69,6 @@ export default function CategoryList() {
     setSelectAll(!selectAll);
   };
 
-  // Placeholder delete function
-  const handleDelete = () => {
-    console.log("Deleting categories with IDs:", selectedCategories);
-
-    // Here you would call your delete mutation and refetch the data.
-    setSelectedCategories([]); // Reset selection after deletion
-    setSelectAll(false);
-  };
-
   const handleRowClick = (category) => {
     setSelectedCategory(category);
     setOriginalCategory({ ...category });
@@ -164,7 +155,6 @@ export default function CategoryList() {
     return <Typography>Error loading categories: {error.message}</Typography>;
   return (
     <>
-      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -178,11 +168,7 @@ export default function CategoryList() {
           Danh sách phân loại cá <ListAltIcon />
         </Typography>
         {selectedCategories.length > 0 && (
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleDeleteSelectedCategories}
-          >
+          <Button variant="contained" color="error" onClick={handleDelete}>
             Xoá phân loại
           </Button>
         )}
