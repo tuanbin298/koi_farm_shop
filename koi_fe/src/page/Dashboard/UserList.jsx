@@ -95,7 +95,6 @@ const UserList = () => {
     if (selectedUser.phone !== originalUser.phone) updates.phone = selectedUser.phone;
 
     if (Object.keys(updates).length === 0) {
-      alert("No changes detected.");
       return;
     }
 
@@ -106,12 +105,10 @@ const UserList = () => {
           data: updates,
         },
       });
-      alert("User updated successfully!");
       refetch();
       handleCloseModal();
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("An error occurred while updating the user.");
     }
   };
 

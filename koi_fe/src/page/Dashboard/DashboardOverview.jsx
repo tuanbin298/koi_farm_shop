@@ -38,6 +38,7 @@ export default function DashboardOverview() {
         data:getAllProducts,
         refetch:refetchAllProducts
     } = useQuery(GET_ALL_PRODUCTS_ADMIN)
+    console.log(getOrders)
     //Tổng doanh thu
     let totalPrice = 0;
     //Tổng sản phẩm
