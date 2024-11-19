@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Box,
@@ -13,10 +13,11 @@ import {
   CircularProgress,
   Modal,
   Button,
-  TextField
+  TextField,
 } from "@mui/material";
 import { GET_ARTICLES } from "../api/Queries/articles";
 import UpdateIcon from "@mui/icons-material/Update";
+
 export default function ArticleList() {
   const { data, loading, error } = useQuery(GET_ARTICLES, {
     variables: { take: 10 },
@@ -29,8 +30,8 @@ export default function ArticleList() {
   const handleRowClick = (article) => {
     setOpenModal(true);
     setSelectedArticle(article);
-    setOriginalArticle({...article});
-  }
+    setOriginalArticle({ ...article });
+  };
 
   const handleCloseModal = () => {
     setSelectedArticle(null);
@@ -108,9 +109,10 @@ export default function ArticleList() {
           </TableHead>
           <TableBody>
             {articles.map((article, index) => (
-              <TableRow key={index}
-              onClick={() => handleRowClick(article)}
-              style={{ cursor: "pointer" }}
+              <TableRow
+                key={index}
+                onClick={() => handleRowClick(article)}
+                style={{ cursor: "pointer" }}
               >
                 <TableCell>{article.name || "Không có tiêu đề"}</TableCell>
                 <TableCell>
@@ -187,7 +189,7 @@ export default function ArticleList() {
               </Typography>
               {isEditing ? (
                 <>
-                <Box
+                  <Box
                     component="img"
                     src={selectedArticle.image?.publicUrl}
                     alt={selectedArticle.name}
@@ -208,7 +210,7 @@ export default function ArticleList() {
                   />
                   <TextField
                     label="Nội dung"
-                    name="email"
+                    name="content"
                     value={selectedArticle.content}
                     onChange={handleChange}
                     fullWidth
@@ -216,7 +218,7 @@ export default function ArticleList() {
                   />
                   <TextField
                     label="Đường dẫn"
-                    name="phone"
+                    name="links"
                     value={selectedArticle.links}
                     onChange={handleChange}
                     fullWidth
@@ -225,7 +227,7 @@ export default function ArticleList() {
                 </>
               ) : (
                 <>
-                <Box
+                  <Box
                     component="img"
                     src={selectedArticle.image?.publicUrl}
                     alt={selectedArticle.name}
@@ -236,7 +238,7 @@ export default function ArticleList() {
                       mb: 2,
                     }}
                   />
-                 <Typography>
+                  <Typography>
                     <strong>Tiêu đề:</strong> {selectedArticle.name}
                   </Typography>
                   <Typography>
