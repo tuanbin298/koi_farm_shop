@@ -7,9 +7,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button, Rating } from "@mui/material";
+import { Box, Typography, Checkbox, Button, Rating,
+  CircularProgress,
+  Modal,
+  TextField
+ } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { GET_FEEDBACK } from "../api/Queries/feedback";
+import { formatTime } from "../../utils/formatDateTime";
+import UpdateIcon from "@mui/icons-material/Update";
 
 export default function FeedbackList() {
   const { data: getFeedbacks, error, loading } = useQuery(GET_FEEDBACK);
@@ -17,8 +23,41 @@ export default function FeedbackList() {
   const [selectedFeedbacks, setSelectedFeedbacks] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
 
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalFeedback, setOriginalFeedback] = useState(null);
+
+  
   // Feedbacks default to an empty array if data is not loaded yet
   const feedbacks = getFeedbacks?.feedbacks || [];
+
+  const handleRowClick = (feedback) => {
+    setOpenModal(true);
+    setSelectedFeedback(feedback);
+    setOriginalFeedback({...feedback});
+  }
+
+  const handleCloseModal = () => {
+    setSelectedFeedback(null);
+    setOpenModal(false);
+    setIsEditing(false);
+  };
+
+  const handleEditToggle = () => {
+    if (!isEditing) {
+      setOriginalFeedback({ ...selectedFeedback });
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedFeedback((prevFeedback) => ({
+      ...prevFeedback,
+      [name]: value,
+    }));
+  };
 
   // Handle individual checkbox toggle
   const handleCheckboxChange = (feedbackId) => {
@@ -112,7 +151,9 @@ export default function FeedbackList() {
           </TableHead>
           <TableBody>
             {feedbacks.map((feedback) => (
-              <TableRow key={feedback.id}>
+              <TableRow key={feedback.id}
+              onClick={()=>handleRowClick(feedback)}
+              >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedFeedbacks.includes(feedback.id)}
@@ -134,6 +175,107 @@ export default function FeedbackList() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            overflowY: "auto",
+          }}
+        >
+          {selectedFeedback && (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h4"
+                component="h2"
+                sx={{ mb: 2 }}
+              >
+                Chi Tiết đánh giá
+              </Typography>
+              {isEditing ? (
+                <>
+                  <TextField
+                    label="Người đánh giá"
+                    name="name"
+                    value={selectedFeedback.user?.name}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Đánh giá"
+                    name="email"
+                    value={selectedFeedback.comment}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Thời gian"
+                    name="phone"
+                    value={formatTime(selectedFeedback.createdAt)}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Số sao"
+                    name="phone"
+                    value={selectedFeedback.rating}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                </>
+              ) : (
+                <>
+                 <Typography>
+                    <strong>Người đánh giá:</strong> {selectedFeedback.user?.name}
+                  </Typography>
+                  <Typography>
+                    <strong>Đánh giá:</strong> {selectedFeedback.comment}
+                  </Typography>
+                  <Typography>
+                    <strong>Thời gian:</strong> {formatTime(selectedFeedback.createdAt)}
+                  </Typography>
+                  <Typography>
+                    <strong>Số sao:</strong> <Rating value={selectedFeedback.rating} readOnly />
+                  </Typography>
+                </>
+              )}
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  p: 2,
+                  borderTop: "1px solid #ddd",
+                }}
+              >
+                <Button variant="contained" onClick={handleEditToggle}>
+                  <UpdateIcon />
+                  {isEditing ? "Lưu" : "Cập Nhật"}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
     </Box>
   );
 }
