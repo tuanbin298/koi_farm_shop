@@ -1,6 +1,3 @@
-22:41 T2
-Nguyễn
-Tuấn Nguyễn
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Paper } from "@mui/material";
 import { MUTATION_ARTICLE } from "../../api/Mutations/article";
