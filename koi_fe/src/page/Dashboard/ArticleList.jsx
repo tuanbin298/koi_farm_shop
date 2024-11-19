@@ -11,9 +11,10 @@ import {
   TableRow,
   Paper,
   CircularProgress,
+  Modal
 } from "@mui/material";
 import { GET_ARTICLES } from "../api/Queries/articles";
-
+import UpdateIcon from "@mui/icons-material/Update";
 export default function ArticleList() {
   const { data, loading, error } = useQuery(GET_ARTICLES, {
     variables: { take: 10 },

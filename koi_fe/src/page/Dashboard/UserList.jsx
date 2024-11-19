@@ -13,8 +13,10 @@ import {
   Typography,
   Modal,
   TextField,
+  CircularProgress
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
+
 
 export const GET_PROFILE_ADMIN = gql`
   query Users {
@@ -112,8 +114,23 @@ const UserList = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Error loading articles: {error.message}
+      </Typography>
+    );
 
   return (
     <Box
@@ -190,7 +207,7 @@ const UserList = () => {
                 component="h2"
                 sx={{ mb: 2 }}
               >
-                Chi Tiết Sản Phẩm
+                Chi Tiết người dùng
               </Typography>
               {isEditing ? (
                 <>
