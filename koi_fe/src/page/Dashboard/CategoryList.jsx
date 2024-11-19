@@ -7,8 +7,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button } from "@mui/material";
+import { Box, Typography, Checkbox, 
+  Button,
+  Modal,
+  TextField
+ } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import UpdateIcon from "@mui/icons-material/Update";
 
 // Query to fetch fish categories (replace with your actual GraphQL query)
 import { GET_CATEGORY } from "../api/Queries/category";
@@ -18,13 +23,24 @@ export default function FishCategoryList() {
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
+  
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalCategory, setOriginalCategory] = useState(null);
 
   if (loading) return <Typography>Loading...</Typography>;
   if (error)
     return <Typography>Error loading categories: {error.message}</Typography>;
 
   const categories = getCategories?.categories || [];
-
+// Update `selectAll` state based on the selection
+useEffect(() => {
+  setSelectAll(
+    selectedCategories.length === categories.length && categories.length > 0
+  );
+}, [selectedCategories, categories]);
   // Handle individual checkbox toggle
   const handleCheckboxChange = (categoryId) => {
     setSelectedCategories((prevSelected) => {
@@ -47,12 +63,7 @@ export default function FishCategoryList() {
     setSelectAll(!selectAll);
   };
 
-  // Update `selectAll` state based on the selection
-  useEffect(() => {
-    setSelectAll(
-      selectedCategories.length === categories.length && categories.length > 0
-    );
-  }, [selectedCategories, categories]);
+  
 
   // Placeholder delete function
   const handleDelete = () => {
@@ -63,6 +74,32 @@ export default function FishCategoryList() {
     setSelectAll(false);
   };
 
+  const handleRowClick = (category) => {
+    setSelectedCategory(category)
+    setOriginalCategory({...category})
+    setOpenModal(true)
+  }
+
+  const handleCloseModal = () => {
+    setSelectedCategory(null)
+    setOpenModal(false)
+    setIsEditing(false);
+  }
+
+  const handleEditToggle = () => {
+    if (!isEditing) {
+      setOriginalCategory({ ...selectedCategory });
+    } 
+    setIsEditing(!isEditing);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedCategory((prevCategory) => ({
+      ...prevCategory,
+      [name]: value,
+    }));
+  };
   return (
     <>
       <Box
@@ -79,7 +116,7 @@ export default function FishCategoryList() {
         </Typography>
         {selectedCategories.length > 0 && (
           <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete Selected
+            Xoá phân loại
           </Button>
         )}
       </Box>
@@ -114,10 +151,12 @@ export default function FishCategoryList() {
               <TableRow
                 key={category.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                onClick={()=>handleRowClick(category)}
               >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedCategories.includes(category.id)}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={() => handleCheckboxChange(category.id)}
                     color="primary"
                   />
@@ -133,6 +172,89 @@ export default function FishCategoryList() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            overflowY: "auto",
+          }}
+        >
+          {selectedCategory && (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h4"
+                component="h2"
+                sx={{ mb: 2 }}
+              >
+                Chi Tiết phân loại
+              </Typography>
+              {isEditing ? (
+                <>
+                  <TextField
+                    label="Tên"
+                    name="name"
+                    value={selectedCategory.name}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Mô tả"
+                    name="description"
+                    value={selectedCategory.description}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2,
+                      
+                     }}
+                  />
+                </>
+              ) : (
+                <>
+
+                 <Typography>
+                    <strong>Tên:</strong> {selectedCategory.name}
+                  </Typography>
+                  <Typography>
+                    <strong>Mô tả:</strong> {selectedCategory.description}
+                  </Typography>
+                </>
+              )}
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  p: 2,
+                  borderTop: "1px solid #ddd",
+                }}
+              >
+                <Button variant="contained" onClick={handleEditToggle}>
+                  <UpdateIcon />
+                  {isEditing ? "Lưu" : "Cập Nhật"}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
     </>
   );
 }

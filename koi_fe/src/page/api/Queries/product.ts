@@ -148,6 +148,14 @@ export const GET_PRODUCT_DETAIL_BY_SLUG = gql`
   }
 `;
 
+export const DELETE_PRODUCTS = gql`
+mutation DeleteProducts($where: [ProductWhereUniqueInput!]!) {
+  deleteProducts(where: $where) {
+    id
+  }
+}
+`
+
 export function useProductBySlug(slug) {
   const { loading, error, data } = useQuery(GET_PRODUCT_DETAIL_BY_SLUG, {
     variables: { where: { slug } }, // Correctly wrap the slug in a where object

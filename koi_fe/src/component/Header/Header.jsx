@@ -11,6 +11,7 @@ import { useQuery } from "@apollo/client";
 import { GET_CATEGORY } from "../../page/api/Queries/category";
 import { GET_CART_ITEMS } from "../../page/api/Queries/cartItem";
 import { useApolloClient } from "@apollo/client";
+import { GET_PROFILE } from "../../page/api/Queries/user";
 
 export default function Header() {
   const client = useApolloClient();
@@ -21,7 +22,6 @@ export default function Header() {
   const [kiguiDropdownOpen, setKiguiDropdownOpen] = useState(false); // Ký gửi dropdown control
   const [cartItemCount, setCartItemCount] = useState(0);
   const navigate = useNavigate();
-
   // Fetching data for fish types using Apollo's useQuery
   const { data, loading, error } = useQuery(GET_CATEGORY);
   const UserId = localStorage.getItem("id");
@@ -44,6 +44,18 @@ export default function Header() {
     fetchPolicy: "network-only", // Bắt buộc lấy dữ liệu mới nhất từ server
   });
 
+  const {
+    data: userData,
+    loading: userLoading,
+    error: userError
+  } = useQuery(GET_PROFILE, {
+    variables:{
+      where:{
+        id: UserId,
+      }
+    },
+    skip: !UserId
+  })
   useEffect(() => {
     if (cartData && cartData.cartItems) {
       const itemCount = loggedIn
@@ -172,6 +184,10 @@ export default function Header() {
                   <MenuItem onClick={() => navigate("/profile")}>
                     Thông tin cá nhân
                   </MenuItem>
+                  {(userData?.user?.role?.name === "Admin" || userData?.user?.role?.name === "Nhân viên")?
+                  (<MenuItem onClick={() => navigate("/dashboard")}>Dashboard</MenuItem>):
+                  (<></>)
+                  }
                   <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
                 </Menu>
               </>

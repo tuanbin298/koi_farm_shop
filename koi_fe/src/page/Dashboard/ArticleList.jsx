@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { useQuery } from "@apollo/client";
 import {
   Box,
@@ -11,13 +11,48 @@ import {
   TableRow,
   Paper,
   CircularProgress,
+  Modal,
+  Button,
+  TextField
 } from "@mui/material";
 import { GET_ARTICLES } from "../api/Queries/articles";
-
+import UpdateIcon from "@mui/icons-material/Update";
 export default function ArticleList() {
   const { data, loading, error } = useQuery(GET_ARTICLES, {
     variables: { take: 10 },
   });
+  const [selectedArticle, setSelectedArticle] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalArticle, setOriginalArticle] = useState(null);
+
+  const handleRowClick = (article) => {
+    setOpenModal(true);
+    setSelectedArticle(article);
+    setOriginalArticle({...article});
+  }
+
+  const handleCloseModal = () => {
+    setSelectedArticle(null);
+    setOpenModal(false);
+    setIsEditing(false);
+  };
+
+  const handleEditToggle = () => {
+    if (!isEditing) {
+      setOriginalArticle({ ...selectedArticle });
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedArticle((prevArticle) => ({
+      ...prevArticle,
+      [name]: value,
+    }));
+  };
+
   console.log(data);
 
   if (loading)
@@ -73,7 +108,10 @@ export default function ArticleList() {
           </TableHead>
           <TableBody>
             {articles.map((article, index) => (
-              <TableRow key={index}>
+              <TableRow key={index}
+              onClick={() => handleRowClick(article)}
+              style={{ cursor: "pointer" }}
+              >
                 <TableCell>{article.name || "Không có tiêu đề"}</TableCell>
                 <TableCell>
                   {typeof article.content === "string"
@@ -114,6 +152,119 @@ export default function ArticleList() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            overflowY: "auto",
+          }}
+        >
+          {selectedArticle && (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h4"
+                component="h2"
+                sx={{ mb: 2 }}
+              >
+                Chi Tiết bài viết
+              </Typography>
+              {isEditing ? (
+                <>
+                <Box
+                    component="img"
+                    src={selectedArticle.image?.publicUrl}
+                    alt={selectedArticle.name}
+                    sx={{
+                      width: "100%",
+                      maxHeight: 200,
+                      objectFit: "contain",
+                      mb: 2,
+                    }}
+                  />
+                  <TextField
+                    label="Tiêu đề"
+                    name="name"
+                    value={selectedArticle.name}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Nội dung"
+                    name="email"
+                    value={selectedArticle.content}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Đường dẫn"
+                    name="phone"
+                    value={selectedArticle.links}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                </>
+              ) : (
+                <>
+                <Box
+                    component="img"
+                    src={selectedArticle.image?.publicUrl}
+                    alt={selectedArticle.name}
+                    sx={{
+                      width: "100%",
+                      maxHeight: 200,
+                      objectFit: "contain",
+                      mb: 2,
+                    }}
+                  />
+                 <Typography>
+                    <strong>Tiêu đề:</strong> {selectedArticle.name}
+                  </Typography>
+                  <Typography>
+                    <strong>Nội dung</strong> {selectedArticle.content}
+                  </Typography>
+                  <Typography>
+                    <strong>Đường dẫn:</strong> {selectedArticle.links}
+                  </Typography>
+                </>
+              )}
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  p: 2,
+                  borderTop: "1px solid #ddd",
+                }}
+              >
+                <Button variant="contained" onClick={handleEditToggle}>
+                  <UpdateIcon />
+                  {isEditing ? "Lưu" : "Cập Nhật"}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
     </>
   );
 }

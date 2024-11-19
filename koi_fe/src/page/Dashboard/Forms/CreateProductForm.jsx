@@ -15,9 +15,13 @@ import { useMutation, useQuery } from "@apollo/client";
 import { CREATE_PRODUCT } from "../../api/Mutations/product";
 import { GET_CATEGORY } from "../../api/Queries/category";
 import toast, { Toaster } from "react-hot-toast";
+import { GET_ALL_PRODUCTS_ADMIN } from "../../api/Queries/product";
 export default function CreateProductForm({ setSelectedSection }) {
   const { data: categoryData, loading, error } = useQuery(GET_CATEGORY);
-
+  const {
+    data: getProducts,
+    refetch: refetchProducts,
+  } = useQuery(GET_ALL_PRODUCTS_ADMIN);
   const [createProduct] = useMutation(CREATE_PRODUCT);
 
   const [productData, setProductData] = useState({
@@ -99,7 +103,7 @@ export default function CreateProductForm({ setSelectedSection }) {
           image: productData.image,
         },
       });
-
+      await refetchProducts();
       toast.success("thêm sản phẩm thành công");
       setSelectedSection("products");
     } catch (err) {

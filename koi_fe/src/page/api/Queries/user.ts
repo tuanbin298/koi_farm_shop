@@ -9,6 +9,9 @@ export const GET_PROFILE = gql`
       address
       phone
       name
+      role {
+        name
+      }
     }
   }
 `;

@@ -65,15 +65,6 @@ const ConsigmentRaising = list({
         isRequired: true,
       },
     }),
-    status: select({
-      label: "Trạng thái",
-      options: [
-        { label: "Đang xử lý", value: "Đang xử lý" },
-        { label: "Đang chăm sóc", value: "Đang chăm sóc" },
-        { label: "Đang giao hàng", value: "Đang giao hàng" },
-        { label: "Đã hoàn thành", value: "Đã hoàn thành" },
-      ],
-    }),
     description: text({
       label: "Mô tả",
     }),

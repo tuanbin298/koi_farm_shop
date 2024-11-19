@@ -108,7 +108,7 @@ model Order {
   address              String      @default("")
   transaction          String      @default("")
   paymentMethod        String?
-  status               String?     @default("Chờ xác nhận")
+  status               String?     @default("Thanh toán thành công")
   statusHistory        Status[]    @relation("Status_order")
   from_OrderItem_order OrderItem[] @relation("OrderItem_order")
 
@@ -157,7 +157,6 @@ model ConsigmentRaising {
   consignmentDate                   DateTime    @default(now())
   returnDate                        DateTime?
   consignmentPrice                  Float
-  status                            String?
   description                       String      @default("")
   from_OrderItem_consignmentRaising OrderItem[] @relation("OrderItem_consignmentRaising")
 

@@ -72,16 +72,9 @@ const Order = list({
     }),
     status: select({
       label: "Trạng thái",
-      defaultValue: "Chờ xác nhận",
+      defaultValue: "Thanh toán thành công",
       options: [
-        { label: "Chờ xác nhận", value: "Chờ xác nhận" },
-        { label: "Xác nhận đơn hàng", value: "Xác nhận đơn hàng" },
-        {
-          label: "Hoàn tất thanh toán",
-          value: "Hoàn tất thanh toán",
-        },
-        { label: "Huỷ đơn hàng", value: "Huỷ đơn hàng" },
-        { label: "Hoàn thành đơn hàng", value: "Hoàn thành đơn hàng" },
+        { label: "Thanh toán thành công", value: "Thanh toán thành công" },
       ],
       ui: {
         itemView: {
