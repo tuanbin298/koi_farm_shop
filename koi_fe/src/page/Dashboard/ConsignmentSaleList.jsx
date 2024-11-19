@@ -228,7 +228,7 @@ export default function ConsignmentSaleList() {
                   {consignment.request?.staff?.name || "Chưa xử lý"}
                 </TableCell>
                 <TableCell>{consignment.request?.description}</TableCell>
-                <TableCell>{consignment.status}</TableCell>
+                <TableCell>{consignment.request?.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>

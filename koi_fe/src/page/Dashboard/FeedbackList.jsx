@@ -112,7 +112,6 @@ export default function FeedbackList() {
         },
       });
 
-      console.log("Deleted feedbacks:", selectedFeedbacks);
       alert("Xóa thành công!");
 
       // Reset selection and refresh data
