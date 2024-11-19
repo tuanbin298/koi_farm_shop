@@ -57,7 +57,6 @@ query Orders {
         consignmentDate
         returnDate
         consignmentPrice
-        status
       }
     }
       user {
