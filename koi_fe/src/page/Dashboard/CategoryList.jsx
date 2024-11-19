@@ -1,62 +1,64 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import toast, { Toaster } from "react-hot-toast";
-import { Box, Typography, Checkbox, 
+import {
+  Box,
   Button,
+  Checkbox,
   Modal,
-  TextField
- } from "@mui/material";
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import UpdateIcon from "@mui/icons-material/Update";
-
-// Query to fetch fish categories (replace with your actual GraphQL query)
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_CATEGORY } from "../api/Queries/category";
+import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";
 
-export default function FishCategoryList() {
-  const { data: getCategories, error, loading,
-    refetch: refetchCategories
-   } = useQuery(GET_CATEGORY);
+export default function CategoryList() {
+  const {
+    data: getCategories,
+    error,
+    loading,
+    refetch,
+  } = useQuery(GET_CATEGORY);
+
+  const [deleteCategories] = useMutation(DELETE_CATEGORY);
+  const [updateCategory, { loading: updating }] = useMutation(UPDATE_CATEGORY);
 
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [deleteCategory] = useMutation(DELETE_CATEGORY)
 
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [originalCategory, setOriginalCategory] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [originalCategory, setOriginalCategory] = useState(null);
-
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error)
-    return <Typography>Error loading categories: {error.message}</Typography>;
 
   const categories = getCategories?.categories || [];
-// Update `selectAll` state based on the selection
-useEffect(() => {
-  setSelectAll(
-    selectedCategories.length === categories.length && categories.length > 0
-  );
-}, [selectedCategories, categories]);
-  // Handle individual checkbox toggle
+
+  // Update `selectAll` state based on the selection
+  useEffect(() => {
+    setSelectAll(
+      selectedCategories.length === categories.length && categories.length > 0
+    );
+  }, [selectedCategories, categories]);
+
   const handleCheckboxChange = (categoryId) => {
-    setSelectedCategories((prevSelected) => {
-      if (prevSelected.includes(categoryId)) {
-        return prevSelected.filter((id) => id !== categoryId);
-      } else {
-        return [...prevSelected, categoryId];
-      }
-    });
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
   };
 
-  // Handle select all toggle
   const handleSelectAllChange = () => {
     if (selectAll) {
       setSelectedCategories([]);
@@ -67,7 +69,6 @@ useEffect(() => {
     setSelectAll(!selectAll);
   };
 
-  
   // Placeholder delete function
   const handleDelete = () => {
     console.log("Deleting categories with IDs:", selectedCategories);
@@ -78,58 +79,92 @@ useEffect(() => {
   };
 
   const handleRowClick = (category) => {
-    setSelectedCategory(category)
-    setOriginalCategory({...category})
-    setOpenModal(true)
-  }
-
-  const handleCloseModal = () => {
-    setSelectedCategory(null)
-    setOpenModal(false)
+    setSelectedCategory(category);
+    setOriginalCategory({ ...category });
+    setOpenModal(true);
     setIsEditing(false);
-  }
-
-  const handleEditToggle = () => {
-    if (!isEditing) {
-      setOriginalCategory({ ...selectedCategory });
-    } 
-    setIsEditing(!isEditing);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSelectedCategory((prevCategory) => ({
-      ...prevCategory,
-      [name]: value,
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedCategory(null);
+    setOriginalCategory(null);
+  };
+
+  const handleInputChange = (field, value) => {
+    setSelectedCategory((prev) => ({
+      ...prev,
+      [field]: value,
     }));
   };
 
-  const handleDeleteSelectedCategories = async () => {
-    try{
-      await deleteCategory({
-        variables:{
-          where: selectedCategories.map((id)=>(
-            {
-              id
-            }
-          ))
-        }
-      })
-
-      await refetchCategories();
-
-      setSelectedCategories([])
-
-      toast.success("Xoá phân loại thành công!");
+  const handleSaveChange = () => {
+    if (!isEditing) {
+      setOriginalCategory({ ...selectedCategory });
+    } else {
+      saveChanges();
     }
-    catch(error){
-      console.error("Error", error)
-      toast.error("Lỗi xoá phân loại!")
+    setIsEditing(!isEditing);
+  };
+
+  const saveChanges = async () => {
+    if (!selectedCategory || !originalCategory) return;
+
+    const categoryId = selectedCategory.id;
+    const dataToUpdate = {};
+
+    if (selectedCategory.name !== originalCategory.name) {
+      dataToUpdate.name = selectedCategory.name;
     }
-  }
+    if (selectedCategory.description !== originalCategory.description) {
+      dataToUpdate.description = selectedCategory.description;
+    }
+
+    if (Object.keys(dataToUpdate).length === 0) {
+      alert("No changes to update.");
+      return;
+    }
+
+    try {
+      await updateCategory({
+        variables: {
+          where: { id: categoryId },
+          data: dataToUpdate,
+        },
+      });
+      alert("Cập nhật thành công!");
+      setOpenModal(false);
+      refetch();
+    } catch (error) {
+      console.error("Error updating category:", error);
+      alert("Đã xảy ra lỗi khi cập nhật.");
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteCategories({
+        variables: {
+          where: selectedCategories.map((id) => ({ id })), // Convert to expected format
+        },
+      });
+
+      alert("Xóa thành công!");
+      setSelectedCategories([]); // Reset selected categories
+      setSelectAll(false); // Reset selectAll state
+      refetch();
+    } catch (error) {
+      console.error("Error deleting categories:", error);
+      alert("Đã xảy ra lỗi khi xóa phân loại.");
+    }
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error)
+    return <Typography>Error loading categories: {error.message}</Typography>;
   return (
     <>
-    <Toaster position="top-center" reverseOrder={false} />
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -143,7 +178,11 @@ useEffect(() => {
           Danh sách phân loại cá <ListAltIcon />
         </Typography>
         {selectedCategories.length > 0 && (
-          <Button variant="contained" color="error" onClick={handleDeleteSelectedCategories}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteSelectedCategories}
+          >
             Xoá phân loại
           </Button>
         )}
@@ -179,7 +218,7 @@ useEffect(() => {
               <TableRow
                 key={category.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                onClick={()=>handleRowClick(category)}
+                onClick={() => handleRowClick(category)}
               >
                 <TableCell padding="checkbox">
                   <Checkbox
@@ -239,7 +278,7 @@ useEffect(() => {
                     label="Tên"
                     name="name"
                     value={selectedCategory.name}
-                    onChange={handleChange}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
                     fullWidth
                     sx={{ mb: 2 }}
                   />
@@ -247,17 +286,16 @@ useEffect(() => {
                     label="Mô tả"
                     name="description"
                     value={selectedCategory.description}
-                    onChange={handleChange}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
                     fullWidth
-                    sx={{ mb: 2,
-                      
-                     }}
+                    sx={{ mb: 2 }}
                   />
                 </>
               ) : (
                 <>
-
-                 <Typography>
+                  <Typography>
                     <strong>Tên:</strong> {selectedCategory.name}
                   </Typography>
                   <Typography>
@@ -274,7 +312,7 @@ useEffect(() => {
                   borderTop: "1px solid #ddd",
                 }}
               >
-                <Button variant="contained" onClick={handleEditToggle}>
+                <Button variant="contained" onClick={handleSaveChange}>
                   <UpdateIcon />
                   {isEditing ? "Lưu" : "Cập Nhật"}
                 </Button>
