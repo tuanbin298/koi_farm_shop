@@ -91,3 +91,10 @@ export const UPDATE_USER = gql`
     }
   }
 `;
+
+export const DELETE_USERS = gql`
+mutation Mutation($where: [UserWhereUniqueInput!]!) {
+  deleteUsers(where: $where) {
+    id
+  }
+}`

@@ -13,13 +13,16 @@ import {
   Modal,
   TextField,
   CircularProgress,
+  Checkbox,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
 import { GET_PROFILE_ADMIN } from "../api/Queries/user";
 import { UPDATE_USER } from "../api/Mutations/user";
+import { DELETE_USERS } from "../api/Mutations/user";
 
 const UserList = () => {
   // Query
@@ -27,12 +30,15 @@ const UserList = () => {
 
   // Mutation
   const [updateUser] = useMutation(UPDATE_USER);
+  const [deleteUsers] = useMutation(DELETE_USERS);
 
   // State
   const [selectedUser, setSelectedUser] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [originalUser, setOriginalUser] = useState(null);
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
+  const [isSelectAll, setIsSelectAll] = useState(false);
 
   // Handle
   const handleRowClick = (user) => {
@@ -90,11 +96,44 @@ const UserList = () => {
         handleCloseModal();
       } catch (error) {
         toast.error("Lỗi cập nhật người dùng!");
-        console.error("Đã xảy ra lỗi khi cập nhật người dùng :", err);
+        console.error("Đã xảy ra lỗi khi cập nhật người dùng:", error);
       }
     } else {
       toast("Không có gì thay đổi");
       handleCloseModal();
+    }
+  };
+
+  const handleCheckboxChange = (id) => {
+    setSelectedUserIds((prevIds) =>
+      prevIds.includes(id)
+        ? prevIds.filter((userId) => userId !== id)
+        : [...prevIds, id]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (isSelectAll) {
+      setSelectedUserIds([]);
+    } else {
+      setSelectedUserIds(data.users.map((user) => user.id));
+    }
+    setIsSelectAll(!isSelectAll);
+  };
+
+  const handleDeleteSelectedUsers = async () => {
+    try {
+      const selectedUsers = selectedUserIds.map((id) => ({ id }));
+      const { data } = await deleteUsers({
+        variables: { where: selectedUsers },
+      });
+      toast.success(`Đã xóa ${data.deleteUsers.length} người dùng thành công!`);
+      setSelectedUserIds([]);
+      setIsSelectAll(false);
+      await refetch();
+    } catch (error) {
+      toast.error("Xóa người dùng thất bại!");
+      console.error(error);
     }
   };
 
@@ -112,7 +151,7 @@ const UserList = () => {
         color="error"
         sx={{ textAlign: "center", marginTop: 4 }}
       >
-        Error loading articles: {error.message}
+        Error loading users: {error.message}
       </Typography>
     );
 
@@ -133,10 +172,33 @@ const UserList = () => {
           Danh sách người dùng
         </Typography>
 
+        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
+          {selectedUserIds.length > 0 && (
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleDeleteSelectedUsers}
+            >
+              Xóa ({selectedUserIds.length}) người dùng
+            </Button>
+          )}
+        </Box>
+
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    indeterminate={
+                      selectedUserIds.length > 0 &&
+                      selectedUserIds.length < data.users.length
+                    }
+                    checked={isSelectAll}
+                    onChange={handleSelectAll}
+                  />
+                </TableCell>
                 <TableCell sx={{ fontWeight: "bold" }}>
                   Tên Khách Hàng
                 </TableCell>
@@ -148,12 +210,19 @@ const UserList = () => {
             </TableHead>
             <TableBody>
               {data.users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  onClick={() => handleRowClick(user)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <TableCell>{user.name}</TableCell>
+                <TableRow key={user.id}>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedUserIds.includes(user.id)}
+                      onChange={() => handleCheckboxChange(user.id)}
+                    />
+                  </TableCell>
+                  <TableCell
+                    onClick={() => handleRowClick(user)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {user.name}
+                  </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>{user.address}</TableCell>
@@ -195,7 +264,7 @@ const UserList = () => {
                   component="h2"
                   sx={{ mb: 2 }}
                 >
-                  Chi Tiết người dùng
+                  Chi tiết người dùng
                 </Typography>
                 {isEditing ? (
                   <>
@@ -265,6 +334,7 @@ const UserList = () => {
                     justifyContent: "flex-end",
                     p: 2,
                     borderTop: "1px solid #ddd",
+                    overflowY: "auto",
                   }}
                 >
                   <Button variant="contained" onClick={handleEditToggle}>
