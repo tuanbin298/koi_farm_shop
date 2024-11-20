@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { GET_ALL_ORDERS } from "../api/Queries/order";
-import { useQuery } from "@apollo/client";
+import { UPDATE_ORDER_ITEM_ADMIN } from "../api/Mutations/orderItem";
+import { useQuery, useMutation } from "@apollo/client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -8,7 +9,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Checkbox,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { formatMoney } from "../../utils/formatMoney";
@@ -16,22 +27,25 @@ import { Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function OrderList() {
-  const { data: getOrders, error, loading } = useQuery(GET_ALL_ORDERS);
+  const { data: getOrders, error, loading, refetch } = useQuery(GET_ALL_ORDERS);
+  const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM_ADMIN, {
+    onCompleted: () => {
+      alert("Cập nhật thành công!");
+      setIsEditing(false);
+    },
+    onError: (error) => {
+      alert("Lỗi: " + error.message);
+    },
+  });
 
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-
-  const [expandedOrder, setExpandedOrder] = useState(null); // Đơn hàng được chọn để hiển thị chi tiết
-  const [showModal, setShowModal] = useState(false); // Quản lý trạng thái modal
-
-  const [selectedProduct, setSelectedProduct] = useState(null)
-  const [openModal, setOpenModal] = useState(false);
+  const [expandedOrder, setExpandedOrder] = useState(null);
+  const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [originalOrder, setOrginalOrder] = useState(null)
+  const [originalOrder, setOriginalOrder] = useState(null);
 
-  
   const orders = getOrders?.orders || [];
-  console.log(orders);
 
   const handleCheckboxChange = (orderId) => {
     setSelectedOrders((prevSelected) => {
@@ -54,15 +68,15 @@ export default function OrderList() {
   };
 
   const handleRowClick = (order) => {
-    setExpandedOrder(order); // Gán chi tiết đơn hàng
-    setShowModal(true); // Hiển thị modal
-    setOrginalOrder({...order})
+    setExpandedOrder(order);
+    setShowModal(true);
+    setOriginalOrder({ ...order });
   };
 
   const closeModal = () => {
-    setIsEditing(false)
+    setIsEditing(false);
     setShowModal(false);
-    setExpandedOrder(null); // Reset chi tiết đơn hàng khi đóng modal
+    setExpandedOrder(null);
   };
 
   const handleDelete = () => {
@@ -74,6 +88,57 @@ export default function OrderList() {
     getOrders.orders = updatedOrders;
     setSelectedOrders([]);
     setSelectAll(false);
+  };
+
+  const handleSaveChange = async (item) => {
+    if (!item || !item.id) return;
+
+    try {
+      // Gửi yêu cầu cập nhật trạng thái
+      await updateOrderItem({
+        variables: {
+          where: { id: item.id },
+          data: { status: item.status },
+        },
+      });
+      alert("Cập nhật trạng thái thành công!");
+      setIsEditing(false); // Tắt chế độ chỉnh sửa
+      refetch(); // Làm mới dữ liệu
+    } catch (error) {
+      console.error("Error updating order item:", error);
+      alert("Đã xảy ra lỗi khi cập nhật trạng thái.");
+    }
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true); // Bật chế độ chỉnh sửa
+  };
+
+  const handleInputChange = (field, value, item) => {
+    if (!item) return;
+
+    setExpandedOrder((prevOrder) => {
+      const updatedItems = prevOrder.items.map((currentItem) =>
+        currentItem.id === item.id
+          ? { ...currentItem, [field]: value }
+          : currentItem
+      );
+      return { ...prevOrder, items: updatedItems };
+    });
+  };
+
+  const handleUpdateOrder = async () => {
+    try {
+      // Cập nhật trạng thái cho tất cả các items
+      for (const item of expandedOrder.items) {
+        await handleSaveChange(item);
+      }
+      alert("Cập nhật tất cả trạng thái thành công!");
+      closeModal();
+    } catch (error) {
+      console.error("Error updating orders:", error);
+      alert("Đã xảy ra lỗi khi cập nhật đơn hàng.");
+    }
   };
 
   return (
@@ -221,7 +286,48 @@ export default function OrderList() {
                                 ? formatMoney(item.product.price)
                                 : "-"}
                             </td>
-                            <td>{item.status || "-"}</td>
+                            <td>
+                              {isEditing ? (
+                                // Khi đang chỉnh sửa, hiển thị dropdown
+                                <>
+                                  <FormControl fullWidth>
+                                    <InputLabel id={`status-label-${item.id}`}>
+                                      Trạng thái
+                                    </InputLabel>
+                                    <Select
+                                      labelId={`status-label-${item.id}`}
+                                      value={item.status || ""}
+                                      label="Trạng thái"
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          "status",
+                                          e.target.value,
+                                          item
+                                        )
+                                      }
+                                    >
+                                      <MenuItem value="Đang xử lý">
+                                        Đang xử lý
+                                      </MenuItem>
+                                      <MenuItem value="Đang giao hàng">
+                                        Đang giao hàng
+                                      </MenuItem>
+                                      <MenuItem value="Hoàn thành">
+                                        Hoàn thành
+                                      </MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </>
+                              ) : (
+                                // Nếu không phải đang chỉnh sửa, hiển thị trạng thái đơn giản
+                                <>
+                                  <Typography variant="body1" sx={{ mb: 1 }}>
+                                    {" "}
+                                    {item.status || "Không rõ"}
+                                  </Typography>
+                                </>
+                              )}
+                            </td>
                           </tr>
                         ))}
                     </tbody>
@@ -257,7 +363,48 @@ export default function OrderList() {
                                 ? formatMoney(item.consignmentSale.price)
                                 : "-"}
                             </td>
-                            <td>{item.status || "-"}</td>
+                            <td>
+                              {isEditing ? (
+                                // Khi đang chỉnh sửa, hiển thị dropdown
+                                <>
+                                  <FormControl fullWidth>
+                                    <InputLabel id={`status-label-${item.id}`}>
+                                      Trạng thái
+                                    </InputLabel>
+                                    <Select
+                                      labelId={`status-label-${item.id}`}
+                                      value={item.status || ""}
+                                      label="Trạng thái"
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          "status",
+                                          e.target.value,
+                                          item
+                                        )
+                                      }
+                                    >
+                                      <MenuItem value="Đang xử lý">
+                                        Đang xử lý
+                                      </MenuItem>
+                                      <MenuItem value="Đang giao hàng">
+                                        Đang giao hàng
+                                      </MenuItem>
+                                      <MenuItem value="Hoàn thành">
+                                        Hoàn thành
+                                      </MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </>
+                              ) : (
+                                // Nếu không phải đang chỉnh sửa, hiển thị trạng thái đơn giản
+                                <>
+                                  <Typography variant="body1" sx={{ mb: 1 }}>
+                                    {" "}
+                                    {item.status || "Không rõ"}
+                                  </Typography>
+                                </>
+                              )}
+                            </td>
                           </tr>
                         ))}
                     </tbody>
@@ -265,7 +412,7 @@ export default function OrderList() {
                 </>
               )}
             </Box>
-            
+
             <Box style={{ marginBottom: "20px" }}>
               {/* Hiển thị Cá Ký Gửi Nuôi */}
               {expandedOrder.items?.filter((item) => item.consignmentRaising)
@@ -319,13 +466,87 @@ export default function OrderList() {
                                   )
                                 : "-"}
                             </td>
-                            <td>{item.status || "-"}</td>
+                            <td>
+                              {isEditing ? (
+                                // Khi đang chỉnh sửa, hiển thị dropdown
+                                <>
+                                  <FormControl fullWidth>
+                                    <InputLabel id={`status-label-${item.id}`}>
+                                      Trạng thái
+                                    </InputLabel>
+                                    <Select
+                                      labelId={`status-label-${item.id}`}
+                                      value={item.status || ""}
+                                      label="Trạng thái"
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          "status",
+                                          e.target.value,
+                                          item
+                                        )
+                                      }
+                                    >
+                                      <MenuItem value="Đang xử lý">
+                                        Đang xử lý
+                                      </MenuItem>
+                                      <MenuItem value="Đang chăm sóc">
+                                        Đang chăm sóc
+                                      </MenuItem>
+                                      <MenuItem value="Kết thúc ký gửi">
+                                        Kết thúc ký gửi
+                                      </MenuItem>
+                                      <MenuItem value="Đang giao hàng">
+                                        Đang giao hàng
+                                      </MenuItem>
+                                      <MenuItem value="Hoàn thành">
+                                        Hoàn thành
+                                      </MenuItem>
+                                    </Select>
+                                  </FormControl>
+                                </>
+                              ) : (
+                                // Nếu không phải đang chỉnh sửa, hiển thị trạng thái đơn giản
+                                <>
+                                  <Typography variant="body1" sx={{ mb: 1 }}>
+                                    {" "}
+                                    {item.status || "Không rõ"}
+                                  </Typography>
+                                </>
+                              )}
+                            </td>
                           </tr>
                         ))}
                     </tbody>
                   </Table>
                 </>
               )}
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                p: 2,
+                borderTop: "1px solid #ddd",
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (isEditing) {
+                    // Nếu đang ở chế độ chỉnh sửa, bấm Lưu
+                    expandedOrder.items.forEach((item) =>
+                      handleSaveChange(item)
+                    );
+                  }
+                  // Chuyển chế độ từ chỉnh sửa sang xem hoặc ngược lại
+                  setIsEditing(!isEditing);
+                }}
+                style={{ marginTop: "20px" }}
+              >
+                <UpdateIcon />
+                {isEditing ? "Lưu" : "Cập nhật"}
+              </Button>
             </Box>
           </Modal.Body>
         </Modal>
