@@ -75,3 +75,19 @@ export const MUTATION_USER_ADMIN = gql`
     }
   }
 `;
+
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: ID!, $data: UserUpdateInput!) {
+    updateUser(where: { id: $id }, data: $data) {
+      id
+      name
+      email
+      address
+      phone
+      role {
+        id
+        name
+      }
+    }
+  }
+`;

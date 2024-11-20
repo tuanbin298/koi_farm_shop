@@ -319,25 +319,6 @@ export default function ConsignmentCareList() {
                     <strong>Giá tiền:</strong>{" "}
                     {formatMoney(selectedConsignment.consignmentPrice)}
                   </Typography>
-
-                  <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel id="status-label" shrink>
-                      Trạng thái
-                    </InputLabel>
-                    <Select
-                      labelId="status-label"
-                      label="Trạng thái"
-                      value={editableData.status || ""}
-                      onChange={(e) =>
-                        handleInputChange("status", e.target.value)
-                      } // Ghi lại trạng thái đã chỉnh sửa
-                    >
-                      <MenuItem value="Đang xử lý">Đang xử lý</MenuItem>
-                      <MenuItem value="Đang chăm sóc">Đang chăm sóc</MenuItem>
-                      <MenuItem value="Đang giao hàng">Đang giao hàng</MenuItem>
-                      <MenuItem value="Đã hoàn thành">Đã hoàn thành</MenuItem>
-                    </Select>
-                  </FormControl>
                 </Box>
 
                 {/* Thông Tin Người Yêu Cầu */}
@@ -364,26 +345,6 @@ export default function ConsignmentCareList() {
                 </Box>
               </>
             )}
-          </Box>
-
-          {/* Nút Cập Nhật */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              p: 2,
-              borderTop: "1px solid #ddd",
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ textTransform: "none", fontWeight: "bold" }}
-              onClick={() => console.log("Cập nhật thông tin")}
-            >
-              <UpdateIcon />
-              Cập Nhật
-            </Button>
           </Box>
         </Box>
       </Modal>

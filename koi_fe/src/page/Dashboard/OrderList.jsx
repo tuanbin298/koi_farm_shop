@@ -8,7 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button } from "@mui/material";
+import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { formatMoney } from "../../utils/formatMoney";
@@ -24,6 +24,12 @@ export default function OrderList() {
   const [expandedOrder, setExpandedOrder] = useState(null); // Đơn hàng được chọn để hiển thị chi tiết
   const [showModal, setShowModal] = useState(false); // Quản lý trạng thái modal
 
+  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [originalOrder, setOrginalOrder] = useState(null)
+
+  
   const orders = getOrders?.orders || [];
   console.log(orders);
 
@@ -50,9 +56,11 @@ export default function OrderList() {
   const handleRowClick = (order) => {
     setExpandedOrder(order); // Gán chi tiết đơn hàng
     setShowModal(true); // Hiển thị modal
+    setOrginalOrder({...order})
   };
 
   const closeModal = () => {
+    setIsEditing(false)
     setShowModal(false);
     setExpandedOrder(null); // Reset chi tiết đơn hàng khi đóng modal
   };

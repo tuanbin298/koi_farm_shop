@@ -9,6 +9,25 @@ export const GET_PROFILE = gql`
       address
       phone
       name
+      role {
+        name
+      }
+    }
+  }
+`;
+
+export const GET_PROFILE_ADMIN = gql`
+  query Users {
+    users {
+      id
+      name
+      email
+      address
+      phone
+      role {
+        id
+        name
+      }
     }
   }
 `;

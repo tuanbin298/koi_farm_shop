@@ -64,7 +64,6 @@ export const GET_ALL_FISH_CARE_ADMIN = gql`
       consignmentPrice
       consignmentDate
       returnDate
-      status
       user {
         name
         email

@@ -27,7 +27,6 @@ import ConsignmentSaleList from "./ConsignmentSaleList";
 import ConsignmentCareList from "./ConsignmentCareList";
 import CreateProductForm from "./Forms/CreateProductForm";
 import Header from "../../component/Header/Header";
-import Footer from "../../component/Footer/Footer";
 import UserList from "./UserList";
 import AddUser from "./Forms/CreateUserForm";
 import CategoryList from "./CategoryList";
@@ -35,9 +34,11 @@ import CreateCategoryForm from "./Forms/CreateCategoryForm";
 import FeedbackList from "./FeedbackList";
 import ArticleList from "./ArticleList";
 import CreateArticleForm from "./Forms/CreateArticleForm";
+
 const drawerWidth = 240;
 
 const Dashboard = () => {
+  // State
   const [selectedSection, setSelectedSection] = useState("overview");
   const [openDropdowns, setOpenDropdowns] = useState({
     orders: false,
@@ -68,7 +69,7 @@ const Dashboard = () => {
       case "users":
         return <UserList />;
       case "userDetail1":
-        return <AddUser />;
+        return <AddUser setSelectedSection={setSelectedSection} />;
       case "consignmentSales":
         return <ConsignmentSaleList />;
       case "consignmentCares":
@@ -76,11 +77,11 @@ const Dashboard = () => {
       case "category":
         return <CategoryList />;
       case "addCategory":
-        return <CreateCategoryForm />;
+        return <CreateCategoryForm setSelectedSection={setSelectedSection} />;
       case "article":
         return <ArticleList />;
       case "addArticle":
-        return <CreateArticleForm />;
+        return <CreateArticleForm setSelectedSection={setSelectedSection} />;
       case "feedback":
         return <FeedbackList />;
       default:

@@ -1,42 +1,67 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Box, Typography, Checkbox, Button } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Modal,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import UpdateIcon from "@mui/icons-material/Update";
+import toast, { Toaster } from "react-hot-toast";
+import { useQuery, useMutation } from "@apollo/client";
 
-// Query to fetch fish categories (replace with your actual GraphQL query)
 import { GET_CATEGORY } from "../api/Queries/category";
+import { UPDATE_CATEGORY } from "../api/Mutations/category";
+import { DELETE_CATEGORY } from "../api/Mutations/category";
 
-export default function FishCategoryList() {
-  const { data: getCategories, error, loading } = useQuery(GET_CATEGORY);
-
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error)
-    return <Typography>Error loading categories: {error.message}</Typography>;
+export default function CategoryList() {
+  // Query
+  const {
+    data: getCategories,
+    error,
+    loading,
+    refetch,
+  } = useQuery(GET_CATEGORY);
 
   const categories = getCategories?.categories || [];
 
-  // Handle individual checkbox toggle
+  // Mutation
+  const [deleteCategories] = useMutation(DELETE_CATEGORY);
+  const [updateCategory, { loading: updating }] = useMutation(UPDATE_CATEGORY);
+
+  // State
+  const [selectAll, setSelectAll] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [originalCategory, setOriginalCategory] = useState(null);
+
+  useEffect(() => {
+    setSelectAll(
+      selectedCategories.length === categories.length && categories.length > 0
+    );
+  }, [selectedCategories, categories]);
+
+  // Handle
   const handleCheckboxChange = (categoryId) => {
-    setSelectedCategories((prevSelected) => {
-      if (prevSelected.includes(categoryId)) {
-        return prevSelected.filter((id) => id !== categoryId);
-      } else {
-        return [...prevSelected, categoryId];
-      }
-    });
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId]
+    );
   };
 
-  // Handle select all toggle
   const handleSelectAllChange = () => {
     if (selectAll) {
       setSelectedCategories([]);
@@ -47,24 +72,110 @@ export default function FishCategoryList() {
     setSelectAll(!selectAll);
   };
 
-  // Update `selectAll` state based on the selection
-  useEffect(() => {
-    setSelectAll(
-      selectedCategories.length === categories.length && categories.length > 0
-    );
-  }, [selectedCategories, categories]);
-
-  // Placeholder delete function
-  const handleDelete = () => {
-    console.log("Deleting categories with IDs:", selectedCategories);
-
-    // Here you would call your delete mutation and refetch the data.
-    setSelectedCategories([]); // Reset selection after deletion
-    setSelectAll(false);
+  const handleRowClick = (category) => {
+    setSelectedCategory(category);
+    setOriginalCategory({ ...category });
+    setOpenModal(true);
+    setIsEditing(false);
   };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedCategory(null);
+    setOriginalCategory(null);
+  };
+
+  const handleInputChange = (field, value) => {
+    setSelectedCategory((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveChange = () => {
+    if (!isEditing) {
+      setOriginalCategory({ ...selectedCategory });
+    } else {
+      saveChanges();
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const saveChanges = async () => {
+    if (!selectedCategory || !originalCategory) return;
+
+    const categoryId = selectedCategory.id;
+    const dataToUpdate = {};
+
+    if (selectedCategory.name !== originalCategory.name) {
+      dataToUpdate.name = selectedCategory.name;
+    }
+    if (selectedCategory.description !== originalCategory.description) {
+      dataToUpdate.description = selectedCategory.description;
+    }
+
+    if (Object.keys(dataToUpdate).length > 0) {
+      try {
+        await updateCategory({
+          variables: {
+            where: { id: categoryId },
+            data: dataToUpdate,
+          },
+        });
+
+        await refetch();
+        toast.success("Cập nhật thành công");
+        handleCloseModal();
+      } catch (error) {
+        toast.error("Lỗi cập nhật!");
+        console.error("Đã xảy ra lỗi khi cập nhật:", err);
+      }
+    } else {
+      toast("Không có gì thay đổi");
+      handleCloseModal();
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteCategories({
+        variables: {
+          where: selectedCategories.map((id) => ({ id })),
+        },
+      });
+
+      await refetch();
+      toast.success("Xóa thành công");
+      setSelectedCategories([]);
+      setSelectAll(false);
+      handleCloseModal();
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi xóa phân loại!");
+      console.error("Đã xảy ra lỗi khi xóa phân loại:", error);
+    }
+  };
+
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải: {error.message}
+      </Typography>
+    );
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -79,7 +190,7 @@ export default function FishCategoryList() {
         </Typography>
         {selectedCategories.length > 0 && (
           <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete Selected
+            Xoá phân loại
           </Button>
         )}
       </Box>
@@ -114,10 +225,12 @@ export default function FishCategoryList() {
               <TableRow
                 key={category.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                onClick={() => handleRowClick(category)}
               >
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedCategories.includes(category.id)}
+                    onClick={(e) => e.stopPropagation()}
                     onChange={() => handleCheckboxChange(category.id)}
                     color="primary"
                   />
@@ -133,6 +246,91 @@ export default function FishCategoryList() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            maxHeight: "80vh",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            overflowY: "auto",
+          }}
+        >
+          {selectedCategory && (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h4"
+                component="h2"
+                sx={{ mb: 2 }}
+              >
+                Chi Tiết phân loại
+              </Typography>
+              {isEditing ? (
+                <>
+                  {/* Name */}
+                  <TextField
+                    label="Tên"
+                    name="name"
+                    value={selectedCategory.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+
+                  {/* Category */}
+                  <TextField
+                    label="Mô tả"
+                    name="description"
+                    value={selectedCategory.description}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                </>
+              ) : (
+                <>
+                  <Typography>
+                    <strong>Tên:</strong> {selectedCategory.name}
+                  </Typography>
+                  <Typography>
+                    <strong>Mô tả:</strong> {selectedCategory.description}
+                  </Typography>
+                </>
+              )}
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  p: 2,
+                  borderTop: "1px solid #ddd",
+                }}
+              >
+                <Button variant="contained" onClick={handleSaveChange}>
+                  <UpdateIcon />
+                  {isEditing ? "Lưu" : "Cập Nhật"}
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </Modal>
     </>
   );
 }
