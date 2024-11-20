@@ -12,8 +12,8 @@ import { Box, Typography, Checkbox, Button } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { formatMoney } from "../../utils/formatMoney";
-import { Modal } from "react-bootstrap"; // Import Modal từ react-bootstrap
-import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo cài bootstrap
+import { Modal } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function OrderList() {
   const { data: getOrders, error, loading } = useQuery(GET_ALL_ORDERS);
@@ -149,125 +149,176 @@ export default function OrderList() {
       </TableContainer>
       {/* Modal for Detailed View */}
       {expandedOrder && (
-        <Modal show={showModal} onHide={closeModal} size="xl">
+        <Modal
+          show={showModal}
+          onHide={closeModal}
+          size="xl"
+          style={{
+            marginTop: "100px",
+            marginLeft: "8%",
+            maxWidth: "95%",
+          }}
+        >
           <Modal.Header closeButton>
             <Modal.Title>Chi tiết đơn hàng</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             <style>
               {`
-              table {
-                border-collapse: collapse;
-                width: 100%;
-              }
-              table, th, td {
-                border: 1px solid #dee2e6;
-              }
-            `}
+                table {
+                  border-collapse: collapse;
+                  width: 100%;
+                }
+                table, th, td {
+                  border: 1px solid #dee2e6;
+                }
+                th, td {
+                  padding: 12px;
+                  text-align: left;
+                }
+                th {
+                  background-color: #f8f9fa;
+                }
+                `}
             </style>
-            {/* Bảng Chi tiết đơn hàng */}
-            {expandedOrder.items.some((item) => !item.consignmentSale) && (
-              <>
-                <h5>Cá Koi Trang Trại</h5>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Tên cá</th>
-                      <th>Giá (VNĐ)</th>
-                      {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
-                      {expandedOrder.items.some(
-                        (item) => item.consignmentRaising
-                      ) && (
-                        <>
-                          <th>Ngày bắt đầu ký gửi nuôi</th>
-                          <th>Ngày kết thúc ký gửi nuôi</th>
-                          <th>Giá ký gửi nuôi (VNĐ)</th>
-                        </>
-                      )}
-                      <th>Trạng Thái</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Lọc ra các item không có consignmentSale */}
-                    {expandedOrder.items
-                      .filter((item) => !item.consignmentSale)
-                      .map((item, idx) => (
-                        <tr key={idx}>
-                          <td>{item.product?.name || "-"}</td>
-                          <td>
-                            {item.product?.price
-                              ? formatMoney(item.product.price)
-                              : "-"}
-                          </td>
-                          {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
-                          {expandedOrder.items.some(
-                            (item) => item.consignmentRaising
-                          ) ? (
-                            <>
-                              <td>
-                                {item.consignmentRaising?.consignmentDate
-                                  ? new Date(
-                                      item.consignmentRaising.consignmentDate
-                                    ).toLocaleDateString()
-                                  : "-"}
-                              </td>
-                              <td>
-                                {item.consignmentRaising?.returnDate
-                                  ? new Date(
-                                      item.consignmentRaising.returnDate
-                                    ).toLocaleDateString()
-                                  : "-"}
-                              </td>
-                              <td>
-                                {item.consignmentRaising?.consignmentPrice
-                                  ? formatMoney(
-                                      item.consignmentRaising.consignmentPrice
-                                    )
-                                  : "-"}
-                              </td>
-                            </>
-                          ) : null}
-                          <td>
-                            {item.consignmentRaising
-                              ? item.consignmentRaising.status
-                              : item.status || "-"}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </Table>
-              </>
-            )}
-            {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
-            {expandedOrder.items.some((item) => item.consignmentSale) && (
-              <>
-                <h5>Cá Koi Ký Gửi Bán</h5>
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>Tên cá </th>
-                      <th>Giá (VNĐ)</th>
-                      <th>Trạng Thái </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {expandedOrder.items
-                      .filter((item) => item.consignmentSale)
-                      .map((item, idx) => (
-                        <tr key={idx}>
-                          <td>{item.consignmentSale.name || "-"}</td>
-                          <td>
-                            {item.consignmentSale.price
-                              ? formatMoney(item.consignmentSale.price)
-                              : "-"}
-                          </td>
-                          <td>{item.status || "-"}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </Table>
-              </>
-            )}
+
+            <Box style={{ marginBottom: "20px" }}>
+              {/* Hiển thị Cá Koi Trang Trại */}
+              {expandedOrder.items?.filter(
+                (item) => !item.consignmentSale && !item.consignmentRaising
+              ).length > 0 && (
+                <>
+                  <Typography variant="h6" style={{ marginBottom: "10px" }}>
+                    Cá Koi Trang Trại
+                  </Typography>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Tên cá</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Trạng Thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expandedOrder.items
+                        .filter(
+                          (item) =>
+                            !item.consignmentSale && !item.consignmentRaising
+                        )
+                        .map((item, idx) => (
+                          <tr key={idx}>
+                            <td>{item.product?.name || "-"}</td>
+                            <td>
+                              {item.product?.price
+                                ? formatMoney(item.product.price)
+                                : "-"}
+                            </td>
+                            <td>{item.status || "-"}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                </>
+              )}
+            </Box>
+
+            <Box>
+              {/* Hiển thị Cá Ký Gửi Bán */}
+              {expandedOrder.items?.filter((item) => item.consignmentSale)
+                .length > 0 && (
+                <>
+                  <Typography variant="h6" style={{ marginBottom: "10px" }}>
+                    Cá Koi Ký Gửi Bán
+                  </Typography>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Tên cá</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Trạng Thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expandedOrder.items
+                        .filter((item) => item.consignmentSale)
+                        .map((item, idx) => (
+                          <tr key={idx}>
+                            <td>{item.consignmentSale?.name || "-"}</td>
+                            <td>
+                              {item.consignmentSale?.price
+                                ? formatMoney(item.consignmentSale.price)
+                                : "-"}
+                            </td>
+                            <td>{item.status || "-"}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                </>
+              )}
+            </Box>
+            
+            <Box style={{ marginBottom: "20px" }}>
+              {/* Hiển thị Cá Ký Gửi Nuôi */}
+              {expandedOrder.items?.filter((item) => item.consignmentRaising)
+                .length > 0 && (
+                <>
+                  <Typography variant="h6" style={{ marginBottom: "10px" }}>
+                    Cá Koi Ký Gửi Nuôi
+                  </Typography>
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Tên cá</th>
+                        <th>Giá (VNĐ)</th>
+                        <th>Ngày bắt đầu ký gửi</th>
+                        <th>Ngày kết thúc ký gửi</th>
+                        <th>Giá ký gửi nuôi (VNĐ)</th>
+                        <th>Trạng Thái</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {expandedOrder.items
+                        .filter((item) => item.consignmentRaising)
+                        .map((item, idx) => (
+                          <tr key={idx}>
+                            <td>
+                              {item.consignmentRaising.product?.name || "-"}
+                            </td>
+                            <td>
+                              {item.product?.price
+                                ? formatMoney(item.product.price)
+                                : "-"}
+                            </td>
+                            <td>
+                              {item.consignmentRaising.consignmentDate
+                                ? new Date(
+                                    item.consignmentRaising.consignmentDate
+                                  ).toLocaleDateString()
+                                : "-"}
+                            </td>
+                            <td>
+                              {item.consignmentRaising.returnDate
+                                ? new Date(
+                                    item.consignmentRaising.returnDate
+                                  ).toLocaleDateString()
+                                : "-"}
+                            </td>
+                            <td>
+                              {item.consignmentRaising.consignmentPrice
+                                ? formatMoney(
+                                    item.consignmentRaising.consignmentPrice
+                                  )
+                                : "-"}
+                            </td>
+                            <td>{item.status || "-"}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </Table>
+                </>
+              )}
+            </Box>
           </Modal.Body>
         </Modal>
       )}
