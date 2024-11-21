@@ -7,20 +7,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {
-  Box,
-  Typography,
-  Checkbox,
-  Button,
-  Rating,
-  CircularProgress,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Box, Typography, Checkbox, Button, Rating } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { GET_FEEDBACK } from "../api/Queries/feedback";
-import { formatTime } from "../../utils/formatDateTime";
-import UpdateIcon from "@mui/icons-material/Update";
 import { DELETE_FEEDBACK } from "../api/Mutations/feedback";
 
 export default function FeedbackList() {
@@ -119,7 +108,6 @@ export default function FeedbackList() {
       setSelectAll(false);
       refetch(); // Optional: Refetch the data to update UI
     } catch (error) {
-      console.error("Failed to delete feedbacks:", error);
       alert("Đã xảy ra lỗi khi xóa đánh giá.");
     }
   };

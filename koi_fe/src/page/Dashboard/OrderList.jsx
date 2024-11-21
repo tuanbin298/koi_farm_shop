@@ -155,7 +155,7 @@ export default function OrderList() {
         </Typography>
         {selectedOrders.length > 0 && (
           <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete Selected
+            Xóa đơn hàng
           </Button>
         )}
       </Box>

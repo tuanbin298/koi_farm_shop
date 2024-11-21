@@ -131,7 +131,6 @@ export default function ConsignmentSaleList() {
 
   const handleDeleteSelected = async () => {
     try {
-      console.log("Deleting selected consignments:", selectedConsignments);
       // TODO: Implement delete mutation here
       refetch();
     } catch (error) {
