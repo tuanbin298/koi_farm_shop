@@ -19,8 +19,8 @@ import {
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import ListAltIcon from "@mui/icons-material/ListAlt";
-import toast, { Toaster } from "react-hot-toast";
 import CloseIcon from "@mui/icons-material/Close";
+import toast, { Toaster } from "react-hot-toast";
 
 import { useMutation, useQuery } from "@apollo/client";
 
@@ -324,30 +324,30 @@ export default function ArticleList() {
             flexDirection: "column",
           }}
         >
-          {/* Nút Đóng */}
+          {/* Close Button */}
           <Box
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              p: 2,
+              p: 1,
               borderBottom: "1px solid #ddd",
             }}
           >
             <Button
               variant="text"
               onClick={handleCloseModal}
-              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+              sx={{ textTransform: "none", color: "red" }}
             >
               <CloseIcon />
               Đóng
             </Button>
           </Box>
-          {/* Nội dung cuộn */}
+
           <Box
             sx={{
               p: 2,
               overflowY: "auto",
-              maxHeight: "70vh", // Chiều cao tối đa
+              maxHeight: "70vh",
             }}
           >
             {selectedArticle && (
@@ -358,7 +358,7 @@ export default function ArticleList() {
                   component="h2"
                   sx={{ mb: 2 }}
                 >
-                  Chi Tiết bài viết
+                  Chi Tiết Bài Viết
                 </Typography>
                 {isEditing ? (
                   <>

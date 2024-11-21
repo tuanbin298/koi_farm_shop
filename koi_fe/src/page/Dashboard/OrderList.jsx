@@ -18,18 +18,22 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import ListAltIcon from "@mui/icons-material/ListAlt";
+import CloseIcon from "@mui/icons-material/Close";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import { formatMoney } from "../../utils/formatMoney";
 import { Modal } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function OrderList() {
+  //query
   const { data: getOrders, error, loading, refetch } = useQuery(GET_ALL_ORDERS);
+  //mutation
   const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM_ADMIN);
-
+  //state
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
   const [expandedOrder, setExpandedOrder] = useState(null);
@@ -38,7 +42,7 @@ export default function OrderList() {
   const [originalOrder, setOriginalOrder] = useState(null);
 
   const orders = getOrders?.orders || [];
-
+  //handle
   const handleCheckboxChange = (orderId) => {
     setSelectedOrders((prevSelected) => {
       if (prevSelected.includes(orderId)) {
@@ -84,13 +88,11 @@ export default function OrderList() {
 
   const handleSaveChange = async (item) => {
     try {
-      const { id, status } = item; // Tách id và status từ item
-
-      // Gọi mutation để cập nhật dữ liệu
+      const { id, status } = item;
       const response = await updateOrderItem({
         variables: {
-          where: { id }, // ID cần cập nhật
-          data: { status }, // Trạng thái mới
+          where: { id },
+          data: { status },
         },
       });
 
@@ -141,6 +143,24 @@ export default function OrderList() {
       alert("Đã xảy ra lỗi khi cập nhật đơn hàng.");
     }
   };
+
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải đơn hàng: {error.message}
+      </Typography>
+    );
 
   return (
     <>
@@ -204,6 +224,7 @@ export default function OrderList() {
                   <Checkbox
                     checked={selectedOrders.includes(order.id)}
                     onChange={() => handleCheckboxChange(order.id)}
+                    onClick={(e) => e.stopPropagation()}
                     color="primary"
                   />
                 </TableCell>
@@ -233,7 +254,26 @@ export default function OrderList() {
             maxWidth: "95%",
           }}
         >
-          <Modal.Header closeButton>
+          {/* Close Button */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 1,
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <Button
+              onClick={closeModal}
+              variant="text"
+              sx={{ color: "red", textTransform: "none" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
+
+          <Modal.Header>
             <Modal.Title>Chi tiết đơn hàng</Modal.Title>
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>

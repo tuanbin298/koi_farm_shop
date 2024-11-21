@@ -168,14 +168,14 @@ export default function ConsignmentCareList() {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              p: 2,
+              p: 1,
               borderBottom: "1px solid #ddd",
             }}
           >
             <Button
               variant="text"
               onClick={handleCloseModal}
-              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+              sx={{ textTransform: "none", color: "red" }}
             >
               <CloseIcon />
               Đóng
@@ -194,9 +194,9 @@ export default function ConsignmentCareList() {
               <>
                 <Typography
                   id="modal-title"
-                  variant="h5"
+                  variant="h4"
                   component="h2"
-                  sx={{ mb: 2, fontWeight: "bold" }}
+                  sx={{ mb: 2 }}
                 >
                   Chi Tiết Yêu Cầu Ký Gửi Nuôi
                 </Typography>

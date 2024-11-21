@@ -27,7 +27,7 @@ import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";
 import { GET_PROFILE } from "../api/Queries/user";
 export default function CategoryList() {
-  const userId = localStorage.getItem("id")
+  const userId = localStorage.getItem("id");
   // Query
   const {
     data: getCategories,
@@ -35,13 +35,13 @@ export default function CategoryList() {
     loading,
     refetch,
   } = useQuery(GET_CATEGORY);
-  const {data:userData} = useQuery(GET_PROFILE, {
-    variables:{
-      where:{
-        id: userId
-      }
-    }
-  })
+  const { data: userData } = useQuery(GET_PROFILE, {
+    variables: {
+      where: {
+        id: userId,
+      },
+    },
+  });
   const categories = getCategories?.categories || [];
 
   // Mutation
@@ -223,21 +223,22 @@ export default function CategoryList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {userData.user.role.name==="Admin"?
-              (<TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectAll}
-                  indeterminate={
-                    selectedCategories.length > 0 &&
-                    selectedCategories.length < categories.length
-                  }
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                />
-              </TableCell>)
-              :
-              (<TableCell></TableCell>)}
-              
+              {userData.user.role.name === "Admin" ? (
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={
+                      selectedCategories.length > 0 &&
+                      selectedCategories.length < categories.length
+                    }
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                  />
+                </TableCell>
+              ) : (
+                <TableCell></TableCell>
+              )}
+
               <TableCell>Tên phân loại</TableCell>
               <TableCell>Mô tả</TableCell>
             </TableRow>
@@ -250,17 +251,19 @@ export default function CategoryList() {
                 onClick={() => handleRowClick(category)}
                 style={{ cursor: "pointer" }}
               >
-                {userData.user.role.name==="Admin"?
-                (<TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCategories.includes(category.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={() => handleCheckboxChange(category.id)}
-                    color="primary"
-                  />
-                </TableCell>):
-              (<TableCell></TableCell>)}
-                
+                {userData.user.role.name === "Admin" ? (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedCategories.includes(category.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={() => handleCheckboxChange(category.id)}
+                      color="primary"
+                    />
+                  </TableCell>
+                ) : (
+                  <TableCell></TableCell>
+                )}
+
                 <TableCell component="th" scope="row">
                   {category.name}
                 </TableCell>
@@ -289,6 +292,7 @@ export default function CategoryList() {
         </Box>
       </TableContainer>
 
+      {/* Modal for Category Details */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -315,14 +319,14 @@ export default function CategoryList() {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              p: 2,
+              p: 1,
               borderBottom: "1px solid #ddd",
             }}
           >
             <Button
               variant="text"
               onClick={handleCloseModal}
-              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+              sx={{ textTransform: "none", color: "red" }}
             >
               <CloseIcon />
               Đóng
@@ -332,7 +336,7 @@ export default function CategoryList() {
             sx={{
               p: 2,
               overflowY: "auto",
-              maxHeight: "70vh", // Chiều cao tối đa
+              maxHeight: "70vh",
             }}
           >
             {selectedCategory && (
@@ -343,7 +347,7 @@ export default function CategoryList() {
                   component="h2"
                   sx={{ mb: 2 }}
                 >
-                  Chi Tiết phân loại
+                  Chi Tiết Phân Loại
                 </Typography>
                 {isEditing ? (
                   <>
