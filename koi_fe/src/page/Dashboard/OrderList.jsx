@@ -28,15 +28,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function OrderList() {
   const { data: getOrders, error, loading, refetch } = useQuery(GET_ALL_ORDERS);
-  const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM_ADMIN, {
-    onCompleted: () => {
-      alert("Cập nhật thành công!");
-      setIsEditing(false);
-    },
-    onError: (error) => {
-      alert("Lỗi: " + error.message);
-    },
-  });
+  const [updateOrderItem] = useMutation(UPDATE_ORDER_ITEM_ADMIN);
 
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -91,22 +83,26 @@ export default function OrderList() {
   };
 
   const handleSaveChange = async (item) => {
-    if (!item || !item.id) return;
-
     try {
-      // Gửi yêu cầu cập nhật trạng thái
-      await updateOrderItem({
+      const { id, status } = item; // Tách id và status từ item
+
+      // Gọi mutation để cập nhật dữ liệu
+      const response = await updateOrderItem({
         variables: {
-          where: { id: item.id },
-          data: { status: item.status },
+          where: { id }, // ID cần cập nhật
+          data: { status }, // Trạng thái mới
         },
       });
-      alert("Cập nhật trạng thái thành công!");
-      setIsEditing(false); // Tắt chế độ chỉnh sửa
-      refetch(); // Làm mới dữ liệu
+
+      if (response?.data?.updateOrderItem) {
+        alert("Cập nhật thành công!");
+        refetch();
+      } else {
+        alert("Không thể cập nhật, vui lòng thử lại!");
+      }
     } catch (error) {
-      console.error("Error updating order item:", error);
-      alert("Đã xảy ra lỗi khi cập nhật trạng thái.");
+      console.error("Error updating order item:", error.message);
+      alert("Cập nhật thất bại!");
     }
   };
 
@@ -115,8 +111,6 @@ export default function OrderList() {
   };
 
   const handleInputChange = (field, value, item) => {
-    if (!item) return;
-
     setExpandedOrder((prevOrder) => {
       const updatedItems = prevOrder.items.map((currentItem) =>
         currentItem.id === item.id
@@ -129,14 +123,21 @@ export default function OrderList() {
 
   const handleUpdateOrder = async () => {
     try {
-      // Cập nhật trạng thái cho tất cả các items
-      for (const item of expandedOrder.items) {
-        await handleSaveChange(item);
-      }
+      const dataToUpdate = expandedOrder.items.map((item) => ({
+        id: item.id,
+        status: item.status,
+      }));
+
+      await updateOrderItem({
+        variables: {
+          data: dataToUpdate,
+        },
+      });
+
       alert("Cập nhật tất cả trạng thái thành công!");
       closeModal();
     } catch (error) {
-      console.error("Error updating orders:", error);
+      console.error("Error updating order items:", error);
       alert("Đã xảy ra lỗi khi cập nhật đơn hàng.");
     }
   };
@@ -312,9 +313,6 @@ export default function OrderList() {
                                       <MenuItem value="Đang giao hàng">
                                         Đang giao hàng
                                       </MenuItem>
-                                      <MenuItem value="Hoàn thành">
-                                        Hoàn thành
-                                      </MenuItem>
                                     </Select>
                                   </FormControl>
                                 </>
@@ -388,9 +386,6 @@ export default function OrderList() {
                                       </MenuItem>
                                       <MenuItem value="Đang giao hàng">
                                         Đang giao hàng
-                                      </MenuItem>
-                                      <MenuItem value="Hoàn thành">
-                                        Hoàn thành
                                       </MenuItem>
                                     </Select>
                                   </FormControl>
@@ -497,9 +492,6 @@ export default function OrderList() {
                                       </MenuItem>
                                       <MenuItem value="Đang giao hàng">
                                         Đang giao hàng
-                                      </MenuItem>
-                                      <MenuItem value="Hoàn thành">
-                                        Hoàn thành
                                       </MenuItem>
                                     </Select>
                                   </FormControl>
