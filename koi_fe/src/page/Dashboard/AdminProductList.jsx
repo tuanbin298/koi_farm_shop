@@ -7,7 +7,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import UpdateIcon from "@mui/icons-material/Update";
-import CloseIcon from "@mui/icons-material/Close";
 import {
   MenuItem,
   Box,
@@ -174,7 +173,7 @@ export default function AdminProductList() {
         handleCloseModal();
       } catch (error) {
         toast.error("Lỗi cập nhật sản phẩm!");
-        console.error("Đã xảy ra lỗi khi cập nhật sản phẩm :", error);
+        console.error("Đã xảy ra lỗi khi cập nhật sản phẩm :", err);
       }
     } else {
       toast("Không có gì thay đổi");
@@ -360,97 +359,73 @@ export default function AdminProductList() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 600,
+            width: 500,
+            maxHeight: "80vh",
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
+            p: 4,
             borderRadius: 2,
-            display: "flex",
-            flexDirection: "column",
+            overflowY: "auto",
           }}
         >
-          {/* Nút Đóng */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              p: 2,
-              borderBottom: "1px solid #ddd",
-            }}
-          >
-            <Button
-              variant="text"
-              onClick={handleCloseModal}
-              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
-            >
-              <CloseIcon />
-              Đóng
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              p: 2,
-              overflowY: "auto",
-              maxHeight: "70vh", // Chiều cao tối đa
-            }}
-          >
-            {selectedProduct && (
-              <>
-                <Typography
-                  id="modal-title"
-                  variant="h5"
-                  component="h2"
-                  sx={{ mb: 2, fontWeight: "bold" }}
-                >
-                  Chi Tiết Sản Phẩm
-                </Typography>
-                {isEditing ? (
-                  <>
-                    <Box
-                      component="img"
-                      src={selectedProduct.photo?.image?.publicUrl}
-                      alt={selectedProduct.name}
-                      sx={{
-                        width: "100%",
-                        maxHeight: 200,
-                        objectFit: "contain",
-                        mb: 2,
-                      }}
-                    />
-                    <TextField
-                      label="Tên"
-                      name="name"
-                      value={selectedProduct.name}
-                      onChange={handleChange}
-                      fullWidth
-                      sx={{ mb: 2 }}
-                    />
-                    <TextField
-                      label="Giá"
-                      name="price"
-                      value={selectedProduct.price}
-                      onChange={handleChange}
-                      fullWidth
-                      sx={{ mb: 2 }}
-                    />
-                    <Select
-                      label="Loại"
-                      name="category"
-                      value={selectedProduct.category?.id || ""}
-                      onChange={(e) =>
-                        handleChange({
-                          target: { name: "category", value: e.target.value },
-                        })
-                      }
-                      fullWidth
-                      sx={{ mb: 2 }}
-                    >
-                      {categories.map((category) => (
-                        <MenuItem key={category.id} value={category.id}>
-                          {category.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
+          {selectedProduct && (
+            <>
+              <Typography
+                id="modal-title"
+                variant="h4"
+                component="h2"
+                sx={{ mb: 2 }}
+              >
+                Chi Tiết Sản Phẩm
+              </Typography>
+              {isEditing ? (
+                <>
+                  <Box
+                    component="img"
+                    src={selectedProduct.photo?.image?.publicUrl}
+                    alt={selectedProduct.name}
+                    sx={{
+                      width: "100%",
+                      maxHeight: 200,
+                      objectFit: "contain",
+                      mb: 2,
+                    }}
+                  />
+                  <TextField
+                    label="Tên"
+                    name="name"
+                    value={selectedProduct.name}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <TextField
+                    label="Giá"
+                    name="price"
+                    value={selectedProduct.price}
+                    onChange={handleChange}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  />
+                  <Select
+                    label="Loại"
+                    name="category"
+                    value={selectedProduct.category?.id || ""}
+                    onChange={(e) =>
+                      handleChange({
+                        target: { name: "category", value: e.target.value },
+                      })
+                    }
+                    fullWidth
+                    sx={{ mb: 2 }}
+                  >
+                    {categories.map((category) => (
+                      <MenuItem key={category.id} value={category.id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
 
                   <TextField
                     label="Mô tả"

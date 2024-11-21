@@ -19,13 +19,20 @@ import UpdateIcon from "@mui/icons-material/Update";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
-import { GET_PROFILE_ADMIN } from "../api/Queries/user";
+import { GET_PROFILE_ADMIN, GET_PROFILE } from "../api/Queries/user";
 import { UPDATE_USER } from "../api/Mutations/user";
 
 const UserList = () => {
+  const userId = localStorage.getItem("id")
   // Query
   const { loading, error, data, refetch } = useQuery(GET_PROFILE_ADMIN);
-
+  const {data:userData} = useQuery(GET_PROFILE, {
+    variables:{
+      where:{
+        id: userId
+      }
+    }
+  })
   const users = data?.users || [];
   console.log(users)
   // Mutation
@@ -177,17 +184,20 @@ const UserList = () => {
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectAll}
-                  indeterminate={
-                    selectedUsers.length > 0 &&
-                    selectedUsers.length < users.length
-                  }
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                />
-              </TableCell>
+                {userData.user.role.name==="Admin"?
+                (<TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={
+                      selectedUsers.length > 0 &&
+                      selectedUsers.length < users.length
+                    }
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                  />
+                </TableCell>):
+                (<TableCell></TableCell>)}
+              
                 <TableCell sx={{ fontWeight: "bold" }}>
                   Tên Khách Hàng
                 </TableCell>
@@ -204,7 +214,8 @@ const UserList = () => {
                   onClick={() => handleRowClick(user)}
                   style={{ cursor: "pointer" }}
                 >
-                <TableCell padding="checkbox">
+                  {userData.user.role.name==="Admin"?
+                  (<TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedUsers.includes(user.id)}
                     onClick={(e) => e.stopPropagation()}
@@ -214,7 +225,9 @@ const UserList = () => {
                     
                     color="primary"
                   />
-                </TableCell>
+                </TableCell>):
+                (<TableCell></TableCell>)}
+                
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
@@ -320,8 +333,8 @@ const UserList = () => {
                     </Typography>
                   </>
                 )}
-
-                <Box
+                {userData.user.role.name==="Admin" || userId===selectedUser.id?
+                (<Box
                   sx={{
                     display: "flex",
                     justifyContent: "flex-end",
@@ -329,11 +342,14 @@ const UserList = () => {
                     borderTop: "1px solid #ddd",
                   }}
                 >
+                  
                   <Button variant="contained" onClick={handleEditToggle}>
                     <UpdateIcon />
                     {isEditing ? "Lưu" : "Cập Nhật"}
                   </Button>
-                </Box>
+                </Box>):
+              (<></>)}
+                
               </>
             )}
           </Box>
