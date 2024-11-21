@@ -40,22 +40,27 @@ export const GET_ALL_ORDERS = gql`
       status
       createAt
       items {
+      id
         status
         product {
+          id
           name
           price
         }
         consignmentSale {
+          id
           name
           price
         }
         consignmentRaising {
           product {
+            id
             name
           }
           consignmentDate
           returnDate
           consignmentPrice
+          id
         }
       }
       user {

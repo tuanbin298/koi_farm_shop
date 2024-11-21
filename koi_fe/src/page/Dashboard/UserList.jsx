@@ -115,13 +115,7 @@ const UserList = () => {
     }
   };
 
-  const handleCheckboxChange = (id) => {
-    setSelectedUserIds((prevIds) =>
-      prevIds.includes(id)
-        ? prevIds.filter((userId) => userId !== id)
-        : [...prevIds, id]
-    );
-  };
+  
 
   const handleSelectAll = () => {
     if (isSelectAll) {
@@ -399,8 +393,9 @@ const UserList = () => {
           </Box>
         </Modal>
       </Box>
+      </Box>
     </>
-  );
+    )
 };
 
 export default UserList;

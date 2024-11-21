@@ -38,7 +38,7 @@ export default function OrderList() {
   const [originalOrder, setOriginalOrder] = useState(null);
 
   const orders = getOrders?.orders || [];
-
+  console.log(orders)
   const handleCheckboxChange = (orderId) => {
     setSelectedOrders((prevSelected) => {
       if (prevSelected.includes(orderId)) {
@@ -83,18 +83,20 @@ export default function OrderList() {
   };
 
   const handleSaveChange = async (item) => {
+    console.log(item)
     try {
       const { id, status } = item;
       await updateOrderItem({
         variables: {
           data: {
-            where: { id: item.id },
+            where: { id: id },
             data: { status: status },
           },
         },
       });
       alert("Cập nhật thành công!");
     } catch (error) {
+      console.log(error)
       alert("Cập nhật thất bại!");
     }
   };
@@ -529,6 +531,7 @@ export default function OrderList() {
                 }}
                 style={{ marginTop: "20px" }}
               >
+                {console.log(expandedOrder.items)}
                 <UpdateIcon />
                 {isEditing ? "Lưu" : "Cập nhật"}
               </Button>
