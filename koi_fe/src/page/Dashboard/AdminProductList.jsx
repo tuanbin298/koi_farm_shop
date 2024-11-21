@@ -29,8 +29,10 @@ import { GET_ALL_PRODUCTS_ADMIN } from "../api/Queries/product";
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_PRODUCT } from "../api/Mutations/updateproduct";
 import { DELETE_PRODUCTS } from "../api/Queries/product";
+import { GET_PROFILE } from "../api/Queries/user";
 
 export default function AdminProductList() {
+  const userId = localStorage.getItem("id");
   // Query
   const {
     data: getProducts,
@@ -41,7 +43,16 @@ export default function AdminProductList() {
 
   const { data: categoryData, loading: loadingCategories } =
     useQuery(GET_CATEGORY);
-
+  
+  const {data: user} = useQuery(GET_PROFILE, {
+    variables:{
+      where:{
+        id: userId
+      }
+    }
+  })
+  
+  
   const products = getProducts?.products || [];
   const categories = categoryData?.categories || [];
 
@@ -257,8 +268,10 @@ export default function AdminProductList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
+              
+                {user.user.role.name === "Admin"?
+                (<TableCell padding="checkbox">
+                  <Checkbox
                   checked={selectAll}
                   indeterminate={
                     selectedProducts.length > 0 &&
@@ -267,7 +280,7 @@ export default function AdminProductList() {
                   onChange={handleSelectAllChange}
                   color="primary"
                 />
-              </TableCell>
+                </TableCell>): <TableCell></TableCell>} 
               <TableCell>Tên sản phẩm</TableCell>
               <TableCell>Giá sản phẩm</TableCell>
               <TableCell>Kích thước</TableCell>
@@ -284,7 +297,8 @@ export default function AdminProductList() {
                 onClick={() => handleRowClick(product)}
                 style={{ cursor: "pointer" }}
               >
-                <TableCell padding="checkbox">
+                {user.user.role.name === "Admin"?
+                (<TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedProducts.includes(product.id)}
                     onClick={(e) => e.stopPropagation()}
@@ -294,7 +308,9 @@ export default function AdminProductList() {
                     disabled={product.status === "Có sẵn" ? false : true}
                     color="primary"
                   />
-                </TableCell>
+                </TableCell>):
+                (<TableCell></TableCell>)}
+                
                 <TableCell>
                   <Image
                     width={100}
@@ -487,8 +503,8 @@ export default function AdminProductList() {
                   </Typography>
                 </>
               )}
-
-              <Box
+              {user.user.role.name==="Admin"?
+              (<Box
                 sx={{
                   display: "flex",
                   justifyContent: "flex-end",
@@ -496,11 +512,14 @@ export default function AdminProductList() {
                   borderTop: "1px solid #ddd",
                 }}
               >
+                
                 <Button variant="contained" onClick={handleSaveChange}>
                   <UpdateIcon />
                   {isEditing ? "Lưu" : "Cập Nhật"}
                 </Button>
-              </Box>
+              </Box>):
+            (<></>)}
+              
             </>
           )}
         </Box>
