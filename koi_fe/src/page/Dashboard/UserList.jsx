@@ -176,7 +176,7 @@ const UserList = () => {
             variant="contained"
             color="error"
           >
-            Xoá sản phẩm
+            Xoá người dùng
           </Button>
         )}
         </Box>
