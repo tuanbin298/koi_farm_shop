@@ -100,11 +100,7 @@ export default function OrderList() {
         alert("Không thể cập nhật, vui lòng thử lại!");
       }
     } catch (error) {
-<<<<<<< HEAD
       console.error("Error updating order item:", error.message);
-=======
->>>>>>> main
-console.error("Error updating order item:", error.message);
       alert("Cập nhật thất bại!");
     }
   };
