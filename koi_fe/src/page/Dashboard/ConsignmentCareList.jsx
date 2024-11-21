@@ -11,14 +11,11 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Pagination from "@mui/material/Pagination";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import CloseIcon from "@mui/icons-material/Close";
-
 import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
 import { formatMoney } from "../../utils/formatMoney";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
 import toast, { Toaster } from "react-hot-toast";
-
 import { GET_ALL_FISH_CARE_ADMIN } from "../api/Queries/fishcare";
-import { DELETE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
 
 export default function ConsignmentCareList() {
   //Query
