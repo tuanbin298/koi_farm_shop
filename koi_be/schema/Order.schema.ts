@@ -123,25 +123,23 @@ const Order = list({
         if (resolvedData.status === "Hoàn thành đơn hàng") {
           const orderItems = await context.query.OrderItem.findMany({
             where: {
-              order: {
-                id: { equals: item.id },
-              },
+              order: { id: { equals: item.id } },
             },
-            query: "id status  consignmentRaising { id }",
+            query: "id status",
           });
+          console.log(orderItems);
 
-          for (const orderItem of orderItems) {
-            if (orderItem.consignmentRaising) {
-              await context.query.OrderItem.updateOne({
-                where: { id: orderItem.id },
-                data: { status: "Đang chăm sóc" },
-              });
-            } else {
-              await context.query.OrderItem.updateOne({
-                where: { id: orderItem.id },
-                data: { status: "Hoàn thành" },
-              });
-            }
+          if (orderItems.length > 0) {
+            // Chuẩn bị danh sách cập nhật
+            const updates = orderItems.map((orderItem) => ({
+              where: { id: orderItem.id }, // Đặt điều kiện với id
+              data: { status: "Hoàn thành" }, // Dữ liệu cập nhật
+            }));
+
+            // Cập nhật hàng loạt với updateMany
+            await context.query.OrderItem.updateMany({
+              data: updates, // Gói danh sách cập nhật bên trong `data`
+            });
           }
         }
       }
