@@ -15,7 +15,7 @@ const Order = list({
       query: allowAll,
       create: allowAll,
       update: allowAll,
-      delete: allowAll,
+      delete: permissions.canManageOrder,
     },
   },
 
@@ -129,16 +129,10 @@ const Order = list({
           });
           console.log(orderItems);
 
-          if (orderItems.length > 0) {
-            // Chuẩn bị danh sách cập nhật
-            const updates = orderItems.map((orderItem) => ({
-              where: { id: orderItem.id }, // Đặt điều kiện với id
-              data: { status: "Hoàn thành" }, // Dữ liệu cập nhật
-            }));
-
-            // Cập nhật hàng loạt với updateMany
-            await context.query.OrderItem.updateMany({
-              data: updates, // Gói danh sách cập nhật bên trong `data`
+          for (const orderItem of orderItems) {
+            await context.query.OrderItem.updateOne({
+              where: { id: orderItem.id },
+              data: { status: "Hoàn thành" },
             });
           }
         }

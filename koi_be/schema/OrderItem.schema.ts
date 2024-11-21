@@ -14,7 +14,7 @@ const OrderItem = list({
       query: allowAll,
       create: allowAll,
       update: allowAll,
-      delete: allowAll,
+      delete: permissions.canManageOrder,
     },
   },
 
