@@ -21,7 +21,6 @@ import UpdateIcon from "@mui/icons-material/Update";
 import CloseIcon from "@mui/icons-material/Close";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
-
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 import {
   Box,
   Typography,
@@ -23,7 +22,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import toast, { Toaster } from "react-hot-toast";
 
 import { useMutation, useQuery } from "@apollo/client";
-
 import { GET_ALL_ARTICLES } from "../api/Queries/articles";
 import { UPDATE_ARTICLE, DELETE_ARTICLE } from "../api/Mutations/article";
 
