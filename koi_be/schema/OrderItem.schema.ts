@@ -13,7 +13,7 @@ const OrderItem = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: permissions.canManageOrder,
+      update: allowAll,
       delete: allowAll,
     },
   },
@@ -74,14 +74,21 @@ const OrderItem = list({
   hooks: {
     async afterOperation({ operation, resolvedData, item, context }) {
       if (operation === "update" && resolvedData.status === "Hoàn thành") {
-        const consignmentRaising =
+        const consignmentRaisings =
           await context.query.ConsigmentRaising.findMany({
             where: {
-              id: { equals: item.id },
+              id: { equals: item.consignmentRaisingId },
             },
-            query: "id product { name }",
+            query: "id product { name } status",
           });
-        console.log(consignmentRaising);
+        console.log(consignmentRaisings);
+
+        for (const consignmentRaising of consignmentRaisings) {
+          await context.query.ConsigmentRaising.updateOne({
+            where: { id: consignmentRaising.id },
+            data: { status: "Đang chăm sóc" },
+          });
+        }
       }
     },
   },

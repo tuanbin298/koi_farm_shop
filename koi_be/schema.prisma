@@ -158,6 +158,7 @@ model ConsigmentRaising {
   returnDate                        DateTime?
   consignmentPrice                  Float
   description                       String      @default("")
+  status                            String?     @default("Đang xử lý")
   from_OrderItem_consignmentRaising OrderItem[] @relation("OrderItem_consignmentRaising")
 
   @@index([userId])
