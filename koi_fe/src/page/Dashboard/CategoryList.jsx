@@ -25,8 +25,9 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";
-
+import { GET_PROFILE } from "../api/Queries/user";
 export default function CategoryList() {
+  const userId = localStorage.getItem("id")
   // Query
   const {
     data: getCategories,
@@ -34,7 +35,13 @@ export default function CategoryList() {
     loading,
     refetch,
   } = useQuery(GET_CATEGORY);
-
+  const {data:userData} = useQuery(GET_PROFILE, {
+    variables:{
+      where:{
+        id: userId
+      }
+    }
+  })
   const categories = getCategories?.categories || [];
 
   // Mutation
@@ -216,7 +223,8 @@ export default function CategoryList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
+              {userData.user.role.name==="Admin"?
+              (<TableCell padding="checkbox">
                 <Checkbox
                   checked={selectAll}
                   indeterminate={
@@ -226,7 +234,10 @@ export default function CategoryList() {
                   onChange={handleSelectAllChange}
                   color="primary"
                 />
-              </TableCell>
+              </TableCell>)
+              :
+              (<TableCell></TableCell>)}
+              
               <TableCell>Tên phân loại</TableCell>
               <TableCell>Mô tả</TableCell>
             </TableRow>
@@ -237,15 +248,19 @@ export default function CategoryList() {
                 key={category.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 onClick={() => handleRowClick(category)}
+                style={{ cursor: "pointer" }}
               >
-                <TableCell padding="checkbox">
+                {userData.user.role.name==="Admin"?
+                (<TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedCategories.includes(category.id)}
                     onClick={(e) => e.stopPropagation()}
                     onChange={() => handleCheckboxChange(category.id)}
                     color="primary"
                   />
-                </TableCell>
+                </TableCell>):
+              (<TableCell></TableCell>)}
+                
                 <TableCell component="th" scope="row">
                   {category.name}
                 </TableCell>

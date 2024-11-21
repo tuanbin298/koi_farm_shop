@@ -69,12 +69,15 @@ export default function DashboardOverview() {
     for (let i = 1; i < 12; i++) {
         const previousMonthRevenue = monthlyRevenue[i - 1];
         const currentMonthRevenue = monthlyRevenue[i];
-
-        if (previousMonthRevenue > 0 && currentMonthRevenue > 0) {
-            //growth algorithm
+    
+        if (previousMonthRevenue > 0) {
+            // Calculate percentage growth
             revenueGrowth[i] = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
-        }
-        else{
+        } else if (previousMonthRevenue === 0 && currentMonthRevenue > 0) {
+            // If no revenue in the previous month but revenue exists now, mark as 100% growth
+            revenueGrowth[i] = 100;
+        } else {
+            // No revenue change or zero growth
             revenueGrowth[i] = 0;
         }
     }

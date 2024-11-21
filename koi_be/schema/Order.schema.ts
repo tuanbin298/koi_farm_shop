@@ -75,6 +75,7 @@ const Order = list({
       defaultValue: "Thanh toán thành công",
       options: [
         { label: "Thanh toán thành công", value: "Thanh toán thành công" },
+        { label: "Hoàn thành đơn hàng", value: "Hoàn thành đơn hàng" },
       ],
       ui: {
         itemView: {
@@ -126,14 +127,21 @@ const Order = list({
                 id: { equals: item.id },
               },
             },
-            query: "id status",
+            query: "id status  consignmentRaising { id }",
           });
 
           for (const orderItem of orderItems) {
-            await context.query.OrderItem.updateOne({
-              where: { id: orderItem.id },
-              data: { status: "Hoàn thành" },
-            });
+            if (orderItem.consignmentRaising) {
+              await context.query.OrderItem.updateOne({
+                where: { id: orderItem.id },
+                data: { status: "Đang chăm sóc" },
+              });
+            } else {
+              await context.query.OrderItem.updateOne({
+                where: { id: orderItem.id },
+                data: { status: "Hoàn thành" },
+              });
+            }
           }
         }
       }

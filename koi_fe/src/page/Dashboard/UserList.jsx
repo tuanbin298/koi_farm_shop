@@ -13,22 +13,34 @@ import {
   Modal,
   TextField,
   CircularProgress,
+  Checkbox
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
-import { GET_PROFILE_ADMIN } from "../api/Queries/user";
+import { GET_PROFILE_ADMIN, GET_PROFILE } from "../api/Queries/user";
 import { UPDATE_USER } from "../api/Mutations/user";
 
 const UserList = () => {
+  const userId = localStorage.getItem("id")
   // Query
   const { loading, error, data, refetch } = useQuery(GET_PROFILE_ADMIN);
-
+  const {data:userData} = useQuery(GET_PROFILE, {
+    variables:{
+      where:{
+        id: userId
+      }
+    }
+  })
+  const users = data?.users || [];
+  console.log(users)
   // Mutation
   const [updateUser] = useMutation(UPDATE_USER);
 
   // State
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -116,6 +128,26 @@ const UserList = () => {
       </Typography>
     );
 
+
+    // When check one checkbox
+  const handleCheckboxChange = (userId) => {
+    setSelectedUsers((prevSelected) =>
+      prevSelected.includes(userId)
+        ? prevSelected.filter((id) => id !== userId)
+        : [...prevSelected, userId]
+    );
+  };
+
+  // When check all checkbox
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSelectedUsers([]);
+    } else {
+      const allUserIds = users.map((user) => user.id);
+      setSelectedUsers(allUserIds);
+    }
+    setSelectAll(!selectAll);
+  };
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
@@ -129,14 +161,43 @@ const UserList = () => {
           borderRadius: "8px",
         }}
       >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          mb: 2,
+        }}
+      >
         <Typography variant="h4" sx={{ mb: 3 }}>
           Danh sách người dùng
         </Typography>
-
+        {selectedUsers.length > 0 && (
+          <Button
+            variant="contained"
+            color="error"
+          >
+            Xoá sản phẩm
+          </Button>
+        )}
+        </Box>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
+                {userData.user.role.name==="Admin"?
+                (<TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={
+                      selectedUsers.length > 0 &&
+                      selectedUsers.length < users.length
+                    }
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                  />
+                </TableCell>):
+                (<TableCell></TableCell>)}
+              
                 <TableCell sx={{ fontWeight: "bold" }}>
                   Tên Khách Hàng
                 </TableCell>
@@ -153,6 +214,20 @@ const UserList = () => {
                   onClick={() => handleRowClick(user)}
                   style={{ cursor: "pointer" }}
                 >
+                  {userData.user.role.name==="Admin"?
+                  (<TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedUsers.includes(user.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => {
+                      handleCheckboxChange(user.id);
+                    }}
+                    
+                    color="primary"
+                  />
+                </TableCell>):
+                (<TableCell></TableCell>)}
+                
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.phone}</TableCell>
@@ -258,8 +333,8 @@ const UserList = () => {
                     </Typography>
                   </>
                 )}
-
-                <Box
+                {userData.user.role.name==="Admin" || userId===selectedUser.id?
+                (<Box
                   sx={{
                     display: "flex",
                     justifyContent: "flex-end",
@@ -267,11 +342,14 @@ const UserList = () => {
                     borderTop: "1px solid #ddd",
                   }}
                 >
+                  
                   <Button variant="contained" onClick={handleEditToggle}>
                     <UpdateIcon />
                     {isEditing ? "Lưu" : "Cập Nhật"}
                   </Button>
-                </Box>
+                </Box>):
+              (<></>)}
+                
               </>
             )}
           </Box>
