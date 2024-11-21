@@ -31,3 +31,15 @@ export const UPDATE_ORDER = gql`
     }
   }
 `;
+
+export const UPDATE_ORDER_STATUS = gql`
+  mutation UpdateOrder(
+    $where: OrderWhereUniqueInput!
+    $data: OrderUpdateInput!
+  ) {
+    updateOrder(where: $where, data: $data) {
+      id
+      status
+    }
+  }
+`;

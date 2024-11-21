@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@apollo/client";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,89 +7,47 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import CircularProgress from "@mui/material/CircularProgress";
+import Pagination from "@mui/material/Pagination";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import CloseIcon from "@mui/icons-material/Close";
-import UpdateIcon from "@mui/icons-material/Update";
-import {
-  Box,
-  Typography,
-  Checkbox,
-  Button,
-  Modal,
-  TextField,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-} from "@mui/material";
-import { GET_ALL_FISH_CARE_ADMIN } from "../api/Queries/fishcare";
+
+import { Box, Typography, Checkbox, Button, Modal } from "@mui/material";
 import { formatMoney } from "../../utils/formatMoney";
 import { formatDate, formatTime } from "../../utils/formatDateTime";
+import toast, { Toaster } from "react-hot-toast";
+
+import { GET_ALL_FISH_CARE_ADMIN } from "../api/Queries/fishcare";
+import { DELETE_CONSIGNMENT_RAISING } from "../api/Mutations/fishcare";
 
 export default function ConsignmentCareList() {
+  //Query
   const {
     data: getConsignments,
     error,
     loading,
+    refetch,
   } = useQuery(GET_ALL_FISH_CARE_ADMIN);
-  const [selectedConsignments, setSelectedConsignments] = useState([]);
+
+  //State
   const [selectedConsignment, setSelectedConsignment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [selectAll, setSelectAll] = useState(false);
+
   const consignments = getConsignments?.consigmentRaisings || [];
 
-  const [editableData, setEditableData] = useState({
-    consignmentPrice: "",
-    status: "",
-  });
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = consignments.slice(startIndex, endIndex);
 
-  const handleCheckboxChange = (consignmentId) => {
-    setSelectedConsignments((prevSelected) =>
-      prevSelected.includes(consignmentId)
-        ? prevSelected.filter((id) => id !== consignmentId)
-        : [...prevSelected, consignmentId]
-    );
-  };
-
-  const handleSelectAllChange = () => {
-    if (selectedConsignments.length === consignments.length) {
-      setSelectedConsignments([]); // Bỏ chọn tất cả
-    } else {
-      setSelectedConsignments(consignments.map((c) => c.id)); // Chọn tất cả
-    }
-  };
+  // Handle
+  const handlePageChange = (event, value) => setPage(value);
 
   const handleRowClick = (consignment) => {
     setSelectedConsignment(consignment);
-    setEditableData({
-      status: consignment.status || "", // Đồng bộ trạng thái hiện tại
-      consignmentPrice: consignment.consignmentPrice || "",
-    });
     setOpenModal(true);
-  };
-
-  const handleInputChange = (field, value) => {
-    setEditableData((prevData) => ({
-      ...prevData,
-      [field]: value,
-    }));
-  };
-  const handleDelete = () => {
-    console.log("Deleting consignments with IDs:", selectedConsignments);
-    const updatedConsignments = consignments.filter(
-      (consignment) => !selectedConsignments.includes(consignment.id)
-    );
-    getConsignments.consignmentSales = updatedConsignments;
-    setSelectedConsignments([]);
-    setSelectAll(false);
-  };
-
-  const handleUpdate = () => {
-    console.log("Dữ liệu đã chỉnh sửa:", editableData);
-
-    // Thêm API hoặc logic cập nhật
-
-    handleCloseModal();
   };
 
   const handleCloseModal = () => {
@@ -97,11 +55,27 @@ export default function ConsignmentCareList() {
     setSelectedConsignment(null);
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
-  if (error) return <Typography>Error loading consignments</Typography>;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (error)
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải: {error.message}
+      </Typography>
+    );
 
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <Box
         sx={{
           display: "flex",
@@ -114,11 +88,6 @@ export default function ConsignmentCareList() {
         <Typography variant="h4">
           Danh sách yêu cầu ký gửi <ListAltIcon />
         </Typography>
-        {selectedConsignments.length > 0 && (
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Delete Selected
-          </Button>
-        )}
       </Box>
       <TableContainer
         component={Paper}
@@ -131,17 +100,6 @@ export default function ConsignmentCareList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedConsignments.length === consignments.length}
-                  indeterminate={
-                    selectedConsignments.length > 0 &&
-                    selectedConsignments.length < consignments.length
-                  }
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                />
-              </TableCell>
               <TableCell>Ngày | Giờ ký gửi</TableCell>
               <TableCell>Người ký gửi nuôi</TableCell>
               <TableCell>Cá ký gửi nuôi</TableCell>
@@ -152,7 +110,7 @@ export default function ConsignmentCareList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {consignments.map((consignment, index) => (
+            {paginatedItems.map((consignment, index) => (
               <TableRow
                 key={index}
                 sx={{
@@ -161,16 +119,6 @@ export default function ConsignmentCareList() {
                 }}
                 onClick={() => handleRowClick(consignment)}
               >
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedConsignments.includes(consignment.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleCheckboxChange(consignment.id);
-                    }}
-                    color="primary"
-                  />
-                </TableCell>
                 <TableCell>
                   {formatDate(consignment.consignmentDate.split("T")[0])}{" "}
                   {" | "} {formatTime(consignment.consignmentDate)}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import {
   Box,
@@ -14,13 +14,18 @@ import {
   Modal,
   Button,
   TextField,
+  Checkbox,
+  Pagination,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import toast, { Toaster } from "react-hot-toast";
+import CloseIcon from "@mui/icons-material/Close";
+
 import { useMutation, useQuery } from "@apollo/client";
 
 import { GET_ALL_ARTICLES } from "../api/Queries/articles";
-import { UPDATE_ARTICLE } from "../api/Mutations/article";
+import { UPDATE_ARTICLE, DELETE_ARTICLE } from "../api/Mutations/article";
 
 export default function ArticleList() {
   // Query
@@ -29,15 +34,41 @@ export default function ArticleList() {
   const articles = data?.articles || [];
 
   // Mutation
+  const [deleteArcicles] = useMutation(DELETE_ARTICLE);
   const [updateArticle] = useMutation(UPDATE_ARTICLE);
 
   // State
+  const [selectAll, setSelectAll] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedArticles, setSelectedArticles] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [originalArticle, setOriginalArticle] = useState(null);
 
+  useEffect(() => {
+    setSelectAll(
+      selectedArticles.length === articles.length && articles.length > 0
+    );
+  }, [selectedArticles, articles]);
+
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = articles.slice(startIndex, endIndex) || [];
+
   // Handle
+  const handlePageChange = (event, value) => setPage(value);
+
+  const handleCheckboxChange = (articleId) => {
+    setSelectedArticles((prev) =>
+      prev.includes(articleId)
+        ? prev.filter((id) => id !== articleId)
+        : [...prev, articleId]
+    );
+  };
+
   const handleRowClick = (article) => {
     setOpenModal(true);
     setSelectedArticle(article);
@@ -50,6 +81,16 @@ export default function ArticleList() {
     setIsEditing(false);
   };
 
+  // When check all checkbox
+  const handleSelectAllChange = () => {
+    if (selectAll) {
+      setSelectedArticles([]);
+    } else {
+      const allArticleIds = articles.map((article) => article.id);
+      setSelectedArticles(allArticleIds);
+    }
+    setSelectAll(!selectAll);
+  };
   const handleSaveChange = () => {
     if (!isEditing) {
       setOriginalArticle({ ...selectedArticle });
@@ -85,7 +126,7 @@ export default function ArticleList() {
         toast.success("Bài viết đã được cập nhật thành công");
         handleCloseModal();
       } catch (err) {
-        oast.error("Lỗi cập nhật bài viết!");
+        Toaster.error("Lỗi cập nhật bài viết!");
         console.error("Đã xảy ra lỗi khi cập nhật bài viết :", err);
       }
     } else {
@@ -100,6 +141,25 @@ export default function ArticleList() {
       ...prevArticle,
       [name]: value,
     }));
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteArcicles({
+        variables: {
+          where: selectedArticles.map((id) => ({ id })),
+        },
+      });
+
+      await refetch();
+      toast.success("Xóa thành công!");
+      setSelectedArticles([]);
+      setSelectAll(false);
+      handleCloseModal();
+    } catch (error) {
+      toast.error("Đã xảy ra lỗi khi xóa tin tức!");
+      console.error("Đã xảy ra lỗi khi xóa tin tức:", error);
+    }
   };
 
   if (loading)
@@ -132,7 +192,14 @@ export default function ArticleList() {
           marginTop: "5%",
         }}
       >
-        <Typography variant="h4">Danh sách bài viết</Typography>
+        <Typography variant="h4">
+          Danh sách bài viết <ListAltIcon />
+        </Typography>
+        {selectedArticles.length > 0 && (
+          <Button variant="contained" color="error" onClick={handleDelete}>
+            Xoá Đã Chọn
+          </Button>
+        )}
       </Box>
 
       <TableContainer
@@ -146,6 +213,17 @@ export default function ArticleList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  checked={selectAll}
+                  indeterminate={
+                    selectedArticles.length > 0 &&
+                    selectedArticles.length < articles.length
+                  }
+                  onChange={handleSelectAllChange}
+                  color="primary"
+                />
+              </TableCell>
               <TableCell>Tiêu đề</TableCell>
               <TableCell>Nội dung</TableCell>
               <TableCell>Đường dẫn</TableCell>
@@ -153,12 +231,21 @@ export default function ArticleList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {articles.map((article, index) => (
+            {paginatedItems.map((article) => (
               <TableRow
                 key={article.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 onClick={() => handleRowClick(article)}
                 style={{ cursor: "pointer" }}
               >
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedArticles.includes(article.id)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => handleCheckboxChange(article.id)}
+                    color="primary"
+                  />
+                </TableCell>
                 <TableCell>{article.name || "Không có tiêu đề"}</TableCell>
                 <TableCell>
                   {typeof article.content === "string"
@@ -198,6 +285,22 @@ export default function ArticleList() {
             ))}
           </TableBody>
         </Table>
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop={2}
+          sx={{
+            marginBottom: "2%",
+          }}
+        >
+          <Pagination
+            count={Math.ceil(articles.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
       </TableContainer>
 
       <Modal
@@ -212,111 +315,137 @@ export default function ArticleList() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
-            maxHeight: "80vh",
+            width: 600,
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
-            p: 4,
             borderRadius: 2,
-            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          {selectedArticle && (
-            <>
-              <Typography
-                id="modal-title"
-                variant="h4"
-                component="h2"
-                sx={{ mb: 2 }}
-              >
-                Chi Tiết bài viết
-              </Typography>
-              {isEditing ? (
-                <>
-                  {/* Image */}
-                  <Box
-                    component="img"
-                    src={selectedArticle.image?.publicUrl}
-                    alt={selectedArticle.name}
-                    sx={{
-                      width: "100%",
-                      maxHeight: 200,
-                      objectFit: "contain",
-                      mb: 2,
-                    }}
-                  />
+          {/* Nút Đóng */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <Button
+              variant="text"
+              onClick={handleCloseModal}
+              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
+          {/* Nội dung cuộn */}
+          <Box
+            sx={{
+              p: 2,
+              overflowY: "auto",
+              maxHeight: "70vh", // Chiều cao tối đa
+            }}
+          >
+            {selectedArticle && (
+              <>
+                <Typography
+                  id="modal-title"
+                  variant="h4"
+                  component="h2"
+                  sx={{ mb: 2 }}
+                >
+                  Chi Tiết bài viết
+                </Typography>
+                {isEditing ? (
+                  <>
+                    {/* Image */}
+                    <Box
+                      component="img"
+                      src={selectedArticle.image?.publicUrl}
+                      alt={selectedArticle.name}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 200,
+                        objectFit: "contain",
+                        mb: 2,
+                      }}
+                    />
 
-                  {/* Name */}
-                  <TextField
-                    label="Tiêu đề"
-                    name="name"
-                    value={selectedArticle.name}
-                    onChange={handleChange}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                  />
+                    {/* Name */}
+                    <TextField
+                      label="Tiêu đề"
+                      name="name"
+                      value={selectedArticle.name}
+                      onChange={handleChange}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
 
-                  {/* Content */}
-                  <TextField
-                    label="Nội dung"
-                    name="content"
-                    value={selectedArticle.content}
-                    onChange={handleChange}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                  />
+                    {/* Content */}
+                    <TextField
+                      label="Nội dung"
+                      name="content"
+                      value={selectedArticle.content}
+                      onChange={handleChange}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
 
-                  {/* Links */}
-                  <TextField
-                    label="Đường dẫn"
-                    name="links"
-                    value={selectedArticle.links}
-                    onChange={handleChange}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Box
-                    component="img"
-                    src={selectedArticle.image?.publicUrl}
-                    alt={selectedArticle.name}
-                    sx={{
-                      width: "100%",
-                      maxHeight: 200,
-                      objectFit: "contain",
-                      mb: 2,
-                    }}
-                  />
-                  <Typography>
-                    <strong>Tiêu đề:</strong> {selectedArticle.name}
-                  </Typography>
-                  <Typography>
-                    <strong>Nội dung</strong> {selectedArticle.content}
-                  </Typography>
-                  <Typography>
-                    <strong>Đường dẫn:</strong> {selectedArticle.links}
-                  </Typography>
-                </>
-              )}
+                    {/* Links */}
+                    <TextField
+                      label="Đường dẫn"
+                      name="links"
+                      value={selectedArticle.links}
+                      onChange={handleChange}
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Box
+                      component="img"
+                      src={selectedArticle.image?.publicUrl}
+                      alt={selectedArticle.name}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 200,
+                        objectFit: "contain",
+                        mb: 2,
+                      }}
+                    />
+                    <Typography>
+                      <strong>Tiêu đề:</strong> {selectedArticle.name}
+                    </Typography>
+                    <Typography>
+                      <strong>Nội dung</strong> {selectedArticle.content}
+                    </Typography>
+                    <Typography>
+                      <strong>Đường dẫn:</strong> {selectedArticle.links}
+                    </Typography>
+                  </>
+                )}
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  p: 2,
-                  borderTop: "1px solid #ddd",
-                }}
-              >
-                <Button variant="contained" onClick={handleSaveChange}>
-                  <UpdateIcon />
-                  {isEditing ? "Lưu" : "Cập Nhật"}
-                </Button>
-              </Box>
-            </>
-          )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    p: 2,
+                    borderTop: "1px solid #ddd",
+                  }}
+                >
+                  <Button variant="contained" onClick={handleSaveChange}>
+                    <UpdateIcon />
+                    {isEditing ? "Lưu" : "Cập Nhật"}
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
         </Box>
       </Modal>
     </>

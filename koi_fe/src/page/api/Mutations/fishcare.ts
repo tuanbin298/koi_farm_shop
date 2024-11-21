@@ -18,3 +18,13 @@ export const CREATE_CONSIGNMENT_RAISING = gql`
     }
   }
 `;
+
+export const DELETE_CONSIGNMENT_RAISING = gql`
+  mutation DeleteConsigmentRaisings(
+    $where: [ConsigmentRaisingWhereUniqueInput!]!
+  ) {
+    deleteConsigmentRaisings(where: $where) {
+      id
+    }
+  }
+`;

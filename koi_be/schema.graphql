@@ -939,7 +939,6 @@ type ConsigmentRaising {
   returnDate: DateTime
   consignmentPrice: Float
   description: String
-  status: String
 }
 
 input ConsigmentRaisingWhereUniqueInput {
@@ -957,7 +956,6 @@ input ConsigmentRaisingWhereInput {
   returnDate: DateTimeNullableFilter
   consignmentPrice: FloatFilter
   description: StringFilter
-  status: StringNullableFilter
 }
 
 input DateTimeFilter {
@@ -988,7 +986,6 @@ input ConsigmentRaisingOrderByInput {
   returnDate: OrderDirection
   consignmentPrice: OrderDirection
   description: OrderDirection
-  status: OrderDirection
 }
 
 input ConsigmentRaisingUpdateInput {
@@ -998,7 +995,6 @@ input ConsigmentRaisingUpdateInput {
   returnDate: DateTime
   consignmentPrice: Float
   description: String
-  status: String
 }
 
 input ConsigmentRaisingUpdateArgs {
@@ -1013,7 +1009,6 @@ input ConsigmentRaisingCreateInput {
   returnDate: DateTime
   consignmentPrice: Float
   description: String
-  status: String
 }
 
 type ConsignmentSale {

@@ -13,7 +13,7 @@ const OrderItem = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: permissions.canManageOrder,
+      update: allowAll,
       delete: allowAll,
     },
   },
@@ -69,6 +69,21 @@ const OrderItem = list({
       label: "Ký gửi nuôi",
       defaultValue: false,
     }),
+  },
+
+  hooks: {
+    async afterOperation({ operation, resolvedData, item, context }) {
+      if (operation === "update" && resolvedData.status === "Hoàn thành") {
+        const consignmentRaising =
+          await context.query.ConsigmentRaising.findMany({
+            where: {
+              id: { equals: item.id },
+            },
+            query: "id product { name }",
+          });
+        console.log(consignmentRaising);
+      }
+    },
   },
 });
 
