@@ -291,6 +291,7 @@ export default function CategoryList() {
         </Box>
       </TableContainer>
 
+      {/* Modal for Category Details */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -317,14 +318,14 @@ export default function CategoryList() {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              p: 2,
+              p: 1,
               borderBottom: "1px solid #ddd",
             }}
           >
             <Button
               variant="text"
               onClick={handleCloseModal}
-              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+              sx={{ textTransform: "none", color: "red" }}
             >
               <CloseIcon />
               Đóng
@@ -334,7 +335,7 @@ export default function CategoryList() {
             sx={{
               p: 2,
               overflowY: "auto",
-              maxHeight: "70vh", // Chiều cao tối đa
+              maxHeight: "70vh",
             }}
           >
             {selectedCategory && (
@@ -345,7 +346,7 @@ export default function CategoryList() {
                   component="h2"
                   sx={{ mb: 2 }}
                 >
-                  Chi Tiết phân loại
+                  Chi Tiết Phân Loại
                 </Typography>
                 {isEditing ? (
                   <>

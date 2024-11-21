@@ -7,20 +7,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import {
-  Box,
-  Typography,
-  Checkbox,
-  Button,
-  Rating,
-  CircularProgress,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { Box, Typography, Checkbox, Button, Rating } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import { GET_FEEDBACK } from "../api/Queries/feedback";
-import { formatTime } from "../../utils/formatDateTime";
-import UpdateIcon from "@mui/icons-material/Update";
 import { DELETE_FEEDBACK } from "../api/Mutations/feedback";
 
 export default function FeedbackList() {
@@ -119,14 +108,27 @@ export default function FeedbackList() {
       setSelectAll(false);
       refetch(); // Optional: Refetch the data to update UI
     } catch (error) {
-      console.error("Failed to delete feedbacks:", error);
       alert("Đã xảy ra lỗi khi xóa đánh giá.");
     }
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   if (error)
-    return <Typography>Error loading feedbacks: {error.message}</Typography>;
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải đánh giá: {error.message}
+      </Typography>
+    );
 
   return (
     <Box>

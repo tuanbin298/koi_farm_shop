@@ -13,9 +13,11 @@ import {
   Modal,
   TextField,
   CircularProgress,
-  Checkbox
+  Checkbox,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
+import CloseIcon from "@mui/icons-material/Close";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -23,18 +25,17 @@ import { GET_PROFILE_ADMIN, GET_PROFILE } from "../api/Queries/user";
 import { UPDATE_USER } from "../api/Mutations/user";
 
 const UserList = () => {
-  const userId = localStorage.getItem("id")
+  const userId = localStorage.getItem("id");
   // Query
   const { loading, error, data, refetch } = useQuery(GET_PROFILE_ADMIN);
-  const {data:userData} = useQuery(GET_PROFILE, {
-    variables:{
-      where:{
-        id: userId
-      }
-    }
-  })
+  const { data: userData } = useQuery(GET_PROFILE, {
+    variables: {
+      where: {
+        id: userId,
+      },
+    },
+  });
   const users = data?.users || [];
-  console.log(users)
   // Mutation
   const [updateUser] = useMutation(UPDATE_USER);
 
@@ -124,12 +125,11 @@ const UserList = () => {
         color="error"
         sx={{ textAlign: "center", marginTop: 4 }}
       >
-        Error loading articles: {error.message}
+        Lỗi tải bải viết: {error.message}
       </Typography>
     );
 
-
-    // When check one checkbox
+  // When check one checkbox
   const handleCheckboxChange = (userId) => {
     setSelectedUsers((prevSelected) =>
       prevSelected.includes(userId)
@@ -151,46 +151,38 @@ const UserList = () => {
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
-      <Box
-        sx={{
-          marginLeft: "20%",
-          marginRight: "5%",
-          marginTop: "5%",
-          padding: 3,
-          backgroundColor: "#f9f9f9",
-          borderRadius: "8px",
-        }}
-      >
+
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           mb: 2,
+          marginLeft: "15%",
+          marginTop: "5%",
         }}
       >
-        <Typography variant="h4" sx={{ mb: 3 }}>
-          Danh sách người dùng
+        <Typography variant="h4">
+          Danh sách người dùng <ListAltIcon />
         </Typography>
-
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 2 }}>
-          {selectedUserIds.length > 0 && (
-            <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDeleteSelectedUsers}
-            >
-              Xóa ({selectedUserIds.length}) người dùng
-            </Button>
-          )}
-        </Box>
-
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }}>
-            <TableHead>
-              <TableRow>
-                {userData.user.role.name==="Admin"?
-                (<TableCell padding="checkbox">
+        {selectedUsers.length > 0 && (
+          <Button variant="contained" color="error">
+            Xoá người dùng
+          </Button>
+        )}
+      </Box>
+      <TableContainer
+        component={Paper}
+        sx={{
+          marginLeft: "15%",
+          marginTop: "2%",
+          width: "85%",
+        }}
+      >
+        <Table sx={{ minWidth: 650 }}>
+          <TableHead>
+            <TableRow>
+              {userData.user.role.name === "Admin" ? (
+                <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectAll}
                     indeterminate={
@@ -200,85 +192,110 @@ const UserList = () => {
                     onChange={handleSelectAllChange}
                     color="primary"
                   />
-                </TableCell>):
-                (<TableCell></TableCell>)}
-              
-                <TableCell sx={{ fontWeight: "bold" }}>
-                  Tên Khách Hàng
                 </TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Số điện thoại</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Địa chỉ</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Vai trò</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.users.map((user) => (
-                <TableRow
-                  key={user.id}
-                  onClick={() => handleRowClick(user)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {userData.user.role.name==="Admin"?
-                  (<TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedUsers.includes(user.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => {
-                      handleCheckboxChange(user.id);
-                    }}
-                    
-                    color="primary"
-                  />
-                </TableCell>):
-                (<TableCell></TableCell>)}
-                
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>{user.address}</TableCell>
-                  <TableCell>{user.role.name}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              ) : (
+                <TableCell></TableCell>
+              )}
 
-        {/* Modal for User Details */}
-        <Modal
-          open={openModal}
-          onClose={handleCloseModal}
-          aria-labelledby="modal-title"
-          aria-describedby="modal-description"
+              <TableCell sx={{ fontWeight: "bold" }}>Tên Khách Hàng</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Số điện thoại</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Địa chỉ</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Vai trò</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.users.map((user) => (
+              <TableRow
+                key={user.id}
+                onClick={() => handleRowClick(user)}
+                style={{ cursor: "pointer" }}
+              >
+                {userData.user.role.name === "Admin" ? (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedUsers.includes(user.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => {
+                        handleCheckboxChange(user.id);
+                      }}
+                      color="primary"
+                    />
+                  </TableCell>
+                ) : (
+                  <TableCell></TableCell>
+                )}
+
+                <TableCell>{user.name}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.phone}</TableCell>
+                <TableCell>{user.address}</TableCell>
+                <TableCell>{user.role.name}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {/* Modal for User Details */}
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 600,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            borderRadius: 2,
+            display: "flex",
+            flexDirection: "column",
+          }}
         >
+          {/* Close Button */}
           <Box
             sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 500,
-              maxHeight: "80vh",
-              bgcolor: "background.paper",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-              borderRadius: 2,
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 1,
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <Button
+              onClick={handleCloseModal}
+              variant="text"
+              sx={{ textTransform: "none", color: "red" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
+          <Box
+            sx={{
               overflowY: "auto",
+              maxHeight: "70vh", // Chiều cao tối đa
             }}
           >
             {selectedUser && (
-              <>
+              <Box sx={{ p: 2 }}>
                 <Typography
                   id="modal-title"
                   variant="h4"
-                  component="h2"
+                  component="h5"
                   sx={{ mb: 2 }}
                 >
-                  Chi Tiết người dùng
+                  Chi Tiết Người Dùng
                 </Typography>
                 {isEditing ? (
                   <>
+                    {/* Editable Fields */}
                     {/* Name */}
                     <TextField
                       label="Tên khách hàng"
@@ -321,6 +338,7 @@ const UserList = () => {
                   </>
                 ) : (
                   <>
+                    {/* Read-Only Display */}
                     <Typography>
                       <strong>Tên:</strong> {selectedUser.name}
                     </Typography>
@@ -338,29 +356,29 @@ const UserList = () => {
                     </Typography>
                   </>
                 )}
-                {userData.user.role.name==="Admin" || userId===selectedUser.id?
-                (<Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    p: 2,
-                    borderTop: "1px solid #ddd",
-                  }}
-                >
-                  
-                  <Button variant="contained" onClick={handleEditToggle}>
-                    <UpdateIcon />
-                    {isEditing ? "Lưu" : "Cập Nhật"}
-                  </Button>
-                </Box>):
-              (<></>)}
-                
-              </>
+                {userData.user.role.name === "Admin" ||
+                userId === selectedUser.id ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      p: 2,
+                      borderTop: "1px solid #ddd",
+                    }}
+                  >
+                    <Button variant="contained" onClick={handleEditToggle}>
+                      <UpdateIcon />
+                      {isEditing ? "Lưu" : "Cập Nhật"}
+                    </Button>
+                  </Box>
+                ) : (
+                  <></>
+                )}
+              </Box>
             )}
           </Box>
-        </Modal>
-      </Box>
-      </Box>
+        </Box>
+      </Modal>
     </>
     )
 };

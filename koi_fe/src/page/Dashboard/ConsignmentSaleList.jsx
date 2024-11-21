@@ -29,9 +29,12 @@ import { GET_ALL_CONSIGNMENT_SALES_ADMIN } from "../api/Queries/consignment";
 import { UPDATE_CONSIGNMENT_PRODUCT_ADMIN } from "../api/Mutations/updateproduct";
 
 export default function ConsignmentSaleList() {
+  //query
   const { data, error, loading, refetch } = useQuery(
     GET_ALL_CONSIGNMENT_SALES_ADMIN
   );
+
+  //mutation
   const [updateConsignmentSale, { loading: updating }] = useMutation(
     UPDATE_CONSIGNMENT_PRODUCT_ADMIN
   );
@@ -44,7 +47,7 @@ export default function ConsignmentSaleList() {
   const [selectAll, setSelectAll] = useState(false);
 
   const consignments = data?.consignmentSales || [];
-
+  //handle
   const handleCheckboxChange = (id) => {
     setSelectedConsignments((prev) =>
       prev.includes(id)
@@ -83,12 +86,13 @@ export default function ConsignmentSaleList() {
   };
   const handleSaveChange = () => {
     if (!isEditing) {
-      setOriginalConsignment({ ...selectedConsignment }); // Lưu giá trị ban đầu khi bắt đầu chỉnh sửa
+      setOriginalConsignment({ ...selectedConsignment });
     } else {
-      saveChanges(); // Gọi hàm thực hiện cập nhật khi nhấn "Lưu"
+      saveChanges();
     }
     setIsEditing(!isEditing);
   };
+
   const saveChanges = async () => {
     if (!selectedConsignment || !originalConsignment) return;
 
@@ -131,7 +135,6 @@ export default function ConsignmentSaleList() {
 
   const handleDeleteSelected = async () => {
     try {
-      console.log("Deleting selected consignments:", selectedConsignments);
       // TODO: Implement delete mutation here
       refetch();
     } catch (error) {
@@ -163,7 +166,7 @@ export default function ConsignmentSaleList() {
             color="error"
             onClick={handleDeleteSelected}
           >
-            Xóa đã chọn
+            Xóa yêu cầu
           </Button>
         )}
       </Box>
@@ -232,7 +235,7 @@ export default function ConsignmentSaleList() {
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Modal */}
+      {/* Modal for Consignment Sale*/}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
@@ -247,10 +250,11 @@ export default function ConsignmentSaleList() {
             transform: "translate(-50%, -50%)",
             width: 600,
             bgcolor: "background.paper",
+            border: "2px solid #000",
             boxShadow: 24,
             borderRadius: 2,
-            overflowY: "auto",
-            maxHeight: "80vh",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           {/* Close Button */}
@@ -258,232 +262,243 @@ export default function ConsignmentSaleList() {
             sx={{
               display: "flex",
               justifyContent: "flex-end",
-              p: 2,
+              p: 1,
               borderBottom: "1px solid #ddd",
             }}
           >
             <Button
-              onClick={handleCloseModal}
               variant="text"
-              sx={{ color: "red", textTransform: "none" }}
+              onClick={handleCloseModal}
+              sx={{ textTransform: "none", color: "red" }}
             >
               <CloseIcon />
               Đóng
             </Button>
           </Box>
+          <Box
+            sx={{
+              overflowY: "auto",
+              maxHeight: "70vh",
+            }}
+          >
+            {selectedConsignment && (
+              <Box sx={{ p: 2 }}>
+                <Typography variant="h4" sx={{ mb: 2 }}>
+                  Chi Tiết Yêu Cầu Ký Gửi Bán
+                </Typography>
 
-          {selectedConsignment && (
-            <Box sx={{ p: 2 }}>
-              <Typography variant="h5" sx={{ mb: 2 }}>
-                Chi Tiết Yêu Cầu Ký Gửi Bán
-              </Typography>
-
-              {/* Editable Fields */}
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Thông Tin Cá
-                </Typography>
-                {selectedConsignment.photo?.image?.publicUrl && (
-                  <Box
-                    component="img"
-                    src={selectedConsignment.photo.image.publicUrl}
-                    alt={selectedConsignment.name}
-                    sx={{
-                      width: "100%",
-                      maxHeight: 200,
-                      objectFit: "contain",
-                      borderRadius: 2,
-                      mb: 2,
-                    }}
-                  />
-                )}
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Tên cá ký gửi:</strong> {selectedConsignment.name}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Năm sinh:</strong>{" "}
-                  {selectedConsignment.birth || "Chưa cập nhật"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Giới tính:</strong>{" "}
-                  {selectedConsignment.sex || "Chưa cập nhật"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Kích thước:</strong>{" "}
-                  {selectedConsignment.size || "Chưa cập nhật"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Lịch sử bệnh:</strong>{" "}
-                  {selectedConsignment.medical || "Không có"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Loại:</strong>{" "}
-                  {selectedConsignment.category || "Chưa cập nhật"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Mô tả:</strong>{" "}
-                  {selectedConsignment.description || "Không có"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Trạng thái:</strong>{" "}
-                  {selectedConsignment.status || "Chưa cập nhật"}
-                </Typography>
-              </Box>
-
-              {/* Consignment Information */}
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Thông Tin Ký Gửi
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Người gửi:</strong>{" "}
-                  {selectedConsignment.request?.user?.name || "Không rõ"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Ngày | Giờ ký gửi:</strong>{" "}
-                  {formatDate(selectedConsignment.request?.createAt)} |{" "}
-                  {formatTime(selectedConsignment.request?.createAt)}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Nhân viên xử lý:</strong>{" "}
-                  {selectedConsignment.request?.staff?.name || "Chưa xử lý"}
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 1 }}>
-                  <strong>Giá xác định từ hệ thống:</strong>{" "}
-                  {selectedConsignment.estimatedPrice
-                    ? `${formatMoney(
-                        selectedConsignment.estimatedPrice.split(" - ")[0]
-                      )} - ${formatMoney(
-                        selectedConsignment.estimatedPrice.split(" - ")[1]
-                      )}`
-                    : "Chưa cập nhật"}
-                </Typography>
-                {isEditing ? (
-                  <>
-                    {/* Editable Fields */}
-                    <TextField
-                      label="Giá tiền"
-                      fullWidth
-                      value={selectedConsignment.price || ""}
-                      onChange={(e) =>
-                        handleInputChange("price", e.target.value)
-                      }
-                      sx={{ mb: 2 }}
-                    />
-                    <FormControl fullWidth sx={{ mb: 2 }}>
-                      <InputLabel id="status-label" shrink>
-                        Trạng thái yêu cầu
-                      </InputLabel>
-                      <Select
-                        labelId="status-label"
-                        value={selectedConsignment.request?.status || ""}
-                        onChange={(e) =>
-                          handleInputChange("request", {
-                            ...selectedConsignment.request,
-                            status: e.target.value,
-                          })
-                        }
-                      >
-                        <MenuItem value="Chờ phê duyệt">Chờ phê duyệt</MenuItem>
-                        <MenuItem value="Hủy phê duyệt">Hủy phê duyệt</MenuItem>
-                        <MenuItem value="Xác nhận phê duyệt">
-                          Xác nhận phê duyệt
-                        </MenuItem>
-                        <MenuItem value="Xác nhận giao dịch">
-                          Xác nhận giao dịch
-                        </MenuItem>
-                        <MenuItem value="Huỷ giao dịch">Huỷ giao dịch</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </>
-                ) : (
-                  <>
-                    {/* Read-Only Display */}
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Giá tiền:</strong>{" "}
-                      {formatMoney(selectedConsignment.price || 0)}
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Trạng thái yêu cầu:</strong>{" "}
-                      {selectedConsignment.request?.status || "Không rõ"}
-                    </Typography>
-                  </>
-                )}
-              </Box>
-
-              {/* Status History */}
-              {selectedConsignment.request?.statusHistory?.length > 0 && (
                 <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="h6"
-                    sx={{ mt: 2, mb: 1, fontWeight: "bold" }}
-                  >
-                    Lịch sử trạng thái:
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Cá
                   </Typography>
-                  <TableContainer
-                    component={Paper}
-                    sx={{
-                      maxHeight: 200, // Scrollable if content exceeds height
-                      overflowY: "auto",
-                      border: "1px solid #ddd",
-                      borderRadius: 1,
-                    }}
-                  >
-                    <Table
-                      stickyHeader
-                      size="small"
-                      aria-label="status history table"
-                    >
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>
-                            <strong>Thời gian</strong>
-                          </TableCell>
-                          <TableCell>
-                            <strong>Người thay đổi</strong>
-                          </TableCell>
-                          <TableCell>
-                            <strong>Trạng thái</strong>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {selectedConsignment.request.statusHistory.map(
-                          (history) => (
-                            <TableRow key={history.id}>
-                              <TableCell>
-                                {formatDate(history.changeTime)} |{" "}
-                                {formatTime(history.changeTime)}
-                              </TableCell>
-                              <TableCell>
-                                {history.changedBy?.name || "Không rõ"}
-                              </TableCell>
-                              <TableCell>{history.status}</TableCell>
-                            </TableRow>
-                          )
-                        )}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
+                  {selectedConsignment.photo?.image?.publicUrl && (
+                    <Box
+                      component="img"
+                      src={selectedConsignment.photo.image.publicUrl}
+                      alt={selectedConsignment.name}
+                      sx={{
+                        width: "100%",
+                        maxHeight: 200,
+                        objectFit: "contain",
+                        borderRadius: 2,
+                        mb: 2,
+                      }}
+                    />
+                  )}
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Tên cá ký gửi:</strong> {selectedConsignment.name}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Năm sinh:</strong>{" "}
+                    {selectedConsignment.birth || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Giới tính:</strong>{" "}
+                    {selectedConsignment.sex || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Kích thước:</strong>{" "}
+                    {selectedConsignment.size || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Lịch sử bệnh:</strong>{" "}
+                    {selectedConsignment.medical || "Không có"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Loại:</strong>{" "}
+                    {selectedConsignment.category || "Chưa cập nhật"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Mô tả:</strong>{" "}
+                    {selectedConsignment.description || "Không có"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Trạng thái:</strong>{" "}
+                    {selectedConsignment.status || "Chưa cập nhật"}
+                  </Typography>
                 </Box>
-              )}
 
-              {/* Action Buttons */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  p: 2,
-                  borderTop: "1px solid #ddd",
-                }}
-              >
-                <Button variant="contained" onClick={handleSaveChange}>
-                  <UpdateIcon />
-                  {isEditing ? "Lưu" : "Cập Nhật"}
-                </Button>
+                {/* Consignment Information */}
+                <Box sx={{ mb: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    Thông Tin Ký Gửi
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Người gửi:</strong>{" "}
+                    {selectedConsignment.request?.user?.name || "Không rõ"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Ngày | Giờ ký gửi:</strong>{" "}
+                    {formatDate(selectedConsignment.request?.createAt)} |{" "}
+                    {formatTime(selectedConsignment.request?.createAt)}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Nhân viên xử lý:</strong>{" "}
+                    {selectedConsignment.request?.staff?.name || "Chưa xử lý"}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    <strong>Giá xác định từ hệ thống:</strong>{" "}
+                    {selectedConsignment.estimatedPrice
+                      ? `${formatMoney(
+                          selectedConsignment.estimatedPrice.split(" - ")[0]
+                        )} - ${formatMoney(
+                          selectedConsignment.estimatedPrice.split(" - ")[1]
+                        )}`
+                      : "Chưa cập nhật"}
+                  </Typography>
+                  {isEditing ? (
+                    <>
+                      {/* Editable Fields */}
+                      <TextField
+                        label="Giá tiền"
+                        fullWidth
+                        value={selectedConsignment.price || ""}
+                        onChange={(e) =>
+                          handleInputChange("price", e.target.value)
+                        }
+                        sx={{ mb: 2 }}
+                      />
+                      <FormControl fullWidth sx={{ mb: 2 }}>
+                        <InputLabel id="status-label" shrink>
+                          Trạng thái yêu cầu
+                        </InputLabel>
+                        <Select
+                          labelId="status-label"
+                          value={selectedConsignment.request?.status || ""}
+                          onChange={(e) =>
+                            handleInputChange("request", {
+                              ...selectedConsignment.request,
+                              status: e.target.value,
+                            })
+                          }
+                        >
+                          <MenuItem value="Chờ phê duyệt">
+                            Chờ phê duyệt
+                          </MenuItem>
+                          <MenuItem value="Hủy phê duyệt">
+                            Hủy phê duyệt
+                          </MenuItem>
+                          <MenuItem value="Xác nhận phê duyệt">
+                            Xác nhận phê duyệt
+                          </MenuItem>
+                          <MenuItem value="Xác nhận giao dịch">
+                            Xác nhận giao dịch
+                          </MenuItem>
+                          <MenuItem value="Huỷ giao dịch">
+                            Huỷ giao dịch
+                          </MenuItem>
+                        </Select>
+                      </FormControl>
+                    </>
+                  ) : (
+                    <>
+                      {/* Read-Only Display */}
+                      <Typography variant="body1" sx={{ mb: 1 }}>
+                        <strong>Giá tiền:</strong>{" "}
+                        {formatMoney(selectedConsignment.price || 0)}
+                      </Typography>
+                      <Typography variant="body1" sx={{ mb: 1 }}>
+                        <strong>Trạng thái yêu cầu:</strong>{" "}
+                        {selectedConsignment.request?.status || "Không rõ"}
+                      </Typography>
+                    </>
+                  )}
+                </Box>
+
+                {/* Status History */}
+                {selectedConsignment.request?.statusHistory?.length > 0 && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ mt: 2, mb: 1, fontWeight: "bold" }}
+                    >
+                      Lịch sử trạng thái:
+                    </Typography>
+                    <TableContainer
+                      component={Paper}
+                      sx={{
+                        maxHeight: 200,
+                        overflowY: "auto",
+                        border: "1px solid #ddd",
+                        borderRadius: 1,
+                      }}
+                    >
+                      <Table
+                        stickyHeader
+                        size="small"
+                        aria-label="status history table"
+                      >
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>
+                              <strong>Thời gian</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong>Người thay đổi</strong>
+                            </TableCell>
+                            <TableCell>
+                              <strong>Trạng thái</strong>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {selectedConsignment.request.statusHistory.map(
+                            (history) => (
+                              <TableRow key={history.id}>
+                                <TableCell>
+                                  {formatDate(history.changeTime)} |{" "}
+                                  {formatTime(history.changeTime)}
+                                </TableCell>
+                                <TableCell>
+                                  {history.changedBy?.name || "Không rõ"}
+                                </TableCell>
+                                <TableCell>{history.status}</TableCell>
+                              </TableRow>
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                )}
+
+                {/* Action Buttons */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    p: 2,
+                    borderTop: "1px solid #ddd",
+                  }}
+                >
+                  <Button variant="contained" onClick={handleSaveChange}>
+                    <UpdateIcon />
+                    {isEditing ? "Lưu" : "Cập Nhật"}
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          )}
+            )}
+          </Box>
         </Box>
       </Modal>
     </>
