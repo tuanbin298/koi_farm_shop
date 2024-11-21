@@ -165,6 +165,11 @@ const UserList = () => {
         <Typography variant="h4">
           Danh sách người dùng <ListAltIcon />
         </Typography>
+        {selectedUsers.length > 0 && (
+          <Button variant="contained" color="error">
+            Xoá người dùng
+          </Button>
+        )}
       </Box>
       <TableContainer
         component={Paper}
