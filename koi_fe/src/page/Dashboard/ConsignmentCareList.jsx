@@ -29,23 +29,11 @@ export default function ConsignmentCareList() {
     refetch,
   } = useQuery(GET_ALL_FISH_CARE_ADMIN);
 
-  //Mutation
-  const [deleteArcicles] = useMutation(DELETE_CONSIGNMENT_RAISING);
-
   //State
-  const [selectedConsignments, setSelectedConsignments] = useState([]);
   const [selectedConsignment, setSelectedConsignment] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [selectAll, setSelectAll] = useState(false);
 
   const consignments = getConsignments?.consigmentRaisings || [];
-
-  useEffect(() => {
-    setSelectAll(
-      selectedConsignments.length === consignments.length &&
-        consignments.length > 0
-    );
-  }, [selectedConsignments, consignments]);
 
   // Pagination configuration
   const [page, setPage] = useState(1);
@@ -57,14 +45,6 @@ export default function ConsignmentCareList() {
   // Handle
   const handlePageChange = (event, value) => setPage(value);
 
-  const handleCheckboxChange = (consignmentId) => {
-    setSelectedConsignments((prevSelected) =>
-      prevSelected.includes(consignmentId)
-        ? prevSelected.filter((id) => id !== consignmentId)
-        : [...prevSelected, consignmentId]
-    );
-  };
-
   const handleRowClick = (consignment) => {
     setSelectedConsignment(consignment);
     setOpenModal(true);
@@ -73,36 +53,6 @@ export default function ConsignmentCareList() {
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedConsignment(null);
-  };
-
-  // When check all checkbox
-  const handleSelectAllChange = () => {
-    if (selectAll) {
-      setSelectedConsignments([]);
-    } else {
-      const allConsignments = consignments.map((consignment) => consignment.id);
-      setSelectedConsignments(allConsignments);
-    }
-    setSelectAll(!selectAll);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await deleteArcicles({
-        variables: {
-          where: selectedConsignments.map((id) => ({ id })),
-        },
-      });
-
-      await refetch();
-      toast.success("Xóa thành công!");
-      setSelectedConsignments([]);
-      setSelectAll(false);
-      handleCloseModal();
-    } catch (error) {
-      toast.error("Đã xảy ra lỗi khi xóa!");
-      console.error("Đã xảy ra lỗi khi xóa:", error);
-    }
   };
 
   if (loading)
@@ -138,11 +88,6 @@ export default function ConsignmentCareList() {
         <Typography variant="h4">
           Danh sách yêu cầu ký gửi <ListAltIcon />
         </Typography>
-        {selectedConsignments.length > 0 && (
-          <Button variant="contained" color="error" onClick={handleDelete}>
-            Xoá Đã Chọn
-          </Button>
-        )}
       </Box>
       <TableContainer
         component={Paper}
@@ -155,17 +100,6 @@ export default function ConsignmentCareList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectedConsignments.length === consignments.length}
-                  indeterminate={
-                    selectedConsignments.length > 0 &&
-                    selectedConsignments.length < consignments.length
-                  }
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                />
-              </TableCell>
               <TableCell>Ngày | Giờ ký gửi</TableCell>
               <TableCell>Người ký gửi nuôi</TableCell>
               <TableCell>Cá ký gửi nuôi</TableCell>
@@ -185,16 +119,6 @@ export default function ConsignmentCareList() {
                 }}
                 onClick={() => handleRowClick(consignment)}
               >
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedConsignments.includes(consignment.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      handleCheckboxChange(consignment.id);
-                    }}
-                    color="primary"
-                  />
-                </TableCell>
                 <TableCell>
                   {formatDate(consignment.consignmentDate.split("T")[0])}{" "}
                   {" | "} {formatTime(consignment.consignmentDate)}
@@ -216,21 +140,6 @@ export default function ConsignmentCareList() {
             ))}
           </TableBody>
         </Table>
-        <Box
-          display="flex"
-          justifyContent="center"
-          marginTop={2}
-          sx={{
-            marginBottom: "2%",
-          }}
-        >
-          <Pagination
-            count={Math.ceil(getConsignments.length / itemsPerPage)}
-            page={page}
-            onChange={handlePageChange}
-            color="primary"
-          />
-        </Box>
       </TableContainer>
 
       <Modal

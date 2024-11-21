@@ -83,20 +83,25 @@ export default function OrderList() {
   };
 
   const handleSaveChange = async (item) => {
-    console.log(item)
     try {
-      const { id, status } = item;
-      await updateOrderItem({
+      const { id, status } = item; // Tách id và status từ item
+
+      // Gọi mutation để cập nhật dữ liệu
+      const response = await updateOrderItem({
         variables: {
-          data: {
-            where: { id: id },
-            data: { status: status },
-          },
+          where: { id }, // ID cần cập nhật
+          data: { status }, // Trạng thái mới
         },
       });
-      alert("Cập nhật thành công!");
+
+      if (response?.data?.updateOrderItem) {
+        alert("Cập nhật thành công!");
+        refetch();
+      } else {
+        alert("Không thể cập nhật, vui lòng thử lại!");
+      }
     } catch (error) {
-      console.log(error)
+      console.error("Error updating order item:", error.message);
       alert("Cập nhật thất bại!");
     }
   };

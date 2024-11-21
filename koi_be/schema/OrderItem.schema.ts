@@ -13,7 +13,7 @@ const OrderItem = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: permissions.canManageOrder,
+      update: allowAll,
       delete: allowAll,
     },
   },
@@ -58,11 +58,11 @@ const OrderItem = list({
       label: "Trạng thái",
       defaultValue: "Đang xử lý",
       options: [
+        { label: "Hoàn thành", value: "Hoàn thành" },
         { label: "Đang xử lý", value: "Đang xử lý" },
         { label: "Đang chăm sóc", value: "Đang chăm sóc" },
         { label: "Kết thúc ký gửi", value: "Kết thúc ký gửi" },
         { label: "Đang giao hàng", value: "Đang giao hàng" },
-        { label: "Hoàn thành", value: "Hoàn thành" },
       ],
     }),
     isStored: checkbox({
