@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -33,10 +33,10 @@ const drawerWidth = 240;
 
 export default function DashboardOverview() {
     const [openDropdown, setOpenDropdown] = useState({});
-    const {data:getOrders,loading,error, refetch:refetchOrders} = useQuery(GET_ALL_ORDERS);
+    const { data: getOrders, loading, error, refetch: refetchOrders } = useQuery(GET_ALL_ORDERS);
     const {
-        data:getAllProducts,
-        refetch:refetchAllProducts
+        data: getAllProducts,
+        refetch: refetchAllProducts
     } = useQuery(GET_ALL_PRODUCTS_ADMIN)
     console.log(getOrders)
     //Tổng doanh thu
@@ -69,7 +69,7 @@ export default function DashboardOverview() {
     for (let i = 1; i < 12; i++) {
         const previousMonthRevenue = monthlyRevenue[i - 1];
         const currentMonthRevenue = monthlyRevenue[i];
-    
+
         if (previousMonthRevenue > 0) {
             // Calculate percentage growth
             revenueGrowth[i] = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
@@ -90,7 +90,7 @@ export default function DashboardOverview() {
         }));
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         refetchOrders()
     }, [refetchOrders])
 
@@ -99,8 +99,8 @@ export default function DashboardOverview() {
     }, [refetchAllProducts])
     return (
         <>
-        
-            <Box sx={{ display: 'flex', marginLeft:"15%" }}>
+
+            <Box sx={{ display: 'flex', marginLeft: "15%" }}>
 
 
                 <Box component="main" sx={{ flexGrow: 1, padding: 5, marginRight: "10%" }}>
@@ -181,31 +181,33 @@ export default function DashboardOverview() {
                         </Grid>
                     </Grid>
 
-                    
+
                     <Box sx={{ mt: 3 }}>
                         <Grid container spacing={3}>
                             <Grid item xs={12}>
-                                <Card variant="outlined" sx={{ borderRadius: "5%", padding: "5px",
-                                    width:"120%",
-                                    paddingLeft:"10%"
-                                 }}>
-                                <CardContent>
+                                <Card variant="outlined" sx={{
+                                    borderRadius: "5%", padding: "5px",
+                                    width: "100%",
+                                    paddingLeft: "2%"
+                                }}>
+                                    <CardContent>
                                         <Typography variant="h4">Doanh thu theo thời gian</Typography>
                                         <BarChart
-                                            xAxis={[{
-                                                scaleType: 'band',
-                                                data: months
-                                            }]}
-                                            series={[{
-                                                data: monthlyRevenue
-                                            }]}
-                                            width={800}
+                                            xAxis={[
+                                                {
+                                                    scaleType: 'band',
+                                                    data: months,
+                                                }
+                                            ]}
+                                            series={[{ data: monthlyRevenue }]}
+                                            width={900}
                                             height={500}
+                                            margin={{ left: 80 }} // Add margin to avoid clipping
                                         />
                                     </CardContent>
                                 </Card>
                             </Grid>
-                            
+
                             {/* <Grid item xs={4}>
                                 <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                                     <ListItem>
@@ -221,13 +223,14 @@ export default function DashboardOverview() {
                             </Grid> */}
                         </Grid>
                         <Box sx={{ mt: 3 }}>
-                        <Grid item xs={12} md={6}>
-                                <Card variant="outlined" sx={{ borderRadius: "5%", padding: "5px",
-                                    width:"120%",
-                                    paddingLeft:"10%"
-                                 }}>
+                            <Grid item xs={12} md={6}>
+                                <Card variant="outlined" sx={{
+                                    borderRadius: "5%", padding: "5px",
+                                    width: "100%",
+                                    paddingLeft: "2%"
+                                }}>
                                     <CardContent>
-                                        <Typography variant="h4">Tăng trưởng doanh thu (%)</Typography>
+                                        <Typography variant="h4">Tăng trưởng doanh thu</Typography>
                                         <LineChart
                                             xAxis={[{
                                                 scaleType: 'band',
@@ -236,13 +239,14 @@ export default function DashboardOverview() {
                                             series={[{
                                                 data: revenueGrowth// Bỏ qua tháng 1 vì không có dữ liệu tăng trưởng
                                             }]}
-                                            width={800}
+                                            width={900}
                                             height={400}
+                                            margin={{ left: 80 }}
                                         />
                                     </CardContent>
                                 </Card>
                             </Grid>
-                            </Box>
+                        </Box>
                     </Box>
                 </Box>
             </Box>
