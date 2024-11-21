@@ -34,15 +34,10 @@ export const UPDATE_ORDER_ITEM = gql`
 `;
 
 export const UPDATE_ORDER_ITEM_ADMIN = gql`
-  mutation UpdateOrderItem(
-    $where: OrderItemWhereUniqueInput!
-    $data: OrderItemUpdateInput!
-  ) {
-    updateOrderItem(where: $where, data: $data) {
-      consignmentRaising {
-        id
-        status
-      }
+  mutation Mutation($data: [OrderItemUpdateArgs!]!) {
+    updateOrderItems(data: $data) {
+      id
+      status
     }
   }
 `;
