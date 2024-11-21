@@ -72,7 +72,6 @@ export default function OrderList() {
   };
 
   const handleDelete = () => {
-    console.log("Deleting orders with IDs:", selectedOrders);
 
     const updatedOrders = orders.filter(
       (order) => !selectedOrders.includes(order.id)
@@ -101,7 +100,6 @@ export default function OrderList() {
         alert("Không thể cập nhật, vui lòng thử lại!");
       }
     } catch (error) {
-      console.error("Error updating order item:", error.message);
       alert("Cập nhật thất bại!");
     }
   };
@@ -137,7 +135,6 @@ export default function OrderList() {
       alert("Cập nhật tất cả trạng thái thành công!");
       closeModal();
     } catch (error) {
-      console.error("Error updating order items:", error);
       alert("Đã xảy ra lỗi khi cập nhật đơn hàng.");
     }
   };
