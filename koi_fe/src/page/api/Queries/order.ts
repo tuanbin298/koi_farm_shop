@@ -65,3 +65,13 @@ export const GET_ALL_ORDERS = gql`
     }
   }
 `;
+
+export const GET_ORDER_ITEMS_BY_ORDER_ID = gql`
+  query Order($where: OrderWhereUniqueInput!) {
+    order(where: $where) {
+      items {
+        id
+      }
+    }
+  }
+`;

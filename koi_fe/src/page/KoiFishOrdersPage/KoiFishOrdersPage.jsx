@@ -14,11 +14,13 @@ import { formatMoney } from "../../utils/formatMoney";
 import "./KoiFishOrdersPage.css";
 import { FaStar, FaPaperPlane } from "react-icons/fa";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
+import { GET_ORDER_ITEMS_BY_ORDER_ID } from "../api/Queries/order";
+import { UPDATE_ORDER_ITEM_STATUS } from "../api/Mutations/orderItem";
 import toast from "react-hot-toast";
 
 const KoiFishOrdersPage = () => {
   const userId = localStorage.getItem("id");
-  const { loading, error, data } = useQuery(GET_ORDERS, {
+  const { loading, error, data, refetch } = useQuery(GET_ORDERS, {
     variables: {
       where: {
         user: {
@@ -35,6 +37,7 @@ const KoiFishOrdersPage = () => {
   const [feedback, setFeedback] = useState({ comment: "" });
   const [rating, setRating] = useState(0);
   const [createFeedback] = useMutation(CREATE_FEEDBACK);
+  const [updateOrderItemsByOrderId] = useMutation(UPDATE_ORDER_ITEM_STATUS);
 
   const toggleDetails = (order) => {
     setExpandedOrder(order);
@@ -52,6 +55,44 @@ const KoiFishOrdersPage = () => {
 
   const handleRatingChange = (star) => {
     setRating(star);
+  };
+
+  const { refetch: refetchOrderItems } = useQuery(GET_ORDER_ITEMS_BY_ORDER_ID, {
+    skip: true, // Skip running this query automatically
+  });
+
+  const handleOrderReceived = async (orderId) => {
+    try {
+      // Refetch order items using the `where` variable
+      const { data } = await refetchOrderItems({
+        where: {
+          id: orderId, // Provide the required `id` inside `where`
+        },
+      });
+
+      if (
+        !data ||
+        !data.order ||
+        !data.order.items ||
+        data.order.items.length === 0
+      ) {
+        alert("Không tìm thấy sản phẩm nào trong đơn hàng!");
+        return;
+      }
+
+      // Update the status of each order item
+      for (const item of data.order.items) {
+        await updateOrderItemsByOrderId({
+          variables: { orderId: item.id, newStatus: "Hoàn thành" },
+        });
+      }
+
+      alert("Cập nhật trạng thái thành công!");
+      refetch(); // Refresh the main orders data
+    } catch (error) {
+      console.error("Error updating order items:", error);
+      alert("Đã xảy ra lỗi khi cập nhật trạng thái. Vui lòng thử lại.");
+    }
   };
 
   const handleSubmitFeedback = async (e) => {
@@ -93,7 +134,9 @@ const KoiFishOrdersPage = () => {
 
   const orders = data.orders;
 
-  const hasCompletedOrder = orders.some(order => order.status === "Hoàn thành đơn hàng");
+  const hasCompletedOrder = orders.some(
+    (order) => order.status === "Hoàn thành đơn hàng"
+  );
 
   return (
     <div className="order container mt-4">
@@ -156,7 +199,7 @@ const KoiFishOrdersPage = () => {
           </Modal.Header>
           <Modal.Body style={{ maxHeight: "80vh", overflowY: "auto" }}>
             {/* Bảng Chi tiết đơn hàng */}
-            {expandedOrder.items.some(item => !item.consignmentSale) && (
+            {expandedOrder.items.some((item) => !item.consignmentSale) && (
               <>
                 <h5>Cá Koi Trang Trại</h5>
                 <Table striped bordered hover>
@@ -165,7 +208,9 @@ const KoiFishOrdersPage = () => {
                       <th>Tên cá</th>
                       <th>Giá (VNĐ)</th>
                       {/* Chỉ hiển thị cột ngày nếu có consignmentRaising */}
-                      {expandedOrder.items.some(item => item.consignmentRaising) && (
+                      {expandedOrder.items.some(
+                        (item) => item.consignmentRaising
+                      ) && (
                         <>
                           <th>Ngày bắt đầu ký gửi nuôi</th>
                           <th>Ngày kết thúc ký gửi nuôi</th>
@@ -176,41 +221,50 @@ const KoiFishOrdersPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {/* Lọc ra các item không có consignmentSale */}
                     {expandedOrder.items
-                      .filter(item => !item.consignmentSale)
+                      .filter((item) => !item.consignmentSale)
                       .map((item, idx) => (
                         <tr key={idx}>
-                          <td>{item.product?.name || '-'}</td>
-                          <td>{item.product?.price ? formatMoney(item.product.price) : '-'}</td>
-                          {/* Chỉ hiển thị ngày nếu có consignmentRaising */}
-                          {expandedOrder.items.some(item => item.consignmentRaising) ? (
+                          <td>{item.product?.name || "-"}</td>
+                          <td>
+                            {item.product?.price
+                              ? formatMoney(item.product.price)
+                              : "-"}
+                          </td>
+                          {expandedOrder.items.some(
+                            (item) => item.consignmentRaising
+                          ) ? (
                             <>
                               <td>
                                 {item.consignmentRaising?.consignmentDate
-                                  ? new Date(item.consignmentRaising.consignmentDate).toLocaleDateString()
-                                  : '-'}
+                                  ? new Date(
+                                      item.consignmentRaising.consignmentDate
+                                    ).toLocaleDateString()
+                                  : "-"}
                               </td>
                               <td>
                                 {item.consignmentRaising?.returnDate
-                                  ? new Date(item.consignmentRaising.returnDate).toLocaleDateString()
-                                  : '-'}
+                                  ? new Date(
+                                      item.consignmentRaising.returnDate
+                                    ).toLocaleDateString()
+                                  : "-"}
                               </td>
                               <td>
                                 {item.consignmentRaising?.consignmentPrice
-                                  ? formatMoney(item.consignmentRaising.consignmentPrice)
-                                  : '-'}
+                                  ? formatMoney(
+                                      item.consignmentRaising.consignmentPrice
+                                    )
+                                  : "-"}
                               </td>
                             </>
                           ) : null}
-                          <td>{item.consignmentRaising ? item.consignmentRaising.status : item.status || '-'}</td>
+                          <td>{item.status || "-"}</td>
                         </tr>
                       ))}
                   </tbody>
                 </Table>
               </>
             )}
-            {/* Bảng Cá Ký Gửi Bán - chỉ hiển thị nếu có consignmentSale */}
             {expandedOrder.items.some((item) => item.consignmentSale) && (
               <>
                 <h5>Cá Koi Ký Gửi Bán</h5>
@@ -242,6 +296,19 @@ const KoiFishOrdersPage = () => {
             )}
           </Modal.Body>
           <Modal.Footer>
+            <Button
+              variant="primary"
+              onClick={() => {
+                const confirmed = window.confirm(
+                  "Bạn có chắc chắn đã nhận được tất cả các con cá trong đơn hàng này chưa?"
+                );
+                if (confirmed) {
+                  handleOrderReceived(expandedOrder.id);
+                }
+              }}
+            >
+              Đã nhận đơn hàng
+            </Button>
             <Button variant="secondary" onClick={closeModal}>
               Đóng
             </Button>
