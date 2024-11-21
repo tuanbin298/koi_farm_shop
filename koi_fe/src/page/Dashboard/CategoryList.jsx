@@ -21,13 +21,12 @@ import UpdateIcon from "@mui/icons-material/Update";
 import CloseIcon from "@mui/icons-material/Close";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
-
 import { GET_CATEGORY } from "../api/Queries/category";
 import { UPDATE_CATEGORY } from "../api/Mutations/category";
 import { DELETE_CATEGORY } from "../api/Mutations/category";
 import { GET_PROFILE } from "../api/Queries/user";
 export default function CategoryList() {
-  const userId = localStorage.getItem("id")
+  const userId = localStorage.getItem("id");
   // Query
   const {
     data: getCategories,
@@ -35,13 +34,13 @@ export default function CategoryList() {
     loading,
     refetch,
   } = useQuery(GET_CATEGORY);
-  const {data:userData} = useQuery(GET_PROFILE, {
-    variables:{
-      where:{
-        id: userId
-      }
-    }
-  })
+  const { data: userData } = useQuery(GET_PROFILE, {
+    variables: {
+      where: {
+        id: userId,
+      },
+    },
+  });
   const categories = getCategories?.categories || [];
 
   // Mutation
@@ -223,21 +222,22 @@ export default function CategoryList() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              {userData.user.role.name==="Admin"?
-              (<TableCell padding="checkbox">
-                <Checkbox
-                  checked={selectAll}
-                  indeterminate={
-                    selectedCategories.length > 0 &&
-                    selectedCategories.length < categories.length
-                  }
-                  onChange={handleSelectAllChange}
-                  color="primary"
-                />
-              </TableCell>)
-              :
-              (<TableCell></TableCell>)}
-              
+              {userData.user.role.name === "Admin" ? (
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={
+                      selectedCategories.length > 0 &&
+                      selectedCategories.length < categories.length
+                    }
+                    onChange={handleSelectAllChange}
+                    color="primary"
+                  />
+                </TableCell>
+              ) : (
+                <TableCell></TableCell>
+              )}
+
               <TableCell>Tên phân loại</TableCell>
               <TableCell>Mô tả</TableCell>
             </TableRow>
@@ -250,17 +250,19 @@ export default function CategoryList() {
                 onClick={() => handleRowClick(category)}
                 style={{ cursor: "pointer" }}
               >
-                {userData.user.role.name==="Admin"?
-                (<TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedCategories.includes(category.id)}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={() => handleCheckboxChange(category.id)}
-                    color="primary"
-                  />
-                </TableCell>):
-              (<TableCell></TableCell>)}
-                
+                {userData.user.role.name === "Admin" ? (
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedCategories.includes(category.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={() => handleCheckboxChange(category.id)}
+                      color="primary"
+                    />
+                  </TableCell>
+                ) : (
+                  <TableCell></TableCell>
+                )}
+
                 <TableCell component="th" scope="row">
                   {category.name}
                 </TableCell>
