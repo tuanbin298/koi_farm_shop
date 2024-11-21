@@ -13,7 +13,7 @@ const OrderItem = list({
     operation: {
       query: allowAll,
       create: allowAll,
-      update: permissions.canManageOrder,
+      update: allowAll,
       delete: allowAll,
     },
   },

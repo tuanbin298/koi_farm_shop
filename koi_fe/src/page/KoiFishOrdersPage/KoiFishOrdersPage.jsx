@@ -14,8 +14,7 @@ import { formatMoney } from "../../utils/formatMoney";
 import "./KoiFishOrdersPage.css";
 import { FaStar, FaPaperPlane } from "react-icons/fa";
 import { CREATE_FEEDBACK } from "../api/Mutations/feedback";
-import { GET_ORDER_ITEMS_BY_ORDER_ID } from "../api/Queries/order";
-import { UPDATE_ORDER_ITEM_STATUS } from "../api/Mutations/orderItem";
+import { UPDATE_ORDER_STATUS } from "../api/Mutations/order";
 import toast from "react-hot-toast";
 
 const KoiFishOrdersPage = () => {
@@ -37,7 +36,7 @@ const KoiFishOrdersPage = () => {
   const [feedback, setFeedback] = useState({ comment: "" });
   const [rating, setRating] = useState(0);
   const [createFeedback] = useMutation(CREATE_FEEDBACK);
-  const [updateOrderItemsByOrderId] = useMutation(UPDATE_ORDER_ITEM_STATUS);
+  const [updateOrder] = useMutation(UPDATE_ORDER_STATUS);
 
   const toggleDetails = (order) => {
     setExpandedOrder(order);
@@ -57,40 +56,21 @@ const KoiFishOrdersPage = () => {
     setRating(star);
   };
 
-  const { refetch: refetchOrderItems } = useQuery(GET_ORDER_ITEMS_BY_ORDER_ID, {
-    skip: true, // Skip running this query automatically
-  });
-
   const handleOrderReceived = async (orderId) => {
     try {
-      // Refetch order items using the `where` variable
-      const { data } = await refetchOrderItems({
-        where: {
-          id: orderId, // Provide the required `id` inside `where`
+      const response = await updateOrder({
+        variables: {
+          where: { id: orderId },
+          data: { status: "Hoàn thành đơn hàng" },
         },
       });
 
-      if (
-        !data ||
-        !data.order ||
-        !data.order.items ||
-        data.order.items.length === 0
-      ) {
-        alert("Không tìm thấy sản phẩm nào trong đơn hàng!");
-        return;
+      if (response?.data?.updateOrder) {
+        alert("Cập nhật trạng thái thành công!");
+        refetch();
       }
-
-      // Update the status of each order item
-      for (const item of data.order.items) {
-        await updateOrderItemsByOrderId({
-          variables: { orderId: item.id, newStatus: "Hoàn thành" },
-        });
-      }
-
-      alert("Cập nhật trạng thái thành công!");
-      refetch(); // Refresh the main orders data
-    } catch (error) {
-      console.error("Error updating order items:", error);
+    } catch (err) {
+      console.error("Error updating order status:", err);
       alert("Đã xảy ra lỗi khi cập nhật trạng thái. Vui lòng thử lại.");
     }
   };

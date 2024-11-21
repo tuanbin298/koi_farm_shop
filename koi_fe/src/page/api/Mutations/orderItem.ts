@@ -46,12 +46,3 @@ export const UPDATE_ORDER_ITEM_ADMIN = gql`
     }
   }
 `;
-
-export const UPDATE_ORDER_ITEM_STATUS = gql`
-  mutation UpdateOrderItemsByOrderId($orderId: ID!, $newStatus: String!) {
-    updateOrderItemsByOrderId(orderId: $orderId, newStatus: $newStatus) {
-      id
-      status
-    }
-  }
-`;
