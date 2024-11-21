@@ -25,6 +25,7 @@ export const GET_ALL_ARTICLES = gql`
       image {
         publicUrl
       }
+      links
     }
   }
 `;

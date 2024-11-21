@@ -14,9 +14,11 @@ import {
   Typography,
   Paper,
   CircularProgress,
+  Pagination,
 } from "@mui/material";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import UpdateIcon from "@mui/icons-material/Update";
+import CloseIcon from "@mui/icons-material/Close";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
@@ -53,7 +55,16 @@ export default function CategoryList() {
     );
   }, [selectedCategories, categories]);
 
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = categories.slice(startIndex, endIndex) || [];
+
   // Handle
+  const handlePageChange = (event, value) => setPage(value);
+  // When check one checkbox
   const handleCheckboxChange = (categoryId) => {
     setSelectedCategories((prev) =>
       prev.includes(categoryId)
@@ -221,7 +232,7 @@ export default function CategoryList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {categories.map((category) => (
+            {paginatedItems.map((category) => (
               <TableRow
                 key={category.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -245,6 +256,22 @@ export default function CategoryList() {
             ))}
           </TableBody>
         </Table>
+
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop={2}
+          sx={{
+            marginBottom: "2%",
+          }}
+        >
+          <Pagination
+            count={Math.ceil(categories.length / itemsPerPage)}
+            page={page}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </Box>
       </TableContainer>
 
       <Modal
@@ -259,76 +286,103 @@ export default function CategoryList() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: 500,
-            maxHeight: "80vh",
+            width: 600,
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
-            p: 4,
             borderRadius: 2,
-            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          {selectedCategory && (
-            <>
-              <Typography
-                id="modal-title"
-                variant="h4"
-                component="h2"
-                sx={{ mb: 2 }}
-              >
-                Chi Tiết phân loại
-              </Typography>
-              {isEditing ? (
-                <>
-                  {/* Name */}
-                  <TextField
-                    label="Tên"
-                    name="name"
-                    value={selectedCategory.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                  />
+          {/* Nút Đóng */}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              p: 2,
+              borderBottom: "1px solid #ddd",
+            }}
+          >
+            <Button
+              variant="text"
+              onClick={handleCloseModal}
+              sx={{ textTransform: "none", color: "red", fontWeight: "bold" }}
+            >
+              <CloseIcon />
+              Đóng
+            </Button>
+          </Box>
+          <Box
+            sx={{
+              p: 2,
+              overflowY: "auto",
+              maxHeight: "70vh", // Chiều cao tối đa
+            }}
+          >
+            {selectedCategory && (
+              <>
+                <Typography
+                  id="modal-title"
+                  variant="h4"
+                  component="h2"
+                  sx={{ mb: 2 }}
+                >
+                  Chi Tiết phân loại
+                </Typography>
+                {isEditing ? (
+                  <>
+                    {/* Name */}
+                    <TextField
+                      label="Tên"
+                      name="name"
+                      value={selectedCategory.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
 
-                  {/* Category */}
-                  <TextField
-                    label="Mô tả"
-                    name="description"
-                    value={selectedCategory.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    }
-                    fullWidth
-                    sx={{ mb: 2 }}
-                  />
-                </>
-              ) : (
-                <>
-                  <Typography>
-                    <strong>Tên:</strong> {selectedCategory.name}
-                  </Typography>
-                  <Typography>
-                    <strong>Mô tả:</strong> {selectedCategory.description}
-                  </Typography>
-                </>
-              )}
+                    {/* Category */}
+                    <TextField
+                      label="Mô tả"
+                      name="description"
+                      value={selectedCategory.description}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
+                      fullWidth
+                      sx={{ mb: 2 }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Typography>
+                      <strong>Tên:</strong> {selectedCategory.name}
+                    </Typography>
+                    <Typography>
+                      <strong>Mô tả:</strong> {selectedCategory.description}
+                    </Typography>
+                  </>
+                )}
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  p: 2,
-                  borderTop: "1px solid #ddd",
-                }}
-              >
-                <Button variant="contained" onClick={handleSaveChange}>
-                  <UpdateIcon />
-                  {isEditing ? "Lưu" : "Cập Nhật"}
-                </Button>
-              </Box>
-            </>
-          )}
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    p: 2,
+                    borderTop: "1px solid #ddd",
+                  }}
+                >
+                  <Button variant="contained" onClick={handleSaveChange}>
+                    <UpdateIcon />
+                    {isEditing ? "Lưu" : "Cập Nhật"}
+                  </Button>
+                </Box>
+              </>
+            )}
+          </Box>
         </Box>
       </Modal>
     </>

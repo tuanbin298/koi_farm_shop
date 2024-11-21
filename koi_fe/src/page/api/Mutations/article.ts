@@ -34,3 +34,11 @@ export const UPDATE_ARTICLE = gql`
     }
   }
 `;
+
+export const DELETE_ARTICLE = gql`
+  mutation DeleteArticles($where: [ArticleWhereUniqueInput!]!) {
+    deleteArticles(where: $where) {
+      id
+    }
+  }
+`;
