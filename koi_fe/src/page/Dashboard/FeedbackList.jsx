@@ -112,9 +112,23 @@ export default function FeedbackList() {
     }
   };
 
-  if (loading) return <Typography>Loading...</Typography>;
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+
   if (error)
-    return <Typography>Error loading feedbacks: {error.message}</Typography>;
+    return (
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", marginTop: 4 }}
+      >
+        Lỗi tải đánh giá: {error.message}
+      </Typography>
+    );
 
   return (
     <Box>
