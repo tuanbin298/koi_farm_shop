@@ -204,6 +204,7 @@ export default function OrderList() {
                   <Checkbox
                     checked={selectedOrders.includes(order.id)}
                     onChange={() => handleCheckboxChange(order.id)}
+                    onClick={(e) => e.stopPropagation()}
                     color="primary"
                   />
                 </TableCell>

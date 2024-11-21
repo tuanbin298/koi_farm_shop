@@ -48,7 +48,7 @@ export default function DashboardOverview() {
 
     let totalProducts = getAllProducts?.products?.length
     const monthlyRevenue = Array(12).fill(0);
-    const revenueGrowth = Array(12).fill(0);
+    // const revenueGrowth = Array(12).fill(0);
     console.log(monthlyRevenue)
 
     //Calculate total profit for each month
@@ -66,21 +66,21 @@ export default function DashboardOverview() {
         totalOrders = getOrders.orders.length;
     }
     console.log(monthlyRevenue)
-    for (let i = 1; i < 12; i++) {
-        const previousMonthRevenue = monthlyRevenue[i - 1];
-        const currentMonthRevenue = monthlyRevenue[i];
+    // for (let i = 1; i < 12; i++) {
+    //     const previousMonthRevenue = monthlyRevenue[i - 1];
+    //     const currentMonthRevenue = monthlyRevenue[i];
 
-        if (previousMonthRevenue > 0) {
-            // Calculate percentage growth
-            revenueGrowth[i] = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
-        } else if (previousMonthRevenue === 0 && currentMonthRevenue > 0) {
-            // If no revenue in the previous month but revenue exists now, mark as 100% growth
-            revenueGrowth[i] = 100;
-        } else {
-            // No revenue change or zero growth
-            revenueGrowth[i] = 0;
-        }
-    }
+    //     if (previousMonthRevenue > 0) {
+    //         // Calculate percentage growth
+    //         revenueGrowth[i] = ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
+    //     } else if (previousMonthRevenue === 0 && currentMonthRevenue > 0) {
+    //         // If no revenue in the previous month but revenue exists now, mark as 100% growth
+    //         revenueGrowth[i] = 100;
+    //     } else {
+    //         // No revenue change or zero growth
+    //         revenueGrowth[i] = 0;
+    //     }
+    // }
     //Bar chart's months
     const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
     const handleToggle = (itemText) => {
@@ -222,7 +222,7 @@ export default function DashboardOverview() {
                                 </List>
                             </Grid> */}
                         </Grid>
-                        <Box sx={{ mt: 3 }}>
+                        {/* <Box sx={{ mt: 3 }}>
                             <Grid item xs={12} md={6}>
                                 <Card variant="outlined" sx={{
                                     borderRadius: "5%", padding: "5px",
@@ -246,7 +246,7 @@ export default function DashboardOverview() {
                                     </CardContent>
                                 </Card>
                             </Grid>
-                        </Box>
+                        </Box> */}
                     </Box>
                 </Box>
             </Box>

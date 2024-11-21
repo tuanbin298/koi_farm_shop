@@ -201,7 +201,7 @@ const CheckoutForm = () => {
             returnDate: new Date(endDate).toISOString(),
             consignmentPrice: days * pricePerDay,
             status: "Đang xử lý",
-            description: "Consignment for fish care",
+            description: "Ký gửi cá để nuôi",
           };
         });
 

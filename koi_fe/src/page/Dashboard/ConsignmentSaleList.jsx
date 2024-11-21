@@ -209,8 +209,8 @@ export default function ConsignmentSaleList() {
                 <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedConsignments.includes(consignment.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={() => {
                       handleCheckboxChange(consignment.id);
                     }}
                     color="primary"
