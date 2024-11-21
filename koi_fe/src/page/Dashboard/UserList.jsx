@@ -13,16 +13,14 @@ import {
   Modal,
   TextField,
   CircularProgress,
-  Checkbox,
+  Checkbox
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateIcon from "@mui/icons-material/Update";
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, useMutation } from "@apollo/client";
 
 import { GET_PROFILE_ADMIN, GET_PROFILE } from "../api/Queries/user";
 import { UPDATE_USER } from "../api/Mutations/user";
-import { DELETE_USERS } from "../api/Mutations/user";
 
 const UserList = () => {
   const userId = localStorage.getItem("id")
@@ -39,7 +37,6 @@ const UserList = () => {
   console.log(users)
   // Mutation
   const [updateUser] = useMutation(UPDATE_USER);
-  const [deleteUsers] = useMutation(DELETE_USERS);
 
   // State
   const [selectedUsers, setSelectedUsers] = useState([]);
@@ -48,8 +45,6 @@ const UserList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [originalUser, setOriginalUser] = useState(null);
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
-  const [isSelectAll, setIsSelectAll] = useState(false);
 
   // Handle
   const handleRowClick = (user) => {
@@ -107,38 +102,11 @@ const UserList = () => {
         handleCloseModal();
       } catch (error) {
         toast.error("Lỗi cập nhật người dùng!");
-        console.error("Đã xảy ra lỗi khi cập nhật người dùng:", error);
+        console.error("Đã xảy ra lỗi khi cập nhật người dùng :", err);
       }
     } else {
       toast("Không có gì thay đổi");
       handleCloseModal();
-    }
-  };
-
-  
-
-  const handleSelectAll = () => {
-    if (isSelectAll) {
-      setSelectedUserIds([]);
-    } else {
-      setSelectedUserIds(data.users.map((user) => user.id));
-    }
-    setIsSelectAll(!isSelectAll);
-  };
-
-  const handleDeleteSelectedUsers = async () => {
-    try {
-      const selectedUsers = selectedUserIds.map((id) => ({ id }));
-      const { data } = await deleteUsers({
-        variables: { where: selectedUsers },
-      });
-      toast.success(`Đã xóa ${data.deleteUsers.length} người dùng thành công!`);
-      setSelectedUserIds([]);
-      setIsSelectAll(false);
-      await refetch();
-    } catch (error) {
-      toast.error("Xóa người dùng thất bại!");
-      console.error(error);
     }
   };
 
@@ -156,7 +124,7 @@ const UserList = () => {
         color="error"
         sx={{ textAlign: "center", marginTop: 4 }}
       >
-        Error loading users: {error.message}
+        Error loading articles: {error.message}
       </Typography>
     );
 
@@ -307,7 +275,7 @@ const UserList = () => {
                   component="h2"
                   sx={{ mb: 2 }}
                 >
-                  Chi tiết người dùng
+                  Chi Tiết người dùng
                 </Typography>
                 {isEditing ? (
                   <>
@@ -377,7 +345,6 @@ const UserList = () => {
                     justifyContent: "flex-end",
                     p: 2,
                     borderTop: "1px solid #ddd",
-                    overflowY: "auto",
                   }}
                 >
                   
